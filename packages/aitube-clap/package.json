@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Types and helpers to manipulate .clap files",
   "scripts": {
     "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
@@ -39,6 +39,7 @@
   "license": "MIT",
   "files": [
     "dist/*.js",
-    "dist/*.d.ts"
+    "dist/*.d.ts",
+    "dist/**/*.d.ts"
   ]
 }
