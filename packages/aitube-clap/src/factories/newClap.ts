@@ -1,8 +1,6 @@
-
-import { v4 as uuidv4 } from "uuid"
-
 import { ClapMeta, ClapModel, ClapProject, ClapScene, ClapSegment } from "@/types"
 import { getValidNumber } from "@/utils/getValidNumber"
+import { UUID } from "@/utils/uuid"
 
 // generate an empty clap file, or copy one from a source
 export function newClap(clap: {
@@ -13,7 +11,7 @@ export function newClap(clap: {
   } = {}): ClapProject {
 
   const meta: ClapMeta = {
-    id: clap?.meta?.id === "string" ? clap.meta.id : uuidv4(),
+    id: clap?.meta?.id === "string" ? clap.meta.id : UUID(),
     title: clap?.meta?.title === "string" ? clap.meta.title : "",
     description: typeof clap?.meta?.description === "string" ? clap.meta.description : "",
     synopsis: typeof clap?.meta?.synopsis === "string" ? clap.meta.synopsis : "",

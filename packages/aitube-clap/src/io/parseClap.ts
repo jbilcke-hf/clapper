@@ -1,9 +1,9 @@
 import YAML from "yaml"
-import { v4 as uuidv4 } from "uuid"
 
 import { ClapHeader, ClapMeta, ClapModel, ClapProject, ClapScene, ClapSegment } from "../types"
 import { getValidNumber } from "../utils/getValidNumber"
 import { dataUriToBlob } from "../converters/dataUriToBlob"
+import { UUID } from "@/utils/uuid"
 
 type StringOrBlob = string | Blob
 
@@ -155,7 +155,7 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
   const maybeClapMeta = maybeArray[1] as ClapMeta
 
   const clapMeta: ClapMeta = {
-    id: typeof maybeClapMeta.title === "string" ? maybeClapMeta.id : uuidv4(),
+    id: typeof maybeClapMeta.title === "string" ? maybeClapMeta.id : UUID(),
     title: typeof maybeClapMeta.title === "string" ? maybeClapMeta.title : "",
     description: typeof maybeClapMeta.description === "string" ? maybeClapMeta.description : "",
     synopsis: typeof maybeClapMeta.synopsis === "string" ? maybeClapMeta.synopsis : "",

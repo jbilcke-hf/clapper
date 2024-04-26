@@ -1,8 +1,7 @@
-import { v4 as uuidv4 } from "uuid"
-
 import { ClapSegment } from "@/types"
 import { isValidNumber } from "@/utils/isValidNumber"
 import { generateSeed } from "@/utils/generateSeed"
+import { UUID } from "@/utils/uuid"
 
 export function newSegment(maybeSegment?: Partial<ClapSegment>) {
 
@@ -22,7 +21,7 @@ export function newSegment(maybeSegment?: Partial<ClapSegment>) {
     : (startTimeInMs + assetDurationInMs)
 
   const segment: ClapSegment = {
-    id: typeof maybeSegment?.id === "string" ? maybeSegment.id : uuidv4(),
+    id: typeof maybeSegment?.id === "string" ? maybeSegment.id : UUID(),
     track: isValidNumber(maybeSegment?.track) ? (maybeSegment?.track || 0) : 0,
     startTimeInMs,
     endTimeInMs,
