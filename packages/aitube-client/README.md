@@ -1,0 +1,50 @@
+# @aitube/client
+
+*Official API client for AiTube.at*
+
+## ATTENTION
+
+AiTube is currently in heavy development, and for the moment
+the API client is reserved for private use.
+
+We are sorry for any inconvenience this might cause.
+
+## Installation
+
+To install the package, run the following command:
+
+```bash
+npm install @aitube/client
+```
+
+## Getting Started
+
+```typescript
+import { parseClap, serializeClap } from '@aitube/client';
+
+/*
+
+  UNDOCUMENTED API
+
+*/
+```
+
+## Build Instructions
+
+Install [Bun](https://bun.sh/)
+
+Run the following commands:
+
+```bash
+bun install
+
+bun run build
+```
+
+## Contributing
+
+We welcome contributions! Please feel free to submit a pull request.
+
+## License
+
+This package is under the MIT License. See `LICENSE` file for more details.
