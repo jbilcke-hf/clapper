@@ -20,6 +20,6 @@ export {
 } from './types'
 export { newClap, newModel, newSegment } from './factories'
 export { parseClap, serializeClap, fetchClap } from './io'
-export { generateSeed, getClapAssetSourceType, getValidNumber, isValidNumber } from './utils'
+export { generateSeed, getClapAssetSourceType, getValidNumber, isValidNumber, UUID } from './utils'
 export { blobToDataUri, dataUriToBlob, clapToDataUri } from './converters'
 export { generateClapFromSimpleStory, getEmptyClap } from './helpers'

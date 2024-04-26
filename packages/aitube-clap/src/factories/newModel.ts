@@ -1,13 +1,12 @@
-import { v4 as uuidv4 } from "uuid"
-
 import { ClapAssetSource, ClapModel, ClapModelAppearance, ClapModelAudioEngine, ClapModelGender, ClapModelRegion, ClapSegmentCategory } from "@/types"
 import { generateSeed } from "@/utils/generateSeed"
 import { isValidNumber } from "@/utils/isValidNumber"
+import { UUID } from "@/utils/uuid"
 
 export function newModel(maybeModel?: Partial<ClapModel>) {
 
   const model: ClapModel = {
-    id: typeof maybeModel?.id === "string" ? maybeModel.id : uuidv4(),
+    id: typeof maybeModel?.id === "string" ? maybeModel.id : UUID(),
     category: typeof maybeModel?.category === "string" ? (maybeModel.category as ClapSegmentCategory) : "character",
     triggerName: typeof maybeModel?.triggerName === "string" ? maybeModel.triggerName : "",
     label: typeof maybeModel?.label === "string" ? maybeModel.label : "",

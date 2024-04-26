@@ -1,9 +1,9 @@
 import YAML from "yaml"
-import { v4 as uuidv4 } from "uuid"
 
 import { getValidNumber } from "@/utils/getValidNumber"
 
 import { ClapHeader, ClapMeta, ClapModel, ClapProject, ClapScene, ClapSegment } from "../types"
+import { UUID } from "@/utils/uuid"
 
 export async function serializeClap({
   meta, // ClapMeta
@@ -130,7 +130,7 @@ export async function serializeClap({
   }
 
   const clapMeta: ClapMeta = {
-    id: meta.id || uuidv4(),
+    id: meta.id || UUID(),
     title: typeof meta.title === "string" ? meta.title : "Untitled",
     description: typeof meta.description === "string" ? meta.description : "",
     synopsis: typeof meta.synopsis === "string" ? meta.synopsis : "",
