@@ -51,6 +51,16 @@ bun install
 bun run build
 ```
 
+To publish:
+
+```bash
+bun run build
+
+bun run build:declaration
+
+bun run publish
+```
+
 ## Contributing
 
 We welcome contributions! Please feel free to submit a pull request.
