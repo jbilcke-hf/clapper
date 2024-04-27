@@ -2,23 +2,29 @@ import { ClapProject, fetchClap, serializeClap } from "@aitube/clap"
 
 import { aitubeApiUrl } from "@/config"
 
-export async function extendClap({
+export async function editClapStoryboards({
   clap,
+  token,
 }: {
   clap: ClapProject
+  token?: string
 }): Promise<ClapProject> {
-  if (!clap) { throw new Error(`please provide a clap to extend`) }
 
-  const extendedClap = await fetchClap(`${aitubeApiUrl}generate/storyboards`, {
+  if (!clap) { throw new Error(`please provide a clap to extend`) }
+  
+  const hasToken = typeof token === "string" && token.length > 0
+
+  const newClap = await fetchClap(`${aitubeApiUrl}edit/storyboards`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-gzip",
-      // TODO pass the JWT so that only the AI Stories Factory can call the API
-      // Authorization: `Bearer ${hfApiToken}`,
+      ...hasToken && {
+        "Authorization": `Bearer ${token}`
+      }
     },
     body: await serializeClap(clap),
     cache: "no-store",
   })
 
-  return extendedClap
+  return newClap
 }
