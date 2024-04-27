@@ -26,22 +26,25 @@ npm install @aitube/client
 ## Getting Started
 
 ```typescript
-import { parseClap, serializeClap } from '@aitube/client';
+import {createClap, editClapStoryboards, exportClapToVideo } from '@aitube/client';
 
-/*
+const ultraSecret = "ultra secret token unavailable to common mortals"
 
-  UNDOCUMENTED API
-
-*/
-
-const storyOnly = await createClap({
+const basicClap = await createClap({
   prompt: "story about a dog",
-  token: "ultra secret token unavailable to common mortals"
+  token: ultraSecret
 })
 
-const storyWithStoryboards = await editClapStoryboards(clap)
+const illustratedClap = await editClapStoryboards({
+  clap: basicClap,
+  token: ultraSecret
+})
 
-const mp4VideoFile = await exportClapToVideos(storyWithStoryboards)
+const mp4VideoFile = await exportClapToVideo({
+  clap: illustratedClap,
+  format: "mp4",
+  token: ultraSecret
+})
 ```
 
 ## Customizing the server
