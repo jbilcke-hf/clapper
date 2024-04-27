@@ -26,7 +26,7 @@ npm install @aitube/client
 ## Getting Started
 
 ```typescript
-import {createClap, editClapStoryboards, exportClapToVideo } from '@aitube/client';
+import { createClap, editClapStoryboards, exportClapToVideo } from '@aitube/client';
 
 const ultraSecret = "ultra secret token unavailable to common mortals"
 
