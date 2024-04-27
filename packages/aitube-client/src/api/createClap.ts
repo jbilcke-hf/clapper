@@ -18,7 +18,7 @@ export async function createClap({
 
   const hasToken = typeof token === "string" && token.length > 0
 
-  const clap = await fetchClap(`${aitubeApiUrl}generate/story`, {
+  const clap = await fetchClap(`${aitubeApiUrl}create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
