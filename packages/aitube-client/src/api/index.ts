@@ -1,4 +1,5 @@
 export { exportClapToVideo } from "./exportClapToVideo"
 export { editClapStoryboards } from "./editClapStoryboards"
-export { editClapModels } from "./editClapModels"
+export { editClapDialogues } from "./editClapDialogues"
+export { editClapEntities } from "./editClapEntities"
 export { createClap } from "./createClap"
