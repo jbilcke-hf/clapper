@@ -2,7 +2,7 @@ import { ClapProject, fetchClap, serializeClap } from "@aitube/clap"
 
 import { aitubeApiUrl } from "@/config"
 
-export async function editClapStoryboards({
+export async function editClapEntities({
   clap,
   token,
 }: {
@@ -10,11 +10,11 @@ export async function editClapStoryboards({
   token?: string
 }): Promise<ClapProject> {
 
-  if (!clap) { throw new Error(`please provide a valid clap project`) }
+  if (!clap) { throw new Error(`please provide a clap to extend`) }
   
   const hasToken = typeof token === "string" && token.length > 0
 
-  const newClap = await fetchClap(`${aitubeApiUrl}edit/storyboards`, {
+  const newClap = await fetchClap(`${aitubeApiUrl}edit/entities`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-gzip",
