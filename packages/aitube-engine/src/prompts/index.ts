@@ -1,0 +1,5 @@
+export { getCharacterPrompt } from "./getCharacterPrompt"
+export { getCharacterReferencePrompt } from "./getCharacterReferencePrompt"
+export { getSpeechBackgroundAudioPrompt } from "./getSpeechBackgroundAudioPrompt"
+export { getSpeechForegroundAudioPrompt } from "./getSpeechForegroundAudioPrompt"
+export { getVideoPrompt } from "./getVideoPrompt"

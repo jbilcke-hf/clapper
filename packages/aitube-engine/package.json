@@ -1,0 +1,46 @@
+{
+  "name": "@aitube/engine",
+  "module": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "The engine powering AiTube.at",
+  "scripts": {
+    "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
+    "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
+    "postbuild": "rimraf tsconfig.types.tsbuildinfo",
+    "publish": "npm publish --access public"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8",
+    "bun-types": "latest",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.4.5",
+    "@aitube/clap": "0.0.7"
+  },
+  "peerDependencies": {
+    "typescript": "^5.4.5",
+    "@aitube/clap": "0.0.7"
+  },
+  "dependencies": {
+    "uuid": "^9.0.1",
+    "yaml": "^2.4.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jbilcke-hf/aitube-engine.git"
+  },
+  "keywords": [
+    "AI cinema",
+    "AiTube"
+  ],
+  "author": "Julian Bilcke",
+  "license": "MIT",
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/**/*.d.ts"
+  ]
+}
