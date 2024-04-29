@@ -24,7 +24,7 @@ npm install @aitube/clap
 import { parseClap, serializeClap } from '@aitube/clap';
 
 // fetch a Clap file
-const res = await fetch("< some .clap file hosted from somewhere >")
+const res = await fetch("https://..../file.clap")
 const file = await res.blob()
 
 // open the Clap file

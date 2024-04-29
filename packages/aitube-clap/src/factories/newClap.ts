@@ -1,11 +1,12 @@
-import { ClapMeta, ClapModel, ClapProject, ClapScene, ClapSegment } from "@/types"
+import { ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment } from "@/types"
 import { getValidNumber } from "@/utils/getValidNumber"
 import { UUID } from "@/utils/uuid"
+import { buildEntityIndex } from "@/helpers/buildEntityIndex"
 
 // generate an empty clap file, or copy one from a source
 export function newClap(clap: {
     meta?: Partial<ClapMeta>
-    models?: ClapModel[]
+    entities?: ClapEntity[]
     scenes?: ClapScene[]
     segments?: ClapSegment[]
   } = {}): ClapProject {
@@ -27,9 +28,10 @@ export function newClap(clap: {
     isInteractive: typeof clap?.meta?.isInteractive === "boolean" ? clap.meta.isInteractive : false,
   }
 
-  const models: ClapModel[] = clap?.models && Array.isArray(clap.models) ? clap.models : []
+  const entities: ClapEntity[] = clap?.entities && Array.isArray(clap.entities) ? clap.entities : []
   const scenes: ClapScene[] =  clap?.scenes && Array.isArray(clap.scenes) ? clap.scenes : []
   const segments: ClapSegment[] =  clap?.segments && Array.isArray(clap.segments) ? clap.segments : []
+  const entityIndex = buildEntityIndex(entities)
 
-  return { meta, models, scenes, segments }
+  return { meta, entities, entityIndex, scenes, segments }
 }

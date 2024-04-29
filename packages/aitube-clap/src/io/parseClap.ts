@@ -1,9 +1,10 @@
 import YAML from "yaml"
 
-import { ClapHeader, ClapMeta, ClapModel, ClapProject, ClapScene, ClapSegment } from "../types"
+import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment } from "../types"
 import { getValidNumber } from "../utils/getValidNumber"
 import { dataUriToBlob } from "../converters/dataUriToBlob"
 import { UUID } from "@/utils/uuid"
+import { buildEntityIndex } from "@/helpers/buildEntityIndex"
 
 type StringOrBlob = string | Blob
 
@@ -26,7 +27,7 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
     if (
       typeof src === "object" &&
       Array.isArray( (src as any)?.scenes) &&
-      Array.isArray((src as any)?.models)
+      Array.isArray((src as any)?.entities)
     ) {
       if (debug) {
         console.log("parseClap: input is already a Clap file, nothing to do:", src)
@@ -172,40 +173,40 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
   }
 
   /*
-  in case we want to support streaming (mix of models and segments etc), we could do it this way:
+  in case we want to support streaming (mix of entities and segments etc), we could do it this way:
 
-  const maybeModelsOrSegments = rawData.slice(2)
-  maybeModelsOrSegments.forEach((unknownElement: any) => {
+  const maybeEntitiesOrSegments = rawData.slice(2)
+  maybeEntitiesOrSegments.forEach((unknownElement: any) => {
     if (isValidNumber(unknownElement?.track)) {
       maybeSegments.push(unknownElement as ClapSegment)
     } else {
-      maybeModels.push(unknownElement as ClapModel)
+      maybeEntities.push(unknownElement as ClapEntity)
     }
   })
   */
 
 
-  const expectedNumberOfModels = maybeClapHeader.numberOfModels || 0
+  const expectedNumberOfEntities = maybeClapHeader.numberOfEntities || 0
   const expectedNumberOfScenes = maybeClapHeader.numberOfScenes || 0
   const expectedNumberOfSegments = maybeClapHeader.numberOfSegments || 0
 
   // note: we assume the order is strictly enforced!
-  // if you implement streaming (mix of models and segments) you will have to rewrite this!
+  // if you implement streaming (mix of entities and segments) you will have to rewrite this!
 
   const afterTheHeaders = 2
-  const afterTheModels = afterTheHeaders + expectedNumberOfModels
+  const afterTheEntities = afterTheHeaders + expectedNumberOfEntities
 
-  const afterTheScenes = afterTheModels + expectedNumberOfScenes
+  const afterTheScenes = afterTheEntities + expectedNumberOfScenes
 
-  // note: if there are no expected models, maybeModels will be empty
-  const maybeModels = maybeArray.slice(afterTheHeaders, afterTheModels) as ClapModel[]
+  // note: if there are no expected entities, maybeEntities will be empty
+  const maybeEntities = maybeArray.slice(afterTheHeaders, afterTheEntities) as ClapEntity[]
 
   // note: if there are no expected scenes, maybeScenes will be empty
-  const maybeScenes = maybeArray.slice(afterTheModels, afterTheScenes) as ClapScene[]
+  const maybeScenes = maybeArray.slice(afterTheEntities, afterTheScenes) as ClapScene[]
 
   const maybeSegments = maybeArray.slice(afterTheScenes) as ClapSegment[]
 
-  const clapModels: ClapModel[] = maybeModels.map(({
+  const clapEntities: ClapEntity[] = maybeEntities.map(({
     id,
     category,
     triggerName,
@@ -280,7 +281,7 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
     startTimeInMs,
     endTimeInMs,
     category,
-    modelId,
+    entityId,
     sceneId,
     prompt,
     label,
@@ -289,38 +290,47 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
     status,
     assetUrl,
     assetDurationInMs,
+    assetSourceType,
     createdBy,
     editedBy,
     outputGain,
     seed,
-  }) => ({
-    // TODO: we should verify each of those, probably
-    id,
-    track,
-    startTimeInMs,
-    endTimeInMs,
-    category,
-    modelId,
-    sceneId,
-    prompt,
-    label,
-    outputType,
-    renderId,
-    status,
-    assetUrl,
-    assetDurationInMs,
-    createdBy,
-    editedBy,
-    outputGain,
-    seed,
-  }))
+  }) => {
+    if (endTimeInMs > clapMeta.durationInMs) {
+      clapMeta.durationInMs = endTimeInMs
+    }
+    return {
+      // TODO: we should verify each of those, probably
+      id,
+      track,
+      startTimeInMs,
+      endTimeInMs,
+      category,
+      entityId,
+      sceneId,
+      prompt,
+      label,
+      outputType,
+      renderId,
+      status,
+      assetUrl,
+      assetDurationInMs,
+      assetSourceType,
+      createdBy,
+      editedBy,
+      outputGain,
+      seed,
+    }
+  })
 
   if (debug) {
-    console.log(`parseClap: successfully parsed ${clapModels.length} models, ${clapScenes.length} scenes and ${clapSegments.length} segments`)
+    console.log(`parseClap: successfully parsed ${clapEntities.length} entities, ${clapScenes.length} scenes and ${clapSegments.length} segments`)
   }
+
   return {
     meta: clapMeta,
-    models: clapModels,
+    entities: clapEntities,
+    entityIndex: buildEntityIndex(clapEntities),
     scenes: clapScenes,
     segments: clapSegments
   }

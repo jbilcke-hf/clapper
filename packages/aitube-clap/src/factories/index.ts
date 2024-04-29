@@ -1,3 +1,3 @@
 export { newClap } from './newClap'
-export { newModel } from './newModel'
+export { newEntity } from './newEntity'
 export { newSegment } from './newSegment'

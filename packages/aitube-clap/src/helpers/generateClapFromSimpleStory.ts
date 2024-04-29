@@ -61,7 +61,7 @@ export function generateClapFromSimpleStory({
       startTimeInMs: currentElapsedTimeInMs,
       endTimeInMs: currentSegmentDurationInMs,
       category: "interface",
-      // modelId: string
+      // entityId: string
       // sceneId: string
       prompt: "a hello world",
       label: "hello world",
