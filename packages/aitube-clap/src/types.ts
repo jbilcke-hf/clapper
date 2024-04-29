@@ -1,3 +1,6 @@
+export type ClapFormat =
+  | "clap-0"
+  | "clap-1"
 
 export type ClapSegmentCategory =
   | "splat"
@@ -43,7 +46,7 @@ export type ClapSegmentStatus =
 
 export type ClapAuthor =
   | "auto" // the element was edited automatically using basic if/else logical rules
-  | "ai" // the element was edited using a large language model
+  | "ai" // the element was edited using a large language entity
   | "human" // the element was edited by a human
 
 export type ClapAssetSource =
@@ -58,16 +61,27 @@ export type ClapAssetSource =
 
   | "EMPTY"
 
-export type ClapModelGender =
+// @deprecated we are going to use ClapEntityVariant (see below)
+export type ClapEntityGender =
   | "male"
   | "female"
   | "person"
   | "object"
 
-export type ClapModelAppearance = "serious" | "neutral" | "friendly" | "chill"
+// this is what we should be using - using presets like "male" / "female" is okay,
+// but we are going to also enable arbitrary strings
+// export type ClapEntityVariant =
+//   | "male"
+//   | "female"
+//   | "person"
+//   | "object"
+//   | string
+
+// @deprecated - we are going to use the ClapEntityVariant instead
+export type ClapEntityAppearance = "serious" | "neutral" | "friendly" | "chill"
 
 // this is used for accent, style..
-export type ClapModelRegion =
+export type ClapEntityRegion =
   | "global"
   | "american"
   | "european"
@@ -87,24 +101,24 @@ export type ClapModelRegion =
 // be associated with African American (AADOS) characters
 //
 // "high" could be used for some other countries, eg. asia
-export type ClapModelTimbre = "high" | "neutral" | "deep"
+export type ClapEntityTimbre = "high" | "neutral" | "deep"
 
-export type ClapModelAudioEngine = "ElevenLabs" | "XTTS" | "Parler-TTS"
+export type ClapEntityAudioEngine = "ElevenLabs" | "XTTS" | "Parler-TTS"
 
 export type ClapVoice = {
   name: string
-  gender: ClapModelGender
+  gender: ClapEntityGender
   age: number
-  region: ClapModelRegion
-  timbre: ClapModelTimbre
-  appearance: ClapModelAppearance
-  audioEngine: ClapModelAudioEngine
+  region: ClapEntityRegion
+  timbre: ClapEntityTimbre
+  appearance: ClapEntityAppearance
+  audioEngine: ClapEntityAudioEngine
   audioId: string
 }
 
 export type ClapHeader = {
-  format: "clap-0"
-  numberOfModels: number
+  format: ClapFormat
+  numberOfEntities: number
   numberOfScenes: number
   numberOfSegments: number
 }
@@ -159,7 +173,7 @@ export type ClapSegment = {
   startTimeInMs: number
   endTimeInMs: number
   category: ClapSegmentCategory
-  modelId: string
+  entityId: string
   sceneId: string
   prompt: string
   label: string
@@ -168,13 +182,16 @@ export type ClapSegment = {
   status: ClapSegmentStatus
   assetUrl: string
   assetDurationInMs: number
+  assetSourceType: ClapAssetSource
   createdBy: ClapAuthor
   editedBy: ClapAuthor
   outputGain: number
   seed: number
 }
 
-export type ClapModel = {
+// TODO: this class name is too confusing,
+// we should rename it to ClapEntity
+export type ClapEntity = {
   id: string
   category: ClapSegmentCategory
   triggerName: string
@@ -184,7 +201,6 @@ export type ClapModel = {
   thumbnailUrl: string
   seed: number
 
-  // TODO: create those 4 fields across all the code base:
   imagePrompt: string
   imageSourceType: ClapAssetSource
   imageEngine: string
@@ -192,20 +208,34 @@ export type ClapModel = {
   
   audioPrompt: string
   audioSourceType: ClapAssetSource
-  audioEngine: ClapModelAudioEngine
+  audioEngine: ClapEntityAudioEngine
   audioId: string
 
-  // TODO: rename to audioVendor, audioId and add an audioSourceType
-  // those are only used by certain types of models
+  // could be replaced by an inceptionDate, so it can be used to compute the absolute "age" of anything:
+  // a pyramid, a person, a spaceship..
+  // maybe also with a destructionDate
   age: number
-  gender: ClapModelGender
-  region: ClapModelRegion
-  appearance: ClapModelAppearance
+
+  // @deprecated TODO: we are going to use `variant: ClapEntityVariant` instead, which is gonna be an arbitrary string
+  //
+  // thay way clap entities could be used for inanimate or fantastic entities like:
+  // buildings, vehicles, robots, animals, people, aliens..
+  // (anything that needs visual and audio consistency)
+  // @deprecated
+  gender: ClapEntityGender
+
+  // we can keep this, this is generic enough
+  // ClapEntityRegion should be renamed to ClapEntityRegion
+  region: ClapEntityRegion
+
+  // @deprecated TODO: we are going to use `variant: ClapEntityVariant` instead, which is gonna be an arbitrary string
+  appearance: ClapEntityAppearance
 }
 
 export type ClapProject = {
   meta: ClapMeta
-  models: ClapModel[]
+  entities: ClapEntity[]
+  entityIndex: Record<string, ClapEntity>
   scenes: ClapScene[]
   segments: ClapSegment[]
   // let's keep room for other stuff (screenplay etc)

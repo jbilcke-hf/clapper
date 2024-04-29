@@ -4,22 +4,22 @@ export {
   ClapSegmentStatus,
   ClapAuthor,
   ClapAssetSource,
-  ClapModelGender,
-  ClapModelAppearance,
-  ClapModelRegion,
-  ClapModelTimbre,
-  ClapModelAudioEngine,
+  ClapEntityGender,
+  ClapEntityAppearance,
+  ClapEntityRegion,
+  ClapEntityTimbre,
+  ClapEntityAudioEngine,
   ClapVoice,
   ClapHeader,
   ClapMeta,
   ClapSceneEvent,
   ClapScene,
   ClapSegment,
-  ClapModel,
+  ClapEntity,
   ClapProject, 
 } from './types'
-export { newClap, newModel, newSegment } from './factories'
+export { newClap, newEntity, newSegment } from './factories'
 export { parseClap, serializeClap, fetchClap } from './io'
 export { generateSeed, getClapAssetSourceType, getValidNumber, isValidNumber, UUID } from './utils'
 export { blobToDataUri, dataUriToBlob, clapToDataUri } from './converters'
-export { generateClapFromSimpleStory, getEmptyClap } from './helpers'
+export { generateClapFromSimpleStory, getEmptyClap, buildEntityIndex } from './helpers'
