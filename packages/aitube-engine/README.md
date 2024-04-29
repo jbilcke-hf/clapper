@@ -20,7 +20,15 @@ npm install @aitube/engine
 ## Getting Started
 
 ```typescript
-import { dedu, editClapStoryboards, exportClapToVideo } from '@aitube/engine';
+import {
+  getCharacterPrompt,
+  getCharacterReferencePrompt,
+  getSpeechBackgroundAudioPrompt,
+  getSpeechForegroundAudioPrompt,
+  getVideoPrompt,
+  deduplicate,
+  deduplicatePrompt,
+} from '@aitube/engine'
 
 ```
 
