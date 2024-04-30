@@ -1,0 +1,1 @@
+export { getRandomDirectory } from "./getRandomDirectory"

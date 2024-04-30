@@ -1,0 +1,44 @@
+{
+  "name": "@aitube/io",
+  "module": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Collection of useful I/O utilities for NodeJS. Used by AiTube.at",
+  "scripts": {
+    "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
+    "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
+    "postbuild": "rimraf tsconfig.types.tsbuildinfo",
+    "publish": "npm publish --access public"
+  },
+  "devDependencies": {
+    "@types/mime-types": "^2.1.4",
+    "@types/uuid": "^9.0.8",
+    "bun-types": "latest",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.4.5"
+  },
+  "peerDependencies": {},
+  "dependencies": {
+    "mime-types": "^2.1.35",
+    "sharp": "^0.33.3",
+    "uuid": "^9.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jbilcke-hf/aitube-io.git"
+  },
+  "keywords": [
+    "AiTube",
+    "FFmpeg"
+  ],
+  "author": "Julian Bilcke",
+  "license": "MIT",
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/**/*.d.ts"
+  ]
+}
