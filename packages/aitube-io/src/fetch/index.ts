@@ -1,0 +1,1 @@
+export { downloadFileAsBase64 } from "./downloadFileAsBase64"

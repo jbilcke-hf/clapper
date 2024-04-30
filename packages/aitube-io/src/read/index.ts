@@ -1,0 +1,6 @@
+export { readJpegFileToBase64 } from "./readJpegFileToBase64"
+export { readMp3FileToBase64 } from "./readMp3FileToBase64"
+export { readMp4FileToBase64 } from "./readMp4FileToBase64"
+export { readPlainText } from "./readPlainText"
+export { readPngFileToBase64 } from "./readPngFileToBase64"
+export { readWavFileToBase64 } from "./readWavFileToBase64"
