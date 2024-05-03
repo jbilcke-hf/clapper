@@ -105,6 +105,20 @@ export type ClapEntityTimbre = "high" | "neutral" | "deep"
 
 export type ClapEntityAudioEngine = "ElevenLabs" | "XTTS" | "Parler-TTS"
 
+export enum ClapSegmentFilteringMode {
+  // the start of a segment must be within the range
+  START,
+
+  // the end of a segment must be within the range
+  END,
+
+  // any end of a segment must be within the range
+  ANY,
+
+  // both ends of a segment must be within the range
+  BOTH,
+}
+
 export type ClapVoice = {
   name: string
   gender: ClapEntityGender
