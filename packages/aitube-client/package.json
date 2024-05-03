@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Official API client for AiTube.at",
   "scripts": {
     "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
@@ -22,11 +22,7 @@
   },
   "peerDependencies": {
     "typescript": "^5.4.5",
-    "@aitube/clap": "0.0.7"
-  },
-  "dependencies": {
-    "uuid": "^9.0.1",
-    "yaml": "^2.4.1"
+    "@aitube/clap": "0.0.9"
   },
   "repository": {
     "type": "git",
