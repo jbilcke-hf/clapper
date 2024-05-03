@@ -6,6 +6,7 @@ export {
   editClapStoryboards,
   editClapVideos,
   exportClapToVideo,
+  ClapCompletionMode,
 } from './api'
 
 export {

@@ -11,7 +11,14 @@ export async function exportClapToVideo({
   token,
 }: {
   clap: ClapProject
+
+  /**
+   * Desired output video format (defaults to "mp4")
+   * 
+   * Can be either "mp4" or "webm"
+   */
   format?: SupportedExportFormat
+
   token?: string
 }): Promise<string> {
   
