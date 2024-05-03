@@ -1,3 +1,5 @@
+export { filterSegments } from './filterSegments'
+export { filterSegmentsWithinRange } from './filterSegmentsWithinRange'
 export { generateSeed } from './generateSeed'
 export { getClapAssetSourceType } from './getClapAssetSourceType'
 export { getValidNumber } from './getValidNumber'

@@ -4,11 +4,31 @@
 
 ## Introduction
 
-This library is used to manipulate Clap files, the file format
-used by AiTube, a modern platform for AI cinema and AI gaming.
+This library is used to manipulate Clap files, the file format used to describe AI scenes for AiTube.
 
-It is designed to support short-to-long 2D, 3D and 4D experiences,
-such as conventional films or more modern forms of art such as gaussian splatting movies with a soundtrack.
+It in an open interchange format that other people can use freely for their own projects.
+
+## Design and capabilities
+
+A Clap file (.clap) is a compressed YAML stream of documents that describe all aspects of a scene.
+
+(to be continued)
+
+## Roadmap
+
+- [ ] Create a DRAFT for the specification
+- [x] Use it in production
+- [x] First working implementation for NodeJS 
+
+## Implementations:
+
+- [ ] C++ library (for native binding): TODO
+- [x] Python (in progress): [py-aitube-clap](https://github.com/jbilcke-hf/py-aitube-clap)
+- [x] NodeJS (released): [aitube-clap](https://github.com/jbilcke-hf/aitube-clap)
+- [ ] Swift: TODO
+- [ ] G TODO
+- [ ] Java TODO
+- [ ] Haskell TODO
 
 ## Installation
 
