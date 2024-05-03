@@ -1,4 +1,4 @@
-import { ClapSegment, ClapSegmentFilteringMode } from "@/types"
+import { ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode } from "@/types"
 import { filterSegmentsWithinRange } from "./filterSegmentsWithinRange"
 
 /**
@@ -12,12 +12,14 @@ import { filterSegmentsWithinRange } from "./filterSegmentsWithinRange"
  * @param mode 
  * @param segment 
  * @param segments 
+ * @param category optional, to also filter by category
  * @returns 
  */
 export function filterSegments(
   mode: ClapSegmentFilteringMode,
   segment?: ClapSegment,
-  segments?: ClapSegment[]
+  segments?: ClapSegment[],
+  category?: ClapSegmentCategory
 ): ClapSegment[] {
 
   const array = Array.isArray(segments) ? segments : []
@@ -26,5 +28,5 @@ export function filterSegments(
 
   const { startTimeInMs, endTimeInMs } = segment
 
-  return filterSegmentsWithinRange(mode, startTimeInMs, endTimeInMs, segments)
+  return filterSegmentsWithinRange(mode, startTimeInMs, endTimeInMs, segments, category)
 }
