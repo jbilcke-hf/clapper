@@ -9,6 +9,7 @@ export {
   ClapEntityRegion,
   ClapEntityTimbre,
   ClapEntityAudioEngine,
+  ClapSegmentFilteringMode,
   ClapVoice,
   ClapHeader,
   ClapMeta,
