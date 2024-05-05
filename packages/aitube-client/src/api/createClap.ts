@@ -1,11 +1,13 @@
 import { ClapProject, fetchClap } from "@aitube/clap"
 
-import { aitubeApiUrl } from "@/config"
+import { aitubeApiUrl } from "@/constants/config"
+
+import { defaultClapHeight, defaultClapWidth } from "@/constants/defaultValues"
 
 export async function createClap({
   prompt,
-  height = 512,
-  width = 288,
+  height = defaultClapHeight,
+  width = defaultClapWidth,
   token,
 }: {
   prompt: string

@@ -6,12 +6,17 @@ export {
   editClapStoryboards,
   editClapVideos,
   exportClapToVideo,
-  ClapCompletionMode,
 } from './api'
 
 export {
   defaultAitubeHostname,
+  defaultClapWidth,
+  defaultClapHeight,
+  defaultExportFormat,
   aitubeUrl,
   aitubeApiVersion,
-  aitubeApiUrl
-} from './config'
+  aitubeApiUrl,
+  ClapCompletionMode,
+  ClapEntityPrompt,
+  SupportedExportFormat
+} from "./constants"

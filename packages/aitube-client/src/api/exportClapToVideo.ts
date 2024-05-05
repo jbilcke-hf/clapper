@@ -1,6 +1,6 @@
 import { ClapProject, serializeClap, blobToDataUri } from "@aitube/clap"
 
-import { aitubeApiUrl } from "@/config"
+import { aitubeApiUrl } from "@/constants/config"
 
 export type SupportedExportFormat = "mp4" | "webm"
 export const defaultExportFormat = "mp4"

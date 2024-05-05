@@ -1,7 +1,8 @@
 import { ClapProject, fetchClap, serializeClap } from "@aitube/clap"
 
-import { aitubeApiUrl } from "@/config"
-import { ClapCompletionMode } from "./types"
+import { aitubeApiUrl } from "@/constants/config"
+
+import { ClapCompletionMode } from "../constants/types"
 
 export async function editClapVideos({
   clap,
