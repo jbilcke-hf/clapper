@@ -1,3 +1,5 @@
+export type SupportedExportFormat = "mp4" | "webm"
+
 export enum ClapCompletionMode {
   /**
    * the API and the client will return a full clap file.
@@ -25,4 +27,24 @@ export enum ClapCompletionMode {
    * This is the most efficient mode, but it relies on side-effects and inline object updates.
    */
   REPLACE = "replace"
+}
+
+
+export type ClapEntityPrompt = {
+  name: string
+
+  // age of the person, animal or entity (eg. robot, talking spaceship etc)
+  age: string
+
+  // characterization of the person, animal or entity (texture, hair color, gender etc)
+  variant: string
+
+  // region from where the person, animal or entity is coming from (human, mechanical, alien planet, european, south-american etc)
+  region: string
+
+  // identity picture
+  identityImage: string
+
+  // identity voice
+  identityVoice: string
 }

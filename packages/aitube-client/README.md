@@ -28,11 +28,21 @@ npm install @aitube/client
 ```typescript
 import {
   createClap,
-  editClapEntities,
   editClapDialogues,
+  editClapEntities,
   editClapStoryboards,
   editClapVideos,
-  exportClapToVideo
+  exportClapToVideo,
+  defaultAitubeHostname,
+  defaultClapWidth,
+  defaultClapHeight,
+  defaultExportFormat,
+  aitubeUrl,
+  aitubeApiVersion,
+  aitubeApiUrl,
+  ClapCompletionMode,
+  ClapEntityPrompt,
+  SupportedExportFormat
   } from '@aitube/client';
 
 const ultraSecret = "ultra secret token unavailable to common mortals"

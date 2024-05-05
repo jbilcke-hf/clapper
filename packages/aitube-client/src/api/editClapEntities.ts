@@ -1,15 +1,21 @@
 import { ClapProject, fetchClap, serializeClap } from "@aitube/clap"
+import queryString from "query-string"
 
-import { aitubeApiUrl } from "@/config"
-import { ClapCompletionMode } from "./types"
+import { aitubeApiUrl } from "@/constants/config"
+
+import { ClapCompletionMode, ClapEntityPrompt } from "../constants/types"
 
 export async function editClapEntities({
   clap,
+  entityPrompts = [],
   completionMode = ClapCompletionMode.MERGE,
   token,
 }: {
   // A ClapProject instance
   clap: ClapProject
+
+  // a list of entity prompts
+  entityPrompts: ClapEntityPrompt[],
 
   /**
    * Completion mode (optional, defaults to "merge")
@@ -29,16 +35,24 @@ export async function editClapEntities({
   
   const hasToken = typeof token === "string" && token.length > 0
 
+  const params: Record<string, any> = {}
+
+  if (typeof completionMode === "string") {
+    params.c = completionMode === ClapCompletionMode.FULL
+      ? "full"
+      : "partial"
+  }
+
+  if (entityPrompts.length) {
+    // if "params.e = JSON.stringify(item)" works with UTF-8 characters,
+    // then we don't need to import "js-base64"
+    // otherwise you will have to do:
+    // params.e = jsBase64.encode(JSON.stringify(item))
+    params.e = JSON.stringify(entityPrompts)
+  }
+
   const newClap = await fetchClap(
-    `${aitubeApiUrl}edit/entities${
-      typeof completionMode === "string"
-      ? `?c=${
-          completionMode === ClapCompletionMode.FULL
-          ? "full"
-          : "partial"
-        }`
-      : ""
-    }`, {
+    `${aitubeApiUrl}edit/entities?${queryString.stringify(params)}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-gzip",
