@@ -20,3 +20,7 @@ export {
   ClapEntityPrompt,
   SupportedExportFormat
 } from "./constants"
+
+export {
+  applyClapCompletion
+} from "./utils"

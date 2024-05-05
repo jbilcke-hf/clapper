@@ -2,8 +2,8 @@ import { ClapProject, fetchClap, serializeClap } from "@aitube/clap"
 import queryString from "query-string"
 
 import { aitubeApiUrl } from "@/constants/config"
-
-import { ClapCompletionMode, ClapEntityPrompt } from "../constants/types"
+import { ClapCompletionMode, ClapEntityPrompt } from "@/constants/types"
+import { applyClapCompletion } from "@/utils"
 
 export async function editClapEntities({
   clap,
@@ -38,9 +38,7 @@ export async function editClapEntities({
   const params: Record<string, any> = {}
 
   if (typeof completionMode === "string") {
-    params.c = completionMode === ClapCompletionMode.FULL
-      ? "full"
-      : "partial"
+    params.c = completionMode
   }
 
   if (entityPrompts.length) {
@@ -64,5 +62,7 @@ export async function editClapEntities({
     cache: "no-store",
   })
 
-  return newClap
+  const result = await applyClapCompletion(clap, newClap, completionMode)
+
+  return result
 }

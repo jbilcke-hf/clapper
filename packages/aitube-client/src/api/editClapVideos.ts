@@ -1,8 +1,8 @@
 import { ClapProject, fetchClap, serializeClap } from "@aitube/clap"
 
 import { aitubeApiUrl } from "@/constants/config"
-
-import { ClapCompletionMode } from "../constants/types"
+import { ClapCompletionMode } from "@/constants/types"
+import { applyClapCompletion } from "@/utils"
 
 export async function editClapVideos({
   clap,
@@ -31,11 +31,7 @@ export async function editClapVideos({
 
   const newClap = await fetchClap(`${aitubeApiUrl}edit/videos${
     typeof completionMode === "string"
-    ? `?c=${
-        completionMode === ClapCompletionMode.FULL
-        ? "full"
-        : "partial"
-      }`
+    ? `?c=${completionMode}`
     : ""
   }`, {
     method: "POST",
@@ -49,5 +45,7 @@ export async function editClapVideos({
     cache: "no-store",
   })
 
-  return newClap
+  const result = await applyClapCompletion(clap, newClap, completionMode)
+
+  return result
 }

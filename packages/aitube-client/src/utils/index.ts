@@ -1,0 +1,1 @@
+export { applyClapCompletion } from "./applyClapCompletion"
