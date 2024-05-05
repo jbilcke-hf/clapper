@@ -1,3 +1,5 @@
+import { ClapSegmentCategory } from "@aitube/clap"
+
 export type SupportedExportFormat = "mp4" | "webm"
 
 export enum ClapCompletionMode {
@@ -32,6 +34,9 @@ export enum ClapCompletionMode {
 
 export type ClapEntityPrompt = {
   name: string
+
+  // eg. "character", "location"
+  category: ClapSegmentCategory
 
   // age of the person, animal or entity (eg. robot, talking spaceship etc)
   age: string
