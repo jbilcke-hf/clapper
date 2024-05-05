@@ -1,9 +1,8 @@
 import { ClapProject, serializeClap, blobToDataUri } from "@aitube/clap"
 
 import { aitubeApiUrl } from "@/constants/config"
+import { defaultExportFormat, SupportedExportFormat } from "@/constants"
 
-export type SupportedExportFormat = "mp4" | "webm"
-export const defaultExportFormat = "mp4"
 
 export async function exportClapToVideo({
   clap,
@@ -24,6 +23,7 @@ export async function exportClapToVideo({
   
   if (!clap) { throw new Error(`please provide a clap`) }
 
+  // TODO use an enum instead, and check the enum object
   if (format !== "mp4" && format !== "webm") { throw new Error(`please provide a valid format ("${format}" is unrecognized)`) }
   
   const hasToken = typeof token === "string" && token.length > 0

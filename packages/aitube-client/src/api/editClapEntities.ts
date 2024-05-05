@@ -15,7 +15,7 @@ export async function editClapEntities({
   clap: ClapProject
 
   // a list of entity prompts
-  entityPrompts: ClapEntityPrompt[],
+  entityPrompts?: ClapEntityPrompt[],
 
   /**
    * Completion mode (optional, defaults to "merge")
