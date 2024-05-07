@@ -1,4 +1,4 @@
-import { ClapEntity, ClapSegment } from "@aitube/clap"
+import { ClapEntity, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 
 import { getCharacterPrompt } from "./getCharacterPrompt"
 
@@ -15,15 +15,15 @@ export function getSpeechBackgroundAudioPrompt(
 ): string {
   return segments
     .filter(({ category, outputType }) => (
-      category === "dialogue" ||
-      category === "weather" ||
-      category === "location"
+      category === ClapSegmentCategory.DIALOGUE ||
+      category === ClapSegmentCategory.WEATHER ||
+      category === ClapSegmentCategory.LOCATION
     ))
     .sort((a, b) => b.label.localeCompare(a.label))
     .map(segment => {
       const entity: ClapEntity | undefined = entityIndex[segment?.entityId || ""] || undefined
       
-      if (segment.category === "dialogue") {
+      if (segment.category === ClapSegmentCategory.DIALOGUE) {
         // if we can't find the entity then we are unable
         // to make any assumption about the gender, age and voice timbre
         if (!entity) {
@@ -34,11 +34,11 @@ export function getSpeechBackgroundAudioPrompt(
 
         return `${characterPrompt}, speaking normally`
         
-      } else if (segment.category === "location") {
+      } else if (segment.category === ClapSegmentCategory.LOCATION) {
         // the location is part of the background noise
         // but this might produce unexpected results - we'll see!
         return segment.prompt
-      } else if (segment.category === "weather") {
+      } else if (segment.category === ClapSegmentCategory.WEATHER) {
         // the weather is part of the background noise
         // here too this might produce weird and unexpected results 🍿
         return segment.prompt

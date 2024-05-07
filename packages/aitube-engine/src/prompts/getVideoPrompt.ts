@@ -1,4 +1,4 @@
-import { ClapEntity, ClapSegment } from "@aitube/clap"
+import { ClapEntity, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 
 import { deduplicatePrompt } from "@/utils/deduplicatePrompt"
 import { getCharacterPrompt } from "@/prompts/getCharacterPrompt"
@@ -26,16 +26,16 @@ export function getVideoPrompt(
       }
 
       if (
-        category === "character" ||
-        category === "location" ||
-        category === "time" ||
-        category === "era" ||
-        category === "lighting" ||
-        category === "weather" ||
-        category === "action" ||
-        category === "style" ||
-        category === "camera" ||
-        category === "generic"
+        category === ClapSegmentCategory.CHARACTER ||
+        category === ClapSegmentCategory.LOCATION ||
+        category === ClapSegmentCategory.TIME ||
+        category === ClapSegmentCategory.ERA || // <- @deprecated
+        category === ClapSegmentCategory.LIGHTING ||
+        category === ClapSegmentCategory.WEATHER ||
+        category === ClapSegmentCategory.ACTION ||
+        category === ClapSegmentCategory.STYLE ||
+        category === ClapSegmentCategory.CAMERA ||
+        category === ClapSegmentCategory.GENERIC
       ) {
         return true
       }
@@ -47,7 +47,7 @@ export function getVideoPrompt(
   let videoPrompt = tmp.map(segment => {
     const entity: ClapEntity | undefined = entitiesIndex[segment?.entityId || ""] || undefined
     
-    if (segment.category === "dialogue") {
+    if (segment.category === ClapSegmentCategory.DIALOGUE) {
 
       // if we can't find the entity, then we are unable
       // to make any assumption about the gender, age or appearance
@@ -67,7 +67,7 @@ export function getVideoPrompt(
       // we create a "bokeh" style
       return `portrait of a person speaking, blurry background, bokeh, ${characterPrompt}`
       
-    } else if (segment.category === "location") {
+    } else if (segment.category === ClapSegmentCategory.LOCATION) {
   
       // if we can't find the location's entity, we default to returning the prompt
       if (!entity) {
