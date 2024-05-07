@@ -1,8 +1,9 @@
-import { ClapSegment } from "@/types"
+import { ClapOutputType, ClapSegment } from "@/types"
 import { isValidNumber } from "@/utils/isValidNumber"
 import { generateSeed } from "@/utils/generateSeed"
 import { UUID } from "@/utils/uuid"
 import { parseSegmentCategory } from "@/utils/parseSegmentCategory"
+import { parseOutputType } from ".."
 
 export function newSegment(maybeSegment?: Partial<ClapSegment>) {
 
@@ -31,7 +32,7 @@ export function newSegment(maybeSegment?: Partial<ClapSegment>) {
     sceneId: typeof maybeSegment?.sceneId === "string" ? maybeSegment.sceneId : "",
     prompt: typeof maybeSegment?.prompt === "string" ? maybeSegment.prompt : "",
     label: typeof maybeSegment?.label === "string" ? maybeSegment.label : "",
-    outputType: typeof maybeSegment?.outputType === "string" ? maybeSegment.outputType : "text",
+    outputType: parseOutputType(maybeSegment?.outputType, ClapOutputType.TEXT),
     renderId: typeof maybeSegment?.renderId === "string" ? maybeSegment.renderId : "",
     status: typeof maybeSegment?.status === "string" ? maybeSegment.status : "to_generate",
     assetUrl: typeof maybeSegment?.assetUrl === "string" ? maybeSegment.assetUrl : "",

@@ -2,7 +2,7 @@ import { defaultSegmentDurationInMs, demoStory } from "@/samples/stories"
 
 import { newClap } from "@/factories/newClap"
 import { newSegment } from "@/factories/newSegment"
-import { ClapProject, ClapSegmentCategory } from "@/types"
+import { ClapOutputType, ClapProject, ClapSegmentCategory } from "@/types"
 
 export function generateClapFromSimpleStory({
   story = demoStory,
@@ -36,7 +36,7 @@ export function generateClapFromSimpleStory({
       category: ClapSegmentCategory.INTERFACE,
       prompt: "<BUILTIN:POWERED_BY_ENGINE>",
       label: "disclaimer",
-      outputType: "interface",
+      outputType: ClapOutputType.INTERFACE,
     }))
     currentElapsedTimeInMs += currentSegmentDurationInMs
   }
@@ -48,7 +48,7 @@ export function generateClapFromSimpleStory({
       category:ClapSegmentCategory.INTERFACE,
       prompt: "<BUILTIN:DISCLAIMER_ABOUT_AI>",
       label: "disclaimer",
-      outputType: "interface",
+      outputType: ClapOutputType.INTERFACE,
     }))
     currentElapsedTimeInMs += currentSegmentDurationInMs
   }
@@ -60,12 +60,12 @@ export function generateClapFromSimpleStory({
       // track: number
       startTimeInMs: currentElapsedTimeInMs,
       endTimeInMs: currentSegmentDurationInMs,
-      category: "interface",
+      category: ClapSegmentCategory.INTERFACE,
       // entityId: string
       // sceneId: string
       prompt: "a hello world",
       label: "hello world",
-      outputType: "interface"
+      outputType: ClapOutputType.INTERFACE,
       // renderId: string
       // status: ClapSegmentStatus
       // assetUrl: string
@@ -91,7 +91,7 @@ export function generateClapFromSimpleStory({
       category: ClapSegmentCategory.VIDEO,
       prompt: "",
       label: "video",
-      outputType: "video",
+      outputType: ClapOutputType.VIDEO,
     }))
     clap.segments.push(newSegment({
       track: 1,
@@ -100,7 +100,7 @@ export function generateClapFromSimpleStory({
       category: ClapSegmentCategory.GENERIC,
       prompt,
       label: prompt,
-      outputType: "text",
+      outputType: ClapOutputType.TEXT,
     }))
     clap.segments.push(newSegment({
       track: 2,
@@ -109,7 +109,7 @@ export function generateClapFromSimpleStory({
       category: ClapSegmentCategory.CAMERA,
       prompt: "medium-shot",
       label: "medium-shot",
-      outputType: "text",
+      outputType: ClapOutputType.TEXT,
     }))
 
     currentElapsedTimeInMs += currentSegmentDurationInMs
