@@ -1,13 +1,14 @@
 import { ClapAssetSource, ClapEntity, ClapEntityAppearance, ClapEntityAudioEngine, ClapEntityGender, ClapEntityRegion, ClapSegmentCategory } from "@/types"
 import { generateSeed } from "@/utils/generateSeed"
 import { isValidNumber } from "@/utils/isValidNumber"
+import { parseSegmentCategory } from "@/utils/parseSegmentCategory"
 import { UUID } from "@/utils/uuid"
 
 export function newEntity(maybeEntity?: Partial<ClapEntity>) {
 
   const entity: ClapEntity = {
     id: typeof maybeEntity?.id === "string" ? maybeEntity.id : UUID(),
-    category: typeof maybeEntity?.category === "string" ? (maybeEntity.category as ClapSegmentCategory) : "character",
+    category: parseSegmentCategory(maybeEntity?.category, ClapSegmentCategory.CHARACTER),
     triggerName: typeof maybeEntity?.triggerName === "string" ? maybeEntity.triggerName : "",
     label: typeof maybeEntity?.label === "string" ? maybeEntity.label : "",
     description: typeof maybeEntity?.description === "string" ? maybeEntity.description : "",

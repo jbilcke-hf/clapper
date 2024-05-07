@@ -2,8 +2,9 @@ import YAML from "yaml"
 
 import { getValidNumber } from "@/utils/getValidNumber"
 
-import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment } from "../types"
+import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment } from "@/types"
 import { UUID } from "@/utils/uuid"
+import { parseMediaOrientation } from "@/utils/parseMediaOrientation"
 
 export async function serializeClap({
   meta, // ClapMeta
@@ -137,7 +138,7 @@ export async function serializeClap({
     description: typeof meta.description === "string" ? meta.description : "",
     synopsis: typeof meta.synopsis === "string" ? meta.synopsis : "",
     licence: typeof meta.licence === "string" ? meta.licence : "",
-    orientation: meta.orientation === "portrait" ? "portrait" : meta.orientation === "square" ? "square" : "landscape",
+    orientation: parseMediaOrientation(meta.orientation),
     durationInMs: getValidNumber(meta.durationInMs, 1000, Number.MAX_SAFE_INTEGER, 4000),
     width: getValidNumber(meta.width, 256, 8192, 1024),
     height: getValidNumber(meta.height, 256, 8192, 576),

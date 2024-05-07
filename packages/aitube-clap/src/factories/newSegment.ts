@@ -2,6 +2,7 @@ import { ClapSegment } from "@/types"
 import { isValidNumber } from "@/utils/isValidNumber"
 import { generateSeed } from "@/utils/generateSeed"
 import { UUID } from "@/utils/uuid"
+import { parseSegmentCategory } from "@/utils/parseSegmentCategory"
 
 export function newSegment(maybeSegment?: Partial<ClapSegment>) {
 
@@ -25,7 +26,7 @@ export function newSegment(maybeSegment?: Partial<ClapSegment>) {
     track: isValidNumber(maybeSegment?.track) ? (maybeSegment?.track || 0) : 0,
     startTimeInMs,
     endTimeInMs,
-    category: typeof maybeSegment?.category === "string" ? maybeSegment.category : "generic",
+    category: parseSegmentCategory(maybeSegment?.category),
     entityId: typeof maybeSegment?.entityId === "string" ? maybeSegment.entityId : "",
     sceneId: typeof maybeSegment?.sceneId === "string" ? maybeSegment.sceneId : "",
     prompt: typeof maybeSegment?.prompt === "string" ? maybeSegment.prompt : "",

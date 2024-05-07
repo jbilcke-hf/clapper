@@ -2,7 +2,7 @@ import { defaultSegmentDurationInMs, demoStory } from "@/samples/stories"
 
 import { newClap } from "@/factories/newClap"
 import { newSegment } from "@/factories/newSegment"
-import { ClapProject } from "@/types"
+import { ClapProject, ClapSegmentCategory } from "@/types"
 
 export function generateClapFromSimpleStory({
   story = demoStory,
@@ -33,7 +33,7 @@ export function generateClapFromSimpleStory({
     clap.segments.push(newSegment({
       startTimeInMs: currentElapsedTimeInMs,
       endTimeInMs: currentSegmentDurationInMs,
-      category: "interface",
+      category: ClapSegmentCategory.INTERFACE,
       prompt: "<BUILTIN:POWERED_BY_ENGINE>",
       label: "disclaimer",
       outputType: "interface",
@@ -45,7 +45,7 @@ export function generateClapFromSimpleStory({
     clap.segments.push(newSegment({
       startTimeInMs: currentElapsedTimeInMs,
       endTimeInMs: currentSegmentDurationInMs,
-      category: "interface",
+      category:ClapSegmentCategory.INTERFACE,
       prompt: "<BUILTIN:DISCLAIMER_ABOUT_AI>",
       label: "disclaimer",
       outputType: "interface",
@@ -88,7 +88,7 @@ export function generateClapFromSimpleStory({
       track: 0,
       startTimeInMs: currentElapsedTimeInMs,
       endTimeInMs: currentSegmentDurationInMs,
-      category: "video",
+      category: ClapSegmentCategory.VIDEO,
       prompt: "",
       label: "video",
       outputType: "video",
@@ -97,7 +97,7 @@ export function generateClapFromSimpleStory({
       track: 1,
       startTimeInMs: currentElapsedTimeInMs,
       endTimeInMs: currentSegmentDurationInMs,
-      category: "generic",
+      category: ClapSegmentCategory.GENERIC,
       prompt,
       label: prompt,
       outputType: "text",
@@ -106,7 +106,7 @@ export function generateClapFromSimpleStory({
       track: 2,
       startTimeInMs: currentElapsedTimeInMs,
       endTimeInMs: currentSegmentDurationInMs,
-      category: "camera",
+      category: ClapSegmentCategory.CAMERA,
       prompt: "medium-shot",
       label: "medium-shot",
       outputType: "text",

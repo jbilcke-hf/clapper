@@ -41,7 +41,61 @@ npm install @aitube/clap
 ## Getting Started
 
 ```typescript
-import { parseClap, serializeClap } from '@aitube/clap';
+import {
+  // types
+  ClapSegmentCategory,
+  ClapOutputType,
+  ClapSegmentStatus,
+  ClapAuthor,
+  ClapAssetSource,
+  ClapEntityGender,
+  ClapEntityAppearance,
+  ClapEntityRegion,
+  ClapEntityTimbre,
+  ClapEntityAudioEngine,
+  ClapSegmentFilteringMode,
+  ClapVoice,
+  ClapHeader,
+  ClapMeta,
+  ClapSceneEvent,
+  ClapScene,
+  ClapSegment,
+  ClapEntity,
+  ClapProject, 
+  ClapMediaOrientation,
+
+  // factories
+  newClap,
+  newEntity,
+  newSegment,
+
+  // main input/output handlers
+  parseClap,
+  serializeClap,
+  fetchClap,
+  updateClap,
+
+  // utilities
+  filterSegments,
+  filterSegmentsWithinRange,
+  generateSeed,
+  getClapAssetSourceType,
+  getValidNumber,
+  isValidNumber,
+  parseMediaOrientation,
+  UUID,
+
+  // converters
+  blobToDataUri,
+  dataUriToBlob,
+  clapToDataUri,
+
+  // helpers
+  generateClapFromSimpleStory,
+  getEmptyClap,
+  buildEntityIndex
+} from "@aitube/clap"
+
 
 // fetch a Clap file
 const res = await fetch("https://..../file.clap")
@@ -51,12 +105,16 @@ const file = await res.blob()
 const clap: ClapProject = await parseClap(file)
 
 // perform arbitrary changes in the project
-clap.segments.at(42).prompt = "a camel in the desert, medium-shot, award-winning, 4k, Canon EOS"
 
 clap.segments.at(64).assetUrl = await generateVideoWithAI(....)
 
+const segment: ClapSegment = clap.segments.at(42)
+segment.prompt = "a camel in the desert, medium-shot, award-winning, 4k, Canon EOS"
+
+const storyboards = clap.segment.filter(s => s.category === ClapSegmentCategory.STORYBOARD)
+
 // save the Clap file
-const newFile = await serializeClap(clap)
+const newFile: ClapProject = await serializeClap(clap)
 ```
 
 ## Build Instructions
