@@ -64,6 +64,9 @@ import {
   ClapProject, 
   ClapMediaOrientation,
 
+// defaults
+  defaultMediaOrientation,
+
   // factories
   newClap,
   newEntity,
@@ -83,6 +86,7 @@ import {
   getValidNumber,
   isValidNumber,
   parseMediaOrientation,
+  parseSegmentCategory,
   UUID,
 
   // converters

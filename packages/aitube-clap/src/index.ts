@@ -21,6 +21,9 @@ export {
   ClapMediaOrientation
 } from './types'
 export {
+  defaultMediaOrientation
+} from './constants'
+export {
   newClap,
   newEntity,
   newSegment
