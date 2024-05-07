@@ -1,4 +1,4 @@
-import {  ClapSegment } from "@aitube/clap"
+import {  ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 
 /**
  * Construct an audio foreground for a voice from a list of active segments
@@ -13,7 +13,7 @@ export function getSpeechForegroundAudioPrompt(
   segments: ClapSegment[] = []
 ): string {
   return segments
-    .filter(({ category }) => category === "dialogue")
+    .filter(({ category }) => category === ClapSegmentCategory.DIALOGUE)
     .sort((a, b) => b.label.localeCompare(a.label))
     .map(({ prompt }) => prompt).filter(x => x)
     .join(". ")

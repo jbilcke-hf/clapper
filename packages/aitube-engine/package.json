@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "The engine powering AiTube.at",
   "scripts": {
     "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
@@ -18,10 +18,10 @@
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
     "typescript": "^5.4.5",
-    "@aitube/clap": "0.0.10"
+    "@aitube/clap": "0.0.13"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.0.10"
+    "@aitube/clap": "0.0.13"
   },
   "repository": {
     "type": "git",
