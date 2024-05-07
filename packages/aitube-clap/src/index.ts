@@ -42,6 +42,7 @@ export {
   getValidNumber,
   isValidNumber,
   parseMediaOrientation,
+  parseOutputType,
   parseSegmentCategory,
   UUID
 } from './utils'

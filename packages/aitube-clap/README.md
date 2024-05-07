@@ -86,6 +86,7 @@ import {
   getValidNumber,
   isValidNumber,
   parseMediaOrientation,
+  parseOutputType,
   parseSegmentCategory,
   UUID,
 

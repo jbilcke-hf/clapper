@@ -91,16 +91,32 @@ export enum ClapMediaOrientation {
   SQUARE = "square"
 }
 
-export type ClapOutputType =
-  | "text"
-  | "animation"
-  | "interface"
-  | "event"
-  | "phenomenon"
-  | "transition"
-  | "image"
-  | "video"
-  | "audio"
+export enum ClapOutputType {
+  // a plain text
+  TEXT = "text",
+
+  // an animation (not used)
+  ANIMATION = "animation",
+
+  // UI element
+  INTERFACE = "interface",
+
+  // event
+  EVENT = "event",
+
+  PHENOMENON = "phenomenon",
+
+  TRANSITION = "transition",
+
+  // image asset
+  IMAGE = "image",
+
+  // video asset
+  VIDEO = "video",
+
+  // audio asset
+  AUDIO = "audio"
+}
 
 export type ClapSegmentStatus =
   | "to_generate"
