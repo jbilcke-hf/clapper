@@ -18,6 +18,7 @@ export {
   ClapSegment,
   ClapEntity,
   ClapProject, 
+  ClapMediaOrientation
 } from './types'
 export {
   newClap,
@@ -37,6 +38,8 @@ export {
   getClapAssetSourceType,
   getValidNumber,
   isValidNumber,
+  parseMediaOrientation,
+  parseSegmentCategory,
   UUID
 } from './utils'
 export {

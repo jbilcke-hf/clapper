@@ -2,29 +2,94 @@ export type ClapFormat =
   | "clap-0"
   | "clap-1"
 
-export type ClapSegmentCategory =
-  | "splat"
-  | "mesh"
-  | "depth"
-  | "event"
-  | "interface"
-  | "phenomenon"
-  | "video"
-  | "storyboard"
-  | "transition"
-  | "character"
-  | "location"
-  | "time"
-  | "era"
-  | "lighting"
-  | "weather"
-  | "action"
-  | "music"
-  | "sound"
-  | "dialogue"
-  | "style"
-  | "camera"
-  | "generic"
+export enum ClapSegmentCategory {
+  // a 3D Gaussian Splatting object (eg. a .splatv)
+  SPLAT = "splat",
+
+  // a 3D mesh object
+  MESH = "mesh",
+
+  // a depth map
+  DEPTH = "depth",
+
+  // a event happening in the scene
+  EVENT = "event",
+  
+  // a user interface element, such as an overlay or caption, or HTML content
+  INTERFACE = "interface",
+
+  // a phenomenom triggering changes in the scene
+  PHENOMENON = "phenomenon",
+
+  // a video clip, eg. mp4 or webm
+  // it is strongly recommended to use an open and royalty-free codec such as VP9,
+  // otherwise some web browsers might not be able to display it
+  VIDEO = "video",
+
+  // a storyboard image, eg. jpg, png, webp, heic (note: most of the apps compatible with .clap prefer to work with jpg and png)
+  STORYBOARD = "storyboard",
+
+  // a transition between two shots (eg. a cross-fade)
+  TRANSITION = "transition",
+
+  // a character (person, animal, alien, robot, walking skeleton..)
+  CHARACTER = "character",
+
+  // a location (indoor or outdoor eg. a house, castle, garden..)
+  LOCATION = "location",
+  
+  // the absolute time where the action takes place
+  //
+  // this can be anything that a language model or stable diffusion model can interpret, eg:
+  // eg. "today at 12am", "2024-01-01", "contemporary times", "14th century", 1960, "AB 31", "20 BC"
+  //
+  // ideally you should use a date formatting indicating the hour and timezone (if your LLM can understand those)
+  // that way it will be possible to automatically determine if it's day or night!
+  TIME = "time",
+
+  // @deprecated - we should use TIME instead
+  ERA = "era",
+
+  // how to lit the scene, colors, angles etc
+  LIGHTING = "lighting",
+
+  // weather conditions in the scene (raining, sunny, cloudy, morning mist..)
+  WEATHER = "weather",
+
+  // direct description of what is happening in the scene ("people talking", "bus passing by", "putting down the glass")
+  ACTION = "action",
+
+  // some music
+  // like for all segments you can either give a prompt and/or work with an actual file (in the case mp3 or wav)
+  MUSIC = "music",
+
+  // some sound
+  // eg. "dog barking", "foot steps", "crowded bar"
+  SOUND = "sound",
+
+  // a dialogue line
+  // either the transcript and/or the generated TTS line
+  DIALOGUE = "dialogue",
+
+  // a specific style to apply
+  // "cinematic", "1950s comic book", "Panavision 70 mm"
+  STYLE = "style",
+
+  // type of shot eg "medium-shot", aperture, ISO..
+  CAMERA = "camera",
+
+  // ..anything else, from prompt to arbitrary/custom/obscure file format
+  // 
+  // however if you have a special demand, something that could be popular and not too niche,
+  // we can turn it into its own category
+  GENERIC = "generic"
+}
+
+export enum ClapMediaOrientation {
+  LANDSCAPE = "landscape",
+  PORTRAIT = "portrait",
+  SQUARE = "square"
+}
 
 export type ClapOutputType =
   | "text"
@@ -143,7 +208,8 @@ export type ClapMeta = {
   description: string
   synopsis: string
   licence: string
-  orientation: string
+
+  orientation: ClapMediaOrientation
 
   // the default duration of the experience
   // the real one might last longer if made interactive

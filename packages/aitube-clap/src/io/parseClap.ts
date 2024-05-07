@@ -5,6 +5,7 @@ import { getValidNumber } from "../utils/getValidNumber"
 import { dataUriToBlob } from "../converters/dataUriToBlob"
 import { UUID } from "@/utils/uuid"
 import { buildEntityIndex } from "@/helpers/buildEntityIndex"
+import { parseMediaOrientation } from "@/utils"
 
 type StringOrBlob = string | Blob
 
@@ -161,7 +162,7 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
     description: typeof maybeClapMeta.description === "string" ? maybeClapMeta.description : "",
     synopsis: typeof maybeClapMeta.synopsis === "string" ? maybeClapMeta.synopsis : "",
     licence: typeof maybeClapMeta.licence === "string" ? maybeClapMeta.licence : "",
-    orientation: maybeClapMeta.orientation === "portrait" ? "portrait" : maybeClapMeta.orientation === "square" ? "square" : "landscape",
+    orientation: parseMediaOrientation(maybeClapMeta.orientation),
     durationInMs: getValidNumber(maybeClapMeta.durationInMs, 1000, Number.MAX_SAFE_INTEGER, 4000),
     width: getValidNumber(maybeClapMeta.width, 128, 8192, 1024),
     height: getValidNumber(maybeClapMeta.height, 128, 8192, 576),

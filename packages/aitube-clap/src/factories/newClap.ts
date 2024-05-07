@@ -2,6 +2,7 @@ import { ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment } from "@/typ
 import { getValidNumber } from "@/utils/getValidNumber"
 import { UUID } from "@/utils/uuid"
 import { buildEntityIndex } from "@/helpers/buildEntityIndex"
+import { parseMediaOrientation } from "@/utils"
 
 // generate an empty clap file, or copy one from a source
 export function newClap(clap: {
@@ -17,7 +18,7 @@ export function newClap(clap: {
     description: typeof clap?.meta?.description === "string" ? clap.meta.description : "",
     synopsis: typeof clap?.meta?.synopsis === "string" ? clap.meta.synopsis : "",
     licence: typeof clap?.meta?.licence === "string" ? clap.meta.licence : "",
-    orientation: clap?.meta?.orientation === "portrait" ? "portrait" : clap?.meta?.orientation === "square" ? "square" : "landscape",
+    orientation: parseMediaOrientation(clap?.meta?.orientation),
     durationInMs: getValidNumber(clap?.meta?.durationInMs, 1000, Number.MAX_SAFE_INTEGER, 4000),
     width: getValidNumber(clap?.meta?.width, 256, 8192, 1024),
     height: getValidNumber(clap?.meta?.height, 256, 8192, 576),
