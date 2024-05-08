@@ -32,7 +32,7 @@ export async function updateClap(existingClap: ClapProject, newerClap: ClapProje
   inlineReplace: false
 }): Promise<ClapProject> {
 
-  const clap = inlineReplace ? existingClap : newClap()
+  const clap: ClapProject = inlineReplace ? existingClap : newClap()
 
   for (const [metaFieldKey, metaFieldValue] of Object.entries(newerClap.meta)) {
     (clap.meta as any)[metaFieldKey] = metaFieldValue
@@ -42,16 +42,25 @@ export async function updateClap(existingClap: ClapProject, newerClap: ClapProje
   const existingEntityIndex: Record<string, ClapEntity> = {}
   for (const entity of existingClap.entities) {
     existingEntityIndex[entity.id] = entity
+    if (!inlineReplace) {
+      clap.entities.push(entity)
+    }
   }
   
   const existingSceneIndex: Record<string, ClapScene> = {}
   for (const scene of existingClap.scenes) {
     existingSceneIndex[scene.id] = scene
+    if (!inlineReplace) {
+      clap.scenes.push(scene)
+    }
   }
   
   const existingSegmentIndex: Record<string, ClapSegment> = {}
   for (const segment of existingClap.segments) {
     existingSegmentIndex[segment.id] = segment
+    if (!inlineReplace) {
+      clap.segments.push(segment)
+    }
   }
 
   // we replace all the data
@@ -63,6 +72,7 @@ export async function updateClap(existingClap: ClapProject, newerClap: ClapProje
       }
     } else {
       existingEntityIndex[entity.id] = entity
+      clap.entities.push(entity)
     }
   }
   
@@ -74,6 +84,7 @@ export async function updateClap(existingClap: ClapProject, newerClap: ClapProje
       }
     } else {
       existingSceneIndex[scene.id] = scene
+      clap.scenes.push(scene)
     }
   }
 
@@ -85,6 +96,7 @@ export async function updateClap(existingClap: ClapProject, newerClap: ClapProje
       }
     } else {
       existingSegmentIndex[segment.id] = segment
+      clap.segments.push(segment)
     }
   }
 
