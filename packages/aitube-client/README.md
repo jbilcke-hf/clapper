@@ -44,23 +44,26 @@ import {
   ClapEntityPrompt,
   SupportedExportFormat,
   applyClapCompletion
-  } from '@aitube/client';
+ } from '@aitube/client'
 
 const ultraSecret = "ultra secret token unavailable to common mortals"
 
 const basicClap = await createClap({
   prompt: "story about a dog",
+  turbo: false,
   token: ultraSecret
 })
 
 const illustratedClap = await editClapStoryboards({
   clap: basicClap,
+  turbo: false,
   token: ultraSecret
 })
 
 const mp4VideoFile = await exportClapToVideo({
   clap: illustratedClap,
   format: "mp4",
+  turbo: false,
   token: ultraSecret
 })
 ```

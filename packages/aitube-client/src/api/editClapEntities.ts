@@ -9,6 +9,7 @@ export async function editClapEntities({
   clap,
   entityPrompts = [],
   completionMode = ClapCompletionMode.MERGE,
+  turbo = false,
   token,
 }: {
   // A ClapProject instance
@@ -28,6 +29,8 @@ export async function editClapEntities({
    */
   completionMode?: ClapCompletionMode
 
+  turbo?: boolean
+
   token?: string
 }): Promise<ClapProject> {
 
@@ -39,6 +42,10 @@ export async function editClapEntities({
 
   if (typeof completionMode === "string") {
     params.c = completionMode
+  }
+
+  if (turbo) {
+    params.t = "true"
   }
 
   if (entityPrompts.length) {

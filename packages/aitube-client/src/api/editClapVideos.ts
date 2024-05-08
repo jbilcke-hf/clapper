@@ -1,3 +1,4 @@
+import queryString from "query-string"
 import { ClapProject, fetchClap, serializeClap } from "@aitube/clap"
 
 import { aitubeApiUrl } from "@/constants/config"
@@ -7,6 +8,7 @@ import { applyClapCompletion } from "@/utils"
 export async function editClapVideos({
   clap,
   completionMode = ClapCompletionMode.MERGE,
+  turbo = false,
   token,
 }: {
   clap: ClapProject
@@ -22,6 +24,8 @@ export async function editClapVideos({
    */
   completionMode?: ClapCompletionMode
 
+  turbo?: boolean
+
   token?: string
 }): Promise<ClapProject> {
 
@@ -29,11 +33,17 @@ export async function editClapVideos({
   
   const hasToken = typeof token === "string" && token.length > 0
 
-  const newClap = await fetchClap(`${aitubeApiUrl}edit/videos${
-    typeof completionMode === "string"
-    ? `?c=${completionMode}`
-    : ""
-  }`, {
+  const params: Record<string, any> = {}
+
+  if (typeof completionMode === "string") {
+    params.c = completionMode
+  }
+
+  if (turbo) {
+    params.t = "true"
+  }
+
+  const newClap = await fetchClap(`${aitubeApiUrl}edit/videos?${queryString.stringify(params)}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-gzip",
