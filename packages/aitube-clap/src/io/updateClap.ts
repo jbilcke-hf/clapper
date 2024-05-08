@@ -1,6 +1,13 @@
 import { ClapEntity, ClapProject, ClapScene, ClapSegment } from "@/types"
 import { newClap } from "@/factories/newClap"
 
+function clone<T>(input: T): T {
+  try {
+    return JSON.parse(JSON.stringify(input))
+  } catch (err) {
+    return input
+  }
+}
 /**
  * This function takes two clap projects (an old and a newer one) and merge them.
  * 
@@ -16,8 +23,12 @@ import { newClap } from "@/factories/newClap"
  * @param newerClap
  */
 export async function updateClap(existingClap: ClapProject, newerClap: ClapProject, {
+  overwriteMeta = false,
   inlineReplace = false
 }: {
+  // Whether to overwrite the meta or not. Defaults to false.
+  overwriteMeta?: boolean
+
   // Whether to replace the existing clap "inline" or not. Defaults to false.
   //
   // true: the function will have side effects as the existing clap will be modified and returned
@@ -34,78 +45,67 @@ export async function updateClap(existingClap: ClapProject, newerClap: ClapProje
 
   const clap: ClapProject = inlineReplace ? existingClap : newClap()
 
-  for (const [metaFieldKey, metaFieldValue] of Object.entries(newerClap.meta)) {
-    (clap.meta as any)[metaFieldKey] = metaFieldValue
-  }
 
   // create some temporary indexes for faster checking
   const existingEntityIndex: Record<string, ClapEntity> = {}
   for (const entity of existingClap.entities) {
-    existingEntityIndex[entity.id] = entity
-    if (!inlineReplace) {
-      clap.entities.push(entity)
+    if (inlineReplace) {
+      existingEntityIndex[entity.id] = entity
+    } else {
+      clap.entities.push(existingEntityIndex[entity.id] = entity)
     }
   }
   
   const existingSceneIndex: Record<string, ClapScene> = {}
   for (const scene of existingClap.scenes) {
-    existingSceneIndex[scene.id] = scene
-    if (!inlineReplace) {
-      clap.scenes.push(scene)
+    if (inlineReplace) {
+      existingSceneIndex[scene.id] = scene
+    } else {
+      clap.scenes.push(existingSceneIndex[scene.id] = scene)
     }
   }
   
   const existingSegmentIndex: Record<string, ClapSegment> = {}
   for (const segment of existingClap.segments) {
-    existingSegmentIndex[segment.id] = segment
-    if (!inlineReplace) {
-      clap.segments.push(segment)
+    if (inlineReplace) {
+      
+      existingSegmentIndex[segment.id] = segment
+    } else {
+      clap.segments.push(existingSegmentIndex[segment.id] = segment)
     }
   }
 
   // we replace all the data
   for (const entity of newerClap.entities) {
     if (existingEntityIndex[entity.id]) {
-      existingEntityIndex[entity.id] = {
-        ...existingEntityIndex[entity.id],
-        ...entity
-      }
+      Object.assign(existingEntityIndex[entity.id], entity)
     } else {
-      existingEntityIndex[entity.id] = entity
-      clap.entities.push(entity)
+      clap.entities.push(existingEntityIndex[entity.id] = entity)
     }
   }
   
   for (const scene of newerClap.scenes) {
     if (existingSceneIndex[scene.id]) {
-      existingSceneIndex[scene.id] = {
-        ...existingSceneIndex[scene.id],
-        ...scene
-      }
+      Object.assign(existingSceneIndex[scene.id], scene)
     } else {
-      existingSceneIndex[scene.id] = scene
-      clap.scenes.push(scene)
+      clap.scenes.push(existingSceneIndex[scene.id] = scene)
     }
   }
 
   for (const segment of newerClap.segments) {
     if (existingSegmentIndex[segment.id]) {
-      existingSegmentIndex[segment.id] = {
-        ...existingSegmentIndex[segment.id],
-        ...segment
-      }
+      Object.assign(existingSegmentIndex[segment.id], segment)
     } else {
-      existingSegmentIndex[segment.id] = segment
-      clap.segments.push(segment)
+      clap.segments.push(existingSegmentIndex[segment.id] = segment)
     }
   }
 
   // sort by ascending line
-  clap.scenes.sort((a, b) => a.startAtLine - b.startAtLine)
+  clap.scenes = clap.scenes.sort((a, b) => a.startAtLine - b.startAtLine)
   
   // sort by ascending start time
   // in case of equivalent time (which happens a lot) we sort by ascending track number
-  clap.segments.sort((a, b) => {
+  clap.segments = clap.segments.sort((a, b) => {
     if (a.startTimeInMs === b.startTimeInMs) {
       return a.track - b.track
     } else {
@@ -118,6 +118,8 @@ export async function updateClap(existingClap: ClapProject, newerClap: ClapProje
   for (const entity of clap.entities) {
     clap.entityIndex[entity.id] = entity
   }
+
+  clap.meta = overwriteMeta ? clone(newerClap.meta) : clone(existingClap.meta)
 
   return clap
 }
