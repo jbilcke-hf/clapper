@@ -14,6 +14,8 @@ export async function applyClapCompletion(
 
   // else we are in ClapCompletionMode.MERGE or ClapCompletionMode.REPLACE
   const result = await updateClap(existingClap, newerClap, {
+    // the newer clap meta may contain incomplete information
+    overwriteMeta: false,
     inlineReplace: clapCompletionMode === ClapCompletionMode.REPLACE
   })
 
