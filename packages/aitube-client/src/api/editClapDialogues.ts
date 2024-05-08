@@ -1,4 +1,5 @@
 import { ClapProject, fetchClap, serializeClap } from "@aitube/clap"
+import queryString from "query-string"
 
 import { aitubeApiUrl } from "@/constants/config"
 import { ClapCompletionMode } from "@/constants/types"
@@ -7,6 +8,7 @@ import { applyClapCompletion } from "@/utils"
 export async function editClapDialogues({
   clap,
   completionMode = ClapCompletionMode.MERGE,
+  turbo = false,
   token,
 }: {
   clap: ClapProject
@@ -22,6 +24,8 @@ export async function editClapDialogues({
    */
   completionMode?: ClapCompletionMode
 
+  turbo?: boolean
+
   token?: string
 }): Promise<ClapProject> {
 
@@ -29,12 +33,18 @@ export async function editClapDialogues({
   
   const hasToken = typeof token === "string" && token.length > 0
 
+  const params: Record<string, any> = {}
+
+  if (typeof completionMode === "string") {
+    params.c = completionMode
+  }
+
+  if (turbo) {
+    params.t = "true"
+  }
+  
   const newClap = await fetchClap(
-    `${aitubeApiUrl}edit/dialogues${
-      typeof completionMode === "string"
-      ? `?c=${completionMode}`
-      : ""
-    }`, {
+    `${aitubeApiUrl}edit/dialogues?${queryString.stringify(params)}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-gzip",

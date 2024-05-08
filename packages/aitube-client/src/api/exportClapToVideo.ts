@@ -1,3 +1,4 @@
+import queryString from "query-string"
 import { ClapProject, serializeClap, blobToDataUri } from "@aitube/clap"
 
 import { aitubeApiUrl } from "@/constants/config"
@@ -7,6 +8,7 @@ import { defaultExportFormat, SupportedExportFormat } from "@/constants"
 export async function exportClapToVideo({
   clap,
   format = defaultExportFormat,
+  turbo = false,
   token,
 }: {
   clap: ClapProject
@@ -18,6 +20,8 @@ export async function exportClapToVideo({
    */
   format?: SupportedExportFormat
 
+  turbo?: boolean
+
   token?: string
 }): Promise<string> {
   
@@ -25,10 +29,18 @@ export async function exportClapToVideo({
 
   // TODO use an enum instead, and check the enum object
   if (format !== "mp4" && format !== "webm") { throw new Error(`please provide a valid format ("${format}" is unrecognized)`) }
-  
+
+  const params: Record<string, any> = {}
+
+  params.f = format
+
+  if (turbo) {
+    params.t = "true"
+  }
+
   const hasToken = typeof token === "string" && token.length > 0
 
-  const res = await fetch(`${aitubeApiUrl}export?f=${format}`, {
+  const res = await fetch(`${aitubeApiUrl}export?${queryString.stringify(params)}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-gzip",

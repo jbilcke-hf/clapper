@@ -8,11 +8,13 @@ export async function createClap({
   prompt,
   height = defaultClapHeight,
   width = defaultClapWidth,
+  turbo = false,
   token,
 }: {
   prompt: string
   height?: number
   width?: number
+  turbo?: boolean
   token?: string
 }): Promise<ClapProject> {
   
@@ -31,7 +33,8 @@ export async function createClap({
     body: JSON.stringify({
       prompt,
       width,
-      height
+      height,
+      turbo,
     }),
     cache: "no-store",
   })
