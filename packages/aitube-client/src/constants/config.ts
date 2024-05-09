@@ -2,7 +2,7 @@ import { defaultAitubeHostname } from "./defaultValues"
 
 // we leave the opportunity to override this at runtime
 export const aitubeUrl = `${
-  process.env.AITUBE_HOSTNAME ||
+  process.env.AITUBE_URL ||
   `https://${defaultAitubeHostname}`
 }`
 

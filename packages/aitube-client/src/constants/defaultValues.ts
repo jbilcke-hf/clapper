@@ -2,7 +2,7 @@
 // const defaultAitubeHostname = "aitube.at"
 
 // so we have to use the direct space hostname instead
-export const defaultAitubeHostname = "jbilcke-hf-ai-tube.hf.space"
+export const defaultAitubeHostname = "aitube.at"
 
 export const defaultClapWidth = 512
 export const defaultClapHeight = 288
