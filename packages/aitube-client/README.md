@@ -25,6 +25,8 @@ npm install @aitube/client
 
 ## Getting Started
 
+Note: to overridethe AiTube API URL, set this env var: `AITUBE_URL`
+
 ```typescript
 import {
   createClap,
