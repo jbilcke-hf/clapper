@@ -32,6 +32,8 @@ import {
   createClap,
   editClapDialogues,
   editClapEntities,
+  editClapMusic,
+  editClapSounds,
   editClapStoryboards,
   editClapVideos,
   exportClapToVideo,
@@ -72,12 +74,12 @@ const mp4VideoFile = await exportClapToVideo({
 
 ## Customizing the server
 
-The hostname can be overriden by defining the `AITUBE_HOSTNAME` environment variable.
+The hostname can be overriden by defining the `AITUBE_URL` environment variable.
 
 eg:
 
 ```bash
-AITUBE_HOSTNAME=http://localhost:3000
+AITUBE_URL=http://localhost:3000
 ```
 
 ## Build Instructions

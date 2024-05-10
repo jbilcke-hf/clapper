@@ -3,6 +3,8 @@ export {
   createClap,
   editClapDialogues,
   editClapEntities,
+  editClapMusic,
+  editClapSounds,
   editClapStoryboards,
   editClapVideos,
   exportClapToVideo,
