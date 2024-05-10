@@ -75,10 +75,14 @@ export async function updateClap(existingClap: ClapProject, newerClap: ClapProje
     }
   }
 
-  // we replace all the data
+  // we replace all the data that is not "completed"
   for (const entity of newerClap.entities) {
     if (existingEntityIndex[entity.id]) {
-      Object.assign(existingEntityIndex[entity.id], entity)
+      // we only overwrite entities without a valid imageId or audioId
+      // otherwise during parallel execution, we would overwrite entities with old data
+      if (!existingEntityIndex[entity.id].imageId || !existingEntityIndex[entity.id].audioId) {
+        Object.assign(existingEntityIndex[entity.id], entity)
+      }
     } else {
       clap.entities.push(existingEntityIndex[entity.id] = entity)
     }
@@ -94,7 +98,12 @@ export async function updateClap(existingClap: ClapProject, newerClap: ClapProje
 
   for (const segment of newerClap.segments) {
     if (existingSegmentIndex[segment.id]) {
-      Object.assign(existingSegmentIndex[segment.id], segment)
+      // we only ovewrite segments that are not completed
+      // otherwise we would have issue during parallel execution,
+      // older empty data would be used to update the segments
+      if (existingSegmentIndex[segment.id].status !== "completed") {
+        Object.assign(existingSegmentIndex[segment.id], segment)
+      }
     } else {
       clap.segments.push(existingSegmentIndex[segment.id] = segment)
     }
