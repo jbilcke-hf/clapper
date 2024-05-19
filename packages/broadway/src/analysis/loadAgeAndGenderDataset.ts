@@ -1,8 +1,6 @@
 import { ClapEntityGender } from "@aitube/clap"
 import Cache, { FileSystemCache } from "file-system-cache"
 
-import { getRandomDirectory } from "@/utils"
-
 import { normalizeName } from "./normalizeName"
 
 export type AgeNameGenderStats = [ClapEntityGender, number, number]
@@ -21,25 +19,27 @@ export const state: {
 
 // note: this takes about 140 Mb of memory
 export async function loadAgeGenderNameStats() {
-
-  if (!state.cache) {
-    state.cache = Cache({
-      basePath: ".age_and_gender_dataset_cache", // await getRandomDirectory()
-      ttl: 30 * 24 * 60  // (optional) A time-to-live (in secs) on how long an item remains cached.
-    });
-  }
-
   let nameToStats = {} as Record<string, AgeNameGenderStats[]>
 
-  try {
-    const rawString = await state.cache.get(CACHE_KEY)
-    nameToStats = JSON.parse(rawString) as Record<string, AgeNameGenderStats[]>
-    if (Object.keys(nameToStats).length === 0) {
-      throw new Error(`failed to load the dataset`)
+  if (typeof window === "undefined") {
+    if (!state.cache) {
+      state.cache = Cache({
+        basePath: ".age_and_gender_dataset_cache", // await getRandomDirectory()
+        ttl: 30 * 24 * 60  // (optional) A time-to-live (in secs) on how long an item remains cached.
+      });
     }
-    return nameToStats
-  } catch (err) {
-    nameToStats = {}
+
+
+    try {
+      const rawString = await state.cache.get(CACHE_KEY)
+      nameToStats = JSON.parse(rawString) as Record<string, AgeNameGenderStats[]>
+      if (Object.keys(nameToStats).length === 0) {
+        throw new Error(`failed to load the dataset`)
+      }
+      return nameToStats
+    } catch (err) {
+      nameToStats = {}
+    }
   }
 
   const url = "https://huggingface.co/datasets/jbilcke-hf/detection-of-age-and-gender/resolve/main/baby-names-us-year-of-birth-full.csv?download=true"
@@ -68,10 +68,12 @@ export async function loadAgeGenderNameStats() {
     nameToStats[key].sort((a, b) => b[1] - a[1])
   })
 
-  try {
-    await state.cache.set(CACHE_KEY, JSON.stringify(nameToStats))
-  } catch (err) {
-    console.error(`failed to cache the dataset: ${err}`)
+  if (typeof window === "undefined" && state.cache) {
+    try {
+      await state.cache.set(CACHE_KEY, JSON.stringify(nameToStats))
+    } catch (err) {
+      console.error(`failed to cache the dataset: ${err}`)
+    }
   }
   return nameToStats
 }
