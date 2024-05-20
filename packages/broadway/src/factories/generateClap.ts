@@ -1,6 +1,6 @@
 import YAML from "yaml"
 
-import { ClapHeader, ClapMeta, ClapEntity, ClapScene, ClapSegment, ClapMediaOrientation, getValidNumber, UUID } from "@aitube/clap"
+import { ClapFormat, ClapHeader, ClapMeta, ClapEntity, ClapScene, ClapSegment, ClapMediaOrientation, getValidNumber, UUID } from "@aitube/clap"
 import { MovieScript, Screenplay } from "@/types"
 
 /**
@@ -96,7 +96,7 @@ export async function generateClap({
   })
 
   const clapHeader: ClapHeader = {
-    format: "clap-0",
+    format: ClapFormat.CLAP_0,
     numberOfEntities: clapEntities.length,
     numberOfScenes: clapScenes.length,
     numberOfSegments: clapSegments.length,
