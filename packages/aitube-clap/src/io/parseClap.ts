@@ -1,6 +1,6 @@
 import YAML from "yaml"
 
-import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment } from "../types"
+import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment, ClapFormat } from "../types"
 import { getValidNumber } from "../utils/getValidNumber"
 import { dataUriToBlob } from "../converters/dataUriToBlob"
 import { UUID } from "@/utils/uuid"
@@ -149,7 +149,7 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
 
   const maybeClapHeader = maybeArray[0] as ClapHeader
 
-  if (maybeClapHeader.format !== "clap-0") {
+  if (maybeClapHeader.format !== ClapFormat.CLAP_0) {
     throw new Error("invalid clap file (sorry, but you can't make up version numbers like that)")
   }
 
@@ -292,6 +292,9 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
     assetUrl,
     assetDurationInMs,
     assetSourceType,
+    assetFileFormat,
+    revision,
+    createdAt,
     createdBy,
     editedBy,
     outputGain,
@@ -317,6 +320,9 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
       assetUrl,
       assetDurationInMs,
       assetSourceType,
+      assetFileFormat,
+      revision,
+      createdAt,
       createdBy,
       editedBy,
       outputGain,

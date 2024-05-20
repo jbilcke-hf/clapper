@@ -17,11 +17,11 @@ export function newEntity(maybeEntity?: Partial<ClapEntity>) {
     seed: isValidNumber(maybeEntity?.seed) ? (maybeEntity?.seed || 0) : generateSeed(),
    
     imagePrompt: typeof maybeEntity?.imagePrompt === "string" ? maybeEntity.imagePrompt : "",
-    imageSourceType: typeof maybeEntity?.imageSourceType === "string" ? (maybeEntity.imageSourceType as ClapAssetSource) : "EMPTY",
+    imageSourceType: typeof maybeEntity?.imageSourceType === "string" ? (maybeEntity.imageSourceType as ClapAssetSource) : ClapAssetSource.EMPTY,
     imageEngine: typeof maybeEntity?.imageEngine === "string" ? maybeEntity.imageEngine : "", 
     imageId: typeof maybeEntity?.imageId === "string" ? maybeEntity.imageId : "",
     audioPrompt: typeof maybeEntity?.audioPrompt === "string" ? maybeEntity.audioPrompt : "",
-    audioSourceType: typeof maybeEntity?.audioSourceType === "string" ? (maybeEntity.audioSourceType as ClapAssetSource) : "EMPTY",
+    audioSourceType: typeof maybeEntity?.audioSourceType === "string" ? (maybeEntity.audioSourceType as ClapAssetSource) : ClapAssetSource.EMPTY,
     audioEngine: typeof maybeEntity?.audioEngine === "string" ? (maybeEntity.audioEngine as ClapEntityAudioEngine) : "Parler-TTS",
     audioId: typeof maybeEntity?.audioId === "string" ? maybeEntity.audioId : "",
 

@@ -88,6 +88,7 @@ import {
   parseMediaOrientation,
   parseOutputType,
   parseSegmentCategory,
+  parseSegmentStatus,
   UUID,
 
   // converters

@@ -1,4 +1,4 @@
-import { ClapOutputType, ClapSegment } from "@/types"
+import { ClapAssetSource, ClapOutputType, ClapSegment, ClapSegmentStatus } from "@/types"
 import { isValidNumber } from "@/utils/isValidNumber"
 import { generateSeed } from "@/utils/generateSeed"
 import { UUID } from "@/utils/uuid"
@@ -34,10 +34,13 @@ export function newSegment(maybeSegment?: Partial<ClapSegment>) {
     label: typeof maybeSegment?.label === "string" ? maybeSegment.label : "",
     outputType: parseOutputType(maybeSegment?.outputType, ClapOutputType.TEXT),
     renderId: typeof maybeSegment?.renderId === "string" ? maybeSegment.renderId : "",
-    status: typeof maybeSegment?.status === "string" ? maybeSegment.status : "to_generate",
+    status: typeof maybeSegment?.status === "string" ? maybeSegment.status : ClapSegmentStatus.TO_GENERATE,
     assetUrl: typeof maybeSegment?.assetUrl === "string" ? maybeSegment.assetUrl : "",
-    assetDurationInMs,
-    assetSourceType: typeof maybeSegment?.assetSourceType === "string" ? maybeSegment.assetSourceType : "EMPTY",
+    assetDurationInMs: isValidNumber(assetDurationInMs) ? assetDurationInMs : 0,
+    assetSourceType: typeof maybeSegment?.assetSourceType === "string" ? maybeSegment.assetSourceType : ClapAssetSource.EMPTY,
+    assetFileFormat: typeof maybeSegment?.assetFileFormat === "string" ? maybeSegment.assetFileFormat : "",
+    revision: isValidNumber(maybeSegment?.revision) ? (maybeSegment?.revision || 0) : 0,
+    createdAt: typeof maybeSegment?.createdAt === "string" ?  maybeSegment.createdAt : new Date().toISOString(),
     createdBy: typeof maybeSegment?.createdBy === "string" ?  maybeSegment.createdBy : "ai",
     editedBy: typeof maybeSegment?.editedBy === "string" ?  maybeSegment.editedBy : "ai",
     outputGain: isValidNumber(maybeSegment?.outputGain) ? (maybeSegment?.outputGain || 0) : 0,

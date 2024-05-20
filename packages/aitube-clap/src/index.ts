@@ -44,6 +44,7 @@ export {
   parseMediaOrientation,
   parseOutputType,
   parseSegmentCategory,
+  parseSegmentStatus,
   UUID
 } from './utils'
 export {
