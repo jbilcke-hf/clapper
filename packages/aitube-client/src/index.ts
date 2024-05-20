@@ -5,6 +5,7 @@ export {
   editClapEntities,
   editClapMusic,
   editClapSounds,
+  editClapStory,
   editClapStoryboards,
   editClapVideos,
   exportClapToVideo,
