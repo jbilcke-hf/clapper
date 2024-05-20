@@ -7,6 +7,7 @@ import { applyClapCompletion } from "@/utils"
 
 export async function editClapStory({
   clap,
+  prompt,
   startTimeInMs,
   endTimeInMs,
   completionMode = ClapCompletionMode.MERGE,
@@ -15,6 +16,9 @@ export async function editClapStory({
 }: {
   // A ClapProject instance
   clap: ClapProject
+
+  // a prompt to describe how to extend the story (optional)
+  prompt?: string
 
   // indicates where the completion should start in the timeline
   //
@@ -63,6 +67,10 @@ export async function editClapStory({
 
   if (typeof completionMode === "string") {
     params.c = completionMode
+  }
+
+  if (typeof prompt === "string" && prompt.length > 0) {
+    params.p = prompt
   }
 
   if (isValidNumber(startTimeInMs)) {
