@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Types and helpers to manipulate .clap files",
   "scripts": {
     "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
@@ -13,10 +13,9 @@
     "publish": "npm publish --access public"
   },
   "devDependencies": {
-    "@types/uuid": "^9.0.8",
     "bun-types": "latest",
     "prettier": "^3.2.5",
-    "rimraf": "^5.0.5",
+    "rimraf": "^5.0.7",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
@@ -24,7 +23,7 @@
   },
   "dependencies": {
     "pure-uuid": "^1.8.1",
-    "yaml": "^2.4.1"
+    "yaml": "^2.4.2"
   },
   "repository": {
     "type": "git",
