@@ -1,6 +1,12 @@
-export type ClapFormat =
-  | "clap-0"
-  | "clap-1"
+export enum ClapFormat {
+  // the current active version
+  // as long as the Clap format is not "standardized"
+  // we will stay in clap-0
+  CLAP_0 = "clap-0",
+
+  // reserved for future use
+  // CLAP_1 = "clap-1"
+}
 
 export enum ClapSegmentCategory {
   // a 3D Gaussian Splatting object (eg. a .splatv)
@@ -118,29 +124,32 @@ export enum ClapOutputType {
   AUDIO = "audio"
 }
 
-export type ClapSegmentStatus =
-  | "to_generate"
-  | "to_interpolate"
-  | "to_upscale"
-  | "completed"
-  | "error"
+export enum ClapSegmentStatus {
+  TO_GENERATE = "to_generate",
+  TO_INTERPOLATE = "to_interpolate",
+  TO_UPSCALE = "to_upscale",
+  COMPLETED = "completed",
+  ERROR = "error",
+}
 
 export type ClapAuthor =
   | "auto" // the element was edited automatically using basic if/else logical rules
   | "ai" // the element was edited using a large language entity
   | "human" // the element was edited by a human
+  | string
 
-export type ClapAssetSource =
-  | "REMOTE" // http:// or https://
+export enum ClapAssetSource {
+  REMOTE = "REMOTE", // http:// or https://
 
-    // note that "path" assets are potentially a security risk, they need to be treated with care
-  | "PATH" // a file path eg. /path or ./path/to/ or ../path/to/
+  // note that "path" assets are potentially a security risk, they need to be treated with care
+  PATH = "PATH", // a file path eg. /path or ./path/to/ or ../path/to/
 
-  | "DATA" // a data URI, starting with data:
+  DATA = "DATA", // a data URI, starting with data:
 
-  | "PROMPT" // by default, a plain text prompt
+  PROMPT = "PROMPT", // by default, a plain text prompt
 
-  | "EMPTY"
+  EMPTY = "EMPTY"
+}
 
 // @deprecated we are going to use ClapEntityVariant (see below)
 export type ClapEntityGender =
@@ -148,18 +157,18 @@ export type ClapEntityGender =
   | "female"
   | "person"
   | "object"
+  | string
 
-// this is what we should be using - using presets like "male" / "female" is okay,
-// but we are going to also enable arbitrary strings
-// export type ClapEntityVariant =
-//   | "male"
-//   | "female"
-//   | "person"
-//   | "object"
-//   | string
+// an arbitrary physical description
+export type ClapEntityVariant = string
 
 // @deprecated - we are going to use the ClapEntityVariant instead
-export type ClapEntityAppearance = "serious" | "neutral" | "friendly" | "chill"
+export type ClapEntityAppearance =
+  | "serious"
+  | "neutral"
+  | "friendly"
+  | "chill"
+  | string
 
 // this is used for accent, style..
 export type ClapEntityRegion =
@@ -174,6 +183,7 @@ export type ClapEntityRegion =
   | "italian"
   | "german"
   | "chinese"
+  | string
 
 // note: this is all very subjective, so please use good judgment
 //
@@ -184,7 +194,12 @@ export type ClapEntityRegion =
 // "high" could be used for some other countries, eg. asia
 export type ClapEntityTimbre = "high" | "neutral" | "deep"
 
-export type ClapEntityAudioEngine = "ElevenLabs" | "XTTS" | "Parler-TTS"
+export type ClapEntityAudioEngine =
+  | "ElevenLabs"
+  | "XTTS"
+  | "Parler-TTS"
+  | "OpenVoice"
+  | string
 
 export enum ClapSegmentFilteringMode {
   // the start of a segment must be within the range
@@ -279,8 +294,18 @@ export type ClapSegment = {
   assetUrl: string
   assetDurationInMs: number
   assetSourceType: ClapAssetSource
+  assetFileFormat: string 
+
+  // when was the segment created
+  createdAt: string
+
   createdBy: ClapAuthor
+
+  // clap segment default: 0)
+  revision: number
+
   editedBy: ClapAuthor
+
   outputGain: number
   seed: number
 }

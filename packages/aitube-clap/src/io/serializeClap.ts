@@ -2,7 +2,7 @@ import YAML from "yaml"
 
 import { getValidNumber } from "@/utils/getValidNumber"
 
-import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment } from "@/types"
+import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment, ClapFormat } from "@/types"
 import { UUID } from "@/utils/uuid"
 import { parseMediaOrientation } from "@/utils/parseMediaOrientation"
 
@@ -99,6 +99,9 @@ export async function serializeClap({
     assetUrl,
     assetDurationInMs,
     assetSourceType,
+    assetFileFormat,
+    revision,
+    createdAt,
     createdBy,
     editedBy,
     outputGain,
@@ -119,6 +122,9 @@ export async function serializeClap({
     assetUrl,
     assetDurationInMs,
     assetSourceType,
+    assetFileFormat,
+    revision,
+    createdAt,
     createdBy,
     editedBy,
     outputGain,
@@ -126,7 +132,7 @@ export async function serializeClap({
   }))
 
   const clapHeader: ClapHeader = {
-    format: "clap-0",
+    format: ClapFormat.CLAP_0,
     numberOfEntities: clapEntities.length,
     numberOfScenes: clapScenes.length,
     numberOfSegments: clapSegments.length,

@@ -5,21 +5,21 @@ export function getClapAssetSourceType(input: string = ""): ClapAssetSource {
   const str = `${input || ""}`.trim()
 
   if (!str || !str.length) {
-    return "EMPTY"
+    return ClapAssetSource.EMPTY
   }
 
   if (str.startsWith("https://") || str.startsWith("http://")) {
-    return "REMOTE"
+    return ClapAssetSource.REMOTE
   }
 
   // note that "path" assets are potentially a security risk, they need to be treated with care
   if (str.startsWith("/") || str.startsWith("../") || str.startsWith("./")) {
-    return "PATH"
+    return ClapAssetSource.PATH
   }
 
   if (str.startsWith("data:")) {
-    return "DATA"
+    return ClapAssetSource.DATA
   }
 
-  return "PROMPT"
+  return ClapAssetSource.PROMPT
 }
