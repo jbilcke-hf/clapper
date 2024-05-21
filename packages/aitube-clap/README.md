@@ -76,8 +76,8 @@ import {
 
   // helpers
   buildEntityIndex,
-  filterClapSegmentAssets,
-  filterClapSegments,
+  filterAssets,
+  filterSegmentsByCategory,
   generateClapFromSimpleStory,
   getEmptyClap,
 } from "@aitube/clap"
