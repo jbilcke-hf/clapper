@@ -10,7 +10,7 @@ import { ClapProject, ClapSegmentCategory } from "@/types"
  * The original is NOT modifed by default, unless you set: `modifyOriginal: true`
  * which will clone the whole clap project
  */
-export async function filterClapSegments({
+export async function filterSegmentsByCategory({
   clap,
   modifyOriginal,
   mode,
@@ -25,7 +25,7 @@ export async function filterClapSegments({
   if (!modifyOriginal) {
     const tmp = await serializeClap(clap)
     const newClap = await parseClap(tmp)
-    return filterClapSegments({
+    return filterSegmentsByCategory({
       clap: newClap,
       modifyOriginal: true,
       mode,

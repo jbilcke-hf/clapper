@@ -56,8 +56,8 @@ export {
 } from './converters'
 export {
   buildEntityIndex,
-  filterClapSegmentAssets,
-  filterClapSegments,
+  filterAssets,
+  filterSegmentsByCategory,
   generateClapFromSimpleStory,
   getEmptyClap,
 } from './helpers'

@@ -1,5 +1,5 @@
 export { buildEntityIndex } from './buildEntityIndex'
-export { filterClapSegmentAssets } from './filterClapSegmentAssets'
-export { filterClapSegments } from './filterClapSegments'
+export { filterAssets } from './filterAssets'
+export { filterSegmentsByCategory } from './filterSegmentsByCategory'
 export { getEmptyClap } from './getEmptyClap'
 export { generateClapFromSimpleStory } from './generateClapFromSimpleStory'
