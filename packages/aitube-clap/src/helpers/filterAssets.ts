@@ -1,6 +1,6 @@
 import { parseClap } from "@/io/parseClap"
 import { serializeClap } from "@/io/serializeClap"
-import { ClapProject, ClapSegmentCategory, ClapSegmentStatus } from "@/types"
+import { ClapAssetSource, ClapProject, ClapSegmentCategory, ClapSegmentStatus } from "@/types"
 
 /**
  * Keep or remove segment assets, by category
@@ -10,24 +10,24 @@ import { ClapProject, ClapSegmentCategory, ClapSegmentStatus } from "@/types"
  * The original is NOT modifed by default, unless you set: `modifyOriginal: true`
  * which will clone the whole clap project
  */
-export async function filterClapSegmentAssets({
+export async function filterAssets({
   clap,
-  immutable,
-  mode,
-  categories,
+  immutable = false,
+  mode = "INCLUDE",
+  categories = {},
   updateStatus = true
 }: {
   clap: ClapProject
   immutable?: boolean
   mode: "INCLUDE" | "EXCLUDE"
-  categories: Record<ClapSegmentCategory, boolean>
+  categories: Partial<Record<ClapSegmentCategory, boolean>>
   updateStatus?: boolean
 }): Promise<ClapProject> {
 
   if (immutable) {
     const tmp = await serializeClap(clap)
     const newClap = await parseClap(tmp)
-    return filterClapSegmentAssets({
+    return filterAssets({
       clap: newClap,
       immutable: false,
       mode,
@@ -48,6 +48,9 @@ export async function filterClapSegmentAssets({
         segment.assetUrl = ""
         if (updateStatus) {
           segment.status = ClapSegmentStatus.TO_GENERATE
+          segment.assetDurationInMs = 0
+          segment.assetSourceType = ClapAssetSource.EMPTY
+          segment.assetFileFormat = ""
         }
       }
     } else if (mode === "EXCLUDE") {
@@ -55,6 +58,9 @@ export async function filterClapSegmentAssets({
         segment.assetUrl = ""
         if (updateStatus) {
           segment.status = ClapSegmentStatus.TO_GENERATE
+          segment.assetDurationInMs = 0
+          segment.assetSourceType = ClapAssetSource.EMPTY
+          segment.assetFileFormat = ""
         }
       } else {
         segment.assetUrl = segment.assetUrl
