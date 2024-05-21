@@ -4,31 +4,9 @@
 
 ## Introduction
 
-This library is used to manipulate Clap files, the file format used to describe AI scenes for AiTube.
+This library is the reference implementation of [OpenClap](https://github.com/jbilcke-hf/OpenClap-Format) for NodeJS and browser environments.
 
-It in an open interchange format that other people can use freely for their own projects.
-
-## Design and capabilities
-
-A Clap file (.clap) is a compressed YAML stream of documents that describe all aspects of a scene.
-
-(to be continued)
-
-## Roadmap
-
-- [ ] Create a DRAFT for the specification
-- [x] Use it in production
-- [x] First working implementation for NodeJS 
-
-## Implementations:
-
-- [ ] C++ library (for native binding): TODO
-- [x] Python (in progress): [py-aitube-clap](https://github.com/jbilcke-hf/py-aitube-clap)
-- [x] NodeJS (released): [aitube-clap](https://github.com/jbilcke-hf/aitube-clap)
-- [ ] Swift: TODO
-- [ ] G TODO
-- [ ] Java TODO
-- [ ] Haskell TODO
+**OpenClap** is a prompt container file format that was initially created for my AiTube.at project. I am also using it in my other AI demos, and I think you should use it, too!
 
 ## Installation
 
