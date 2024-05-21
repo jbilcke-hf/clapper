@@ -55,7 +55,9 @@ export {
   clapToDataUri
 } from './converters'
 export {
+  buildEntityIndex,
+  filterClapSegmentAssets,
+  filterClapSegments,
   generateClapFromSimpleStory,
   getEmptyClap,
-  buildEntityIndex
 } from './helpers'
