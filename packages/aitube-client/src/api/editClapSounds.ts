@@ -1,5 +1,5 @@
 import queryString from "query-string"
-import { ClapProject, fetchClap, serializeClap } from "@aitube/clap"
+import { ClapProject, fetchClap, serializeClap, removeGeneratedAssetUrls } from "@aitube/clap"
 
 import { aitubeApiUrl } from "@/constants/config"
 import { ClapCompletionMode } from "@/constants/types"
@@ -51,7 +51,7 @@ export async function editClapSounds({
         "Authorization": `Bearer ${token}`
       }
     },
-    body: await serializeClap(clap),
+    body: await serializeClap(removeGeneratedAssetUrls(clap)),
     cache: "no-store",
   })
 

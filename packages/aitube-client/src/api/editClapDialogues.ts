@@ -1,4 +1,4 @@
-import { ClapProject, fetchClap, serializeClap } from "@aitube/clap"
+import { ClapProject, fetchClap, removeGeneratedAssetUrls, serializeClap } from "@aitube/clap"
 import queryString from "query-string"
 
 import { aitubeApiUrl } from "@/constants/config"
@@ -52,7 +52,7 @@ export async function editClapDialogues({
         "Authorization": `Bearer ${token}`
       }
     },
-    body: await serializeClap(clap),
+    body: await serializeClap(removeGeneratedAssetUrls(clap)),
     cache: "no-store",
   })
 
