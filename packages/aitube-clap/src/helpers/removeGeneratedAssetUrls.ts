@@ -9,7 +9,9 @@ import { ClapProject, ClapSegmentCategory, ClapSegmentStatus, ClapSegment } from
 // with status TO_GENERATE and something in assetUrl
 export function removeGeneratedAssetUrls(
   clap: ClapProject,
-  keep: ClapSegmentCategory[] = []
+
+  // those segments will be preserved no matter what
+  idsOfSegmentsToKeep: string[] = []
 ): ClapProject {
   return {
     ...clap,
@@ -17,7 +19,10 @@ export function removeGeneratedAssetUrls(
       .map((segment: ClapSegment) =>
         // if a segment is not "TO_GENERATE" then we assume it contains an URL,
         // which is information we can strip out
-        (segment?.status === ClapSegmentStatus.TO_GENERATE)
+        // also if it's in idsOfSegmentsToKeep we keep it without asking questions
+        (
+          idsOfSegmentsToKeep.includes(segment.id) ||
+          segment?.status === ClapSegmentStatus.TO_GENERATE)
         ? segment
         : { ...segment, assetUrl: '' }
       )
