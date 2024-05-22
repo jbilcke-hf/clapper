@@ -1,4 +1,4 @@
-import { ClapProject, fetchClap, isValidNumber, serializeClap } from "@aitube/clap"
+import { ClapProject, fetchClap, filterAssets, isValidNumber, serializeClap, removeGeneratedAssetUrls } from "@aitube/clap"
 import queryString from "query-string"
 
 import { aitubeApiUrl } from "@/constants/config"
@@ -85,6 +85,17 @@ export async function editClapStory({
     params.t = "true"
   }
 
+  // we remove heavy elements from the payload
+  const payload = await filterAssets({
+    clap,
+    mode: "INCLUDE",
+    categories: {},
+    immutable: true, // to create a standalone copy
+
+    // we only remove the data, but we still keep things marked as "generated"
+    updateStatus: false,
+  })
+  
   const newClap = await fetchClap(
     `${aitubeApiUrl}edit/story?${queryString.stringify(params)}`, {
     method: "POST",
@@ -94,7 +105,7 @@ export async function editClapStory({
         "Authorization": `Bearer ${token}`
       }
     },
-    body: await serializeClap(clap),
+    body: await serializeClap(removeGeneratedAssetUrls(clap)),
     cache: "no-store",
   })
 

@@ -25,5 +25,5 @@ export {
 } from "./constants"
 
 export {
-  applyClapCompletion
+  applyClapCompletion,
 } from "./utils"

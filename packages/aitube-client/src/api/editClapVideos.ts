@@ -1,5 +1,5 @@
 import queryString from "query-string"
-import { ClapProject, fetchClap, serializeClap } from "@aitube/clap"
+import { ClapProject, fetchClap, serializeClap, removeGeneratedAssetUrls, ClapSegmentStatus, ClapSegmentCategory, filterSegments, ClapSegmentFilteringMode, ClapSegment } from "@aitube/clap"
 
 import { aitubeApiUrl } from "@/constants/config"
 import { ClapCompletionMode } from "@/constants/types"
@@ -42,6 +42,27 @@ export async function editClapVideos({
   if (turbo) {
     params.t = "true"
   }
+  // special trick to not touch the generated
+  // storyboards that are used by pending videos
+  const idsOfStoryboardsToKeep = clap.segments.map(segment => {
+    
+    const isPendingVideo = (
+      segment.category === ClapSegmentCategory.VIDEO
+      &&
+      segment.status === ClapSegmentStatus.TO_GENERATE
+    )
+
+    if (!isPendingVideo) { return undefined }
+
+    const storyboard: ClapSegment | undefined = filterSegments(
+      ClapSegmentFilteringMode.BOTH,
+      segment,
+      clap.segments,
+      ClapSegmentCategory.STORYBOARD
+    ).at(0)
+
+    return storyboard?.id
+  }).filter(x => x) as string[]
 
   const newClap = await fetchClap(`${aitubeApiUrl}edit/videos?${queryString.stringify(params)}`, {
     method: "POST",
@@ -51,7 +72,11 @@ export async function editClapVideos({
         "Authorization": `Bearer ${token}`
       }
     },
-    body: await serializeClap(clap),
+    body: await serializeClap(
+      // need a special trick here, to not touch the generated
+      // storyboards that are used by pending videos
+      removeGeneratedAssetUrls(clap, idsOfStoryboardsToKeep)
+    ),
     cache: "no-store",
   })
 

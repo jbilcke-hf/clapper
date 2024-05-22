@@ -48,7 +48,7 @@ import {
   ClapCompletionMode,
   ClapEntityPrompt,
   SupportedExportFormat,
-  applyClapCompletion
+  applyClapCompletion,
  } from '@aitube/client'
 
 const ultraSecret = "ultra secret token unavailable to common mortals"
