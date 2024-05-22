@@ -80,6 +80,7 @@ import {
   filterSegmentsByCategory,
   generateClapFromSimpleStory,
   getEmptyClap,
+  removeGeneratedAssetUrls,
 } from "@aitube/clap"
 
 
