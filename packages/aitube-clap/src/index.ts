@@ -60,4 +60,5 @@ export {
   filterSegmentsByCategory,
   generateClapFromSimpleStory,
   getEmptyClap,
+  removeGeneratedAssetUrls,
 } from './helpers'

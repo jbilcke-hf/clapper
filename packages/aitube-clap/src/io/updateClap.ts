@@ -1,4 +1,4 @@
-import { ClapEntity, ClapProject, ClapScene, ClapSegment } from "@/types"
+import { ClapEntity, ClapProject, ClapScene, ClapSegment, ClapSegmentStatus } from "@/types"
 import { newClap } from "@/factories/newClap"
 
 function clone<T>(input: T): T {
@@ -98,12 +98,16 @@ export async function updateClap(existingClap: ClapProject, newerClap: ClapProje
 
   for (const segment of newerClap.segments) {
     if (existingSegmentIndex[segment.id]) {
-      // we only ovewrite segments that are not completed
+      // we only overwrite segments that are not completed
       // otherwise we would have issue during parallel execution,
       // older empty data would be used to update the segments
-      if (existingSegmentIndex[segment.id].status !== "completed") {
+      if (existingSegmentIndex[segment.id].status !== ClapSegmentStatus.COMPLETED) {
         Object.assign(existingSegmentIndex[segment.id], segment)
       }
+
+      // note: sometimes a segment is marked as "completed" but is actually
+      // empty when it comes to the assetUrl.. that is perfectly fine!
+      // it just means that its value is held somewhere else, and that we shouldn't touch it
     } else {
       clap.segments.push(existingSegmentIndex[segment.id] = segment)
     }
