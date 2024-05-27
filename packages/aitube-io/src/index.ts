@@ -21,6 +21,7 @@ export type { ImageFileExt } from "./image"
 
 export {
   readJpegFileToBase64,
+  readLocalOrRemotePlainText,
   readMp3FileToBase64,
   readMp4FileToBase64,
   readPlainText,

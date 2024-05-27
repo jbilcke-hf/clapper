@@ -1,4 +1,5 @@
 export { readJpegFileToBase64 } from "./readJpegFileToBase64"
+export { readLocalOrRemotePlainText } from "./readLocalOrRemotePlainText"
 export { readMp3FileToBase64 } from "./readMp3FileToBase64"
 export { readMp4FileToBase64 } from "./readMp4FileToBase64"
 export { readPlainText } from "./readPlainText"
