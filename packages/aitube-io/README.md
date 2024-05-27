@@ -32,6 +32,7 @@ import {
   convertImageToWebp,
   resizeImage,
   readJpegFileToBase64,
+  readLocalOrRemotePlainText,
   readMp3FileToBase64,
   readMp4FileToBase64,
   readPlainText,

@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Collection of useful I/O utilities for NodeJS. Used by AiTube.at",
   "scripts": {
     "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
@@ -14,17 +14,16 @@
   },
   "devDependencies": {
     "@types/mime-types": "^2.1.4",
-    "@types/uuid": "^9.0.8",
     "bun-types": "latest",
     "prettier": "^3.2.5",
-    "rimraf": "^5.0.5",
+    "rimraf": "^5.0.7",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {},
   "dependencies": {
     "mime-types": "^2.1.35",
-    "sharp": "^0.33.3",
-    "uuid": "^9.0.1"
+    "pure-uuid": "^1.8.1",
+    "sharp": "^0.33.4"
   },
   "repository": {
     "type": "git",
