@@ -74,7 +74,7 @@ export {
   cleanUTF8Characters,
   deduplicate,
   getEntities,
-  getRandomDirectory,
+  // getRandomDirectory,
   isAllCaps,
   onlyContainsStrangeNumber,
   pick,
