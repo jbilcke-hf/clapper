@@ -4,6 +4,7 @@ export {
   analyzeScreenplay,
   getEntityAnalysisPrompt,
   guessAgeAndGender,
+  getScreenplayFromText,
   isCharacterLine,
   isDialogueLine,
   isPageSeparator,
