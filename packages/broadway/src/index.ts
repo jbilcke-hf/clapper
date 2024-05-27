@@ -78,7 +78,5 @@ export {
   isAllCaps,
   onlyContainsStrangeNumber,
   pick,
-  readLocalOrRemotePlainText,
-  readPlainText,
   sleep
 } from "./utils"

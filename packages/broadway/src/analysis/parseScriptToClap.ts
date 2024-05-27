@@ -1,9 +1,9 @@
 import { ClapMediaOrientation, ClapProject, newClap, UUID } from "@aitube/clap"
 
 import { cleanUTF8Characters } from "@/utils"
-import { getScreenplayFromText } from "./getScreenplayFromText"
 import { analyzeScreenplay } from "@/analysis/analyzeScreenplay"
-import { readLocalOrRemotePlainText } from "@/utils/readLocalOrRemotePlainText"
+
+import { getScreenplayFromText } from "./getScreenplayFromText"
 
 export type ParseScriptProgressUpdate = ({
   value,
@@ -21,11 +21,8 @@ export async function parseScriptToClap(
   input: string,
   onProgressUpdate: ParseScriptProgressUpdate = defaultParseScriptProgressUpdate
 ): Promise<ClapProject> {
-
-  let content = await readLocalOrRemotePlainText(input)
-
   // fix any mess which might be in it
-  content = cleanUTF8Characters(content)
+  const content = cleanUTF8Characters(input)
 
   await  onProgressUpdate({ value: 10 })
 

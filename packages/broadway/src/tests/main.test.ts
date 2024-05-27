@@ -1,7 +1,8 @@
 import { test, expect, describe } from "bun:test"
 import { ClapProject, serializeClap } from "@aitube/clap"
+import { readPlainText } from "@aitube/io"
 
-import { parseScriptToClap, readPlainText } from ".."
+import { parseScriptToClap } from ".."
 
 // hack for Bun
 require("./bun-shims.js")
@@ -27,5 +28,9 @@ describe("main demo", async () => {
   // example:
   // first time (need to download the dataset): [7.40s]
   // second time (with the dataset cached): [839.00ms]
+  //
+  // UPDATE:
+  // we currently don't cache the result,
+  // because this was too much platform-specific (file system caching, so for Node only)
   30000)
 })

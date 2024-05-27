@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Convert a script to a clap file",
   "scripts": {
     "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@aitube/clap": "0.0.22",
+    "@aitube/io": "0.0.1",
     "bun-types": "latest",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.7",
