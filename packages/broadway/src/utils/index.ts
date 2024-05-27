@@ -1,7 +1,7 @@
 export { cleanUTF8Characters } from "./cleanUTF8Characters"
 export { deduplicate } from "./deduplicate"
 export { getEntities } from "./getEntities"
-export { getRandomDirectory } from "./getRandomDirectory"
+// export { getRandomDirectory } from "./getRandomDirectory"
 export { isAllCaps } from "./isAllCaps"
 export { onlyContainsStrangeNumber } from "./onlyContainsStrangeNumber"
 export { pick } from "./pick"
