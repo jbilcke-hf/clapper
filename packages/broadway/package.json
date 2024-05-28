@@ -4,17 +4,17 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Convert a script to a clap file",
   "scripts": {
-    "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
+    "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js --external=@aitube/clap --external=@aitube/colors && bun run build:declaration",
     "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
-    "postbuild": "rimraf tsconfig.types.tsbuildinfo",
+    "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
     "publish": "npm publish --access public"
   },
   "devDependencies": {
     "@aitube/clap": "0.0.22",
-    "@aitube/colors": "0.0.0",
+    "@aitube/colors": "0.0.1",
     "@aitube/io": "0.0.1",
     "bun-types": "latest",
     "prettier": "^3.2.5",
