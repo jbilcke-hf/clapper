@@ -1,4 +1,3 @@
-export { segmentColorsTailwind, type SegmentColor } from "./colors"
 export {
   DEFAULT_DURATION_IN_MS_PER_STEP,
   DEFAULT_COLUMNS_PER_STEP,
@@ -17,9 +16,3 @@ export {
   type ScreenplaySequenceTime
 } from "./screenplaySequences"
 
-export {
-  segmentCategories,
-  categoryNames,
-  getSegment,
-  getSegmentColor
-} from "./segments"

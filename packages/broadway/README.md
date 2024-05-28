@@ -4,13 +4,13 @@
 
 ## Installation
 
-To install Broadway run the following command (`@aitube/clap` is a peer dependency):
+To install Broadway run the following command (some modules are peer dependencies):
 
 ```bash
 # this depends on your package manager, eg:
-npm install @aitube/broadway @aitube/clap
+npm install @aitube/broadway @aitube/clap @aitube/colors
 # or:
-bun i @aitube/broadway @aitube/clap
+bun i @aitube/broadway @aitube/clap @aitube/colors
 ```
 
 ## Getting Started

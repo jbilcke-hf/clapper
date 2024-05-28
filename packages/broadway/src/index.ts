@@ -17,8 +17,6 @@ export {
 } from "./analysis"
 
 export {
-  segmentColorsTailwind, type SegmentColor,
-
   DEFAULT_DURATION_IN_MS_PER_STEP,
   DEFAULT_COLUMNS_PER_STEP,
   DEFAULT_COLUMNS_PER_SLICE,
@@ -31,10 +29,6 @@ export {
   type ScreenplaySequenceType,
   screenplaySequenceTimes,
   type ScreenplaySequenceTime,
-  segmentCategories,
-  categoryNames,
-  getSegment,
-  getSegmentColor
 } from "./constants"
 
 export { createSegment, generateClap } from "./factories"
@@ -54,7 +48,6 @@ export {
 } from "./parsers"
 
 export {
-  type ClapSegmentCategorySettings,
   type MovieScriptMeta,
   type MovieScript,
   type SceneEvent,

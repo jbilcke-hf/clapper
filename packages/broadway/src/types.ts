@@ -1,6 +1,5 @@
 import { ScreenplaySequenceType } from "@/constants/screenplaySequences"
 import { ClapSegmentCategory } from "@aitube/clap"
-import { SegmentColor } from "./constants/colors"
 
 export type NamedEntity = {
   label: string
@@ -36,13 +35,6 @@ export type NamedEntityParser = (input: string) => Promise<NamedEntityResult[]>
 export type SimpleNamedEntityParser = (inputs?: string[], defaultValues?: string[], removeDuplicates?: boolean) => Promise<string[]>
 
 export type SimpleOccurrencesCounter = (input: string, minimumOccurrences: number) => Promise<Record<string, number>> 
-
-export interface ClapSegmentCategorySettings {
-  id: ClapSegmentCategory // eg. "country"
-  title: string // eg. Country
-  description: string // description in one sentence
-  color: SegmentColor // base color name, in lowercase
-}
 
 export type MovieScriptMeta = {
   fileName: string
