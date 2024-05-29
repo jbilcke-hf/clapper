@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Various color settings and utilities for AiTube",
   "scripts": {
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap && bun run build:declaration",
@@ -13,14 +13,13 @@
     "publish": "npm publish --access public"
   },
   "devDependencies": {
-    "@aitube/clap": "0.0.22",
     "bun-types": "latest",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.7",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.0.22"
+    "@aitube/clap": "0.0.23"
   },
   "repository": {
     "type": "git",
