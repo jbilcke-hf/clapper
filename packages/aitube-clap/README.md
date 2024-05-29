@@ -10,10 +10,10 @@ This library is the reference implementation of [OpenClap](https://github.com/jb
 
 ## Installation
 
-To install the package, run the following command:
+To install the package, run the following command (`yaml` is a peer dependency):
 
 ```bash
-npm install @aitube/clap
+npm install @aitube/clap yaml
 ```
 
 ## Getting Started
