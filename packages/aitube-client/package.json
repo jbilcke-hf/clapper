@@ -4,20 +4,19 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "description": "Official API client for AiTube.at",
   "scripts": {
-    "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
+    "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap && bun run build:declaration",
     "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
-    "postbuild": "rimraf tsconfig.types.tsbuildinfo",
+    "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
     "publish": "npm publish --access public"
   },
   "devDependencies": {
     "bun-types": "latest",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.7",
-    "typescript": "^5.4.5",
-    "@aitube/clap": "0.0.22"
+    "typescript": "^5.4.5"
   },
   "peerDependencies": {
     "@aitube/clap": "0.0.22"
