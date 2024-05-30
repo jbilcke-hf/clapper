@@ -1,6 +1,14 @@
 import { MapControls } from "@react-three/drei"
 
-export function TimelineControls() {
+export function TimelineControls({
+  minZoom,
+  maxZoom,
+  zoomSpeed
+}:{
+  minZoom: number
+  maxZoom: number
+  zoomSpeed: number
+}) {
 
   // TODO: we should create a new class extending from MapControls
   // and add some custom code to put limits, to avoid going out of bounds
@@ -13,8 +21,8 @@ export function TimelineControls() {
       // enabled
       // minDistance={10}
       // maxDistance={10}
-      minZoom={1}
-      maxZoom={5}
+      minZoom={minZoom}
+      maxZoom={maxZoom}
       // minPolarAngle: number;
       // maxPolarAngle: number;
       // minAzimuthAngle: number;
@@ -23,7 +31,7 @@ export function TimelineControls() {
       dampingFactor={0.3} // low : delay, high : faster/snappier
 
       enableZoom
-      zoomSpeed={2.5} // high = faster
+      zoomSpeed={zoomSpeed}
 
       enableRotate={false}
       // rotateSpeed={0}

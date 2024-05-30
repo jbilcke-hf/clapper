@@ -29,7 +29,7 @@ const charLength = characters.reduce((acc, char) => ({
 }), {} as Record<string, number>)
 
 const defaultCharLength = 5.561523437 // seems to be a common width when we use getTextWidthInCanvas()
-const webglFontWidthFactor = 0.58
+const webglFontWidthFactor = 0.64
 
 /**
  * Compute the text of a simple Arial text in a WebGL environmment
@@ -75,6 +75,7 @@ export function clampWebGLText(
     buffer += c
     if (width >= maxWidthInPixels) {
       if (lines.length >= maxNbLines) {
+        buffer = buffer.trim() // to avoid writing "and .."
         buffer += ".."
         break
       } else {
