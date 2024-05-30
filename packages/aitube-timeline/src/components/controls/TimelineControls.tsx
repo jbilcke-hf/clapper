@@ -3,11 +3,13 @@ import { MapControls } from "@react-three/drei"
 export function TimelineControls({
   minZoom,
   maxZoom,
-  zoomSpeed
+  zoomSpeed,
+  zoomDampingFactor,
 }:{
   minZoom: number
   maxZoom: number
   zoomSpeed: number
+  zoomDampingFactor: number
 }) {
 
   // TODO: we should create a new class extending from MapControls
@@ -28,7 +30,7 @@ export function TimelineControls({
       // minAzimuthAngle: number;
       // maxAzimuthAngle: number;
       enableDamping
-      dampingFactor={0.3} // low : delay, high : faster/snappier
+      dampingFactor={zoomDampingFactor}
 
       enableZoom
       zoomSpeed={zoomSpeed}

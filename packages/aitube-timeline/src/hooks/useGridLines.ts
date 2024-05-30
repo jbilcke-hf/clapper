@@ -1,22 +1,23 @@
 import { useEffect, useState } from "react"
-
 import * as THREE from "three"
 
+import { useTimelineState } from "./useTimelineState"
+
 export const useGridLines = ({
-  cellHeight,
-  cellWidth,
-  nbMaxTracks,
   nbMaxShots,
 }: {
-  cellHeight: number,
-  cellWidth: number,
-  nbMaxTracks: number,
-  nbMaxShots: number,
+  nbMaxShots: number
 }) => {
+  const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
+  const getCellHeight = useTimelineState(s => s.getCellHeight)
+  const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
+
+  const nbIdentifiedTracks = useTimelineState(s => s.nbIdentifiedTracks)
+
   const [gridlines, setGridLines] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 
   const maxWidth = nbMaxShots * cellWidth
-  const maxHeight = nbMaxTracks * cellHeight
+  const maxHeight = getVerticalCellPosition(0, nbIdentifiedTracks)
 
   useEffect(() => {
 
@@ -33,10 +34,10 @@ export const useGridLines = ({
       thisLines.push(verticalLineGeometry);
     }
 
-    for (let i = 0; i < nbMaxTracks; i++) {
+    for (let i = 0; i < nbIdentifiedTracks; i++) {
       const horizontalLinePoints = [
-        new THREE.Vector3(0, -i * cellHeight, 1),
-        new THREE.Vector3(maxWidth, -i * cellHeight, 1)
+        new THREE.Vector3(0, -getVerticalCellPosition(0, i), 1),
+        new THREE.Vector3(maxWidth, -getVerticalCellPosition(0, i), 1)
       ];
       const horizontalLineGeometry = new THREE.BufferGeometry().setFromPoints(horizontalLinePoints);
 
@@ -44,7 +45,7 @@ export const useGridLines = ({
     }
 
     setGridLines(thisLines);
-  }, [maxWidth, maxHeight, cellHeight, cellWidth, nbMaxTracks, nbMaxShots]);
+  }, [maxWidth, maxHeight, cellWidth, nbIdentifiedTracks, nbMaxShots]);
 
   return gridlines;
 };

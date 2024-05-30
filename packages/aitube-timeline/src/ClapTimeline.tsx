@@ -8,12 +8,7 @@ import {
   TimelineGrid
 } from "@/components"
 import { ClapProject } from "@aitube/clap"
-
-
-export const DEFAULT_MIN_ZOOM = 1
-export const DEFAULT_MAX_ZOOM = 5
-export const DEFAULT_ZOOM_SPEED = 2.2 // high = faster
-export const DEFAULT_SHOW_FPS = false
+import { DEFAULT_BACKGROUND_COLOR, DEFAULT_MAX_ZOOM, DEFAULT_MIN_ZOOM, DEFAULT_SHOW_FPS, DEFAULT_ZOOM_DAMPING_FACTOR, DEFAULT_ZOOM_SPEED } from "./constants/defaults"
 
 export function ClapTimeline({
   clap,
@@ -21,35 +16,59 @@ export function ClapTimeline({
   minZoom = DEFAULT_MIN_ZOOM,
   maxZoom = DEFAULT_MAX_ZOOM,
   zoomSpeed = DEFAULT_ZOOM_SPEED,
-  showFPS = DEFAULT_SHOW_FPS
+  zoomDampingFactor = DEFAULT_ZOOM_DAMPING_FACTOR,
+  showFPS = DEFAULT_SHOW_FPS,
+  backgroundColor = DEFAULT_BACKGROUND_COLOR
   }: {
     clap?: ClapProject
     minZoom?: number
     maxZoom?: number
     zoomSpeed?: number
-    showFPS?: false
+    zoomDampingFactor?: number
+    showFPS?: boolean
+    backgroundColor?: string
   } = {
     clap: undefined,
 
     minZoom: DEFAULT_MIN_ZOOM,
     maxZoom: DEFAULT_MAX_ZOOM,
     zoomSpeed: DEFAULT_ZOOM_SPEED,
-    showFPS: DEFAULT_SHOW_FPS
+    zoomDampingFactor: DEFAULT_ZOOM_DAMPING_FACTOR,
+    showFPS: DEFAULT_SHOW_FPS,
+    backgroundColor: DEFAULT_BACKGROUND_COLOR
   }) {
   return (
-    <div className="w-full h-full overflow-hidden"
-    style={{ width: "100%", height: "100%", background: "rgb(18,24,39)" }}>
+    <div
+    className="w-full h-full overflow-hidden"
+    // note: bg-zinc-800 is: #27272A
+     >
       <div className="flex flex-row w-full h-full">
         <div className="flex flex-col w-full h-full">
           <Canvas
-             frameloop="demand"
-            style={{ width: "100%", height: "100%", background: "rgb(18,24,39)" }}>
+
+            frameloop="always"
+
+            // those must stay ON otherwise colors will be washed out
+            flat
+            linear
+
+            // doesn't work in our case since we need to display videos
+            // frameloop="demand"
+            
+
+            style={{
+              width: "100%",
+              height: "100%",
+              background: backgroundColor
+            }}
+            >
             <OrthographicCamera makeDefault position={[0, 0, 1]} />
             <TimelineControls
 
               minZoom={minZoom}
               maxZoom={maxZoom}
               zoomSpeed={zoomSpeed}
+              zoomDampingFactor={zoomDampingFactor}
             />
             <TimelineGrid />
             {showFPS && <Stats className="!left-auto right-0" />}

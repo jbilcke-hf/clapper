@@ -9,13 +9,9 @@ import { similar, sliceSegments } from "@/utils"
 import { useTimelineState } from "./useTimelineState"
 
 export const useVisibleSegments = ({
-  cellHeight,
-  cellWidth,
   nbMaxTracks,
   refreshRateInMs,
 }: {
-  cellHeight: number
-  cellWidth: number
   nbMaxTracks: number
   refreshRateInMs: number
 }) => {
@@ -36,6 +32,12 @@ export const useVisibleSegments = ({
   const controls = useThree((state) => state.controls)
   const camera = useThree((state) => state.camera)
   
+  const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
+  const getCellHeight = useTimelineState(s => s.getCellHeight)
+  // const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
+  // note: only the average height change will be detected
+  const cellHeight = getCellHeight()
+
   // TODO: maybe refactor this, put it inside the Zustand state
 
   const stateRef = useRef<{
@@ -47,8 +49,6 @@ export const useVisibleSegments = ({
     timeout: NodeJS.Timeout
     segments: ClapSegment[]
     visibleSegments: ClapSegment[]
-    cellHeight: number
-    cellWidth: number
     nbMaxTracks: number
   }>({
     position: new THREE.Vector3(),
@@ -59,16 +59,12 @@ export const useVisibleSegments = ({
     timeout: 0 as unknown as NodeJS.Timeout,
     segments: [],
     visibleSegments: [],
-    cellHeight,
-    cellWidth,
     nbMaxTracks,
   })
 
 
   // make sure the state reflects the latest params
   stateRef.current.segments = [...segments]
-  stateRef.current.cellHeight = cellHeight
-  stateRef.current.cellWidth = cellWidth
   stateRef.current.nbMaxTracks = nbMaxTracks
 
   // DO we still need this?
@@ -145,14 +141,21 @@ export const useVisibleSegments = ({
   // instead, but it doesn't work for some reason..
   const sync = async (forceRerendering?: boolean) => {
     if (!stateRef.current) { return }
+
+    // TODO: replace our usage of stateRef.current
+    // by useTimelineState.getState()
     const state = stateRef.current
+    const cellWidth = useTimelineState.getState().horizontalZoomLevel
 
     // we can adjust this threshold to only re compute the geometry
     // when a significant shift has been done by the user
-    const epsilonPaneThreshold = 5
+    // high value (eg 5) == less sensitive
+    // low value (e 2) == super sensitive
+    const epsilonPaneThreshold = 3
 
     // now the zoom is tricky because it may be equivalent to a large paning,
     // if we are in a zoom out
+    // which is why we are more sensitive here
     const epsilonZoomThreshold = 1
 
     const cameraDidntPaneALot = similar(state.position, camera.position, epsilonPaneThreshold)
@@ -163,13 +166,12 @@ export const useVisibleSegments = ({
     state.position.copy(camera.position)
     state.scale.copy(camera.scale)
 
-    // TODO: compute the visible cell X and Y
-    // then we are going to be a bit generous and also display items on the left and right of it
-
     // determine, based on the current zoom level, and screen width,
     // how many horizontal cell columns could be visible at a time
-    const maxPossibleNumberOfVisibleHorizontalCells =
-      Math.ceil(size.width / state.cellWidth / camera.zoom)
+    // 
+    // note that is only useful for *horizontal* scrolling
+    // this doesn't prevent loading delay caused by zooming out
+    const maxPossibleNumberOfVisibleHorizontalCells = Math.ceil(size.width / cellWidth / camera.zoom)
 
     const cellWidthInPixelBasedOnZoom = size.width / maxPossibleNumberOfVisibleHorizontalCells
 
@@ -187,7 +189,17 @@ export const useVisibleSegments = ({
 
     const cellIndex = Math.max(0, pixelX / cellWidthInPixelBasedOnZoom)
 
-    const securityMargin = maxPossibleNumberOfVisibleHorizontalCells
+    const securityMargin =
+      // this is useful for horizontal  scroll only
+      maxPossibleNumberOfVisibleHorizontalCells
+      +
+      // if the camera is already zoomed-out a lot, it means we only need
+      // to take horizontal scroll into account
+      //
+      // but if the camera is zoomed-in, then a quick scroll wheel could
+      // send us asking for x2, x5 etc.. more cells instantly, so we need
+      // to take that into account too.
+      (camera.zoom * 8) // 8 because 4 on left and 4 on right
 
     // we only keep segments within a given range
     // those are not necessarily visible (there is a security margin)
@@ -217,16 +229,18 @@ export const useVisibleSegments = ({
    
     // we could also use useInterval, but we need something async-friendly
     const fn = async () => {
-      // TODO: monitor how long it takes to sync
+      // we want a relatively "high" refresh rate in order to get smooth camera movement
+      // eg a rate of 500ms
+      //
+      // ideally I would say we should also debounce the call, to defer
+      // the sync to until we have finished the zoom animation and don't have user action,
+      // (with a time limit anyway)
+      //
+      // we can also try to optimize this further by adapting it to the compute load,
+      // either by calculating the FPS or by monitoring the time it takes
+      // to run the sync() function
       try { await sync(false) } catch (err) {}
-      // console.log("setting a new timeout")
 
-      // refresh rate for the grid (high value == delay before we see the "hidden" cells)
-      // this should be a fact of the number of segments,
-      // as this puts a strain on the rendering FPS
-      // one thing that could be done is to compute how long the last sync operation lasted,
-      // and adjust the refreshRateInMs based on this
-      
       state.timeout = setTimeout(fn, refreshRateInMs) as any
     }
     fn()
@@ -239,5 +253,5 @@ export const useVisibleSegments = ({
     fn()
   }, [cellHeight, cellWidth])
   
-  return visibleSegments;
+  return visibleSegments
 };

@@ -7,7 +7,6 @@ export {
 
 export {
   useAxis,
-  useCellWidth,
   useGridLines,
   usePreviewTrackHeight,
   useStandardTrackHeight,
