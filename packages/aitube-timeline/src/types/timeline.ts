@@ -7,6 +7,7 @@ export type TimelineStoreState = {
   segments: ClapSegment[]
   segmentsChanged: number
   visibleSegments: ClapSegment[]
+  nbIdentifiedTracks: number
 
   minHorizontalZoomLevel: number
   maxHorizontalZoomLevel: number
@@ -21,6 +22,8 @@ export type TimelineStoreState = {
   cellHeight: number
   cellWidth: number
   nbMaxTracks: number
+
+  trackToCellHeight: Record<number, number>
 }
 
 
@@ -28,6 +31,8 @@ export type TimelineStoreModifiers = {
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => void
   setSegments: (segments?: ClapSegment[]) => void
   setVisibleSegments: (visibleSegments?: ClapSegment[]) => void
+  getCellHeight: (segmentOrTrackNumber?: number | ClapSegment) => number
+  getVerticalCellPosition: (start: number,end: number) => number
 }
 
 

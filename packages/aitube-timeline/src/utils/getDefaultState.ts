@@ -12,6 +12,7 @@ export function getDefaultState(): TimelineStoreState {
     segments: [],
     segmentsChanged: 0,
     visibleSegments: [],
+    nbIdentifiedTracks: 0,
     
     position: new THREE.Vector3(),
     scale: new THREE.Vector3(),
@@ -20,12 +21,20 @@ export function getDefaultState(): TimelineStoreState {
     afterSteps: 0,
     timeout: 0 as unknown as NodeJS.Timeout,
 
-    minHorizontalZoomLevel: 25,
-    maxHorizontalZoomLevel: 150,
-    horizontalZoomLevel: 20, // 80,
+    minHorizontalZoomLevel: 2,
+    maxHorizontalZoomLevel: 100,
+    horizontalZoomLevel: 8, // 80,
     
     cellHeight: PROMPT_STEP_HEIGHT_IN_PX,
     cellWidth: 20,
     nbMaxTracks: DEFAULT_NB_TRACKS,
+
+    trackToCellHeight: {
+      // VIDEO
+      0: PROMPT_STEP_HEIGHT_IN_PX * 3,
+
+      // STORYBOARD
+      1: PROMPT_STEP_HEIGHT_IN_PX * 3,
+    },
   }
 }
