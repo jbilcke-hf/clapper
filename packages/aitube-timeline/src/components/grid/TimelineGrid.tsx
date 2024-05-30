@@ -17,19 +17,22 @@ import {
 export function TimelineGrid() {
   const { size, viewport } = useThree()
 
-  const previewCellHeight = usePreviewTrackHeight()
+  // const previewCellHeight = usePreviewTrackHeight()
   const cellHeight = useStandardTrackHeight() // cellHeight
   const cellWidth = useCellWidth() // 10
 
   const nbMaxShots = ((3 * 60 * 60) / 2) // 3 hours converted to seconds, and divided by 2 (a shot is about 2 sec)
   const nbMaxTracks = DEFAULT_NB_TRACKS
 
-  const [scale, setScale] = useState(50)
+  // refresh rate for the grid (high value == delay before we see the "hidden" cells)
+  // this should be a fact of the number of segments,
+  // as this puts a strain on the rendering FPS
+  const refreshRateInMs = 250
 
-  const aspect = size.width / viewport.width;
+  // const aspect = size.width / viewport.width;
 
-  const controls = useThree((state) => state.controls)
-  const camera = useThree((state) => state.camera)
+  // const controls = useThree((state) => state.controls)
+  // const camera = useThree((state) => state.camera)
 
   const width = nbMaxShots * cellWidth
   const height = nbMaxTracks * cellHeight
@@ -49,6 +52,7 @@ export function TimelineGrid() {
     cellHeight,
     cellWidth,
     nbMaxTracks,
+    refreshRateInMs,
   });
 
   const [hovered, setHovered] = useState("")
@@ -119,9 +123,14 @@ export function TimelineGrid() {
             // this depends on the current row height
             const maxNbLines = 2
 
-            const durationInSteps = (s.endTimeInMs - s.startTimeInMs) * DEFAULT_DURATION_IN_MS_PER_STEP
+            const durationInSteps = (
+              (s.endTimeInMs - s.startTimeInMs) / DEFAULT_DURATION_IN_MS_PER_STEP
+            )
 
-            const startTimeInSteps = s.startTimeInMs * DEFAULT_DURATION_IN_MS_PER_STEP
+            const startTimeInSteps = (
+              s.startTimeInMs / DEFAULT_DURATION_IN_MS_PER_STEP
+            )
+
 
             // note: an alternative could be to create a small fade or blur effect,
             // but I think it might be expensive
@@ -136,7 +145,13 @@ export function TimelineGrid() {
             <a.mesh
               key={s.id}
               position={[
-                (startTimeInSteps * cellWidth) + cellWidth,
+                (startTimeInSteps * cellWidth) 
+
+                  // the position of a RoundedBox is defined from its center
+                  // so we have to shift its container (the a.mesh)
+                  // to the right, exactly one half of the RoundedBox's width
+                  + ((durationInSteps * cellWidth) / 2),
+
                 -s.track * cellHeight + cellHeight,
                 1
               ]}
@@ -221,6 +236,7 @@ export function TimelineGrid() {
                     1
                   ]}
                   */
+                  lineHeight={1.0}
                   color="#000000" // default
                   fillOpacity={0.7}
                   anchorX="left" // default

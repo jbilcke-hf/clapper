@@ -13,7 +13,10 @@ export function sliceSegments({
   beforeTimeInMs: number
   visibleSegments: ClapSegment[]
 }): ClapSegment[] {
-  console.log(`sliceSegments(): slicing [${afterTimeInMs}:${beforeTimeInMs}] of ${segments.length} segments`)
+  // console.log(`sliceSegments(): extracting [${afterTimeInMs}:${beforeTimeInMs}] out of ${segments.length} segments`)
   
-  return segments.filter(s => afterTimeInMs <= s.startTimeInMs && s.endTimeInMs <= beforeTimeInMs)
+  const result = segments.filter(s => afterTimeInMs <= s.startTimeInMs && s.endTimeInMs <= beforeTimeInMs)
+  // console.log(`sliceSegments(): extracted ${result.length} segments`)
+  
+  return result
 }

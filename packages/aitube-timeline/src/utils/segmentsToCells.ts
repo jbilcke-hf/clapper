@@ -23,10 +23,11 @@ export async function segmentsToCells({
   afterTimeInMs: number
   beforeTimeInMs: number
 }): Promise<Cell[]> {
+  throw new Error(`this function seems to be unused`)
 
   const cells: Cell[] = [];
 
-  console.log("starting segmentsToCells cellWidth = ${cellWidth}`")
+  console.log(`starting segmentsToCells cellWidth = ${cellWidth}`)
   // const maxWidth = nbMaxShots * cellWidth
   // const maxHeight = nbTracks * cellHeight
 
@@ -38,7 +39,7 @@ export async function segmentsToCells({
   let addAsyncDelayEveryItems = 100
   let addAsyncDelayInMs = 50
 
-  console.log(`segmentsToCell(): slicing [${afterTimeInMs}:${beforeTimeInMs}] of ${segments.length} segments`)
+  console.log(`segmentsToCell(): converting slice [${afterTimeInMs}:${beforeTimeInMs}] (${segments.length} segments)`)
   // TODO: we should probably try to keep the existing structure if possible
 
   // since the for loop is a blocker, we turn it into an async thing
@@ -65,6 +66,19 @@ export async function segmentsToCells({
     const startTimeInSteps = segment.startTimeInMs / DEFAULT_DURATION_IN_MS_PER_STEP
     const durationInSteps = (segment.endTimeInMs - segment.startTimeInMs) / DEFAULT_DURATION_IN_MS_PER_STEP
 
+    console.log(`details: `, {
+      DEFAULT_DURATION_IN_MS_PER_STEP,
+      cellWidth,
+
+      startTimeInMs: segment.startTimeInMs,
+      startTimeInSteps,
+
+      endTimeInMs: segment.endTimeInMs,
+      durationInSteps,
+
+      x1: (startTimeInSteps * cellWidth) + cellWidth,
+      x2: (durationInSteps * cellWidth) - 0.2,
+    })
     const cell: Cell = {
       position: new THREE.Vector3(
         (startTimeInSteps * cellWidth) + cellWidth,

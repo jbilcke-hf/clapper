@@ -12,10 +12,12 @@ export const useVisibleSegments = ({
   cellHeight,
   cellWidth,
   nbMaxTracks,
+  refreshRateInMs,
 }: {
   cellHeight: number
   cellWidth: number
   nbMaxTracks: number
+  refreshRateInMs: number
 }) => {
   // to make it react to screen width change
   // however, this doesn't seem to work well
@@ -69,6 +71,7 @@ export const useVisibleSegments = ({
   stateRef.current.cellWidth = cellWidth
   stateRef.current.nbMaxTracks = nbMaxTracks
 
+  // DO we still need this?
   useEffect(() => {
     stateRef.current.segments = [...segments]
     console.log("TODO: force a re-rendering")
@@ -212,13 +215,18 @@ export const useVisibleSegments = ({
 
     state.initialized = true
    
-    const refreshRateInMs = 500
-
     // we could also use useInterval, but we need something async-friendly
     const fn = async () => {
+      // TODO: monitor how long it takes to sync
       try { await sync(false) } catch (err) {}
       // console.log("setting a new timeout")
 
+      // refresh rate for the grid (high value == delay before we see the "hidden" cells)
+      // this should be a fact of the number of segments,
+      // as this puts a strain on the rendering FPS
+      // one thing that could be done is to compute how long the last sync operation lasted,
+      // and adjust the refreshRateInMs based on this
+      
       state.timeout = setTimeout(fn, refreshRateInMs) as any
     }
     fn()

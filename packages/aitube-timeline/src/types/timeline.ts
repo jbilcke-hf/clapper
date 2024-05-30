@@ -1,7 +1,9 @@
 import * as THREE from "three"
-import { ClapSegment } from "@aitube/clap"
+import { ClapProject, ClapSegment } from "@aitube/clap"
 
-export type TimelineState = {
+export type TimelineStoreState = {
+  clap?: ClapProject
+
   segments: ClapSegment[]
   segmentsChanged: number
   visibleSegments: ClapSegment[]
@@ -19,8 +21,14 @@ export type TimelineState = {
   cellHeight: number
   cellWidth: number
   nbMaxTracks: number
+}
 
+
+export type TimelineStoreModifiers = {
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => void
   setSegments: (segments?: ClapSegment[]) => void
   setVisibleSegments: (visibleSegments?: ClapSegment[]) => void
 }
+
+
+export type TimelineStore = TimelineStoreState & TimelineStoreModifiers
