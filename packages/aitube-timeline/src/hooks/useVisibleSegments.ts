@@ -32,11 +32,8 @@ export const useVisibleSegments = ({
   const controls = useThree((state) => state.controls)
 
   // we do a little trick here, to put the camera zoom inside our Zustand store
-  const camera = useThree(({ camera }) => {
-    useTimelineState.setState({ currentZoomLevel: camera.zoom })
-    return camera
-  })
-  
+  const camera = useThree(({ camera }) => camera)
+
   const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
   const getCellHeight = useTimelineState(s => s.getCellHeight)
   // const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
@@ -45,6 +42,10 @@ export const useVisibleSegments = ({
 
   // TODO: maybe refactor this, put it inside the Zustand state
 
+  useEffect(() => {
+    useTimelineState.setState({ currentZoomLevel: camera.zoom })
+  }, [camera])
+  
   const stateRef = useRef<{
     position: THREE.Vector3
     scale: THREE.Vector3

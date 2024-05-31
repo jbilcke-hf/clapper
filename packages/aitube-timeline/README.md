@@ -27,18 +27,11 @@ Depending on your project configuration and package manager, you may need to ins
 npm i @aitube/clap @radix-ui/react-slider @react-spring/three @react-spring/types @react-three/drei @react-three/fiber @types/react @types/react-dom react react-dom tailwindcss three typescript zustand
 ```
 
-If you forget some dependencies you might get weird errors,
-such as this one:
+If you forget some dependencies you might get weird errors
 
-```
-TypeError: (0 , g.jsxDEV) is not a function
-    at eX (page-e7081404c9d62d4d.js:1:35643)
+## Building
 
- children: [(0, g.jsxDEV)(z.i, {
-  makeDefault: !0,
-  position: [0, 0, 1]
-  }
-```
+You can see in the package.json that I set `NODE_ENV=production` while building, that's because of a weirdness with Bun: https://github.com/oven-sh/bun/issues/3768
 
 ## Future extensions
 
