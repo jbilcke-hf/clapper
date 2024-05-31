@@ -52,7 +52,12 @@ export function Main() {
         ? <ClapTimeline
           showFPS
         />
-        : <p className="text-stone-50 text-4xl">Loading..</p>}
+        : <p
+        className="text-stone-100 font-sans font-thin text-[4.5vw]"
+        style={{ textShadow: "#000 1px 0 3px" }}
+        >
+          {clapUrl ? 'Loading..' : 'Error: missing .clap file'}
+          </p>}
         <Toaster />
       </div>
     </TooltipProvider>
