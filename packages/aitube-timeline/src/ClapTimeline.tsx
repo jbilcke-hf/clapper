@@ -9,6 +9,7 @@ import {
 } from "@/components"
 import { ClapProject } from "@aitube/clap"
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_MAX_ZOOM, DEFAULT_MIN_ZOOM, DEFAULT_SHOW_FPS, DEFAULT_ZOOM_DAMPING_FACTOR, DEFAULT_ZOOM_SPEED } from "./constants/defaults"
+import { cn } from "./utils"
 
 export function ClapTimeline({
   clap,
@@ -62,17 +63,17 @@ export function ClapTimeline({
               background: backgroundColor
             }}
             >
-            <OrthographicCamera makeDefault position={[0, 0, 1]} />
-            <TimelineControls
+              <OrthographicCamera makeDefault position={[0, 0, 1]} />
+              <TimelineControls
 
-              minZoom={minZoom}
-              maxZoom={maxZoom}
-              zoomSpeed={zoomSpeed}
-              zoomDampingFactor={zoomDampingFactor}
-            />
-            <TimelineGrid />
-            {showFPS && <Stats className="!left-auto right-0" />}
-          </Canvas>
+                minZoom={minZoom}
+                maxZoom={maxZoom}
+                zoomSpeed={zoomSpeed}
+                zoomDampingFactor={zoomDampingFactor}
+              />
+              <TimelineGrid />
+              <Stats className={cn(`!left-auto right-0`, showFPS ? 'opacity-100' : 'opacity-0')} />
+            </Canvas>
           <HorizontalScroller />
         </div>
         <VerticalScroller />
