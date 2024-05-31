@@ -108,7 +108,6 @@ export function TimelineGrid() {
                 }
                 linewidth={1}
               />
-              {/*<meshBasicMaterial color="#374151" />*/}
             </line>
           ))}
         </group>
@@ -146,7 +145,6 @@ export function TimelineGrid() {
             />
           )}
         </group>
-
       </Plane>
     </mesh>
   );
