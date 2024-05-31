@@ -2,7 +2,12 @@ export {
   TimelineControls,
   HorizontalScroller,
   VerticalScroller,
-  TimelineGrid
+  TimelineGrid,
+  Cell,
+  ImageCell,
+  VideoCell,
+  TextCell,
+  SpecializedCellProps
 } from "./components"
 
 export {
@@ -16,14 +21,23 @@ export {
 
 export {
   cn,
-  getSegmentColorHex,
   getWebGLCharWidth,
   getWebGLTextWidth,
   clampWebGLText,
   clampWebGLTextNaive,
-  segmentsToCells,
   similar,
   sliceSegments
 } from "./utils"
 
+export {
+  RenderedCell,
+  TimelineStore,
+  TimelineStoreState,
+  TimelineStoreModifiers,
+  ClapTimelineTheme,
+  ClapSegmentCategoryHues,
+  ClapSegmentColorScheme,
+} from "./types"
+
 export { ClapTimeline } from "./ClapTimeline"
+

@@ -2,13 +2,14 @@
 import * as THREE from "three"
 
 
-import { DEFAULT_NB_TRACKS, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
+import { DEFAULT_NB_TRACKS, pastel, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 import { TimelineStoreState } from "@/types/timeline"
 
 export function getDefaultState(): TimelineStoreState {
 
   return {
     clap: undefined,
+    theme: pastel,
     segments: [],
     segmentsChanged: 0,
     visibleSegments: [],
@@ -23,10 +24,18 @@ export function getDefaultState(): TimelineStoreState {
 
     minHorizontalZoomLevel: 2,
     maxHorizontalZoomLevel: 100,
-    horizontalZoomLevel: 8, // 80,
+
+    // horizontalZoomLevel is the WIDTH of a grid cell, in pixels
+    // by initializing it with PROMPT_STEP_HEIGHT_IN_PX (the default grid cell HEIGHT in pixels)
+    // we can achieve a square shape
+    horizontalZoomLevel: PROMPT_STEP_HEIGHT_IN_PX,
+    originalHorizontalZoomLevel: PROMPT_STEP_HEIGHT_IN_PX,
     
     cellHeight: PROMPT_STEP_HEIGHT_IN_PX,
-    cellWidth: 20,
+
+    // @deprecated
+    cellWidth: PROMPT_STEP_HEIGHT_IN_PX,
+
     nbMaxTracks: DEFAULT_NB_TRACKS,
 
     trackToCellHeight: {
@@ -36,5 +45,8 @@ export function getDefaultState(): TimelineStoreState {
       // STORYBOARD
       1: PROMPT_STEP_HEIGHT_IN_PX * 3,
     },
+    typicalSegmentDurationInSteps: 4,
+
+    currentZoomLevel: 1.0,
   }
 }

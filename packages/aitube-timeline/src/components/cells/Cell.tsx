@@ -2,7 +2,6 @@ import { a } from "@react-spring/three"
 import { ClapSegment } from "@aitube/clap"
 
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
-import { getSegmentColorHex } from "@/utils"
 
 import { ImageCell } from "./ImageCell"
 import { VideoCell } from "./VideoCell"
@@ -18,7 +17,8 @@ export function Cell({
   setHovered: (id: string) => void
 }) {
 
-  const baseSegmentColor = getSegmentColorHex(s)
+  const getSegmentColorScheme = useTimelineState(s => s.getSegmentColorScheme)
+  const colorScheme = getSegmentColorScheme(s)
 
   const cellWidth = useTimelineState((s) => s.horizontalZoomLevel)
   const getCellHeight = useTimelineState((s) => s.getCellHeight)
@@ -34,6 +34,13 @@ export function Cell({
   const startTimeInSteps = (
     s.startTimeInMs / DEFAULT_DURATION_IN_MS_PER_STEP
   )
+
+  const widthInPx = durationInSteps * cellWidth
+
+  const currentZoomLevel = useTimelineState(s => s.currentZoomLevel)
+
+  // we need to round this one to avoid *too* many re-renders
+  const widthInPxAfterZoom = Math.round(currentZoomLevel * durationInSteps * cellWidth)
 
   const SpecializedCell =
     s.assetUrl.startsWith("data:image/")
@@ -69,7 +76,9 @@ export function Cell({
           setHovered={setHovered}
           durationInSteps={durationInSteps}
           startTimeInSteps={startTimeInSteps}
-          baseSegmentColor={baseSegmentColor}
+          colorScheme={colorScheme}
+          widthInPx={widthInPx}
+          widthInPxAfterZoom={widthInPxAfterZoom}
         />
     </a.mesh>
   )

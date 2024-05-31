@@ -1,5 +1,8 @@
 import { MapControls } from "@react-three/drei"
 
+// for doc see:
+// https://threejs.org/docs/index.html?q=controls#examples/en/controls/MapControls
+
 export function TimelineControls({
   minZoom,
   maxZoom,
@@ -25,6 +28,7 @@ export function TimelineControls({
       // maxDistance={10}
       minZoom={minZoom}
       maxZoom={maxZoom}
+
       // minPolarAngle: number;
       // maxPolarAngle: number;
       // minAzimuthAngle: number;

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import * as THREE from "three"
 import { Plane } from "@react-three/drei"
 import { useThree } from "@react-three/fiber"
 import { useSpring, a, animated, config } from "@react-spring/three"
@@ -12,10 +13,12 @@ import {
 } from "@/hooks"
 
 import { Cell } from "@/components/cells"
+import { hslToHex } from "@/utils"
 
 export function TimelineGrid() {
   const { size, viewport } = useThree()
 
+  const typicalSegmentDurationInSteps = useTimelineState(s => s.typicalSegmentDurationInSteps)
   const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
   const getCellHeight = useTimelineState(s => s.getCellHeight)
   const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
@@ -78,7 +81,11 @@ export function TimelineGrid() {
       // {...bindDrag()}
       position={[0,0,0]}
     >
-      <Plane args={[width, height]} position={[0,0,-1]}>
+      <Plane args={[width, height]} position={[
+        -(size.width / 2),
+        0,
+        -1
+        ]}>
         {/* background */}
         <meshBasicMaterial
           attach="material"
@@ -94,9 +101,11 @@ export function TimelineGrid() {
               key={idx}>
               <lineBasicMaterial
                 attach="material"
-                color={"#ffffff"}
-                transparent
-                opacity={0.3}
+                color={
+                  idx % typicalSegmentDurationInSteps === 0
+                  ? hslToHex(0, 0, 70)
+                  : hslToHex(0, 0, 50)
+                }
                 linewidth={1}
               />
               {/*<meshBasicMaterial color="#374151" />*/}

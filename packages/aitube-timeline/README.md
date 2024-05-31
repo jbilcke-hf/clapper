@@ -23,3 +23,9 @@ npm i @aitube/clap @aitube/colors @radix-ui/react-slider @react-spring/three @re
 ```
 
 This project is currently not designed to be used with other tools such as Svelte, Vue, or other state manager. However if there is demand (eg. more than one person asking for it) it might evolve to become more modular in the future.
+
+## TODO
+
+### Performance optimization
+
+[ ] The timeline is slow when we are zooming out over large amounts of text -> we need to hide the text when it is very small
