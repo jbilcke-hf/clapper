@@ -6,12 +6,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "NODE_ENV=development next start",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@aitube/clap": "0.0.23",
-    "@aitube/timeline": "0.0.1",
+    "@aitube/timeline": "0.0.2",
     "@huggingface/hub": "^0.15.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -31,6 +31,10 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@react-spring/three": "^9.7.3",
+    "@react-spring/types": "^9.7.3",
+    "@react-three/drei": "^9.106.0",
+    "@react-three/fiber": "^8.16.6",
     "@types/node": "20.12.7",
     "@types/react": "18.3.0",
     "@types/react-dom": "18.3.0",
@@ -59,6 +63,7 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss": "^3.4.3",
     "tailwindcss-animate": "^1.0.7",
+    "three": "^0.164.1",
     "ts-node": "^10.9.2",
     "typescript": "5.4.5",
     "use-file-picker": "^2.1.2",
