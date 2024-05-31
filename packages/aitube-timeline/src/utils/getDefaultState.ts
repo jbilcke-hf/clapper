@@ -48,5 +48,7 @@ export function getDefaultState(): TimelineStoreState {
     typicalSegmentDurationInSteps: 4,
 
     currentZoomLevel: 1.0,
+
+    hoveredSegment: undefined,
   }
 }

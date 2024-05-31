@@ -8,7 +8,8 @@ import { DEFAULT_NB_TRACKS } from "@/constants"
 import {
   useVisibleSegments,
   useAxis,
-  useGridLines,
+  useVerticalGridLines,
+  useHorizontalGridLines,
   useTimelineState
 } from "@/hooks"
 
@@ -46,7 +47,11 @@ export function TimelineGrid() {
 
   const axis = useAxis(width, height)
 
-  const gridlines = useGridLines({
+  const verticalGridLines = useVerticalGridLines({
+    nbMaxShots,
+  });
+
+  const horizontalGridLines = useHorizontalGridLines({
     nbMaxShots,
   });
 
@@ -58,13 +63,14 @@ export function TimelineGrid() {
     refreshRateInMs,
   });
 
-  const [hovered, setHovered] = useState("")
+  const hoveredSegment = useTimelineState(s => s.hoveredSegment)
+  const setHoveredSegment = useTimelineState(s => s.setHoveredSegment)
 
   useEffect(() => {
-    document.body.style.cursor = hovered ? 'pointer' : 'auto'
+    document.body.style.cursor = hoveredSegment ? 'pointer' : 'auto'
 
     return () => { document.body.style.cursor = 'auto' }
-  }, [hovered])
+  }, [hoveredSegment])
 
   const [props, set] = useSpring(() => ({
     pos: [0, 0, 0],
@@ -94,7 +100,7 @@ export function TimelineGrid() {
           
         />
         <group position={[0, height / 2, -3]}>
-          {gridlines.map((lineGeometry, idx) => (
+          {verticalGridLines.map((lineGeometry, idx) => (
             <line
               // @ts-ignore
               geometry={lineGeometry}
@@ -111,6 +117,23 @@ export function TimelineGrid() {
             </line>
           ))}
         </group>
+
+        <group position={[0, height / 2, -3]}>
+        {horizontalGridLines.map((lineGeometry, idx) => (
+          <line
+            // @ts-ignore
+            geometry={lineGeometry}
+            key={idx}>
+            <lineBasicMaterial
+              attach="material"
+              color={
+                hslToHex(0, 0, 70)
+              }
+              linewidth={1}
+            />
+          </line>
+        ))}
+      </group>
 
         <group position={[0, height / 2, -3]}>
           {axis.map((lineGeometry, idx) => (
@@ -141,7 +164,7 @@ export function TimelineGrid() {
             <Cell
               key={s.id}
               segment={s}
-              setHovered={setHovered}
+              setHoveredSegment={setHoveredSegment}
             />
           )}
         </group>

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import * as THREE from "three"
 import { useSpring, a, animated, config } from "@react-spring/three"
 
@@ -8,7 +8,8 @@ export function VideoCell({
   segment: s,
   cellWidth,
   cellHeight,
-  setHovered,
+  isHovered,
+  setHoveredSegment,
   durationInSteps,
   startTimeInSteps,
   colorScheme,
@@ -25,12 +26,24 @@ export function VideoCell({
     return vid;
   })
 
+  useEffect(() => {
+    if (isHovered && video) {
+      if (video.paused) {
+        video.play()
+      }
+    } else {
+      if (!video.paused) {
+        video.pause()
+      }
+    }
+  }, [isHovered])
+
   return (
     <a.mesh
       key={s.id}
       position={[
         0,
-        - ((1 + s.track) * cellHeight),
+        -cellHeight,
         1
       ]}
     >

@@ -19,7 +19,9 @@ export type ClapSegmentColorScheme = {
   baseLightness: number
   
   backgroundColor: string
+  backgroundColorHover: string
   foregroundColor: string
   borderColor: string
   textColor: string
+  textColorHover: string
 }

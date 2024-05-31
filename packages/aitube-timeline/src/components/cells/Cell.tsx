@@ -7,14 +7,13 @@ import { ImageCell } from "./ImageCell"
 import { VideoCell } from "./VideoCell"
 import { TextCell } from "./TextCell"
 import { useTimelineState } from "@/hooks"
-import { DEFAULT_BACKGROUND_COLOR } from "@/constants/defaults"
 
 export function Cell({
   segment: s,
-  setHovered
+  setHoveredSegment
 }: {
   segment: ClapSegment
-  setHovered: (id: string) => void
+  setHoveredSegment: (hoveredSegment?: ClapSegment) => void
 }) {
 
   const getSegmentColorScheme = useTimelineState(s => s.getSegmentColorScheme)
@@ -42,6 +41,9 @@ export function Cell({
   // we need to round this one to avoid *too* many re-renders
   const widthInPxAfterZoom = Math.round(currentZoomLevel * durationInSteps * cellWidth)
 
+  const hoveredSegment = useTimelineState(s => s.hoveredSegment)
+  const isHovered = hoveredSegment?.id === s.id
+
   const SpecializedCell =
     s.assetUrl.startsWith("data:image/")
       ? ImageCell
@@ -60,20 +62,39 @@ export function Cell({
           // to the right, exactly one half of the RoundedBox's width
           + ((durationInSteps * cellWidth) / 2),
 
-        -verticalCellPosition + (cellHeight / 2),
+        -verticalCellPosition  + (cellHeight / 2),
         1
       ]}
+
+      onPointerEnter={(e) => {
+        // console.log('enter')
+        setHoveredSegment(s)
+      }}
+      onPointerLeave={(e) => {
+        // console.log('leave')
+        setHoveredSegment(undefined)
+      }}
+
+
+      onClick={(e) => console.log('click')}
+      onContextMenu={(e) => console.log('context menu')}
+      onDoubleClick={(e) => console.log('double click')}
+      // onWheel={(e) => console.log('wheel spins')}
+      // onPointerUp={(e) => console.log('up')}
+      // onPointerDown={(e) => console.log('down')}
+      // onPointerOver={(e) => console.log('over')}
+      // onPointerOut={(e) => console.log('out')}
+
+      // onPointerMove={(e) => console.log('move')}
+      // onPointerMissed={() => console.log('missed')}
+      // onUpdate={(self) => console.log('props have been updated')}
     >
-      <meshBasicMaterial
-        attach="material"
-        color={DEFAULT_BACKGROUND_COLOR}
-      />
-        
       <SpecializedCell
           segment={s}
           cellWidth={cellWidth}
           cellHeight={cellHeight}
-          setHovered={setHovered}
+          isHovered={isHovered}
+          setHoveredSegment={setHoveredSegment}
           durationInSteps={durationInSteps}
           startTimeInSteps={startTimeInSteps}
           colorScheme={colorScheme}

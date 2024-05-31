@@ -32,6 +32,8 @@ export type TimelineStoreState = {
   // note: this is a mirror value of 
   // it might change rapidly (many times per seconds), so use with care!
   currentZoomLevel: number
+
+  hoveredSegment?: ClapSegment
 }
 
 
@@ -42,6 +44,7 @@ export type TimelineStoreModifiers = {
   getCellHeight: (trackNumber?: number) => number
   getVerticalCellPosition: (start: number,end: number) => number
   getSegmentColorScheme: (segment?: ClapSegment) => ClapSegmentColorScheme
+  setHoveredSegment: (hoveredSegment?: ClapSegment) => void
 }
 
 
