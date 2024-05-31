@@ -1,31 +1,37 @@
-# @aitube/react-timeline
+# @aitube/timeline
 
-*React component to display a .clap timeline*
+*React component to display an OpenClap timeline*
 
 ## Introduction
 
-This is a work in progress project.
+This library is not ready for public use yet.
 
-For the moment the component is read-only, and can only display text.
+This is a "build in public" project so code is open and provided for convenience and discussion,
+but there is no official release yet (documentation will be written once the library is useable).
 
-More instructions will be provided until we can do more with it.
+Thanks for your patience!
 
 ## Installation
 
-```bash
-npm i @aitube/react-timeline
-```
+Note: as warned before, this library is not ready for public use yet.
 
-Depending on your project configuration and package manager, you my need to install some additional packages manually, such as React, Radix, Tailwind, Three.js, Zustand etc:
+I cannot provide support until the basic features have been implemented and some critical bugs fixed.
 
 ```bash
-npm i @aitube/clap @aitube/colors @radix-ui/react-slider @react-spring/three @react-spring/types @react-three/drei @react-three/fiber @types/react @types/react-dom react react-dom tailwindcss three typescript zustand
+npm i @aitube/timeline
 ```
 
-This project is currently not designed to be used with other tools such as Svelte, Vue, or other state manager. However if there is demand (eg. more than one person asking for it) it might evolve to become more modular in the future.
+Depending on your project configuration and package manager, you may need to install some additional packages manually, such as React, Radix, Tailwind, Three.js, Zustand etc:
+
+```bash
+npm i @aitube/clap @radix-ui/react-slider @react-spring/three @react-spring/types @react-three/drei @react-three/fiber @types/react @types/react-dom react react-dom tailwindcss three typescript zustand
+```
+
+This project is currently not designed to be used with other tools such as Svelte, Vue, or other state manager. In the future it may be split into sub-libraries to facilitate support for alternative frameworks.
 
 ## TODO
 
-### Performance optimization
-
-[ ] The timeline is slow when we are zooming out over large amounts of text -> we need to hide the text when it is very small
+[ ] BUG: When zooming in an area, large segments (such as music) become invisible due to the way we compute ranges
+[ ] FEATURE: Add edit callbacks
+[ ] CLEAN: Write doc
+[ ] BUG: Fix the Vite previewer
