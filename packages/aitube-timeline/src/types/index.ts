@@ -1,6 +1,6 @@
 
 export {
-  Cell
+  RenderedCell
 } from "./grid"
 
 export {
@@ -8,3 +8,9 @@ export {
   TimelineStoreState,
   TimelineStoreModifiers
 } from "./timeline"
+
+export {
+  ClapTimelineTheme,
+  ClapSegmentCategoryHues,
+  ClapSegmentColorScheme
+} from "./theme"

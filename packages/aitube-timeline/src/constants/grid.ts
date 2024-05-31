@@ -7,5 +7,5 @@ export const DEFAULT_NB_TRACKS = 24
 // lasts for 2 seconds (500ms * 4)
 export const DEFAULT_COLUMNS_PER_SLICE = 4
 
-export const PROMPT_STEP_HEIGHT_IN_PX = 24
+export const PROMPT_STEP_HEIGHT_IN_PX = 48
 export const PREVIEW_STEP_HEIGHT_IN_PX = 3 * PROMPT_STEP_HEIGHT_IN_PX

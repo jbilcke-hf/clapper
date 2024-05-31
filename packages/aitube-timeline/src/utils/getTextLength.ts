@@ -7,6 +7,8 @@
   * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
   */
 
+import { useTimelineState } from ".."
+
 function getTextWidthInCanvas(text: string, font: string) {
   if (typeof window === "undefined") {
     return 0
@@ -25,11 +27,12 @@ function getTextWidthInCanvas(text: string, font: string) {
 const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()_-"+=,;:?/\\&@#'.split('')
 const charLength = characters.reduce((acc, char) => ({
   ...acc,
-  [char]: getTextWidthInCanvas(char, "Arial")
+  [char]: getTextWidthInCanvas(char, "bold Arial")
 }), {} as Record<string, number>)
+let defaultCharLength = 5.561523437
 
-const defaultCharLength = 5.561523437 // seems to be a common width when we use getTextWidthInCanvas()
-const webglFontWidthFactor = 0.64
+// change this whenever you modify the font size
+const webglFontWidthFactor = 1.7
 
 /**
  * Compute the text of a simple Arial text in a WebGL environmment
@@ -39,7 +42,32 @@ const webglFontWidthFactor = 0.64
  * @returns 
  */
 export function getWebGLCharWidth(char: string = ""): number {
-  return webglFontWidthFactor * (charLength[char] || defaultCharLength)
+
+  const cellWidthInPixels = useTimelineState.getState().horizontalZoomLevel
+
+  let responsiveHack = 1.5
+
+  if (cellWidthInPixels < 16) {
+    responsiveHack = 1.20
+  } else if (cellWidthInPixels < 20) {
+    responsiveHack = 1.10
+  } else if (cellWidthInPixels < 24) {
+    responsiveHack = 1.05
+  } else if (cellWidthInPixels < 28) {
+    responsiveHack = 1
+  } else if (cellWidthInPixels < 32) {
+    responsiveHack = 0.9
+  } else if (cellWidthInPixels < 48) {
+    responsiveHack = 0.8
+  } else if (cellWidthInPixels < 64) {
+    responsiveHack = 0.75
+  } else if (cellWidthInPixels < 128) {
+    responsiveHack = 0.65
+  } else {
+    responsiveHack = 0.55
+  }
+
+  return responsiveHack * webglFontWidthFactor * (charLength[char] || defaultCharLength)
 }
 
 /**
@@ -68,13 +96,13 @@ export function clampWebGLText(
   let width = 0
   let lines: string[] = []
 
-  const text = `${input || ""}`.trim()
+  const text = `${input || ""}`.replace('\n', ' ').trim()
   const characters = text.split('')
   for (const c of characters) {
     width += getWebGLCharWidth(c)
     buffer += c
     if (width >= maxWidthInPixels) {
-      if (lines.length >= maxNbLines) {
+      if (lines.length >= (maxNbLines - 1)) {
         buffer = buffer.trim() // to avoid writing "and .."
         buffer += ".."
         break

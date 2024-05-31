@@ -11,7 +11,7 @@ export function VideoCell({
   setHovered,
   durationInSteps,
   startTimeInSteps,
-  baseSegmentColor,
+  colorScheme,
 }: SpecializedCellProps) {
 
   const [video] = useState(() => {
@@ -21,7 +21,7 @@ export function VideoCell({
     vid.loop = true;
     vid.muted = true;
     vid.playsInline = true;
-    vid.play();
+    // vid.play();
     return vid;
   })
 

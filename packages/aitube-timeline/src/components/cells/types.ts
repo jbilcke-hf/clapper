@@ -1,3 +1,4 @@
+import { ClapSegmentColorScheme } from "@/types"
 import { ClapSegment } from "@aitube/clap"
 
 export type SpecializedCellProps = {
@@ -7,7 +8,7 @@ export type SpecializedCellProps = {
   setHovered: (id: string) => void
   durationInSteps: number
   startTimeInSteps: number
-  baseSegmentColor: {
-    bg: string;
-  }
+  colorScheme: ClapSegmentColorScheme
+  widthInPx: number
+  widthInPxAfterZoom: number
 }

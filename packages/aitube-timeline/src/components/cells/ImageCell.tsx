@@ -11,7 +11,7 @@ export function ImageCell({
   setHovered,
   durationInSteps,
   startTimeInSteps,
-  baseSegmentColor,
+  colorScheme,
 }: SpecializedCellProps) {
   return (
     <Image

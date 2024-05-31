@@ -4,6 +4,8 @@ import { useSpring, a, animated, config } from "@react-spring/three"
 import { clampWebGLText } from "@/utils"
 
 import { SpecializedCellProps } from "./types"
+import { useThree } from "@react-three/fiber"
+import { useTimelineState } from "@/hooks"
 
 export function TextCell({
   segment: s,
@@ -12,27 +14,36 @@ export function TextCell({
   setHovered,
   durationInSteps,
   startTimeInSteps,
-  baseSegmentColor,
+  colorScheme,
+  widthInPx,
+  widthInPxAfterZoom,
 }: SpecializedCellProps) {
 
+
   // this depends on the current row height
+  // note: in some cases we still get 3 lines
+  // not a big issue, but if you feel like doing so you can try to fix the text clamp function
   const maxNbLines = 2
 
   // note: an alternative could be to create a small fade or blur effect,
   // but I think it might be expensive
+  // console.log(" durationInSteps * cellWidth:",  durationInSteps * cellWidth)
   const lines = clampWebGLText(
     s.label || s.prompt,
-    durationInSteps * cellWidth,
+    widthInPx,
     maxNbLines
   )
   // const label = clampWebGLTextNaive(s.label, durationInSteps * cellWidth)
 
-  const padding = 1
+  const padding = 1.0
+
+  const fontSize = 12
+  const lineHeight = 1.0
 
   return (
     <RoundedBox
       args={[
-        (durationInSteps * cellWidth) - padding, // tiny padding
+        widthInPx - padding, // tiny padding
         cellHeight - padding, // tiny padding
         1
       ]} // Width, height, depth. Default is [1, 1, 1]
@@ -50,18 +61,18 @@ export function TextCell({
       // onPointerOver={(e) => console.log('over')}
       // onPointerOut={(e) => console.log('out')}
       onPointerEnter={(e) => {
-        console.log('enter')
+        // console.log('enter')
         setHovered(s.id)
       }}
       onPointerLeave={(e) => {
-        console.log('leave')
+        // console.log('leave')
         setHovered(s.id)
       }}
       // onPointerMove={(e) => console.log('move')}
       // onPointerMissed={() => console.log('missed')}
       // onUpdate={(self) => console.log('props have been updated')}
     >
-      <meshBasicMaterial color={baseSegmentColor.bg} />
+      <meshBasicMaterial color={colorScheme.backgroundColor} />
       {/*
         <Html
           // as='div' // Wrapping element (default: 'div')
@@ -88,36 +99,43 @@ export function TextCell({
         </Html>
           */}
       <a.mesh>
-        <Text
+        {
+        // here we want to hide text when there is too much text on screen,
+        // so we are interested in the value post-zoom
+        widthInPxAfterZoom < 50 ? null : <Text
           position={[
             // by default we are centered in the middle,
             // so we need to shift it back to the left
-             (-(durationInSteps * cellWidth) / 2)
+             (-widthInPx / 2)
 
              // but also add a lil padding
-             + (cellWidth / 2),
+             + (cellWidth / 3),
              0,
              1
           ]}
 
           // this controls the font size (the first two 5)
-          scale={[4, 4, 1]}
-          
-          // scale={[
-          //   (s.durationInSteps * cellWidth) / 5, // tiny padding
-          //   cellHeight / 10, // tiny padding
-          //   1
-          // ]}
-          
-          lineHeight={1.0}
-          color="#000000" // default
-          fillOpacity={0.7}
+          // if you change this, you will have to modify `webglFontWidthFactor` as well
+          scale={[
+            fontSize,
+            fontSize,
+            1
+          ]}
+
+          lineHeight={lineHeight}
+          color={colorScheme.textColor}
+          // fillOpacity={0.7}
           anchorX="left" // default
           anchorY="middle" // default
+
+          // keep in mind this will impact the font width
+          // so you will have to change the "Arial" or "bold Arial"
+          // in the function which computes a character's width
+          fontWeight={400}
         >
           {lines.join("\n")}
-        </Text>
-    
+        </Text>}
+  
       </a.mesh>
     </RoundedBox>
   )
