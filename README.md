@@ -12,21 +12,11 @@ header: mini
 short_description: Visualize OpenClap files 🎞️
 ---
 
+## Introduction
 
-## Known bugs
+Clap Viewer is a simple app to visualize a .clap timeline:
 
-For some strange reason it works locally but not when built? hmm.
-
-This works:
-```
-http://localhost:3000/?clap=https://huggingface.co/spaces/jbilcke-hf/clap-viewer/resolve/main/public/samples/test.clap
-```
-
-This doesn't (the .clap loads but it doesn't render due to a JSX error):
-
-```
-https://jbilcke-hf-clap-viewer.hf.space/?clap=https://huggingface.co/spaces/jbilcke-hf/clap-viewer/resolve/main/public/samples/test.clap
-```
+[demo](https://jbilcke-hf-clap-viewer.hf.space/?clap=https://huggingface.co/spaces/jbilcke-hf/clap-viewer/resolve/main/public/samples/test.clap)
 
 ## Instructions for developers
 
