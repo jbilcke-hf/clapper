@@ -8,7 +8,8 @@ export function ImageCell({
   segment: s,
   cellWidth,
   cellHeight,
-  setHovered,
+  isHovered,
+  setHoveredSegment,
   durationInSteps,
   startTimeInSteps,
   colorScheme,
@@ -18,7 +19,7 @@ export function ImageCell({
       opacity={1.0}
       position={[
         0,
-        -s.track * cellHeight,
+        -cellHeight,
         1
       ]}
       scale={[

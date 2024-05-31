@@ -33,6 +33,21 @@ If you forget some dependencies you might get weird errors
 
 You can see in the package.json that I set `NODE_ENV=production` while building, that's because of a weirdness with Bun: https://github.com/oven-sh/bun/issues/3768
 
+If you are developping the timeline, I recommend to use:
+
+```bash
+bun run build:dev
+```
+
+to build with the jsxDEV enabled.
+
+You will also want to use a path like this to test the module directly dependency:
+
+```json
+ "@aitube/timeline": "file:/path/to/aitube-timeline",
+```
+   
+
 ## Future extensions
 
 This project is currently not designed to be used with other tools such as Svelte, Vue, or other state manager. In the future it may be split into sub-libraries to facilitate support for alternative frameworks.

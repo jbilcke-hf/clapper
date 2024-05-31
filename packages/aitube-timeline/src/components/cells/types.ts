@@ -5,7 +5,8 @@ export type SpecializedCellProps = {
   segment: ClapSegment
   cellWidth: number
   cellHeight: number
-  setHovered: (id: string) => void
+  isHovered: boolean
+  setHoveredSegment: (hoveredSegment?: ClapSegment) => void
   durationInSteps: number
   startTimeInSteps: number
   colorScheme: ClapSegmentColorScheme

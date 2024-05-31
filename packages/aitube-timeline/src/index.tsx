@@ -12,7 +12,6 @@ export {
 
 export {
   useAxis,
-  useGridLines,
   usePreviewTrackHeight,
   useStandardTrackHeight,
   useTimelineState,

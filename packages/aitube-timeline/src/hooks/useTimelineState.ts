@@ -26,10 +26,21 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
 
     let typicalSegmentDurationInSteps = DEFAULT_COLUMNS_PER_SLICE * DEFAULT_DURATION_IN_MS_PER_STEP
 
-    // TODO: should be done by the Clap parser and/or serializer
-    // send a demand to Julian (@flngr) to get it fixed
+    // TODO: many of those checks about average duration, nb of tracks, collisions...
+    // should be done by the Clap parser and/or serializer
+    // send a demand to Julian (@flngr) to get it fixed!
+
+    let idCollisionDetector = new Set<string>()
+
     let nbIdentifiedTracks = 0
     for (const s of segments) {
+      
+      if (idCollisionDetector.has(s.id)) {
+        console.log(`collision detected! there is already a segment with id ${s.id}`)
+        continue
+      }
+      idCollisionDetector.add(s.id)
+
       if (s.track > nbIdentifiedTracks) {
         nbIdentifiedTracks = s.track
       }
@@ -148,9 +159,11 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       baseLightness,
       
       backgroundColor: hslToHex(baseHue, baseSaturation, baseLightness),
+      backgroundColorHover: hslToHex(baseHue, baseSaturation + 10, baseLightness + 1),
       foregroundColor: hslToHex(baseHue, baseSaturation, baseLightness),
-      borderColor: hslToHex(baseHue, baseSaturation, baseLightness),
-      textColor: hslToHex(baseHue, baseSaturation, baseLightness),
+      borderColor: hslToHex(baseHue, baseSaturation + 40, baseLightness),
+      textColor: hslToHex(baseHue, baseSaturation + 40, baseLightness),
+      textColorHover: hslToHex(baseHue, baseSaturation + 40, baseLightness + 2),
     }
 
     if (!segment) { return colorScheme }
@@ -167,12 +180,17 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       baseSaturation,
       baseLightness,
     
-      backgroundColor: hslToHex(baseHue, baseSaturation, baseLightness),
-      foregroundColor: hslToHex(baseHue, baseSaturation, baseLightness),
-      borderColor: hslToHex(baseHue, baseSaturation, baseLightness),
-      textColor: hslToHex(baseHue, baseSaturation + 40, 30),
+      backgroundColor: hslToHex(baseHue, baseSaturation + 10, baseLightness),
+      backgroundColorHover: hslToHex(baseHue, baseSaturation + 20, baseLightness + 1),
+      foregroundColor: hslToHex(baseHue, baseSaturation + 40, baseLightness),
+      borderColor: hslToHex(baseHue, baseSaturation + 40, baseLightness + 10),
+      textColor: hslToHex(baseHue, baseSaturation + 50, baseLightness - 40),
+      textColorHover: hslToHex(baseHue, baseSaturation + 50, baseLightness - 38),
     }
 
     return colorScheme
+  },
+  setHoveredSegment: (hoveredSegment?: ClapSegment) =>  {
+    set({ hoveredSegment })
   }
 }))

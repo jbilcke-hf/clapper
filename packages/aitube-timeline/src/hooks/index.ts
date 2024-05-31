@@ -1,5 +1,6 @@
 export { useAxis } from "./useAxis"
-export { useGridLines } from "./useGridLines"
+export { useVerticalGridLines } from "./useVerticalGridLines"
+export { useHorizontalGridLines } from "./useHorizontalGridLines"
 export { usePreviewTrackHeight } from "./usePreviewTrackHeight"
 export { useStandardTrackHeight } from "./useStandardTrackHeight"
 export { useTimelineState } from "./useTimelineState"

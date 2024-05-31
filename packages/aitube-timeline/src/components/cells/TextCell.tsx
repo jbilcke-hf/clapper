@@ -11,7 +11,8 @@ export function TextCell({
   segment: s,
   cellWidth,
   cellHeight,
-  setHovered,
+  isHovered,
+  setHoveredSegment,
   durationInSteps,
   startTimeInSteps,
   colorScheme,
@@ -35,13 +36,19 @@ export function TextCell({
   )
   // const label = clampWebGLTextNaive(s.label, durationInSteps * cellWidth)
 
-  const padding = 1.0
+  const padding = 1.2
 
   const fontSize = 12
   const lineHeight = 1.0
 
   return (
     <RoundedBox
+      key={s.id}
+      position={[
+        0,
+        -cellHeight,
+        0
+      ]}
       args={[
         widthInPx - padding, // tiny padding
         cellHeight - padding, // tiny padding
@@ -51,28 +58,12 @@ export function TextCell({
       smoothness={2} // The number of curve segments. Default is 4
       bevelSegments={1} // The number of bevel segments. Default is 4, setting it to 0 removes the bevel, as a result the texture is applied to the whole geometry.
       creaseAngle={0.4} // Smooth normals everywhere except faces that meet at an angle greater than the crease angle
-
-      onClick={(e) => console.log('click')}
-      onContextMenu={(e) => console.log('context menu')}
-      onDoubleClick={(e) => console.log('double click')}
-      // onWheel={(e) => console.log('wheel spins')}
-      // onPointerUp={(e) => console.log('up')}
-      // onPointerDown={(e) => console.log('down')}
-      // onPointerOver={(e) => console.log('over')}
-      // onPointerOut={(e) => console.log('out')}
-      onPointerEnter={(e) => {
-        // console.log('enter')
-        setHovered(s.id)
-      }}
-      onPointerLeave={(e) => {
-        // console.log('leave')
-        setHovered(s.id)
-      }}
-      // onPointerMove={(e) => console.log('move')}
-      // onPointerMissed={() => console.log('missed')}
-      // onUpdate={(self) => console.log('props have been updated')}
     >
-      <meshBasicMaterial color={colorScheme.backgroundColor} />
+      <meshBasicMaterial color={
+        isHovered
+         ? colorScheme.backgroundColorHover
+         : colorScheme.backgroundColor
+        } />
       {/*
         <Html
           // as='div' // Wrapping element (default: 'div')
@@ -123,7 +114,11 @@ export function TextCell({
           ]}
 
           lineHeight={lineHeight}
-          color={colorScheme.textColor}
+          color={
+            isHovered
+            ? colorScheme.textColorHover
+            : colorScheme.textColor
+          }
           // fillOpacity={0.7}
           anchorX="left" // default
           anchorY="middle" // default
