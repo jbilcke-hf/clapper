@@ -35,7 +35,7 @@ COPY --chown=user . /app
 
 RUN npm ci --force
 
-RUN npm run build
+RUN NODE_ENV=development npm run build
 
 EXPOSE 3000
 
