@@ -1,12 +1,15 @@
 import { create } from "zustand"
+import * as THREE from "three"
 import { ClapProject, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 
-import { TimelineStore } from "@/types/timeline"
+import { TimelineStore, Tracks } from "@/types/timeline"
 import { getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_COLUMNS_PER_SLICE, DEFAULT_DURATION_IN_MS_PER_STEP, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 import { removeFinalVideos } from "@/utils/removeFinalVideo"
 import { hslToHex } from "@/utils/hslToHex"
 import { ClapSegmentCategoryHues, ClapSegmentColorScheme } from "@/types"
+import { TimelineControlsImpl } from "@/components/controls/types"
+import { TimelineCameraImpl } from "@/components/camera/types"
 
 export const useTimelineState = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -22,7 +25,8 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
 
     // we remove the big/long video
     const segments = removeFinalVideos(clap)
-    const cellWidth = get().horizontalZoomLevel
+    const { horizontalZoomLevel, getCellHeight, getVerticalCellPosition } = get()
+    const cellWidth = horizontalZoomLevel
 
     let typicalSegmentDurationInSteps = DEFAULT_COLUMNS_PER_SLICE * DEFAULT_DURATION_IN_MS_PER_STEP
 
@@ -32,7 +36,8 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
 
     let idCollisionDetector = new Set<string>()
 
-    let nbIdentifiedTracks = 0
+    let tracks: Tracks = []
+
     for (const s of segments) {
       
       if (idCollisionDetector.has(s.id)) {
@@ -41,8 +46,40 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       }
       idCollisionDetector.add(s.id)
 
-      if (s.track > nbIdentifiedTracks) {
-        nbIdentifiedTracks = s.track
+      if (!tracks[s.track]) {
+        const isPreview =
+          s.category === ClapSegmentCategory.STORYBOARD ||
+          s.category === ClapSegmentCategory.VIDEO
+        tracks[s.track] = {
+          id: s.track,
+          // name: `Track ${s.track}`,
+          name: `${s.category}`,
+          isPreview,
+          height: isPreview
+            ? PROMPT_STEP_HEIGHT_IN_PX * 3
+            : PROMPT_STEP_HEIGHT_IN_PX,
+          hue: 0,
+          occupied: true,
+          visible: true,
+        }
+      } else {
+        
+        const track = tracks[s.track]
+        const categories = track.name.split(",").map(x => x.trim())
+        if (!categories.includes(s.category)) {
+          tracks[s.track].name = "(misc)"
+
+          /*
+          if (categories.length < 2) {
+            categories.push(s.category)
+            track.name = categories.join(", ")
+          } else if (!track.name.includes("..")) {
+            track.name = track.name + ".."
+          }
+          */
+        }
+        
+  
       }
 
       if (s.category === ClapSegmentCategory.CAMERA) {
@@ -57,19 +94,28 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
 
     // TODO: compute the exact image ratio instead of using the media orientation,
     // since it might not match the actual assets
-    const ratio = clap.meta.width / clap.meta.height
+    const ratio = (clap.meta?.width || 640) / (clap.meta?.height || 480)
     
     // also storyboards and videos might have different sizes / ratios
     const previewHeight = Math.round(
       typicalSegmentLengthInPixels / ratio
     )
 
-    const trackToCellHeight: Record<number, number> = {
-      // VIDEO
-      0: previewHeight,
-
-      // STORYBOARD
-      1: previewHeight
+    const nbIdentifiedTracks = tracks.length
+    const maxHeight = getCellHeight() + getVerticalCellPosition(0, nbIdentifiedTracks)
+  
+    for (let id = 0; id < tracks.length; id++) {
+      if (!tracks[id]) {
+        tracks[id] = {
+          id,
+          name: `(empty)`,
+          isPreview: false,
+          height: PROMPT_STEP_HEIGHT_IN_PX,
+          hue: 0,
+          occupied: false, // <-- setting this to false is the important part
+          visible: true,
+        }
+      }
     }
 
     set({
@@ -77,8 +123,9 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       clap,
       segments,
       visibleSegments: segments,
+      tracks,
+      maxHeight,
       nbIdentifiedTracks,
-      trackToCellHeight,
       typicalSegmentDurationInSteps,
     })
   },
@@ -99,9 +146,8 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
  
     const {
       clap,
-      trackToCellHeight,
       horizontalZoomLevel,
-      originalHorizontalZoomLevel,
+      tracks,
       typicalSegmentDurationInSteps
     } = get()
     
@@ -119,16 +165,13 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     const previewHeight = Math.round(
       typicalSegmentLengthInPixels / ratio
     )
-
     
     if (typeof trackNumber === "number" && !isNaN(trackNumber) && isFinite(trackNumber)) {
-      if (trackNumber === 0 || trackNumber === 1) {
-       //  DISABLED
-       //  cellHeight = previewHeight
-
-        if (trackToCellHeight[trackNumber]) {
-          cellHeight = trackToCellHeight[trackNumber]
-        }
+      const track = tracks[trackNumber]
+      if (track) {
+        cellHeight = track.isPreview ? previewHeight : track.height
+      } else {
+        // missing data
       }
     }
 
@@ -184,13 +227,33 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       backgroundColorHover: hslToHex(baseHue, baseSaturation + 20, baseLightness + 1),
       foregroundColor: hslToHex(baseHue, baseSaturation + 40, baseLightness),
       borderColor: hslToHex(baseHue, baseSaturation + 40, baseLightness + 10),
-      textColor: hslToHex(baseHue, baseSaturation + 50, baseLightness - 40),
-      textColorHover: hslToHex(baseHue, baseSaturation + 50, baseLightness - 38),
+      textColor: hslToHex(baseHue, baseSaturation + 55, baseLightness - 60),
+      textColorHover: hslToHex(baseHue, baseSaturation + 55, baseLightness - 50),
     }
 
     return colorScheme
   },
-  setHoveredSegment: (hoveredSegment?: ClapSegment) =>  {
+  setHoveredSegment: (hoveredSegment?: ClapSegment) => {
     set({ hoveredSegment })
+  },
+  setTimelineCamera: (timelineCamera?: TimelineCameraImpl) => {
+    set({ timelineCamera })
+  },
+  setTimelineControls: (timelineControls?: TimelineControlsImpl) => {
+    set({ timelineControls })
+  },
+  setTopBarTimelineScale: (topBarTimelineScale?: THREE.Group<THREE.Object3DEventMap>) => {
+    set({ topBarTimelineScale })
+  },
+  setLeftBarTrackScale: (leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>) => {
+    set({ leftBarTrackScale })
+  },
+  handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number, deltaY: number }) => {
+    const { scrollX, scrollY } = get()
+    set({
+      scrollX: scrollX + deltaX,
+      scrollY: scrollY - deltaY,
+    })
   }
+
 }))

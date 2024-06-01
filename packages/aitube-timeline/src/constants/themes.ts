@@ -1,6 +1,10 @@
+import { ClapSegmentCategory } from "@aitube/clap"
+
 import { ClapTimelineTheme } from "@/types"
 import { ClapSegmentCategoryHues } from "@/types/theme"
-import { ClapSegmentCategory } from "@aitube/clap"
+
+export const leftBarTrackScaleWidth = 120
+export const topBarTimeScaleHeight = 40
 
 export const baseClapSegmentCategoryHues: ClapSegmentCategoryHues = {
   [ClapSegmentCategory.SPLAT]: 347,
@@ -9,22 +13,22 @@ export const baseClapSegmentCategoryHues: ClapSegmentCategoryHues = {
   [ClapSegmentCategory.EVENT]: 270,
   [ClapSegmentCategory.INTERFACE]: 216,
   [ClapSegmentCategory.PHENOMENON]: 270,
-  [ClapSegmentCategory.VIDEO]: 65,
-  [ClapSegmentCategory.STORYBOARD]: 65,
-  [ClapSegmentCategory.TRANSITION]: 65,
+  [ClapSegmentCategory.VIDEO]: 70,
+  [ClapSegmentCategory.STORYBOARD]: 70,
+  [ClapSegmentCategory.TRANSITION]: 55,
   [ClapSegmentCategory.CHARACTER]: 285.8,
   [ClapSegmentCategory.LOCATION]: 80.9,
-  [ClapSegmentCategory.TIME]: 91,
-  [ClapSegmentCategory.ERA]: 91,
+  [ClapSegmentCategory.TIME]: 250,
+  [ClapSegmentCategory.ERA]: 250,
   [ClapSegmentCategory.LIGHTING]: 50,
   [ClapSegmentCategory.WEATHER]: 197.2,
   [ClapSegmentCategory.ACTION]: 3,
-  [ClapSegmentCategory.MUSIC]: 90,
-  [ClapSegmentCategory.SOUND]: 63,
+  [ClapSegmentCategory.MUSIC]: 100,
+  [ClapSegmentCategory.SOUND]: 60,
   [ClapSegmentCategory.DIALOGUE]: 23,
   [ClapSegmentCategory.STYLE]: 285,
-  [ClapSegmentCategory.CAMERA]: 1,
-  [ClapSegmentCategory.GENERIC]: 67,
+  [ClapSegmentCategory.CAMERA]: 10,
+  [ClapSegmentCategory.GENERIC]: 200,
 }
 
 export const pastel: ClapTimelineTheme = {
@@ -32,8 +36,8 @@ export const pastel: ClapTimelineTheme = {
     backgroundColor: "#27272A",
   },
   cell: {
-    saturation: 29, // 20.3,
-    lightness: 77, // 71.4,
+    saturation: 30,
+    lightness: 78.6,
     hues: baseClapSegmentCategoryHues
   }
 }

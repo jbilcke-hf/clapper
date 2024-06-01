@@ -1,0 +1,33 @@
+import { useEffect, useState } from "react"
+import * as THREE from "three"
+
+import { useTimelineState } from "./useTimelineState"
+import { leftBarTrackScaleWidth } from "@/constants/themes"
+
+export const useHorizontaTrackLines = () => {
+  const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
+  const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
+
+  const nbIdentifiedTracks = useTimelineState(s => s.nbIdentifiedTracks)
+
+  const [lines, setLines] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
+
+  useEffect(() => {
+
+    const thisLines = [] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[];
+
+    for (let i = 0; i <= nbIdentifiedTracks; i++) {
+      const horizontalLinePoints = [
+        new THREE.Vector3(0, -getVerticalCellPosition(0, i), 1),
+        new THREE.Vector3(leftBarTrackScaleWidth, -getVerticalCellPosition(0, i), 1)
+      ];
+      const horizontalLineGeometry = new THREE.BufferGeometry().setFromPoints(horizontalLinePoints);
+
+      thisLines.push(horizontalLineGeometry);
+    }
+
+    setLines(thisLines);
+  }, [cellWidth, nbIdentifiedTracks]);
+
+  return lines;
+};

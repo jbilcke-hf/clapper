@@ -6,12 +6,7 @@ import { useTimelineState } from "./useTimelineState";
 export const useAxis = (width: number, height: number) => {
   const [axis, setAxis] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 
-  const getCellHeight = useTimelineState(s => s.getCellHeight)
-  const cellHeight = getCellHeight()
-
-  const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
-  const nbIdentifiedTracks = useTimelineState(s => s.nbIdentifiedTracks)
-  const maxHeight = cellHeight + getVerticalCellPosition(0, nbIdentifiedTracks)
+  const maxHeight = useTimelineState(s => s.maxHeight)
 
   useEffect(() => {
     const horizontalTop = new THREE.BufferGeometry().setFromPoints([

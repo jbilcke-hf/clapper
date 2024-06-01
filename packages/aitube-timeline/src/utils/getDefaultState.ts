@@ -15,6 +15,8 @@ export function getDefaultState(): TimelineStoreState {
     visibleSegments: [],
     nbIdentifiedTracks: 0,
     
+    tracks: [],
+    
     position: new THREE.Vector3(),
     scale: new THREE.Vector3(),
     initialized: false,
@@ -38,17 +40,19 @@ export function getDefaultState(): TimelineStoreState {
 
     nbMaxTracks: DEFAULT_NB_TRACKS,
 
-    trackToCellHeight: {
-      // VIDEO
-      0: PROMPT_STEP_HEIGHT_IN_PX * 3,
-
-      // STORYBOARD
-      1: PROMPT_STEP_HEIGHT_IN_PX * 3,
-    },
     typicalSegmentDurationInSteps: 4,
 
     currentZoomLevel: 1.0,
 
     hoveredSegment: undefined,
+    timelineControls: undefined,
+
+    maxHeight: 32,
+    
+    scrollX: 0,
+    scrollY: 0,
+
+    topBarTimelineScale: undefined,
+    leftBarTrackScale: undefined,
   }
 }
