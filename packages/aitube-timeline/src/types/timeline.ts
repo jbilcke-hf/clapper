@@ -1,6 +1,21 @@
 import * as THREE from "three"
 import { ClapProject, ClapSegment } from "@aitube/clap"
+
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
+import { TimelineControlsImpl } from "@/components/controls/types"
+import { TimelineCameraImpl } from "@/components/camera/types"
+
+export type Track = {
+  id: number
+  name: string
+  isPreview: boolean
+  height: number
+  hue: number
+  occupied: boolean
+  visible: boolean
+}
+
+export type Tracks = Track[]
 
 export type TimelineStoreState = {
   clap?: ClapProject
@@ -10,6 +25,8 @@ export type TimelineStoreState = {
   segmentsChanged: number
   visibleSegments: ClapSegment[]
   nbIdentifiedTracks: number
+
+  tracks: Tracks
 
   minHorizontalZoomLevel: number
   maxHorizontalZoomLevel: number
@@ -26,7 +43,6 @@ export type TimelineStoreState = {
   cellWidth: number
   nbMaxTracks: number
 
-  trackToCellHeight: Record<number, number>
   typicalSegmentDurationInSteps: number
 
   // note: this is a mirror value of 
@@ -34,6 +50,30 @@ export type TimelineStoreState = {
   currentZoomLevel: number
 
   hoveredSegment?: ClapSegment
+
+  /**
+   * The timeline camera
+   * 
+   * Note: there will be no update of this value in case the camera settings have changed
+   */
+  timelineCamera?: TimelineCameraImpl
+
+  /**
+   * The timeline controls
+   * 
+   * Note: there will be no update of this value in case the controls settings have changed
+   */
+  timelineControls?: TimelineControlsImpl
+
+  // max height of the timeline
+  maxHeight: number
+
+  // used to track current camera position, at zoom level 1.0
+  scrollX: number
+  scrollY: number
+
+  topBarTimelineScale?: THREE.Group<THREE.Object3DEventMap>
+  leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>
 }
 
 
@@ -45,7 +85,11 @@ export type TimelineStoreModifiers = {
   getVerticalCellPosition: (start: number,end: number) => number
   getSegmentColorScheme: (segment?: ClapSegment) => ClapSegmentColorScheme
   setHoveredSegment: (hoveredSegment?: ClapSegment) => void
+  setTimelineCamera: (timelineCamera?: TimelineCameraImpl) => void
+  setTimelineControls: (timelineControls?: TimelineControlsImpl) => void
+  setTopBarTimelineScale: (topBarTimelineScale?: THREE.Group<THREE.Object3DEventMap>) => void
+  setLeftBarTrackScale: (leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>) => void
+  handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number, deltaY: number }) => void
 }
-
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers

@@ -15,8 +15,8 @@ export const pastel: ClapTimelineTheme = {
     backgroundColor: "#27272A",
   },
   cell: {
-    saturation: 20.3,
-    lightness: 71.4,
+    saturation: 28.4,
+    lightness: 78.6,
     hues: baseClapSegmentCategoryHues,
   }
 }

@@ -38,8 +38,8 @@ export function TextCell({
 
   const padding = 1.2
 
-  const fontSize = 12
-  const lineHeight = 1.0
+  const fontSize = 13
+  const lineHeight = 1.2
 
   return (
     <RoundedBox
@@ -100,7 +100,8 @@ export function TextCell({
              (-widthInPx / 2)
 
              // but also add a lil padding
-             + (cellWidth / 3),
+             // note: this should be based on the horizontal zoom settings
+             + (cellWidth / 4),
              0,
              1
           ]}

@@ -1,11 +1,11 @@
-import { Canvas } from "@react-three/fiber"
-import { OrthographicCamera, Stats } from "@react-three/drei"
+import { Canvas, useFrame, useThree } from "@react-three/fiber"
+import { Stats } from "@react-three/drei"
 
 import {
   TimelineControls,
   HorizontalScroller,
   VerticalScroller,
-  TimelineGrid
+  Timeline
 } from "@/components"
 import { ClapProject } from "@aitube/clap"
 import {
@@ -17,6 +17,10 @@ import {
   DEFAULT_ZOOM_SPEED
 } from "./constants/defaults"
 import { cn } from "./utils"
+import { TimelineCamera } from "./components/camera"
+import { useTimelineState } from "./hooks"
+import { clamp } from "./utils/clamp"
+import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "./constants/themes"
 
 export function ClapTimeline({
   clap,
@@ -53,8 +57,8 @@ export function ClapTimeline({
     <div
     className={cn(`w-full h-full overflow-hidden`, className)}
      >
-      <div className="flex flex-row w-full h-full">
-        <div className="flex flex-col w-full h-full">
+      <div className="flex flex-grow flex-row h-full">
+        <div className="flex flex-grow flex-col w-full">
           <Canvas
 
             // must be active when playing back a video
@@ -69,8 +73,15 @@ export function ClapTimeline({
             
 
             style={{ width: "100%", height: "100%" }}
+
+            onWheel={(wheelEvent) => {
+              useTimelineState.getState().handleMouseWheel({
+                deltaX: wheelEvent.deltaX,
+                deltaY: wheelEvent.deltaY
+              })
+            }}
             >
-              <OrthographicCamera makeDefault position={[0, 0, 1]} />
+              <TimelineCamera />
               <TimelineControls
 
                 minZoom={minZoom}
@@ -78,12 +89,14 @@ export function ClapTimeline({
                 zoomSpeed={zoomSpeed}
                 zoomDampingFactor={zoomDampingFactor}
               />
-              <TimelineGrid />
-              <Stats className={cn(`!left-auto right-0`, showFPS ? 'opacity-100' : 'opacity-0')} />
+              <Timeline />
+              {showFPS && <Stats className={cn(`!left-auto right-0`)} />}
             </Canvas>
           <HorizontalScroller />
         </div>
-        <VerticalScroller />
+        {
+        // <VerticalScroller />
+        }
       </div>
     </div>
   );
