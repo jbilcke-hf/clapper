@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@aitube/clap": "0.0.23",
-    "@aitube/timeline": "0.0.3",
+    "@aitube/timeline": "0.0.4",
     "@huggingface/hub": "^0.15.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",

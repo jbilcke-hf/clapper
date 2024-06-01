@@ -46,13 +46,13 @@ export function Main() {
         w-screen h-screen
         overflow-hidden
         items-center justify-center
-        bg-stone-700
+        bg-[rgb(58,54,50)]
         `
       )}
         >
         {clap
         ? <ClapTimeline
-          showFPS
+          showFPS={false}
           className={cn(
 
           )}

@@ -14,11 +14,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" style={{ overscrollBehaviorX: "none"}}>
       <body className={cn(
         `h-full w-full overflow-none dark`,
        inter.className
-        )}>
+        )}
+        style={{ overscrollBehaviorX: "none" }}>
         {children}
       </body>
     </html>
