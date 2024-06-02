@@ -45,7 +45,7 @@ export function Cells({
   }))
   */
   
-  console.log(`re-rendering ${visibleSegments.length} <Cells>`)
+  // console.log(`re-rendering ${visibleSegments.length} <Cells>`)
 
   return (
     <group position={[
