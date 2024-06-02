@@ -21,12 +21,14 @@ const useRequestAnimationFrame = (
     duration: Number.POSITIVE_INFINITY,
     shouldAnimate: true }
 ) => {
+  /*
   const isServerSideOrApiUnsupported =
     typeof requestAnimationFrame === 'undefined' ||
     typeof window === 'undefined'
   if (isServerSideOrApiUnsupported) {
     return
   }
+    */
 
   const frame = React.useRef(0)
   const firstFrameTime = React.useRef(performance.now())
