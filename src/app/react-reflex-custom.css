@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/*
+This extends the original react-reflex.css (from react-reflex@4.1.0),
+with some custom colors and sizes
+*/
+
+@layer components {
+  body .reflex-container > .reflex-splitter {
+    @apply transition-all duration-200 ease-in-out bg-gray-700;
+  }
+
+  body .reflex-container > .reflex-splitter.active,
+  body .reflex-container > .reflex-splitter:hover {
+    @apply transition-all duration-200 ease-in-out bg-gray-400;
+  }
+
+  body .horizontal > .reflex-splitter {
+    @apply h-[2px] bg-gray-700 border-t-gray-700 border-b-gray-700;
+  }
+
+  body .reflex-container.horizontal > .reflex-splitter:hover,
+  body .reflex-container.horizontal > .reflex-splitter.active {
+    @apply bg-gray-400 border-t-gray-400 border-b-gray-400;
+  }
+
+  body .reflex-container.vertical > .reflex-splitter {
+    @apply w-[2px] bg-gray-700 border-l-gray-700 border-r-gray-700;
+  }
+
+  body .reflex-container.vertical > .reflex-splitter:hover,
+  body .reflex-container.vertical > .reflex-splitter.active {
+    @apply bg-gray-400 border-l-gray-400 border-r-gray-400;
+  }
+}

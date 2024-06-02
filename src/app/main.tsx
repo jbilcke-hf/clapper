@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react"
 import { FileUploader } from "react-drag-drop-files"
-import 'react-reflex/styles.css'
 import {
   ReflexContainer,
   ReflexSplitter,
@@ -15,6 +14,9 @@ import { Toaster } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { useQueryStringParams } from "@/lib/hooks/useQueryStringParams"
+import { StaticVideo } from "@/components/interface/static-video"
+import { RenderClap } from "@/components/interface/render-clap"
+import { Timeline } from "@/components/interface/timeline"
 
 export function Main() {
   const { clapUrl } = useQueryStringParams({
@@ -97,13 +99,12 @@ export function Main() {
         {clap
         ? 
         <ReflexContainer orientation="horizontal">
+          <ReflexElement>
+            <RenderClap />
+          </ReflexElement>
+          <ReflexSplitter />
           <ReflexElement className={isLoading ? 'opacity-0' :  'opacity-100'}>
-            <ClapTimeline
-              showFPS={false}
-              className={cn(
-
-              )}
-            />
+            <Timeline />
           </ReflexElement>
         </ReflexContainer>
         :
