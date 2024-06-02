@@ -2,6 +2,12 @@
 
 import React, { useEffect, useState } from "react"
 import { FileUploader } from "react-drag-drop-files"
+import 'react-reflex/styles.css'
+import {
+  ReflexContainer,
+  ReflexSplitter,
+  ReflexElement
+} from 'react-reflex'
 import { parseClap } from "@aitube/clap"
 import { ClapTimeline, useTimelineState } from "@aitube/timeline"
 
@@ -17,12 +23,46 @@ export function Main() {
     clapUrl: '',
   })
 
+  const [isImporting, setIsImporting] = useState(false)
   const clap = useTimelineState(s => s.clap)
   const setClap = useTimelineState(s => s.setClap)
+  const isLoading = useTimelineState(s => s.isLoading)
+  const isEmpty = useTimelineState(s => s.isEmpty)
+
+  const isBusy = isLoading || isImporting
 
   const handleChange = async (file: File) => {
-    const clap = await parseClap(file)
-    setClap(clap)
+    if (file.name.endsWith("clap")) {
+      setIsImporting(true)
+      try {
+        const clap = await parseClap(file)
+        setClap(clap)
+        setTimeout(() => {
+          setIsImporting(false)
+        }, 500)
+      } catch (err) {
+        console.error(err)
+        setIsImporting(false)
+      }
+    } else {
+      setIsImporting(true)
+      try {
+        const res = await fetch("https://jbilcke-hf-broadway-api.hf.space", {
+          method: "POST",
+          headers: { 'Content-Type': 'text/plain' },
+          body: await file.text(),
+        })
+        const blob = await res.blob()
+        const clap = await parseClap(blob)
+        setClap(clap)
+        setTimeout(() => {
+          setIsImporting(false)
+        }, 1000)
+      } catch (err) {
+        console.error(err)
+        setIsImporting(false)
+      }
+    }
   };
   
   useEffect(() => {
@@ -31,10 +71,14 @@ export function Main() {
         console.log("No clap URL provided")
         return
       }
+      setIsImporting(true)
       const res = await fetch(clapUrl)
       const blob = await res.blob()
       const clap = await parseClap(blob)
       setClap(clap)
+      setTimeout(() => {
+        setIsImporting(false)
+      }, 1000)
     })()
   }, [clapUrl])
 
@@ -51,30 +95,38 @@ export function Main() {
       )}
         >
         {clap
-        ? <ClapTimeline
-          showFPS={false}
-          className={cn(
+        ? 
+        <ReflexContainer orientation="horizontal">
+          <ReflexElement className={isLoading ? 'opacity-0' :  'opacity-100'}>
+            <ClapTimeline
+              showFPS={false}
+              className={cn(
 
-          )}
-        />
+              )}
+            />
+          </ReflexElement>
+        </ReflexContainer>
         :
           <FileUploader
             handleChange={handleChange}
-            name="file" types={["clap"]}>
+            name="file" types={["txt", "clap"]}>
           <div className={cn(`
           flex
         w-screen h-screen
         overflow-hidden
         items-center justify-center
         cursor-pointer
-        `, clapUrl ? 'animate-pulse' : '')}
+        `, isBusy ? 'animate-pulse' : '')}
         style={{
           backgroundImage: "repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #34353655, #343536 )"
         }}><p
-        className="text-stone-100 font-sans font-thin text-[4.5vw]"
+        className="text-stone-100 font-sans font-thin text-[3vw]"
         style={{ textShadow: "#000 1px 0 3px" }}
         >
-          {clapUrl ? 'Loading..' : 'Click here to load a .clap'}
+          {isBusy ? 'Loading..' : 
+          <span className="flex flex-center justify-center text-center w-full">
+            Click to import a screenplay (.txt)<br/>
+          or an OpenClap file (.clap)</span>}
           </p>
           </div>
           </FileUploader>
