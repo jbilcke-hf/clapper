@@ -79,6 +79,7 @@ export type ButtonProperties = ContainerProperties & {
   disabled?: boolean
 }
 
+// eslint-disable-next-line
 export const Button: (props: ButtonProperties & RefAttributes<ComponentInternals>) => ReactNode = forwardRef(
   ({ children, variant = 'default', size = 'default', disabled = false, hover, ...props }, ref) => {
     const {
