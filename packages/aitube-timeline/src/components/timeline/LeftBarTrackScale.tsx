@@ -64,7 +64,12 @@ export function LeftBarTrackScale({
             leftBarTrackScaleWidth / 2,
             -getVerticalCellPosition(0, track.id) - (getCellHeight(track.id) / 2),
             -1
-          ]}>
+          ]}
+          onClick={(e) => {
+            toggleTrackVisibility(track.id)
+            e.stopPropagation()
+          }}
+          >
             <meshBasicMaterial color="rgb(125,124,120)" />
             <Text
               
@@ -96,9 +101,10 @@ export function LeftBarTrackScale({
               visible={
                 true
               }
-              onClick={() => {
-                toggleTrackVisibility(track.id)
-              }}
+          onClick={(e) => {
+            toggleTrackVisibility(track.id)
+            e.stopPropagation()
+          }}
             >
               👁️
             </Text>

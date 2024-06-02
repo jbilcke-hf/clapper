@@ -81,7 +81,7 @@ export function Cell({
 
       onPointerMove={(e) => {
         // crude code to ignore the event when we are over the left column or the top row
-        if (e.clientX < leftBarTrackScaleWidth || e.clientY < topBarTimeScaleHeight) {
+        if (e.offsetX < leftBarTrackScaleWidth || e.offsetY < topBarTimeScaleHeight) {
           setHoveredSegment(undefined)
         } else {
           setHoveredSegment(s)
@@ -91,7 +91,7 @@ export function Cell({
       /*
       onPointerEnter={(e) => {
         // crude code to ignore the event when we are over the left column or the top row
-        if (e.clientX < leftBarTrackScaleWidth || e.clientY < topBarTimeScaleHeight) {
+        if (e.offsetX < leftBarTrackScaleWidth || e.offsetY < topBarTimeScaleHeight) {
           setHoveredSegment(undefined)
         } else {
           setHoveredSegment(s)

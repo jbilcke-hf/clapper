@@ -4,6 +4,7 @@ import { TimelineControlsImpl } from "./types"
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
 import { clamp } from "@/utils/clamp"
 import { useFrame, useThree } from "@react-three/fiber"
+import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 
 // for doc see:
 // https://threejs.org/docs/index.html?q=controls#examples/en/controls/MapControls
@@ -19,8 +20,6 @@ export function TimelineControls({
   zoomSpeed: number
   zoomDampingFactor: number
 }) {
-
-
   const { size } = useThree()
 
   // this controls the top grid ruler bar and makes it sticky
@@ -31,14 +30,20 @@ export function TimelineControls({
   // or maybe the useFrame, but it doesn't resize immediately
   useFrame(({ gl, scene, camera }) => {
     let {
+      clap,
+      horizontalZoomLevel: cellWidth,
       scrollX,
       scrollY,
       timelineCamera,
       timelineControls,
+      timelineCursor,
       maxHeight,
       leftBarTrackScale,
       topBarTimelineScale,
       resizeStartedAt,
+      width,
+      height,
+      cursorTimestampAt,
     } = useTimelineState.getState()
 
     const now = performance.now() // new Date().getTime(),
@@ -52,25 +57,49 @@ export function TimelineControls({
       return
     }
 
-    const min = maxHeight * 0.5
-    const max = maxHeight * 0.5
- 
     scrollX = Math.max(-leftBarTrackScaleWidth, scrollX)
 
-    const availableHeight = Math.min(size.height, maxHeight)
+    const canvasHeight = size.height // * gl.getPixelRatio()
+    const contentHeight = maxHeight
 
-    let before = scrollY
+
+    //  *------------------------*
+    //  |       scrollY          |         
+    //  |  *---------------*     |
+    //  |  |               |     |   \
+    //  |  |               |     |    <--- canvasHeight
+    //  |  |               |     |   /
+    //  *--|---------------|-----*
+    //     |               |
+    //     | ------------- |
+    //     |               |
+    //     |               |   \
+    //     |               |    <------ contentHeight (can be > or < than the canvasHeight)
+    //     |               |   /
+    //     |               | 
+    //     *---------------*
+    //
+
     scrollY = clamp(
       // should depend upon the current zoom level
       // if we are "high" in the sky (low zoom value)
       // then we need to to go further noth
       // now, the problem is that depends
       scrollY, // + (zoomHeight / 2),
-      -availableHeight / 2, // (availableHeight / 2),
-      availableHeight
+
+      60, // min value: enough to display about one row + the top bar
+
+      // TODO: find the right formula
+      size.height > 550 ? 350 :
+      size.height > 500 ? 400 :
+      size.height > 450 ? 450 :
+      size.height > 400 ? 500 :
+      size.height > 350 ? 550 :
+      size.height > 300 ? 550 :
+      600 // determine how far down we can move (to see more of what is up)
     )
  
-    // console.log(`debug: before=${Math.round(before)}, after=${Math.round(scrollY)}`)
+    // console.log(`scrollY=${Math.round(scrollY)}`)
     timelineCamera.position.setX(scrollX)
     timelineControls.target.setX(scrollX)
  
@@ -82,7 +111,17 @@ export function TimelineControls({
       scrollY,
       isResizing
     })
-    
+
+
+    if (timelineCursor) {
+   
+      const positionInSteps = (
+        (cursorTimestampAt * 1000) / DEFAULT_DURATION_IN_MS_PER_STEP
+      ) * cellWidth
+
+      timelineCursor.position.x = positionInSteps
+    }
+
     if (topBarTimelineScale) {
       topBarTimelineScale.position.y = (-topBarTimeScaleHeight + scrollY) + (size.height / 2)
     }

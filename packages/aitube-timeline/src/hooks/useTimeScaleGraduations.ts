@@ -68,7 +68,7 @@ export const useTimeScaleGraduations = ({
       }
     } else {
       for (let i = 0; i < nbMaxShots; i++) {
-        if (i % 20 !== 0) { continue }
+        if (i % 10 !== 0) { continue }
         const verticalLinePoints = [
           new THREE.Vector3(i * cellWidth, 2, 1),
           new THREE.Vector3(

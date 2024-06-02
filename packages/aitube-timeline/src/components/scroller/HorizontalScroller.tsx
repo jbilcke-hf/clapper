@@ -42,11 +42,6 @@ export function HorizontalScroller() {
          value={range}
          onValueChange={(newRange: number[]) => handleTimelinePositionChange(newRange[0])}
          onWheel={(e) => {
-          console.log("HorizontalTimelineSlider: received a mouse wheel event:", {
-            deltaX: e.deltaX,
-            deltaY: e.deltaY,
-            z: e.deltaZ
-          })
           handleZoomChange(horizontalZoomLevel + e.deltaY)
          }}
        />
