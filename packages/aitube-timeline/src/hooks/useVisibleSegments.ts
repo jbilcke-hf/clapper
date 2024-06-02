@@ -14,7 +14,7 @@ export const useVisibleSegments = ({
 }: {
   nbMaxTracks: number
   refreshRateInMs: number
-}) => {
+}): ClapSegment[] => {
   // to make it react to screen width change
   // however, this doesn't seem to work well
   const { size: canvasSize, viewport } = useThree()
@@ -26,6 +26,8 @@ export const useVisibleSegments = ({
   const segments = useTimelineState((s) => s.segments)
   const segmentsChanged = useTimelineState((s) => s.segmentsChanged)
 
+  // console.log(`segmentsChanged:`, segmentsChanged)
+  
   const visibleSegments = useTimelineState((s) => s.visibleSegments)
   const setVisibleSegments = useTimelineState((s) => s.setVisibleSegments)
 
@@ -151,6 +153,7 @@ export const useVisibleSegments = ({
     // TODO: replace our usage of stateRef.current
     // by useTimelineState.getState()
     const state = stateRef.current
+
     const cellWidth = useTimelineState.getState().horizontalZoomLevel
 
     // we can adjust this threshold to only re compute the geometry
@@ -233,6 +236,7 @@ export const useVisibleSegments = ({
 
     state.initialized = true
    
+    console.log("scheduling a sync(false)")
     // we could also use useInterval, but we need something async-friendly
     const fn = async () => {
       // we want a relatively "high" refresh rate in order to get smooth camera movement
@@ -255,6 +259,7 @@ export const useVisibleSegments = ({
 
   // force a re-render when cell width or height change
   useEffect(() => {
+    console.log("forcing a sync(true)")
     const fn = async () => { try { await sync(true) } catch (err) {} }
     fn()
   }, [cellHeight, cellWidth])

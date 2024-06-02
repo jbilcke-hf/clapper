@@ -18,6 +18,8 @@ export function TextCell({
   colorScheme,
   widthInPx,
   widthInPxAfterZoom,
+  isResizing,
+  track
 }: SpecializedCellProps) {
 
 
@@ -59,11 +61,17 @@ export function TextCell({
       bevelSegments={1} // The number of bevel segments. Default is 4, setting it to 0 removes the bevel, as a result the texture is applied to the whole geometry.
       creaseAngle={0.4} // Smooth normals everywhere except faces that meet at an angle greater than the crease angle
     >
-      <meshBasicMaterial color={
-        isHovered
-         ? colorScheme.backgroundColorHover
-         : colorScheme.backgroundColor
-        } />
+      <meshBasicMaterial
+        color={
+          track.visible ? (
+            isHovered
+            ? colorScheme.backgroundColorHover
+            : colorScheme.backgroundColor
+          ) : colorScheme.backgroundColorDisabled
+        }
+        // transparent
+        // opacity={}
+        />
       {/*
         <Html
           // as='div' // Wrapping element (default: 'div')
@@ -93,7 +101,7 @@ export function TextCell({
         {
         // here we want to hide text when there is too much text on screen,
         // so we are interested in the value post-zoom
-        widthInPxAfterZoom < 50 ? null : <Text
+        !track.visible || isResizing || widthInPxAfterZoom < 50 ? null : <Text
           position={[
             // by default we are centered in the middle,
             // so we need to shift it back to the left

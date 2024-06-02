@@ -60,6 +60,7 @@ export function ClapTimeline({
       <div className="flex flex-grow flex-row h-full">
         <div className="flex flex-grow flex-col w-full">
           <Canvas
+            id="clap-timeline"
 
             // must be active when playing back a video
             frameloop="always"
@@ -75,6 +76,14 @@ export function ClapTimeline({
             style={{ width: "100%", height: "100%" }}
 
             onWheel={(wheelEvent) => {
+              // apparently we cannot stop the propagation from the scroll wheel event
+              // we attach to our to bar from the scroll wheel event set on the canvas
+              // (that makes sense, one is in DOM space, the other in WebGL space)
+              //
+              // there are probably better ways to do this, but for now here is a very
+              // crude fix to ignore global X-Y scroll events when we are over the timeline
+              if (wheelEvent.clientY <= topBarTimeScaleHeight) { return }
+ 
               useTimelineState.getState().handleMouseWheel({
                 deltaX: wheelEvent.deltaX,
                 deltaY: wheelEvent.deltaY

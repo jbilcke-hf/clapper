@@ -13,10 +13,14 @@ export function ImageCell({
   durationInSteps,
   startTimeInSteps,
   colorScheme,
+  isResizing,
+  track,
 }: SpecializedCellProps) {
   return (
     <Image
-      opacity={1.0}
+      opacity={
+        track.visible ? 1 : 0.5
+      }
       position={[
         0,
         -cellHeight,

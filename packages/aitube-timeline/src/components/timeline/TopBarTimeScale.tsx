@@ -23,10 +23,12 @@ export function TopBarTimeScale({
 }) {
   const { size } = useThree()
 
-  // we use the non-reactive version
-  // const cellWidth = useTimelineState((s) => s.horizontalZoomLevel)
-  const cellWidth = useTimelineState.getState().horizontalZoomLevel
+  // we should use the non-reactive version
+  const cellWidth = useTimelineState((s) => s.horizontalZoomLevel)
+  // const cellWidth = useTimelineState.getState().horizontalZoomLevel
   
+  const isResizing = useTimelineState(s => s.isResizing)
+
   const nbMaxShots = NB_MAX_SHOTS
 
   const unit = 10
@@ -41,7 +43,7 @@ export function TopBarTimeScale({
 
   const setHorizontalZoomLevel = useTimelineState((s) => s.setHorizontalZoomLevel)
 
-  console.log(`re-rendering <TopBarTimeScale>`)
+  // console.log(`re-rendering <TopBarTimeScale>`)
 
   const setTopBarTimelineScale = useTimelineState(s => s.setTopBarTimelineScale)
   
@@ -94,8 +96,8 @@ export function TopBarTimeScale({
           </line>
         ))}
       </group>
-      <group position={[0, 0, 0]}>
-        {timeScaleGraduations.map((lineGeometry, idx) => (
+      <group position={[0, 0, 0]} visible={!isResizing}>
+        {isResizing ? [] : timeScaleGraduations.map((lineGeometry, idx) => (
           <Text
             key={idx}
             position={[

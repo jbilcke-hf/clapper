@@ -13,6 +13,8 @@ export function VideoCell({
   durationInSteps,
   startTimeInSteps,
   colorScheme,
+  isResizing,
+  track
 }: SpecializedCellProps) {
 
   const [video] = useState(() => {
@@ -55,6 +57,9 @@ export function VideoCell({
           side={THREE.FrontSide}
           // toneMapped={false}
           transparent
+          opacity={
+            track.visible ? 1 : 0.5
+          }
           >
           <videoTexture attach="map" args={[video]} />
           <videoTexture attach="emissiveMap" args={[video]} />

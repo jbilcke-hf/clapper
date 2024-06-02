@@ -15,7 +15,6 @@ export {
 
 export {
   useAxis,
-  usePreviewTrackHeight,
   useStandardTrackHeight,
   useTimelineState,
   useVisibleSegments

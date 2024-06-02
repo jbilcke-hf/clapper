@@ -26,6 +26,9 @@ export type TimelineStoreState = {
   visibleSegments: ClapSegment[]
   nbIdentifiedTracks: number
 
+  isEmpty: boolean
+  isLoading: boolean
+
   tracks: Tracks
 
   minHorizontalZoomLevel: number
@@ -72,6 +75,12 @@ export type TimelineStoreState = {
   scrollX: number
   scrollY: number
 
+  // used to determine how long it has been since we touch the scroll
+  // we use this information to render the grid faster, by disabling all text
+  // until a given debouncing time has elapsed
+  resizeStartedAt: number
+  isResizing: boolean
+
   topBarTimelineScale?: THREE.Group<THREE.Object3DEventMap>
   leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>
 }
@@ -90,6 +99,7 @@ export type TimelineStoreModifiers = {
   setTopBarTimelineScale: (topBarTimelineScale?: THREE.Group<THREE.Object3DEventMap>) => void
   setLeftBarTrackScale: (leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>) => void
   handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number, deltaY: number }) => void
+  toggleTrackVisibility: (trackId: number) => void
 }
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers

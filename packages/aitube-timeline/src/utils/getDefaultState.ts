@@ -14,6 +14,9 @@ export function getDefaultState(): TimelineStoreState {
     segmentsChanged: 0,
     visibleSegments: [],
     nbIdentifiedTracks: 0,
+
+    isEmpty: true,
+    isLoading: false,
     
     tracks: [],
     
@@ -51,6 +54,8 @@ export function getDefaultState(): TimelineStoreState {
     
     scrollX: 0,
     scrollY: 0,
+    resizeStartedAt: 0,
+    isResizing: false,
 
     topBarTimelineScale: undefined,
     leftBarTrackScale: undefined,
