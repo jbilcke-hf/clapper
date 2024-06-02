@@ -20,6 +20,7 @@ export type ClapSegmentColorScheme = {
   
   backgroundColor: string
   backgroundColorHover: string
+  backgroundColorDisabled: string
   foregroundColor: string
   borderColor: string
   textColor: string

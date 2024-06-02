@@ -17,17 +17,18 @@ export function LeftBarTrackScale({
   width: number
   height: number
 }) {
-  console.log(`re-rendering <LeftBarTrackScale>`)
+  // console.log(`re-rendering <LeftBarTrackScale>`)
   const getCellHeight = useTimelineState((s) => s.getCellHeight)
 
   const getVerticalCellPosition = useTimelineState((s) => s.getVerticalCellPosition)
 
   const tracks = useTimelineState(s => s.tracks)
+  const toggleTrackVisibility = useTimelineState((s) => s.toggleTrackVisibility)
 
   const setLeftBarTrackScale = useTimelineState(s => s.setLeftBarTrackScale)
 
-  
-  const horizontalTrackLines = useHorizontaTrackLines();
+
+  const horizontalTrackLines = useHorizontaTrackLines()
 
   return (
     <group
@@ -64,13 +65,47 @@ export function LeftBarTrackScale({
             -getVerticalCellPosition(0, track.id) - (getCellHeight(track.id) / 2),
             -1
           ]}>
-           {
-            <meshBasicMaterial    color="rgb(125,124,120)" />
-           }
+            <meshBasicMaterial color="rgb(125,124,120)" />
+            <Text
+              
+              position={[
+                -38,
+                0, // -getVerticalCellPosition(0, track.id),
+                2
+              ]}
+
+              scale={[
+                16,
+                16,
+                1
+              ]}
+
+              lineHeight={1.0}
+              color={
+                "#ffffff"
+              }
+              // fillOpacity={0.7}
+              anchorX="center" // default
+              anchorY="middle" // default
+
+              // keep in mind this will impact the font width
+              // so you will have to change the "Arial" or "bold Arial"
+              // in the function which computes a character's width
+              fontWeight={600}
+              fillOpacity={track.visible ? 0.9 : 0.5}
+              visible={
+                true
+              }
+              onClick={() => {
+                toggleTrackVisibility(track.id)
+              }}
+            >
+              👁️
+            </Text>
            <Text
      
             position={[
-              0,
+              10,
               8, // -getVerticalCellPosition(0, track.id),
               2
             ]}
@@ -105,14 +140,14 @@ export function LeftBarTrackScale({
           <Text
             
             position={[
-              0,
+              10,
               -8, // -getVerticalCellPosition(0, track.id),
               2
             ]}
 
             scale={[
-              12,
-              12,
+              11,
+              11,
               1
             ]}
 

@@ -2,7 +2,7 @@ import { create } from "zustand"
 import * as THREE from "three"
 import { ClapProject, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 
-import { TimelineStore, Tracks } from "@/types/timeline"
+import { TimelineStore, Track, Tracks } from "@/types/timeline"
 import { getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_COLUMNS_PER_SLICE, DEFAULT_DURATION_IN_MS_PER_STEP, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 import { removeFinalVideos } from "@/utils/removeFinalVideo"
@@ -21,6 +21,9 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       })
       return
     }
+
+    set({ isLoading: true })
+
     console.log(`useTimelineState: setting the clap to`, clap)
 
     // we remove the big/long video
@@ -118,25 +121,32 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       }
     }
 
+    const isEmpty = segments.length > 0
     set({
       ...getDefaultState(),
       clap,
       segments,
-      visibleSegments: segments,
+      visibleSegments: [],
       tracks,
       maxHeight,
       nbIdentifiedTracks,
       typicalSegmentDurationInSteps,
+      isEmpty,
+      isLoading: false,
     })
   },
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => {
     const { minHorizontalZoomLevel, maxHorizontalZoomLevel } = get()
     const horizontalZoomLevel = Math.min(maxHorizontalZoomLevel, Math.max(minHorizontalZoomLevel, newHorizontalZoomLevel))
-    set({ horizontalZoomLevel })
+    set({
+      horizontalZoomLevel,
+      resizeStartedAt: performance.now(),
+      isResizing: true,
+    })
   },
   
   setSegments: (segments: ClapSegment[] = []) => {
-    set({ segments, visibleSegments: segments })
+    set({ segments, visibleSegments: [] })
   },
   setVisibleSegments: (visibleSegments: ClapSegment[] = []) => { set({ visibleSegments }) },
 
@@ -169,7 +179,12 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     if (typeof trackNumber === "number" && !isNaN(trackNumber) && isFinite(trackNumber)) {
       const track = tracks[trackNumber]
       if (track) {
-        cellHeight = track.isPreview ? previewHeight : track.height
+        cellHeight =
+          track.isPreview && track.visible
+          ? previewHeight
+          : track.visible
+          ? track.height
+          : defaultCellHeight
       } else {
         // missing data
       }
@@ -201,12 +216,13 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       baseSaturation,
       baseLightness,
       
-      backgroundColor: hslToHex(baseHue, baseSaturation, baseLightness),
-      backgroundColorHover: hslToHex(baseHue, baseSaturation + 10, baseLightness + 1),
-      foregroundColor: hslToHex(baseHue, baseSaturation, baseLightness),
-      borderColor: hslToHex(baseHue, baseSaturation + 40, baseLightness),
-      textColor: hslToHex(baseHue, baseSaturation + 40, baseLightness),
-      textColorHover: hslToHex(baseHue, baseSaturation + 40, baseLightness + 2),
+      backgroundColor: hslToHex(baseHue, baseSaturation + 10, baseLightness),
+      backgroundColorHover: hslToHex(baseHue, baseSaturation + 20, baseLightness + 1),
+      backgroundColorDisabled: hslToHex(baseHue, baseSaturation - 10, baseLightness - 2),
+      foregroundColor: hslToHex(baseHue, baseSaturation + 40, baseLightness),
+      borderColor: hslToHex(baseHue, baseSaturation + 40, baseLightness + 10),
+      textColor: hslToHex(baseHue, baseSaturation + 55, baseLightness - 60),
+      textColorHover: hslToHex(baseHue, baseSaturation + 55, baseLightness - 50),
     }
 
     if (!segment) { return colorScheme }
@@ -225,6 +241,7 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     
       backgroundColor: hslToHex(baseHue, baseSaturation + 10, baseLightness),
       backgroundColorHover: hslToHex(baseHue, baseSaturation + 20, baseLightness + 1),
+      backgroundColorDisabled: hslToHex(baseHue, baseSaturation - 10, baseLightness - 2),
       foregroundColor: hslToHex(baseHue, baseSaturation + 40, baseLightness),
       borderColor: hslToHex(baseHue, baseSaturation + 40, baseLightness + 10),
       textColor: hslToHex(baseHue, baseSaturation + 55, baseLightness - 60),
@@ -234,7 +251,17 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     return colorScheme
   },
   setHoveredSegment: (hoveredSegment?: ClapSegment) => {
-    set({ hoveredSegment })
+    // note: we do all of this in order to avoid useless state updates
+    if (hoveredSegment) {
+      if (get().hoveredSegment?.id !== hoveredSegment?.id) {
+        set({ hoveredSegment })
+      }
+    } else {
+      if (get().hoveredSegment) {
+        set({ hoveredSegment: undefined })
+      }
+    }
+
   },
   setTimelineCamera: (timelineCamera?: TimelineCameraImpl) => {
     set({ timelineCamera })
@@ -254,6 +281,15 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       scrollX: scrollX + deltaX,
       scrollY: scrollY - deltaY,
     })
+  },
+  toggleTrackVisibility: (trackId: number) => {
+    const { tracks } = get()
+    set({
+      tracks: tracks.map(t => (
+        t.id === trackId
+        ? { ...t, visible: !t.visible }
+        : t
+      )),
+    })
   }
-
 }))

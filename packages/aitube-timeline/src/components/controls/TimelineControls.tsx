@@ -38,9 +38,19 @@ export function TimelineControls({
       maxHeight,
       leftBarTrackScale,
       topBarTimelineScale,
+      resizeStartedAt,
     } = useTimelineState.getState()
 
-    if (!timelineCamera || !timelineControls) { return }
+    const now = performance.now() // new Date().getTime(),
+    const elapsedTimeInMs = now - resizeStartedAt
+
+    const delayThreshold = 300
+    const isResizing = elapsedTimeInMs < delayThreshold
+    // console.log(`now=${now}, resizeStartedAt=${resizeStartedAt}, elapsedTimeInMs=${elapsedTimeInMs}, delayThreshold=${delayThreshold}, isResizing=${isResizing}`)
+    if (!timelineCamera || !timelineControls) {
+      useTimelineState.setState({ isResizing })
+      return
+    }
 
     const min = maxHeight * 0.5
     const max = maxHeight * 0.5
@@ -49,6 +59,7 @@ export function TimelineControls({
 
     const availableHeight = Math.min(size.height, maxHeight)
 
+    let before = scrollY
     scrollY = clamp(
       // should depend upon the current zoom level
       // if we are "high" in the sky (low zoom value)
@@ -59,13 +70,18 @@ export function TimelineControls({
       availableHeight
     )
  
+    // console.log(`debug: before=${Math.round(before)}, after=${Math.round(scrollY)}`)
     timelineCamera.position.setX(scrollX)
     timelineControls.target.setX(scrollX)
  
     timelineCamera.position.setY(scrollY)
     timelineControls.target.setY(scrollY)
  
-    useTimelineState.setState({ scrollX, scrollY })
+    useTimelineState.setState({
+      scrollX,
+      scrollY,
+      isResizing
+    })
     
     if (topBarTimelineScale) {
       topBarTimelineScale.position.y = (-topBarTimeScaleHeight + scrollY) + (size.height / 2)

@@ -35,23 +35,17 @@ export function Cells({
     refreshRateInMs,
   });
 
-  const hoveredSegment = useTimelineState(s => s.hoveredSegment)
-  const setHoveredSegment = useTimelineState(s => s.setHoveredSegment)
 
-  useEffect(() => {
-    document.body.style.cursor = hoveredSegment ? 'pointer' : 'auto'
-
-    return () => { document.body.style.cursor = 'auto' }
-  }, [hoveredSegment])
-
+  /*
   const [props, set] = useSpring(() => ({
     pos: [0, 0, 0],
     scale: [1, 1, 1],
     rotation: [0, 0, 0],
     config: { mass: 10, tension: 1000, friction: 300, precision: 0.00001 }
   }))
+  */
   
-  console.log(`re-rendering <Cells>`)
+  console.log(`re-rendering ${visibleSegments.length} <Cells>`)
 
   return (
     <group position={[
@@ -66,7 +60,6 @@ export function Cells({
         <Cell
           key={s.id}
           segment={s}
-          setHoveredSegment={setHoveredSegment}
         />
       )}
     </group>

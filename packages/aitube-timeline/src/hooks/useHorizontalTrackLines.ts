@@ -8,7 +8,7 @@ export const useHorizontaTrackLines = () => {
   const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
   const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
 
-  const nbIdentifiedTracks = useTimelineState(s => s.nbIdentifiedTracks)
+  const tracks = useTimelineState(s => s.tracks)
 
   const [lines, setLines] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 
@@ -16,7 +16,7 @@ export const useHorizontaTrackLines = () => {
 
     const thisLines = [] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[];
 
-    for (let i = 0; i <= nbIdentifiedTracks; i++) {
+    for (let i = 0; i <= tracks.length; i++) {
       const horizontalLinePoints = [
         new THREE.Vector3(0, -getVerticalCellPosition(0, i), 1),
         new THREE.Vector3(leftBarTrackScaleWidth, -getVerticalCellPosition(0, i), 1)
@@ -27,7 +27,11 @@ export const useHorizontaTrackLines = () => {
     }
 
     setLines(thisLines);
-  }, [cellWidth, nbIdentifiedTracks]);
+  }, [
+    cellWidth,
+    leftBarTrackScaleWidth,
+    ...tracks.map(t => `${t.visible}_${t.height}`)
+  ]);
 
   return lines;
 };
