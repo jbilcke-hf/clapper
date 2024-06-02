@@ -54,7 +54,8 @@ This project is currently not designed to be used with other tools such as Svelt
 
 ## TODO
 
-[ ] BUG: When zooming in an area, large segments (such as music) become invisible due to the way we compute ranges
+[ ] BUG: the scrollY position is a bit janky, one should solve the formula
+[ ] OPTIM: we should avoid re-creating geometries (eg. grids, cells) and text since this is costly
 [ ] FEATURE: Add edit callbacks
 [ ] CLEAN: Write doc
 [ ] BUG: Fix the Vite previewer

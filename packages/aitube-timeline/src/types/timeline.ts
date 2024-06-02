@@ -4,6 +4,7 @@ import { ClapProject, ClapSegment } from "@aitube/clap"
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
+import { TimelineCursorImpl } from "@/components/timeline/types"
 
 export type Track = {
   id: number
@@ -18,6 +19,10 @@ export type Track = {
 export type Tracks = Track[]
 
 export type TimelineStoreState = {
+  // container width and height
+  width: number
+  height: number
+  
   clap?: ClapProject
   theme: ClapTimelineTheme
 
@@ -68,6 +73,9 @@ export type TimelineStoreState = {
    */
   timelineControls?: TimelineControlsImpl
 
+  // ref to the cursor element
+  timelineCursor?: TimelineCursorImpl
+
   // max height of the timeline
   maxHeight: number
 
@@ -83,6 +91,13 @@ export type TimelineStoreState = {
 
   topBarTimelineScale?: THREE.Group<THREE.Object3DEventMap>
   leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>
+
+  // the final video, if available
+  finalVideo?: ClapSegment
+
+  // position of the current timestamp
+  cursorTimestampAt: number
+
 }
 
 
@@ -98,8 +113,11 @@ export type TimelineStoreModifiers = {
   setTimelineControls: (timelineControls?: TimelineControlsImpl) => void
   setTopBarTimelineScale: (topBarTimelineScale?: THREE.Group<THREE.Object3DEventMap>) => void
   setLeftBarTrackScale: (leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>) => void
-  handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number, deltaY: number }) => void
+  handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number; deltaY: number }) => void
   toggleTrackVisibility: (trackId: number) => void
+  setContainerSize: ({ width, height }: { width: number; height: number }) => void
+  setTimelineCursor: (timelineCursor?: TimelineCursorImpl) => void
+  setCursorTimestampAt: (cursorTimestampAt: number) => void
 }
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers

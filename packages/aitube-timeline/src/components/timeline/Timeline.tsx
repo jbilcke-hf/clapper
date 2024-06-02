@@ -14,6 +14,7 @@ import { Cells } from "./Cells"
 import { TopBarTimeScale } from "./TopBarTimeScale"
 import { clamp } from "@/utils/clamp"
 import { LeftBarTrackScale } from "./LeftBarTrackScale"
+import { Cursor } from "./Cursor"
 
 export function Timeline() {
   const { size } = useThree()
@@ -54,10 +55,14 @@ export function Timeline() {
           opacity={0}
           
         />
+        {/*
+        not a fan of all those props.. I think we could drop this
+        */}
         <Grid width={width} height={height} />
         <TopBarTimeScale width={width} height={height} />
         <LeftBarTrackScale width={width} height={height} />
         <Cells width={width} height={height} />
+        <Cursor width={width} height={height} />
       </Plane>
     </mesh>
   );

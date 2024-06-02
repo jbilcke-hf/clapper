@@ -1,3 +1,4 @@
+import AutoSizer, { Size } from "react-virtualized-auto-sizer"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { Stats } from "@react-three/drei"
 
@@ -7,7 +8,7 @@ import {
   VerticalScroller,
   Timeline
 } from "@/components"
-import { ClapProject } from "@aitube/clap"
+import { ClapProject, isValidNumber } from "@aitube/clap"
 import {
   DEFAULT_FRAMELOOP,
   DEFAULT_MAX_ZOOM,
@@ -21,6 +22,7 @@ import { TimelineCamera } from "./components/camera"
 import { useTimelineState } from "./hooks"
 import { clamp } from "./utils/clamp"
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "./constants/themes"
+import { useRef } from "react"
 
 export function ClapTimeline({
   clap,
@@ -30,7 +32,9 @@ export function ClapTimeline({
   zoomSpeed = DEFAULT_ZOOM_SPEED,
   zoomDampingFactor = DEFAULT_ZOOM_DAMPING_FACTOR,
   showFPS = DEFAULT_SHOW_FPS,
-  frameloop = DEFAULT_FRAMELOOP,
+  // frameloop = DEFAULT_FRAMELOOP,
+  // width,
+  // height,
   }: {
     clap?: ClapProject
     className?: string
@@ -42,7 +46,9 @@ export function ClapTimeline({
 
     // demand is less CPU intensive, but you will have to manually
     // trigger state changes
-    frameloop?: "demand" | "always" | "never"
+    // frameloop?: "demand" | "always" | "never"
+    // width?: number
+    // height?: number
   } = {
     clap: undefined,
 
@@ -51,15 +57,19 @@ export function ClapTimeline({
     zoomSpeed: DEFAULT_ZOOM_SPEED,
     zoomDampingFactor: DEFAULT_ZOOM_DAMPING_FACTOR,
     showFPS: DEFAULT_SHOW_FPS,
-    frameloop: DEFAULT_FRAMELOOP
+    // frameloop: DEFAULT_FRAMELOOP
   }) {
+  const ref = useRef<HTMLCanvasElement>(null)
   return (
-    <div
-    className={cn(`w-full h-full overflow-hidden`, className)}
-     >
+    <div className={cn(`w-full h-full`, className)}>
+      <AutoSizer style={{ height: "100%" }}>
+        {({ height, width }: Size) => (
+        // kids don't try this at home
+        useTimelineState.getState().setContainerSize({ width, height }),
       <div className="flex flex-grow flex-row h-full">
         <div className="flex flex-grow flex-col w-full">
           <Canvas
+            ref={ref}
             id="clap-timeline"
 
             // must be active when playing back a video
@@ -73,16 +83,26 @@ export function ClapTimeline({
             // frameloop="demand"
             
 
-            style={{ width: "100%", height: "100%" }}
+            style={{
+              width: isValidNumber(width) ? `${width}px` : "100%",
+              height: isValidNumber(height) ? `${height}px` : "100%"
+            }}
 
             onWheel={(wheelEvent) => {
+              const rect = ref.current?.getBoundingClientRect()
+              if (!rect) { return }
+
+              const clientY = wheelEvent.clientY
+              const containerY = rect.y
+              const posY = clientY - containerY
+ 
               // apparently we cannot stop the propagation from the scroll wheel event
               // we attach to our to bar from the scroll wheel event set on the canvas
               // (that makes sense, one is in DOM space, the other in WebGL space)
               //
               // there are probably better ways to do this, but for now here is a very
               // crude fix to ignore global X-Y scroll events when we are over the timeline
-              if (wheelEvent.clientY <= topBarTimeScaleHeight) { return }
+              if (posY <= topBarTimeScaleHeight) { return }
  
               useTimelineState.getState().handleMouseWheel({
                 deltaX: wheelEvent.deltaX,
@@ -93,6 +113,7 @@ export function ClapTimeline({
               <TimelineCamera />
               <TimelineControls
 
+                // TODO: remove all those controls
                 minZoom={minZoom}
                 maxZoom={maxZoom}
                 zoomSpeed={zoomSpeed}
@@ -107,6 +128,8 @@ export function ClapTimeline({
         // <VerticalScroller />
         }
       </div>
+        )}
+      </AutoSizer>
     </div>
   );
 };

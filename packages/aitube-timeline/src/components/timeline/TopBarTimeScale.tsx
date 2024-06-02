@@ -12,7 +12,7 @@ import { DEFAULT_DURATION_IN_MS_PER_STEP, NB_MAX_SHOTS } from "@/constants/grid"
 import { formatTimestamp } from "@/utils/formatTimestamp"
 import { useFrame, useThree } from "@react-three/fiber"
 
-import { topBarTimeScaleHeight } from "@/constants/themes"
+import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
 
 export function TopBarTimeScale({
   width,
@@ -54,10 +54,16 @@ export function TopBarTimeScale({
           setTopBarTimelineScale(r)
         }
       }}
-      position={[0, 0, 0]}
+      position={[-leftBarTrackScaleWidth, 0, 0]}
       onWheel={(e) => {
+        if (e.offsetY > topBarTimeScaleHeight) { return }
+
+        const wheelFactor = 0.3
+
         setHorizontalZoomLevel(
-          useTimelineState.getState().horizontalZoomLevel + (0.5 * e.deltaY)
+          // Math.round(
+            useTimelineState.getState().horizontalZoomLevel + (wheelFactor * e.deltaY)
+          // )
         )
         e.stopPropagation()
       }}
@@ -66,8 +72,12 @@ export function TopBarTimeScale({
 
         position={[0, 0, -1]}>
         <Plane
-           args={[width, topBarTimeScaleHeight]}
-           position={[width / 2, (topBarTimeScaleHeight / 2) + 2, 1]}
+           args={[leftBarTrackScaleWidth + width, topBarTimeScaleHeight]}
+           position={[
+            width / 2,
+            (topBarTimeScaleHeight / 2) + 2,
+            1
+          ]}
 
         >
 
@@ -78,7 +88,11 @@ export function TopBarTimeScale({
             />
         </Plane>
       </group>
-      <group position={[0, 0, 0]}>
+      <group position={[
+        leftBarTrackScaleWidth,
+        0,
+        0
+        ]}>
         {timeScaleGraduations.map((lineGeometry, idx) => (
           <line
             // @ts-ignore
@@ -96,7 +110,7 @@ export function TopBarTimeScale({
           </line>
         ))}
       </group>
-      <group position={[0, 0, 0]} visible={!isResizing}>
+      <group position={[leftBarTrackScaleWidth, 0, 0]} visible={!isResizing}>
         {isResizing ? [] : timeScaleGraduations.map((lineGeometry, idx) => (
           <Text
             key={idx}
@@ -108,8 +122,8 @@ export function TopBarTimeScale({
             ]}
 
             scale={[
-              idx % unit === 0 ? 12 : 9,
-              idx % unit === 0 ? 12 : 9,
+              idx % unit === 0 ? 12 : 10,
+              idx % unit === 0 ? 12 : 10,
               1
             ]}
 

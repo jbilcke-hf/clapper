@@ -6,8 +6,9 @@ import { DEFAULT_NB_TRACKS, pastel, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants
 import { TimelineStoreState } from "@/types/timeline"
 
 export function getDefaultState(): TimelineStoreState {
-
   return {
+    width: 800,
+    height: 600,
     clap: undefined,
     theme: pastel,
     segments: [],
@@ -53,11 +54,16 @@ export function getDefaultState(): TimelineStoreState {
     maxHeight: 32,
     
     scrollX: 0,
-    scrollY: 0,
+    scrollY: 450,
     resizeStartedAt: 0,
     isResizing: false,
 
     topBarTimelineScale: undefined,
     leftBarTrackScale: undefined,
+
+    finalVideo: undefined,
+    
+    cursorTimestampAt: 0,
+    timelineCursor: undefined,
   }
 }

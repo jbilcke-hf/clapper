@@ -10,6 +10,8 @@ import { hslToHex } from "@/utils/hslToHex"
 import { ClapSegmentCategoryHues, ClapSegmentColorScheme } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
+import { getFinalVideo } from "@/utils/getFinalVideo"
+import { TimelineCursorImpl } from "@/components/timeline/types"
 
 export const useTimelineState = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -32,6 +34,19 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     const cellWidth = horizontalZoomLevel
 
     let typicalSegmentDurationInSteps = DEFAULT_COLUMNS_PER_SLICE * DEFAULT_DURATION_IN_MS_PER_STEP
+
+    const typicalSegmentLengthInPixels = cellWidth * typicalSegmentDurationInSteps
+
+    // TODO: compute the exact image ratio instead of using the media orientation,
+    // since it might not match the actual assets
+    const ratio = (clap.meta?.width || 640) / (clap.meta?.height || 480)
+    
+    // also storyboards and videos might have different sizes / ratios
+    const previewHeight = Math.round(
+      typicalSegmentLengthInPixels / ratio
+    )
+
+    const defaultCellHeight = PROMPT_STEP_HEIGHT_IN_PX
 
     // TODO: many of those checks about average duration, nb of tracks, collisions...
     // should be done by the Clap parser and/or serializer
@@ -58,9 +73,10 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
           // name: `Track ${s.track}`,
           name: `${s.category}`,
           isPreview,
-          height: isPreview
-            ? PROMPT_STEP_HEIGHT_IN_PX * 3
-            : PROMPT_STEP_HEIGHT_IN_PX,
+          height:
+            isPreview
+            ? previewHeight
+            : defaultCellHeight,
           hue: 0,
           occupied: true,
           visible: true,
@@ -93,20 +109,8 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       }
     }
 
-    const typicalSegmentLengthInPixels = cellWidth * typicalSegmentDurationInSteps
 
-    // TODO: compute the exact image ratio instead of using the media orientation,
-    // since it might not match the actual assets
-    const ratio = (clap.meta?.width || 640) / (clap.meta?.height || 480)
-    
-    // also storyboards and videos might have different sizes / ratios
-    const previewHeight = Math.round(
-      typicalSegmentLengthInPixels / ratio
-    )
 
-    const nbIdentifiedTracks = tracks.length
-    const maxHeight = getCellHeight() + getVerticalCellPosition(0, nbIdentifiedTracks)
-  
     for (let id = 0; id < tracks.length; id++) {
       if (!tracks[id]) {
         tracks[id] = {
@@ -121,7 +125,13 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       }
     }
 
+    const finalVideo = getFinalVideo(clap)
+    
     const isEmpty = segments.length > 0
+
+    const nbIdentifiedTracks = tracks.length
+    const maxHeight = getCellHeight() + getVerticalCellPosition(0, nbIdentifiedTracks)
+  
     set({
       ...getDefaultState(),
       clap,
@@ -133,6 +143,7 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       typicalSegmentDurationInSteps,
       isEmpty,
       isLoading: false,
+      finalVideo,
     })
   },
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => {
@@ -283,13 +294,43 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     })
   },
   toggleTrackVisibility: (trackId: number) => {
-    const { tracks } = get()
+    const {
+      tracks: oldTracks,
+      getCellHeight,
+      getVerticalCellPosition
+    } = get()
+
+    const tracks = oldTracks.map(t => (
+      t.id === trackId
+      ? { ...t, visible: !t.visible }
+      : t
+    ))
+
+    const maxHeight = getCellHeight() + getVerticalCellPosition(0, tracks.length)
+  
     set({
-      tracks: tracks.map(t => (
-        t.id === trackId
-        ? { ...t, visible: !t.visible }
-        : t
-      )),
+      tracks,
+      maxHeight,
     })
+  },
+  setContainerSize: ({ width, height }: { width: number; height: number }) => {
+
+    const { tracks, getCellHeight, getVerticalCellPosition  } = get()
+
+    const nbIdentifiedTracks = tracks.length
+    const maxHeight = getCellHeight() + getVerticalCellPosition(0, nbIdentifiedTracks)
+  
+    set({
+      width,
+      height,
+      resizeStartedAt: performance.now(),
+      isResizing: true,
+    })
+  },
+  setTimelineCursor: (timelineCursor?: TimelineCursorImpl) => {
+    set({ timelineCursor })
+  },
+  setCursorTimestampAt: (cursorTimestampAt: number) => {
+    set({ cursorTimestampAt })
   }
 }))
