@@ -1,6 +1,12 @@
 export {
+  renderShotToStoryboard,
+  renderShotToVideo
+} from './renderers'
+
+export {
   getCharacterPrompt,
   getCharacterReferencePrompt,
+  getPositivePrompt,
   getSpeechBackgroundAudioPrompt,
   getSpeechForegroundAudioPrompt,
   getVideoPrompt,
@@ -10,3 +16,9 @@ export {
   deduplicate,
   deduplicatePrompt,
 } from './utils'
+
+export {
+  VideoRenderer,
+  StoryboardRenderer,
+  VideoFirstFrameExtractor
+} from "./types"

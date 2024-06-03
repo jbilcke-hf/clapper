@@ -23,11 +23,17 @@ npm install @aitube/engine
 import {
   getCharacterPrompt,
   getCharacterReferencePrompt,
+  getPositivePrompt,
   getSpeechBackgroundAudioPrompt,
   getSpeechForegroundAudioPrompt,
   getVideoPrompt,
   deduplicate,
   deduplicatePrompt,
+  renderShotToStoryboard,
+  renderShotToVideo,
+  type VideoRenderer,
+  type StoryboardRenderer,
+  type VideoFirstFrameExtractor
 } from '@aitube/engine'
 
 ```

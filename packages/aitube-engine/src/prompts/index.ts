@@ -1,5 +1,6 @@
 export { getCharacterPrompt } from "./getCharacterPrompt"
 export { getCharacterReferencePrompt } from "./getCharacterReferencePrompt"
+export { getPositivePrompt } from "./getPositivePrompt"
 export { getSpeechBackgroundAudioPrompt } from "./getSpeechBackgroundAudioPrompt"
 export { getSpeechForegroundAudioPrompt } from "./getSpeechForegroundAudioPrompt"
 export { getVideoPrompt } from "./getVideoPrompt"
