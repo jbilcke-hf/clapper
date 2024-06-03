@@ -1,6 +1,4 @@
-import { ClapProject, updateClap } from "@aitube/clap"
-
-import { ClapCompletionMode } from ".."
+import { ClapCompletionMode, ClapProject, updateClap } from "@aitube/clap"
 
 export async function applyClapCompletion(
   existingClap: ClapProject,

@@ -1,8 +1,7 @@
-import { ClapProject, fetchClap, filterAssets, isValidNumber, serializeClap, removeGeneratedAssetUrls } from "@aitube/clap"
+import { ClapCompletionMode, ClapProject, fetchClap, filterAssets, isValidNumber, serializeClap, removeGeneratedAssetUrls } from "@aitube/clap"
 import queryString from "query-string"
 
 import { aitubeApiUrl } from "@/constants/config"
-import { ClapCompletionMode } from "@/constants/types"
 import { applyClapCompletion } from "@/utils"
 
 export async function editClapStory({

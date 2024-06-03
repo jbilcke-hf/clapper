@@ -12,7 +12,6 @@ export {
 } from './config'
 
 export {
-  ClapCompletionMode,
   ClapEntityPrompt,
   SupportedExportFormat
 } from "./types"
