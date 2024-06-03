@@ -10,8 +10,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aitube/clap": "0.0.23",
-    "@aitube/timeline": "0.0.6",
+    "@aitube/clap": "0.0.24",
+    "@aitube/engine": "0.0.15",
+    "@aitube/timeline": "0.0.7",
     "@huggingface/hub": "^0.15.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -47,7 +48,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
-    "eslint": "8.56.0",
+    "eslint": "8.57.0",
     "eslint-config-next": "14.1.0",
     "lucide-react": "^0.334.0",
     "next": "^14.2.3",
@@ -62,6 +63,7 @@
     "react-hook-consent": "^3.5.3",
     "react-icons": "^5.2.1",
     "react-reflex": "^4.2.6",
+    "replicate": "^0.30.1",
     "sharp": "^0.33.4",
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.3.0",
@@ -75,6 +77,5 @@
     "uuid": "^9.0.1",
     "yaml": "^2.4.2",
     "zustand": "^4.5.2"
-  },
-  "devDependencies": {}
+  }
 }
