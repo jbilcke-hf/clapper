@@ -21,6 +21,7 @@ export {
   ClapSegmentFilteringMode,
   ClapSegmentStatus,
   ClapVoice,
+  ClapCompletionMode
 } from './types'
 export {
   defaultMediaOrientation
