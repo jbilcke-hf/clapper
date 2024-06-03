@@ -19,7 +19,6 @@ export {
   aitubeUrl,
   aitubeApiVersion,
   aitubeApiUrl,
-  ClapCompletionMode,
   ClapEntityPrompt,
   SupportedExportFormat
 } from "./constants"

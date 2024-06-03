@@ -45,7 +45,6 @@ import {
   aitubeUrl,
   aitubeApiVersion,
   aitubeApiUrl,
-  ClapCompletionMode,
   ClapEntityPrompt,
   SupportedExportFormat,
   applyClapCompletion,

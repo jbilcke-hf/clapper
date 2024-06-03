@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "description": "Official API client for AiTube.at",
   "scripts": {
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap && bun run build:declaration",
@@ -14,18 +14,19 @@
   },
   "devDependencies": {
     "bun-types": "latest",
-    "prettier": "^3.2.5",
+    "prettier": "^3.3.0",
     "rimraf": "^5.0.7",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.0.23"
+    "@aitube/clap": "0.0.24"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/jbilcke-hf/aitube-client.git"
   },
   "keywords": [
+    "OpenClap",
     "AI cinema",
     "file format",
     "specification"
