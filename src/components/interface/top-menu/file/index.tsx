@@ -7,6 +7,7 @@ import { parseClap } from "@aitube/clap"
 import { MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarTrigger } from "@/components/ui/menubar"
 import { useClapFilePicker, useQueryStringParams, useScreenplayFilePicker } from "@/lib/hooks"
 import { Loader } from "../../loader"
+import { IframeWarning } from "../../iframe-warning"
 
 export function TopMenuFile() {
   const { clapUrl } = useQueryStringParams({
@@ -67,6 +68,7 @@ export function TopMenuFile() {
       </MenubarContent>
     </MenubarMenu>
     <Loader isLoading={isLoading} />
+    <IframeWarning />
     </>
   )
 }

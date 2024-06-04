@@ -1,5 +1,5 @@
 ---
-title: Clap Viewer
+title: Clapper
 emoji: 🎬
 sdk: docker
 colorFrom: gray
@@ -9,14 +9,12 @@ app_port: 3000
 disable_embedding: true
 hf_oauth: false
 header: mini
-short_description: Visualize screenplay and OpenClap files 🎬
+short_description: 🎬 Clapper
 ---
 
 ## Introduction
 
-Clap Viewer is a simple app to visualize a .clap timeline:
-
-[demo](https://jbilcke-hf-clap-viewer.hf.space/?clap=https://huggingface.co/spaces/jbilcke-hf/clap-viewer/resolve/main/public/samples/test.clap)
+🎬 Clapper is a work-in-progress video editor made for the AI age
 
 ## Instructions for developers
 
