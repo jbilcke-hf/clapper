@@ -19,7 +19,7 @@ export const useCursorGeometry = () => {
 
     for (let i = 0; i < 3; i++) {
       const verticalLinePoints = [
-        new THREE.Vector3(i, 0, 7),
+        new THREE.Vector3(i, 60, 7),
         new THREE.Vector3(i, -maxHeight, 7)
       ];
       const verticalLineGeometry = new THREE.BufferGeometry().setFromPoints(verticalLinePoints);

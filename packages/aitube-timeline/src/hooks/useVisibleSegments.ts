@@ -55,7 +55,6 @@ export const useVisibleSegments = ({
     beforeTimeInMs: number
     afterTimeInMs: number
     timeout: NodeJS.Timeout
-    visibleSegments: ClapSegment[]
   }>({
     position: new THREE.Vector3(),
     scale: new THREE.Vector3(),
@@ -63,7 +62,6 @@ export const useVisibleSegments = ({
     beforeTimeInMs: 0,
     afterTimeInMs: 0,
     timeout: 0 as unknown as NodeJS.Timeout,
-    visibleSegments: [],
   })
 
   /*
@@ -208,13 +206,13 @@ export const useVisibleSegments = ({
       state.afterTimeInMs = afterTimeInMs
       state.beforeTimeInMs = beforeTimeInMs
 
+      const { segments, visibleSegments: previouslyVisibleSegments } = useTimelineState.getState()
       const visibleSegments = await sliceSegments({
-        segments: useTimelineState.getState().segments,
+        segments,
+        visibleSegments: previouslyVisibleSegments,
         ...state
       })
 
-      state.visibleSegments = [...visibleSegments]
-      
       setVisibleSegments(visibleSegments)
     }
   }
@@ -225,7 +223,7 @@ export const useVisibleSegments = ({
 
     state.initialized = true
    
-    console.log("scheduling a sync(false)")
+    // console.log("scheduling a sync(false)")
     // we could also use useInterval, but we need something async-friendly
     const fn = async () => {
       // we want a relatively "high" refresh rate in order to get smooth camera movement
@@ -248,7 +246,7 @@ export const useVisibleSegments = ({
 
   // force a re-render when cell width or height change
   useEffect(() => {
-    console.log("forcing a sync(true)")
+    // console.log("forcing a sync(true)")
     const fn = async () => { try { await sync(true) } catch (err) {} }
     fn()
   }, [cellHeight, cellWidth, segmentsChanged])

@@ -76,7 +76,7 @@ export function Cell({
           + ((durationInSteps * cellWidth) / 2),
 
         -verticalCellPosition  + (cellHeight / 2),
-        -1
+        -3
       ]}
 
       onPointerMove={(e) => {

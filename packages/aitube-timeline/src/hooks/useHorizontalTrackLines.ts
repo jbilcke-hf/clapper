@@ -18,8 +18,8 @@ export const useHorizontaTrackLines = () => {
 
     for (let i = 0; i <= tracks.length; i++) {
       const horizontalLinePoints = [
-        new THREE.Vector3(0, -getVerticalCellPosition(0, i), 1),
-        new THREE.Vector3(leftBarTrackScaleWidth, -getVerticalCellPosition(0, i), 1)
+        new THREE.Vector3(0, -getVerticalCellPosition(0, i), 0),
+        new THREE.Vector3(leftBarTrackScaleWidth, -getVerticalCellPosition(0, i), 0)
       ];
       const horizontalLineGeometry = new THREE.BufferGeometry().setFromPoints(horizontalLinePoints);
 
@@ -29,6 +29,8 @@ export const useHorizontaTrackLines = () => {
     setLines(thisLines);
   }, [
     cellWidth,
+    // maxWidth,
+    // nbMaxShots,
     leftBarTrackScaleWidth,
     JSON.stringify(tracks.map(t => `${t.visible}_${t.height}`))
   ]);

@@ -27,7 +27,8 @@ export {
   clampWebGLText,
   clampWebGLTextNaive,
   similar,
-  sliceSegments
+  sliceSegments,
+  parseRenderingStrategy
 } from "./utils"
 
 export {
@@ -38,6 +39,7 @@ export {
   ClapTimelineTheme,
   ClapSegmentCategoryHues,
   ClapSegmentColorScheme,
+  RenderingStrategy
 } from "./types"
 
 export { ClapTimeline } from "./ClapTimeline"

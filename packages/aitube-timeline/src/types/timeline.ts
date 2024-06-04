@@ -1,10 +1,11 @@
 import * as THREE from "three"
-import { ClapProject, ClapSegment } from "@aitube/clap"
+import { ClapEntity, ClapProject, ClapSegment } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { TimelineCursorImpl } from "@/components/timeline/types"
+import { RenderingStrategy } from "./rendering"
 
 export type Track = {
   id: number
@@ -17,6 +18,15 @@ export type Track = {
 }
 
 export type Tracks = Track[]
+
+export type SegmentRenderer = (params: {
+  segment: ClapSegment,
+
+  // the slice to use for rendering
+  segments: ClapSegment[],
+
+  entities: Record<string, ClapEntity>
+}) => Promise<ClapSegment>
 
 export type TimelineStoreState = {
   // container width and height
@@ -98,6 +108,10 @@ export type TimelineStoreState = {
   // position of the current timestamp
   cursorTimestampAt: number
 
+  storyboardRenderingStrategy: RenderingStrategy
+  videoRenderingStrategy: RenderingStrategy
+
+  segmentRenderer: SegmentRenderer
 }
 
 
@@ -134,6 +148,10 @@ export type TimelineStoreModifiers = {
     // some extra text to append to the file name
     extraLabel?: string
   }) => Promise<number>
+  setStoryboardRenderingStrategy: (storyboardRenderingStrategy: RenderingStrategy) => void
+  setVideoRenderingStrategy: (videoRenderingStrategy: RenderingStrategy) => void
+  setSegmentRenderer: (segmentRenderer: SegmentRenderer) => void
+  renderSegment: (segment: ClapSegment) => Promise<ClapSegment>
 }
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers

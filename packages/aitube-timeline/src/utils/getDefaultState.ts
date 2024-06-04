@@ -4,6 +4,8 @@ import * as THREE from "three"
 
 import { DEFAULT_NB_TRACKS, pastel, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 import { TimelineStoreState } from "@/types/timeline"
+import { RenderingStrategy } from "@/types"
+import { ClapEntity, ClapSegment } from "@aitube/clap"
 
 export function getDefaultState(): TimelineStoreState {
   return {
@@ -65,5 +67,16 @@ export function getDefaultState(): TimelineStoreState {
     
     cursorTimestampAt: 0,
     timelineCursor: undefined,
+
+    storyboardRenderingStrategy: RenderingStrategy.ON_DEMAND,
+    videoRenderingStrategy: RenderingStrategy.ON_DEMAND,
+    segmentRenderer: (params: {
+      segment: ClapSegment,
+    
+      // the slice to use for rendering
+      segments: ClapSegment[],
+    
+      entities: Record<string, ClapEntity>
+    }) => Promise.resolve(params.segment),
   }
 }
