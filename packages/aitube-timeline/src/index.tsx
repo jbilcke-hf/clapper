@@ -39,7 +39,8 @@ export {
   ClapTimelineTheme,
   ClapSegmentCategoryHues,
   ClapSegmentColorScheme,
-  RenderingStrategy
+  RenderingStrategy,
+  SegmentRenderer
 } from "./types"
 
 export { ClapTimeline } from "./ClapTimeline"

@@ -1,3 +1,4 @@
+import { ClapEntity, ClapSegment } from "@aitube/clap"
 
 export enum RenderingStrategy {
 
@@ -22,3 +23,12 @@ export enum RenderingStrategy {
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   ON_SCREEN_THEN_ALL = "ON_SCREEN_THEN_ALL",
 }
+
+export type SegmentRenderer = (params: {
+  segment: ClapSegment,
+
+  // the slice to use for rendering
+  segments: ClapSegment[],
+
+  entities: Record<string, ClapEntity>
+}) => Promise<ClapSegment>

@@ -2,17 +2,16 @@ import { create } from "zustand"
 import * as THREE from "three"
 import { ClapEntity, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, newClap, serializeClap } from "@aitube/clap"
 
-import { SegmentRenderer, TimelineStore, Track, Tracks } from "@/types/timeline"
+import { TimelineStore, Tracks } from "@/types/timeline"
 import { getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_COLUMNS_PER_SLICE, DEFAULT_DURATION_IN_MS_PER_STEP, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 import { removeFinalVideos } from "@/utils/removeFinalVideo"
 import { hslToHex } from "@/utils/hslToHex"
-import { ClapSegmentCategoryHues, ClapSegmentColorScheme, RenderingStrategy } from "@/types"
+import { ClapSegmentCategoryHues, ClapSegmentColorScheme, RenderingStrategy, SegmentRenderer } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { getFinalVideo } from "@/utils/getFinalVideo"
 import { TimelineCursorImpl } from "@/components/timeline/types"
-import { sliceSegments } from "@/utils"
 
 export const useTimelineState = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
