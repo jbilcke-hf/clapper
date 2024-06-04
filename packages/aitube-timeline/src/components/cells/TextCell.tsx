@@ -6,6 +6,8 @@ import { clampWebGLText } from "@/utils"
 import { SpecializedCellProps } from "./types"
 import { useThree } from "@react-three/fiber"
 import { useTimelineState } from "@/hooks"
+import { RedrawButton } from "./RedrawButton"
+import { ClapSegmentCategory } from "@aitube/clap"
 
 export function TextCell({
   segment: s,
@@ -139,8 +141,15 @@ export function TextCell({
         >
           {lines.join("\n")}
         </Text>}
-  
       </a.mesh>
+      {(s.category === ClapSegmentCategory.STORYBOARD || s.category === ClapSegmentCategory.VIDEO)
+       ? <RedrawButton
+        segment={s}
+        cellWidth={cellWidth}
+        cellHeight={cellHeight}
+        isHovered={isHovered}
+        durationInSteps={durationInSteps}
+      /> : null}
     </RoundedBox>
   )
 }

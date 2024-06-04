@@ -38,7 +38,7 @@ export function Grid({
 
   return (
     <>
-      <group position={[0, height / 2, -7]}>
+      <group position={[0, height / 2, -12]}>
       {verticalGridLines.map((lineGeometry, idx) => (
         <line
           // @ts-ignore
@@ -57,7 +57,7 @@ export function Grid({
       ))}
       </group>
 
-      <group position={[0, height / 2, -7]}>
+      <group position={[0, height / 2, -12]}>
       {horizontalGridLines.map((lineGeometry, idx) => (
         <line
           // @ts-ignore
@@ -74,7 +74,7 @@ export function Grid({
       ))}
       </group>
 
-      <group position={[0, height / 2, -7]}>
+      <group position={[0, height / 2, -12]}>
       {axis.map((lineGeometry, idx) => (
         <line
           // @ts-ignore

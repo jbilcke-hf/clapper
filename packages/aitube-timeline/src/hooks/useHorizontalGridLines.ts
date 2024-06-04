@@ -24,8 +24,8 @@ export const useHorizontalGridLines = ({
 
     for (let i = 0; i <= tracks.length; i++) {
       const horizontalLinePoints = [
-        new THREE.Vector3(0, -getVerticalCellPosition(0, i), 1),
-        new THREE.Vector3(maxWidth, -getVerticalCellPosition(0, i), 1)
+        new THREE.Vector3(0, -getVerticalCellPosition(0, i), 0),
+        new THREE.Vector3(maxWidth, -getVerticalCellPosition(0, i), 0)
       ];
       const horizontalLineGeometry = new THREE.BufferGeometry().setFromPoints(horizontalLinePoints);
 

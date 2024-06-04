@@ -26,7 +26,7 @@ export function Cursor({
       position={[
         leftBarTrackScaleWidth,
        (height / 2),
-        -7
+        -6
       ]}
       ref={r => {
         if (r) {

@@ -19,11 +19,15 @@ export const useAxis = (width: number, height: number) => {
       new THREE.Vector3(0, -maxHeight, 1)
     ]);
 
+    /*
     const horizontalBottom = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(0, -maxHeight, 1),
       new THREE.Vector3(width, -maxHeight, 1)
     ]);
-    setAxis([horizontalTop, vertical, horizontalBottom]);
+    */
+    setAxis([horizontalTop, vertical, 
+      //horizontalBottom
+      ]);
   }, [width, height]);
 
   return axis;

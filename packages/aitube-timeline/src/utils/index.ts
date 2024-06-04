@@ -8,3 +8,4 @@ export {
 export { hslToHex } from "./hslToHex"
 export { similar } from "./similar"
 export { sliceSegments } from "./sliceSegments"
+export { parseRenderingStrategy } from "./parseRenderingStrategy"

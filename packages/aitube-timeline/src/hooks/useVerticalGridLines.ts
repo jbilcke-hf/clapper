@@ -10,6 +10,7 @@ export const useVerticalGridLines = ({
 }) => {
   const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
   const tracks = useTimelineState(s => s.tracks)
+  const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
   const [gridlines, setGridLines] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 
   const maxHeight = useTimelineState(s => s.maxHeight)
@@ -20,8 +21,8 @@ export const useVerticalGridLines = ({
 
     for (let i = 0; i < nbMaxShots; i++) {
       const verticalLinePoints = [
-        new THREE.Vector3(i * cellWidth, 0, 1),
-        new THREE.Vector3(i * cellWidth, -maxHeight, 1)
+        new THREE.Vector3(i * cellWidth, 0, 0),
+        new THREE.Vector3(i * cellWidth, -getVerticalCellPosition(0, tracks.length), 0)
       ];
       const verticalLineGeometry = new THREE.BufferGeometry().setFromPoints(verticalLinePoints);
 

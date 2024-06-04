@@ -1,13 +1,13 @@
 import { create } from "zustand"
 import * as THREE from "three"
-import { ClapProject, ClapSegment, ClapSegmentCategory, newClap, serializeClap } from "@aitube/clap"
+import { ClapEntity, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, newClap, serializeClap } from "@aitube/clap"
 
-import { TimelineStore, Track, Tracks } from "@/types/timeline"
+import { SegmentRenderer, TimelineStore, Track, Tracks } from "@/types/timeline"
 import { getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_COLUMNS_PER_SLICE, DEFAULT_DURATION_IN_MS_PER_STEP, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 import { removeFinalVideos } from "@/utils/removeFinalVideo"
 import { hslToHex } from "@/utils/hslToHex"
-import { ClapSegmentCategoryHues, ClapSegmentColorScheme } from "@/types"
+import { ClapSegmentCategoryHues, ClapSegmentColorScheme, RenderingStrategy } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { getFinalVideo } from "@/utils/getFinalVideo"
@@ -396,5 +396,44 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     document.body.removeChild(anchor);
 
     return objectUrl.length
+  },
+  setStoryboardRenderingStrategy: (storyboardRenderingStrategy: RenderingStrategy) => {
+    set({
+      storyboardRenderingStrategy: storyboardRenderingStrategy || RenderingStrategy.ON_DEMAND
+    })
+  },
+  setVideoRenderingStrategy: (videoRenderingStrategy: RenderingStrategy) => {
+    set({
+      videoRenderingStrategy: videoRenderingStrategy || RenderingStrategy.ON_DEMAND
+    })
+  },
+  setSegmentRenderer: (segmentRenderer: SegmentRenderer) => {
+    const defaultSegmentRenderer: SegmentRenderer = ( params: {
+      segment: ClapSegment,
+    
+      // the slice to use for rendering
+      segments: ClapSegment[],
+    
+      entities: Record<string, ClapEntity>
+    }) => Promise.resolve(params.segment)
+
+    set({
+      segmentRenderer: (segmentRenderer || defaultSegmentRenderer)
+    })
+  },
+  renderSegment: async (segment: ClapSegment) => {
+    const { segmentRenderer, clap, segments } = get()
+
+    return segmentRenderer({
+      segment,
+    
+      // the slice to use for rendering
+      segments: filterSegments(ClapSegmentFilteringMode.ANY, segment, segments),
+    
+      // TODO OPTIMIZATION:
+      // we should filter the entities here,
+      // to optimize the payload size
+      entities: clap?.entityIndex || {},
+    })
   },
 }))

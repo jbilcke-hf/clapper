@@ -3,6 +3,7 @@ import * as THREE from "three"
 import { useSpring, a, animated, config } from "@react-spring/three"
 
 import { SpecializedCellProps } from "./types"
+import { RedrawButton } from "./RedrawButton"
 
 export function VideoCell({
   segment: s,
@@ -64,6 +65,13 @@ export function VideoCell({
           <videoTexture attach="map" args={[video]} />
           <videoTexture attach="emissiveMap" args={[video]} />
         </meshStandardMaterial>
+      <RedrawButton
+        segment={s}
+        cellWidth={cellWidth}
+        cellHeight={cellHeight}
+        isHovered={isHovered}
+        durationInSteps={durationInSteps}
+      />
     </a.mesh>
   )
 }

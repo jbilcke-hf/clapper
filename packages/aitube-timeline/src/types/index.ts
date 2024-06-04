@@ -14,3 +14,7 @@ export {
   ClapSegmentCategoryHues,
   ClapSegmentColorScheme
 } from "./theme"
+
+export {
+  RenderingStrategy
+} from "./rendering"
