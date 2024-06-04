@@ -13,7 +13,7 @@ export function FormField({ label, children, className, horizontal = false }: {
   return (
     <div className={cn(
       `flex flex-col space-y-3`,
-      `text-base font-thin text-gray-400`,
+      `text-base font-thin text-stone-400`,
       horizontal ? '' : 'w-full',
       )}>
       {label && <FormLabel>{label}</FormLabel>}

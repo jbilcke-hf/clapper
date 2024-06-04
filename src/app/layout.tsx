@@ -25,7 +25,7 @@ export default function RootLayout({
         )}
         style={{
           overscrollBehaviorX: "none",
-          backgroundImage: "repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #34353655, #343536 )"
+          backgroundImage: "repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #37353455, #373534 )"
         }}>
         {children}
       </body>

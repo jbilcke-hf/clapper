@@ -15,8 +15,10 @@ import {
 } from "@/components/ui/menubar"
 import { useSettingsRendering } from "@/settings/rendering"
 import { RenderingStrategy } from "@/types"
+import { useSettingsView } from "@/settings/view"
 
 export function TopMenuRendering() {
+  const setShowSettings = useSettingsView(s => s.setShowSettings)
 
   const storyboardRenderingStrategy = useSettingsRendering((s) => s.storyboardRenderingStrategy)
   const setStoryboardRenderingStrategy = useSettingsRendering((s) => s.setStoryboardRenderingStrategy)
@@ -37,6 +39,9 @@ export function TopMenuRendering() {
       <MenubarContent>
 
         <MenubarSub>
+          <MenubarItem
+            onClick={() => { setShowSettings(true) }}>All settings (API, tokens..)</MenubarItem>
+          <MenubarSeparator />
           <MenubarSubTrigger>Storyboards generation</MenubarSubTrigger>
           <MenubarSubContent>
             <MenubarCheckboxItem

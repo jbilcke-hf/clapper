@@ -10,7 +10,7 @@ with some custom colors and sizes
 
 @layer components {
   body .reflex-container > .reflex-splitter {
-    @apply transition-all duration-200 ease-in-out bg-stone-800;
+    @apply transition-all duration-200 ease-in-out bg-stone-600;
   }
 
   body .reflex-container > .reflex-splitter.active,
@@ -19,20 +19,20 @@ with some custom colors and sizes
   }
 
   body .horizontal > .reflex-splitter {
-    @apply h-[2px] bg-stone-800 border-t-stone-900 border-b-stone-800;
+    @apply h-[3px] bg-stone-600 border-t-stone-600 border-b-stone-600;
   }
 
   body .reflex-container.horizontal > .reflex-splitter:hover,
   body .reflex-container.horizontal > .reflex-splitter.active {
-    @apply  h-[2px] bg-stone-400 border-t-stone-400 border-b-stone-800;
+    @apply  h-[3px] bg-stone-400 border-t-stone-400 border-b-stone-800;
   }
 
   body .reflex-container.vertical > .reflex-splitter {
-    @apply w-[2px] bg-stone-800 border-l-stone-800 border-r-stone-800;
+    @apply w-[3px] bg-stone-600 border-l-stone-400 border-r-stone-600;
   }
 
   body .reflex-container.vertical > .reflex-splitter:hover,
   body .reflex-container.vertical > .reflex-splitter.active {
-    @apply  w-[2px] bg-stone-400 border-l-stone-400 border-r-stone-400;
+    @apply  w-[3px] bg-stone-400 border-l-stone-400 border-r-stone-400;
   }
 }

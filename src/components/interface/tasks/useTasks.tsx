@@ -1,0 +1,376 @@
+"use client"
+
+import { create } from "zustand"
+import { toast } from "sonner"
+import { UUID } from "@aitube/clap"
+
+import { NewTask, Task, TaskCategory, TaskProgressType, TaskRemoteControl, TaskStatus, TaskVisibility } from "./types"
+import { TaskStatusUpdate } from "./TaskStatusUpdate"
+import { sleep } from "@/lib/utils/sleep"
+
+// we enforce the impossibility of some transitions
+function statusTransition(current: TaskStatus, requested: TaskStatus): TaskStatus {
+  switch (current) {
+    case "upcoming":
+    case "running":
+    case "paused":
+      return requested
+
+    default:
+      return current
+  }
+}
+
+/**
+ * A task manager, used for downloads, processing..
+ * 
+ * It may seem a bit complicated, but that's because it can handle various modes:
+ * 
+ * - Promise (you pass a function returning a promise, and it will wait the end)
+ * - Progressive (no function, no promise, instead you call yourself a progress update function)
+ * 
+ * It is also complex, because it is bidirectional!
+ * - A task can receive a helper to gets its status, but it can also sets its own status
+ * - A task can finish itself, ir be finished by an external event etc..
+ * 
+ * and it also provides tons of helper to track the status
+ */
+export const useTasks = create<{
+  tasks: Record<string, Task>,
+  expandTasks: boolean,
+  setExpandTasks: (expandTasks: boolean) => void,
+  get: (taskId?: string) => TaskRemoteControl | undefined
+  find: (params?: {
+    status?: TaskStatus
+    category?: TaskCategory
+    visibility?: TaskVisibility
+  }) => Task[]
+  add: (partialTask: Partial<Task>, status?: TaskStatus) => TaskRemoteControl
+  pause: (taskId?: string) => void
+  continue: (taskId?: string) => void
+  setStatus: (status: TaskStatus, taskId?: string) => void
+  setProgress: (taskId: string, options?: {
+    value?: number
+    sleepDelay?: number
+    message?: string
+    isFinished?: boolean
+    hasFailed?: boolean
+  }) => Promise<void>
+
+  // cancel and clear all tasks (used when switching project)
+  clear: () => void
+
+  // mark a task as completed
+  success: (taskId: string) => void
+  fail: (taskId: string, reason?: string) => void
+  cancel: (taskId?: string) => void
+}>((set, get) => ({
+  tasks: {} as Record<string, Task>,
+  expandTasks: false,
+  setExpandTasks: (expandTasks: boolean) => {
+    set({ expandTasks })
+  },
+  get: (taskId?: string): TaskRemoteControl | undefined => {
+    const { tasks } = get()
+    if (!taskId) { return undefined }
+    const task = (tasks[taskId || "" ] || undefined) as Task | undefined
+    if (!task) { return }
+
+    // we provide a helper to whoever called us
+    return {
+      task,
+      promise: task.promise,
+      pause: () => {
+        return get().pause(task.id)
+      },
+      continue: () => {
+        return get().continue(task.id)
+      },
+      setStatus: (status: TaskStatus) => {
+        return get().setStatus(status, task.id)
+      },
+      setProgress: async (options?: {
+        value?: number
+        sleepDelay?: number
+        message?: string
+        isFinished?: boolean
+        hasFailed?: boolean
+      }) => {
+        return get().setProgress(task.id, options)
+      },
+      success: () => {
+        return get().success(task.id)
+      },
+      fail: (reason?: string) => {
+        return get().fail(task.id, reason)
+      },
+      cancel: () => {
+        return get().cancel(task.id)
+      }
+    }
+  },
+  find: (params?: {
+    status?: TaskStatus
+    category?: TaskCategory
+    visibility?: TaskVisibility
+  }): Task[] => {
+    const {
+      tasks,
+    } = get()
+
+    let list = Object.values(tasks)
+  
+    if (params?.status) {
+      list = list.filter(t => t.status === params?.status)
+    }
+
+    if (params?.category) {
+      list = list.filter(t => t.category === params?.category)
+    }
+
+    return list
+  },
+  add: (partialTask: Partial<NewTask>, status?: TaskStatus): TaskRemoteControl => {
+    const mode: TaskProgressType =
+    partialTask?.mode === "counter" ? "counter" :
+    partialTask?.mode === "ratio" ? "ratio" :
+      partialTask?.mode === "percentage" ? "percentage" :
+        "percentage"
+  
+    const min = mode === "counter" && partialTask?.min ? partialTask.min : 0
+    const max = mode === "counter" && partialTask?.max ? partialTask.max : mode === "ratio" ? 1 : mode === "percentage" ? 100 : 100
+  
+    const id = UUID()
+
+    const newTask: NewTask = {
+      id,
+      visibility: partialTask?.visibility || "background",
+      category: partialTask?.category || "generic",
+      initialMessage: partialTask?.initialMessage || "Loading..",
+      successMessage: partialTask?.successMessage || "Task completed!",
+      priority: partialTask?.priority || 0, // 0 = lowest, 1 or more = more and more important
+      status: status || "running",
+      value: partialTask?.value || 0,
+      progress: partialTask?.progress || 0,
+      min,
+      max,
+      mode,
+      run: partialTask.run,
+    }
+
+    const task: Task = {
+      ...newTask,
+      currentMessage: newTask.initialMessage,
+      startedAt: new Date().toISOString(),
+      endedAt: "",
+      promise: Promise.resolve("running"),
+    }
+
+    task.promise = new Promise<TaskStatus>((resolve, reject) => {
+      let checkStatus = () => {
+        try {
+          // need to use fresh data here
+          const t = get().get(id)!
+          
+          if (!t) {
+            resolve("success" )
+            return
+          }
+
+          const status = t.task.status || "deleted"
+          const progress = t.task.progress || 0
+
+          console.log(`useTasks[${id}]: checkStatus: checking task, current status is: "${status}"`)
+          if (
+            status === "error" ||
+            status === "success" ||
+            status === "deleted" ||
+            status === "cancelled"
+          ) {
+            console.log(`useTasks[${id}]: checkStatus: status is "${status}", interrupting task loop..`)
+
+            // this call might be redundant
+            if (status === "success") {
+              get().setProgress(id, { isFinished: true })
+            }
+            resolve(status)
+          } else if (progress >= 100) {
+            console.log(`useTasks[${id}]: checkStatus: task is completed at 100%, interrupting task loop..`)
+            // this call might be redundant
+            get().setProgress(id, { isFinished: true })
+            // get().setStatus("success", id)
+            resolve("success")
+          } else {
+            console.log(`useTasks[${id}]: checkStatus: status is "${status}", continuing task loop..`)
+            setTimeout(checkStatus, 1000)
+          }
+        } catch (err) {
+          console.error("useTasks:checkStatus: ", err)
+        }
+      }
+
+      checkStatus()
+    })
+
+    toast.promise<TaskStatus>(task.promise, {
+      loading: <TaskStatusUpdate taskId={id} />,
+      success: (finalStatus) => {
+        return finalStatus === "success" ? task.successMessage : `Task ended`;
+      },
+      error: 'Task aborted',
+    });
+
+    const { tasks } = get()
+    set({
+      tasks: {
+        ...tasks,
+        [id]: task,
+      }
+    })
+
+    setTimeout(async () => {
+      // optionally launch the task function, if there is one
+      if (!task.run) { return }
+      // oh, one last thing: let's launch-and-forget the actual task
+
+      console.log(`useTasks[${id}]: launching the task runner in the background..`)
+
+      // we provide to the task runner a wait to get the current status
+      // that wait long-running jobs will know when they have been cancelled and no longer needed
+      const result = await task.run(() => {
+        const remoteControl = get().get(id)!
+        const status = remoteControl?.task?.status
+        console.log(`useTasks[${id}]: task runner asked for current status (which is: "${status || "deleted"}")`)
+        return status || "deleted"
+      })
+
+      console.log(`useTasks[${id}]: task runner ended with status: "${result}"`)
+      get().setProgress(id, { isFinished: true })
+      // get().setStatus(result, id)
+    },  100)
+
+    // we want to return the "remote control", which is a more complex object,
+    // with functions and all
+    // the easiest way to do this is to call our get() function
+    const remoteControl = get().get(id)!
+
+    return remoteControl
+  },
+  pause: (taskId?: string) => {
+    get().setStatus("paused", taskId)
+  },
+  continue: (taskId?: string) => {
+    get().setStatus("running", taskId)
+  },
+  setStatus: (status: TaskStatus, taskId?: string) => {
+    const { tasks } = get()
+    const task = get().get(taskId)?.task
+
+    console.log(`useTasks[${taskId}]:setStatus("${status}")`)
+    if (task) {
+      console.log(`useTasks[${taskId}]:setStatus("${status}") -> setting one task to ${status}`)
+      set({
+        tasks: {
+          ...tasks,
+          [task.id]: { ...task, status: statusTransition(task.status, status) }
+        }
+      })
+    } else {
+      console.log(`useTasks[${taskId}]:setStatus("${status}") -> setting all tasks to ${status}`)
+      const newTasks = {} as Record<string, Task>
+      for (const [id, t] of Object.entries(tasks)) {
+        newTasks[id] = { ...t, status: statusTransition(t.status, status) }
+      }
+      set({
+        tasks: newTasks
+      })
+    }
+  },
+  setProgress: async (taskId: string, options?: {
+    value?: number
+    sleepDelay?: number
+    message?: string
+    isFinished?: boolean
+    hasFailed?: boolean
+  }): Promise<void> => {
+    try {
+      const { tasks } = get()
+      const task = get().get(taskId)?.task
+
+      const message = options?.message || ""
+      const value = options?.value || task?.value || 0
+      const sleepDelay = options?.sleepDelay || 100
+
+      if (task) {
+
+        let progress =
+          task.mode === "percentage"
+            ? value :
+          task.mode === "ratio"
+            ? (value * 100)
+          : ((value - task.min) / (task.max - task.min)) * 100
+      
+        const currentMessage = message || task.initialMessage
+
+        if (options?.hasFailed) {
+          set({
+            tasks: {
+              ...tasks,
+              [task.id]: {
+                ...task,
+                currentMessage,
+                status: "error",
+                endedAt: new Date().toISOString(),
+              }
+            }
+          })
+          
+        } else {
+          
+          const isFinished = options?.isFinished || progress >= 100
+
+          if (isFinished) {
+            progress = 100
+          } 
+          
+          set({
+            tasks: {
+              ...tasks,
+              [task.id]: {
+                ...task,
+                progress,
+                value,
+                currentMessage,
+                status: isFinished ? "success" : "running",
+                endedAt: isFinished ? new Date().toISOString() : task.endedAt,
+              }
+            }
+          })
+        }
+
+        await sleep(sleepDelay)
+      }
+    } catch (err) {
+
+    }
+  },
+  clear: () => {
+    get().cancel()
+    set({ tasks: {} })
+  },
+  success: (taskId: string) => {
+    get().setProgress(taskId, { isFinished: true })
+    get().setStatus("success", taskId)
+  },
+  fail: (taskId: string, reason?: string) => {
+    get().setProgress(taskId, {
+      message: reason || "unknown failure",
+      isFinished: true,
+      hasFailed: true,
+    })
+    get().setStatus("error", taskId)
+  },
+  cancel: (taskId?: string) => {
+    get().setStatus("cancelled", taskId)
+  }
+}))

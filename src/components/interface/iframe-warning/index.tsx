@@ -31,7 +31,7 @@ export function IframeWarning() {
       : 'pointer-events-none opacity-0',
       )}
       style={{
-       backgroundImage: "repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #34353655, #343536 )"
+       backgroundImage: "repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #37353455, #373534 )"
       }}>
       <p
         className={cn("text-stone-100 font-sans")}

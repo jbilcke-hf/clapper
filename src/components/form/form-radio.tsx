@@ -20,9 +20,9 @@ export function FormRadio({ label, className, selected, items, horizontal }: {
         <div key={item.name} className={cn(
           `flex flex-row items-center space-x-2`,
           selected === item.name
-            ? `text-gray-200 font-normal`
+            ? `text-stone-200 font-light`
             : (
-              item.disabled ? `text-gray-600 font-normal` :  `text-gray-400 font-normal`
+              item.disabled ? `text-stone-600 font-light` :  `text-stone-400 font-light`
             )
         )}>
           {selected === item.name

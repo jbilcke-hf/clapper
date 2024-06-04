@@ -49,7 +49,7 @@ export function FormSelect<T>({
           onSelect(selectedItem?.value)
         }}
         defaultValue={selectedItemId}>
-        <SelectTrigger className="w-full md:w-52 lg:w-56 xl:w-64 font-normal text-base">
+        <SelectTrigger className="w-full md:w-52 lg:w-56 xl:w-64 font-light text-base">
           <SelectValue placeholder={selectedItemLabel} />
         </SelectTrigger>
         <SelectContent>
