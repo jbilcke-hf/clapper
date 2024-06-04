@@ -27,11 +27,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-K98T8ZFZ');`}</Script>
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K98T8ZFZ"
 height="0" width="0" style={{ display: "none", visibility: "hidden" }}></iframe></noscript>
-      <main className={cn(
-        ``,
-        `text-stone-900/90 dark:text-stone-100/90`,
-        `bg-stone-500`,
-        )}>
+      <main>
         {isLoaded && <Main />}
       </main>
     </>

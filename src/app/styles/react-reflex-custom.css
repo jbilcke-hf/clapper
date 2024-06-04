@@ -10,29 +10,29 @@ with some custom colors and sizes
 
 @layer components {
   body .reflex-container > .reflex-splitter {
-    @apply transition-all duration-200 ease-in-out bg-gray-700;
+    @apply transition-all duration-200 ease-in-out bg-stone-800;
   }
 
   body .reflex-container > .reflex-splitter.active,
   body .reflex-container > .reflex-splitter:hover {
-    @apply transition-all duration-200 ease-in-out bg-gray-400;
+    @apply transition-all duration-200 ease-in-out bg-stone-400;
   }
 
   body .horizontal > .reflex-splitter {
-    @apply h-[2px] bg-gray-700 border-t-gray-700 border-b-gray-700;
+    @apply h-[2px] bg-stone-800 border-t-stone-900 border-b-stone-800;
   }
 
   body .reflex-container.horizontal > .reflex-splitter:hover,
   body .reflex-container.horizontal > .reflex-splitter.active {
-    @apply bg-gray-400 border-t-gray-400 border-b-gray-400;
+    @apply  h-[2px] bg-stone-400 border-t-stone-400 border-b-stone-800;
   }
 
   body .reflex-container.vertical > .reflex-splitter {
-    @apply w-[2px] bg-gray-700 border-l-gray-700 border-r-gray-700;
+    @apply w-[2px] bg-stone-800 border-l-stone-800 border-r-stone-800;
   }
 
   body .reflex-container.vertical > .reflex-splitter:hover,
   body .reflex-container.vertical > .reflex-splitter.active {
-    @apply bg-gray-400 border-l-gray-400 border-r-gray-400;
+    @apply  w-[2px] bg-stone-400 border-l-stone-400 border-r-stone-400;
   }
 }

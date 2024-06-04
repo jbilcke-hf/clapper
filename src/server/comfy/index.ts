@@ -4,16 +4,19 @@ import { RenderRequest } from "@/types"
 
 import { run as runWithReplicate } from "./replicate"
 import { run as runWithHuggingFace } from "./huggingface"
-import { formatStoryboardWorkflow } from "./formatStoryboardWorkflow"
+import { getComfyWorkflow } from "./getComfyWorkflow"
 
-export async function run(request: RenderRequest): Promise<string> {
+// TODO: at some point in the future we will 
+// move src/server/comfy to @aitube/engine
+export async function render(request: RenderRequest): Promise<string> {
 
-  const workflow = formatStoryboardWorkflow(request)
+  const workflow = getComfyWorkflow(request)
 
   // TODO support Hugging Face as well
   // const await runWithHuggingFace({
+
   const result = await runWithReplicate({
-    apiKey: request.comfyApiKey,
+    apiKey: request.comfyUiApiKey,
     workflow,
   })
 

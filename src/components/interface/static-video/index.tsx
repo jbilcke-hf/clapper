@@ -3,7 +3,7 @@
 import React, { ReactNode, useEffect, useRef } from "react"
 
 import { useTimelineState } from "@aitube/timeline"
-import useRequestAnimationFrame from "@/lib/hooks/useRequestAnimationFrame"
+import { useRequestAnimationFrame } from "@/lib/hooks/useRequestAnimationFrame"
 
 export function StaticVideo({
   video = "",

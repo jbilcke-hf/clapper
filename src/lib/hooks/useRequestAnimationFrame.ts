@@ -12,7 +12,7 @@ type Config = {
  *
  * @description keep your `nextAnimationFrameHandler` as simple and performant as possible with the least amount of dependencies and transformations. It will be called frequently and this can lead to bad UX
  */
-const useRequestAnimationFrame = (
+export const useRequestAnimationFrame = (
   nextAnimationFrameHandler: (progress: number) => void,
   {
     duration = Number.POSITIVE_INFINITY,
@@ -60,4 +60,3 @@ const useRequestAnimationFrame = (
   }, [shouldAnimate])
 }
 
-export default useRequestAnimationFrame
