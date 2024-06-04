@@ -1,15 +1,15 @@
 ---
 title: Clap Viewer
-emoji: 🎞️
+emoji: 🎬
 sdk: docker
-colorFrom: yellow
-colorTo: yellow
+colorFrom: gray
+colorTo: gray
 pinned: true
 app_port: 3000
 disable_embedding: true
 hf_oauth: false
 header: mini
-short_description: Visualize OpenClap files 🎞️
+short_description: Visualize screenplay and OpenClap files 🎬
 ---
 
 ## Introduction
