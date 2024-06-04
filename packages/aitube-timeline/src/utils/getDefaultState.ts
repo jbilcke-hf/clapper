@@ -28,7 +28,7 @@ export function getDefaultState(): TimelineStoreState {
     afterSteps: 0,
     timeout: 0 as unknown as NodeJS.Timeout,
 
-    minHorizontalZoomLevel: 2,
+    minHorizontalZoomLevel: 6,
     maxHorizontalZoomLevel: 100,
 
     // horizontalZoomLevel is the WIDTH of a grid cell, in pixels

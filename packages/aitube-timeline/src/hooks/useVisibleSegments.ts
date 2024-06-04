@@ -55,9 +55,7 @@ export const useVisibleSegments = ({
     beforeTimeInMs: number
     afterTimeInMs: number
     timeout: NodeJS.Timeout
-    segments: ClapSegment[]
     visibleSegments: ClapSegment[]
-    nbMaxTracks: number
   }>({
     position: new THREE.Vector3(),
     scale: new THREE.Vector3(),
@@ -65,21 +63,9 @@ export const useVisibleSegments = ({
     beforeTimeInMs: 0,
     afterTimeInMs: 0,
     timeout: 0 as unknown as NodeJS.Timeout,
-    segments: [],
     visibleSegments: [],
-    nbMaxTracks,
   })
 
-
-  // make sure the state reflects the latest params
-  stateRef.current.segments = [...segments]
-  stateRef.current.nbMaxTracks = nbMaxTracks
-
-  // DO we still need this?
-  useEffect(() => {
-    stateRef.current.segments = [...segments]
-    console.log("TODO: force a re-rendering")
-  }, [segmentsChanged])
   /*
 
   for some reason, this:
@@ -222,7 +208,10 @@ export const useVisibleSegments = ({
       state.afterTimeInMs = afterTimeInMs
       state.beforeTimeInMs = beforeTimeInMs
 
-      const visibleSegments = await sliceSegments({ ...state })
+      const visibleSegments = await sliceSegments({
+        segments: useTimelineState.getState().segments,
+        ...state
+      })
 
       state.visibleSegments = [...visibleSegments]
       
@@ -262,7 +251,7 @@ export const useVisibleSegments = ({
     console.log("forcing a sync(true)")
     const fn = async () => { try { await sync(true) } catch (err) {} }
     fn()
-  }, [cellHeight, cellWidth])
+  }, [cellHeight, cellWidth, segmentsChanged])
   
   return visibleSegments
 };
