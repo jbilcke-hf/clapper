@@ -25,27 +25,33 @@ export type GenerationStage =
   | "idle"
 
 export enum ComfyVendor {
+  NONE = "NONE",
   CUSTOM = "CUSTOM",
   HUGGINGFACE = "HUGGINGFACE",
   REPLICATE = "REPLICATE",
 }
 
-export enum AssetGenerationStrategy {
+export enum RenderingStrategy {
 
-  // generate assets when the user asks for it explicitely
-  ON_DEMAND = "ON_DEMAND_",
+  // render assets when the user asks for it (could be a click or mouse hover)
+  ON_DEMAND = "ON_DEMAND",
 
-  // generate missing assets currently visible on screen, and that's all
+  // render assets currently visible on screen, never render invisible ones
   ON_SCREEN_ONLY = "ON_SCREEN_ONLY",
 
-  // generate missing assets visible on screen first,
-  // then pre-generate surrouding assets (a bit before and after)
+  // render assets visible on screen in priority,
+  // then pre-render a few of the surrounding assets (but not the whole set)
   ON_SCREEN_THEN_SURROUNDING = "ON_SCREEN_THEN_SURROUNDING",
 
-  // generate missing assets visible on screen first,
-  // then pre-generate *ALL* the remaining project's assets
+
+  // render assets visible on screen in priority,
+  // then pre-render *ALL* the remaining project's assets
+  // so yeah if you have 3000 storyboards, it will render that many ($$$)
+  // (note: there is a setting to cap the number of parallel renderings)
   //
-  // this is hardcore! only GPU-rich people shoud use this one!
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // !! this is hardcore! only GPU-rich people shoud use this feature! !!
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   ON_SCREEN_THEN_ALL = "ON_SCREEN_THEN_ALL",
 }
 
@@ -54,23 +60,29 @@ export type Settings = {
   comfyVendor: ComfyVendor
   comfyApiKey: string
 
-  storyboardGenerationStrategy: AssetGenerationStrategy
-  videoGenerationStrategy: AssetGenerationStrategy
+  storyboardGenerationStrategy: RenderingStrategy
+  videoGenerationStrategy: RenderingStrategy
 
   maxNbAssetsToGenerateInParallel: number
 }
 
 export type RenderRequest = {
-  comfyVendor: ComfyVendor
+  comfyUiApiVendor: ComfyVendor
 
   // secret vendor api key to use (provided by the user)
-  comfyApiKey: string
+  comfyUiApiKey: string
 
-  // URL to use for the vendor
-  // vendorUrl: string
+  // available ComfyUI workflows
+  // a render request might use multiple workflows (eg. entity + storyboard)
+  // so we need to have them all readily available
+  entityWorkflow: string
+  dialogueWorkflow: string  
+  storyboardWorkflow: string
+  videoWorkflow: string
+  musicWorkflow: string
 
-  // ComfyUI workflow to use
-  comfyWorkflow: string
+  // the reference segment to render (eg. storyboard or video)
+  segment: ClapSegment
 
   // the slice to use for rendering
   segments: ClapSegment[]

@@ -7,7 +7,7 @@ export function Timeline() {
     <ClapTimeline
       showFPS={false}
       className={cn(
-
+        "bg-[rgb(58,54,50)]"
       )}
     />
   )

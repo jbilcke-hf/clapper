@@ -12,6 +12,7 @@ export async function run({
 
   const replicate = new Replicate({ auth: apiKey })
 
+  // https://replicate.com/fofr/any-comfyui-workflow
   const cogId = "fofr/any-comfyui-workflow:74f12621dc9f9b7cdca50d03941b8ddb3a368d7f5a1bb16fb7e1b87f05d96bf5"
 
   const output = await replicate.run(cogId, {
