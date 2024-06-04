@@ -16,5 +16,6 @@ export {
 } from "./theme"
 
 export {
-  RenderingStrategy
+  RenderingStrategy,
+  SegmentRenderer
 } from "./rendering"

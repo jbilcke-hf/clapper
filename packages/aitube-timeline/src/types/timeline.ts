@@ -5,7 +5,7 @@ import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { TimelineCursorImpl } from "@/components/timeline/types"
-import { RenderingStrategy } from "./rendering"
+import { RenderingStrategy, SegmentRenderer } from "./rendering"
 
 export type Track = {
   id: number
@@ -18,15 +18,6 @@ export type Track = {
 }
 
 export type Tracks = Track[]
-
-export type SegmentRenderer = (params: {
-  segment: ClapSegment,
-
-  // the slice to use for rendering
-  segments: ClapSegment[],
-
-  entities: Record<string, ClapEntity>
-}) => Promise<ClapSegment>
 
 export type TimelineStoreState = {
   // container width and height
