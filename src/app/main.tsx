@@ -20,6 +20,7 @@ export function Main() {
   return (
     <TooltipProvider>
       <div className={cn(`
+        select-none
         fixed
         flex flex-col
         w-screen h-screen

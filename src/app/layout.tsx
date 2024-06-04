@@ -8,8 +8,8 @@ import type { Metadata } from 'next'
 import { inter } from './fonts'
 
 export const metadata: Metadata = {
-  title: 'Clap Viewer - Visualize .clap files 🎞️',
-  description: 'Clap Viewer - Visualize .clap files 🎞️',
+  title: '🎬 Clapper',
+  description: '🎬 Clapper',
 }
 
 export default function RootLayout({

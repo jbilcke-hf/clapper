@@ -1,8 +1,8 @@
 {
-  "name": "@jbilcke-hf/clap-viewer",
+  "name": "@jbilcke-hf/clapper",
   "version": "0.0.2",
   "private": true,
-  "description": "Clap Viewer - Visualize screenplays and OpenClap files 🎞️",
+  "description": "🎬 Clapper",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
