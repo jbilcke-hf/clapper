@@ -8,7 +8,7 @@ export function IframeWarning() {
   const [showWarning, setShowWarning] = useState(false)
 
   useEffect(() => {
-    setShowWarning(true) // window.self !== window.top)
+    setShowWarning(window.self !== window.top)
     return () => {}
   }, [])
   // TODO: read our global state
