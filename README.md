@@ -6,7 +6,7 @@ colorFrom: gray
 colorTo: gray
 pinned: true
 app_port: 3000
-disable_embedding: true
+disable_embedding: false
 hf_oauth: false
 header: mini
 short_description: 🎬 Clapper
