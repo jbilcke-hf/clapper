@@ -122,7 +122,7 @@ export function Main() {
         cursor-pointer
         `, isBusy ? 'animate-pulse' : '')}
         style={{
-          backgroundImage: "repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #34353655, #343536 )"
+          backgroundImage: "repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #37353455, #373534 )"
         }}><p
         className="text-stone-100 font-sans font-thin text-[3vw]"
         style={{ textShadow: "#000 1px 0 3px" }}

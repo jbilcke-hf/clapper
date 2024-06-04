@@ -27,8 +27,9 @@ export function SettingsDialog() {
   return (
     <Dialog open={showSettings} onOpenChange={setShowSettings}>
       <DialogContent className={cn(
+        `select-none`,
         // DialogContent comes with some hardcoded values so we need to override them
-        `w-[95w] md:w-[85vw] max-w-6xl h-[80%]`,
+        `w-[95w] md:w-[45vw] max-w-6xl h-[60%]`,
         `flex flex-row`
       )}>
          <ScrollArea className="flex flex-col h-full w-44">
@@ -37,18 +38,23 @@ export function SettingsDialog() {
               <Button
                 key={key}
                 variant="ghost"
-                className="flex flex-col capitalize w-full items-end text-right text-md"
+                className="flex flex-col capitalize w-full items-end text-right text-lg font-thin text-stone-300"
                 onClick={() => setConfigPanel(key as keyof typeof panels)}>{panelLabels[key]}</Button>
               ))}
             </div>
         </ScrollArea>
 
-        <div className="flex flex-col h-full flex-grow justify-between max-w-[calc(100%-200px)]">
+        <div className="
+        select-none
+        flex flex-col h-full flex-grow justify-between max-w-[calc(100%-200px)]
+        border-l border-stone-800
+        pl-8
+        ">
           <ScrollArea className="flex flex-row h-full">
             {panels[configPanel]}
           </ScrollArea>
-          <DialogFooter className="text-gray-800">
-            <Button onClick={() => { setShowSettings(false) }}>Close</Button>
+          <DialogFooter>
+            <Button variant="outline" className=" dark:bg-stone-800 dark:text-stone-400 dark:border-stone-700 text-sm font-light" onClick={() => { setShowSettings(false) }}>Close</Button>
           </DialogFooter>
         </div>
       </DialogContent>

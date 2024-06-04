@@ -93,7 +93,7 @@ export function FormInput<T>({
       <Input
         ref={ref}
         placeholder={`${placeholder || defaultValue || ""}`}
-        className={cn(`w-full md:w-52 lg:w-56 xl:w-64 font-normal text-base`, className)}
+        className={cn(`w-full md:w-52 lg:w-56 xl:w-64 font-light text-base`, className)}
         disabled={disabled}
         onChange={handleChange}
         // {...props}

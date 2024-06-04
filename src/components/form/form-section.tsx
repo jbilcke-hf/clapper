@@ -10,7 +10,7 @@ export function FormSection({ label, children, className, horizontal }: {
 }) {
   return (
     <div className={cn(`flex flex-col space-y-4`)}>
-      <h2 className="text-2xl font-thin pb-2 text-gray-200">{label}</h2>
+      <h2 className="text-4xl font-thin pb-2 text-stone-400">{label}</h2>
       <div className={cn(
         "flex",
         horizontal

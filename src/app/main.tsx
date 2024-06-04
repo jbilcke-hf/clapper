@@ -14,22 +14,26 @@ import { RenderClap } from "@/components/interface/render-clap"
 import { Timeline } from "@/components/interface/timeline"
 import { TopBar } from "@/components/interface/top-bar"
 import { useTimelineState } from "@aitube/timeline"
+import { SettingsDialog } from "@/components/settings"
+import { LoadingDialog } from "@/components/interface/loader/LoadingDialog"
 
 export function Main() {
   const isEmpty = useTimelineState(s => s.isEmpty)
   return (
     <TooltipProvider>
       <div className={cn(`
+        dark
         select-none
         fixed
         flex flex-col
         w-screen h-screen
         overflow-hidden
         items-center justify-center
+        font-light
         text-stone-900/90 dark:text-stone-100/90
         `)}
         style={{
-          backgroundImage: "repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #34353655, #343536 )"
+          backgroundImage: "repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #37353455, #373534 )"
         }}
         >
         <TopBar />
@@ -46,8 +50,11 @@ export function Main() {
               <Timeline />
             </ReflexElement>
           </ReflexContainer>
-          <Toaster />
         </div>
+        <SettingsDialog />
+        <LoadingDialog />
+        <Toaster />
+        <Toaster />
       </div>
     </TooltipProvider>
   );

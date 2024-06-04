@@ -1,29 +1,5 @@
 import { ClapEntity, ClapSegment } from "@aitube/clap"
 
-export type TaskStatus =
-  | "idle"
-  | "generating"
-  | "finished"
-  | "error"
-
-export type GlobalStatus =
-  | "idle"
-  | "generating"
-  | "finished"
-  | "error"
-
-export type GenerationStage =
-  | "parse"
-  | "story"
-  | "entities"
-  | "sounds"
-  | "music"
-  | "voices"
-  | "images"
-  | "videos"
-  | "final"
-  | "idle"
-
 export enum ComfyVendor {
   NONE = "NONE",
   CUSTOM = "CUSTOM",

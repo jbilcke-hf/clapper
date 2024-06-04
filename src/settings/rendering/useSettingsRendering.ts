@@ -16,23 +16,23 @@ export const useSettingsRendering = create<SettingsRenderingStore>()(
     (set, get) => ({
       ...getDefaultSettingsRendering(),
 
-      setComfyUiApiVendor: (comfyUiApiVendor: ComfyVendor) => {
+      setComfyUiApiVendor: (comfyUiApiVendor?: ComfyVendor) => {
         const { comfyUiApiVendor: defaultComfyUiApiVendor } = getDefaultSettingsRendering()
         set({ comfyUiApiVendor: parseComfyVendor(comfyUiApiVendor, defaultComfyUiApiVendor) })
       },
-      setComfyUiApiKey: (comfyUiApiKey: string) => {
+      setComfyUiApiKey: (comfyUiApiKey?: string) => {
         const { comfyUiApiKey: defaultComfyUiApiKey } = getDefaultSettingsRendering()
         set({ comfyUiApiKey: getValidString(comfyUiApiKey, defaultComfyUiApiKey) })
       },
-      setStoryboardRenderingStrategy: (storyboardRenderingStrategy: RenderingStrategy) => {
+      setStoryboardRenderingStrategy: (storyboardRenderingStrategy?: RenderingStrategy) => {
         const { storyboardRenderingStrategy: defaulStoryboardRenderingStrategy } = getDefaultSettingsRendering()
         set({ storyboardRenderingStrategy: parseRenderingStrategy(storyboardRenderingStrategy, defaulStoryboardRenderingStrategy) })
       },
-      setVideoRenderingStrategy: (videoRenderingStrategy: RenderingStrategy) => {
+      setVideoRenderingStrategy: (videoRenderingStrategy?: RenderingStrategy) => {
         const { videoRenderingStrategy: defaultVideoRenderingStrategy } = getDefaultSettingsRendering()
         set({ videoRenderingStrategy: parseRenderingStrategy(videoRenderingStrategy, defaultVideoRenderingStrategy) })
       },
-      setMaxNbAssetsToGenerateInParallel: (maxNbAssetsToGenerateInParallel: number) => {
+      setMaxNbAssetsToGenerateInParallel: (maxNbAssetsToGenerateInParallel?: number) => {
         const { maxNbAssetsToGenerateInParallel: defaultMaxNbAssetsToGenerateInParallel } = getDefaultSettingsRendering()
         set({
           maxNbAssetsToGenerateInParallel: getValidNumber(
