@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import * as THREE from "three"
-import { ClapProject, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+import { ClapProject, ClapSegment, ClapSegmentCategory, newClap, serializeClap } from "@aitube/clap"
 
 import { TimelineStore, Track, Tracks } from "@/types/timeline"
 import { getDefaultState } from "@/utils/getDefaultState"
@@ -12,10 +12,11 @@ import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { getFinalVideo } from "@/utils/getFinalVideo"
 import { TimelineCursorImpl } from "@/components/timeline/types"
+import { sliceSegments } from "@/utils"
 
 export const useTimelineState = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
-  setClap: (clap?: ClapProject) => {
+  setClap: async (clap?: ClapProject) => {
     if (!clap || !Array.isArray(clap?.segments)) {
       console.log(`useTimelineState: empty clap, so resetting`)
       set({
@@ -127,16 +128,35 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
 
     const finalVideo = getFinalVideo(clap)
     
-    const isEmpty = segments.length > 0
+    const isEmpty = segments.length === 0
 
     const nbIdentifiedTracks = tracks.length
     const maxHeight = getCellHeight() + getVerticalCellPosition(0, nbIdentifiedTracks)
   
+    /*
+    // by default the buffer ("visibleSegments") will be empty,
+    // waiting for some user interactions
+    // we bootstrap it by giving it a pre-filtered list of segments
+    //
+    // TODO: we should move those computations to useVisibleSegments instead
+    const howManyCellsAreVisible = (get().width / horizontalZoomLevel) + 10
+    const beforeTimeInMs = howManyCellsAreVisible * DEFAULT_DURATION_IN_MS_PER_STEP
+
+    const visibleSegments = await sliceSegments({
+      segments,
+      afterTimeInMs: 0,
+      beforeTimeInMs,
+      visibleSegments: []
+    })
+      */
+    const visibleSegments: ClapSegment[] = []
+
     set({
       ...getDefaultState(),
       clap,
       segments,
-      visibleSegments: [],
+      visibleSegments,
+      segmentsChanged: 1,
       tracks,
       maxHeight,
       nbIdentifiedTracks,
@@ -332,5 +352,49 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
   },
   setCursorTimestampAt: (cursorTimestampAt: number) => {
     set({ cursorTimestampAt })
-  }
+  },
+  saveClapAs: async ({
+    embedded,
+
+    saveToFilePath,
+
+    showTargetDirPopup = false,
+
+    // some extra text to append to the file name
+    extraLabel = ""
+  }: {
+    // if embedded is true, the file will be larger, as all the content,
+    // image, video, audio..
+    // will be embedded into it (except the last big video)
+    embedded?: boolean
+
+    saveToFilePath?: string
+
+    // note: the native select picker doesn't work in all browsers (eg. not in Firefox)
+    // but it's not an issue, in our case we can save using Node/Electron + the cloud
+    showTargetDirPopup?: boolean
+
+    // some extra text to append to the file name
+    extraLabel?: string
+  } = {}) => {
+    const clap = get().clap || newClap()
+
+    const blob = await serializeClap(clap)
+
+    // Create an object URL for the compressed clap blob
+    const objectUrl = URL.createObjectURL(blob);
+  
+    // Create an anchor element and force browser download
+    const anchor = document.createElement("a");
+    anchor.href = objectUrl;
+    anchor.download = saveToFilePath || `${clap.meta.title}${extraLabel}.clap`;
+    document.body.appendChild(anchor); // Append to the body (could be removed once clicked)
+    anchor.click(); // Trigger the download
+  
+    // Cleanup: revoke the object URL and remove the anchor element
+    URL.revokeObjectURL(objectUrl);
+    document.body.removeChild(anchor);
+
+    return objectUrl.length
+  },
 }))

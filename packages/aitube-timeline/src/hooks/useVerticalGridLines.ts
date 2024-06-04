@@ -9,7 +9,7 @@ export const useVerticalGridLines = ({
   nbMaxShots: number
 }) => {
   const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
-
+  const tracks = useTimelineState(s => s.tracks)
   const [gridlines, setGridLines] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 
   const maxHeight = useTimelineState(s => s.maxHeight)
@@ -29,7 +29,12 @@ export const useVerticalGridLines = ({
     }
 
     setGridLines(thisLines);
-  }, [maxHeight, cellWidth, nbMaxShots]);
+  }, [
+    maxHeight,
+    cellWidth,
+    nbMaxShots,
+    JSON.stringify(tracks.map(t => `${t.visible}_${t.height}`))
+  ]);
 
   return gridlines;
 };

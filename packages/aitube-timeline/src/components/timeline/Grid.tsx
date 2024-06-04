@@ -33,7 +33,7 @@ export function Grid({
     nbMaxShots,
   });
 
-  console.log(`re-rendering <Grid>`)
+  // console.log(`re-rendering <Grid>`)
   
 
   return (

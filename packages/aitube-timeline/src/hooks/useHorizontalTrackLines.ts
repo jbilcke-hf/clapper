@@ -30,7 +30,7 @@ export const useHorizontaTrackLines = () => {
   }, [
     cellWidth,
     leftBarTrackScaleWidth,
-    ...tracks.map(t => `${t.visible}_${t.height}`)
+    JSON.stringify(tracks.map(t => `${t.visible}_${t.height}`))
   ]);
 
   return lines;

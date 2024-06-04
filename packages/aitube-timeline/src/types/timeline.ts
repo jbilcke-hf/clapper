@@ -102,6 +102,7 @@ export type TimelineStoreState = {
 
 
 export type TimelineStoreModifiers = {
+  setClap: (clap?: ClapProject) => Promise<void>
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => void
   setSegments: (segments?: ClapSegment[]) => void
   setVisibleSegments: (visibleSegments?: ClapSegment[]) => void
@@ -118,6 +119,21 @@ export type TimelineStoreModifiers = {
   setContainerSize: ({ width, height }: { width: number; height: number }) => void
   setTimelineCursor: (timelineCursor?: TimelineCursorImpl) => void
   setCursorTimestampAt: (cursorTimestampAt: number) => void
+  saveClapAs: (params: {
+    // if embedded is true, the file will be larger, as all the content,
+    // image, video, audio..
+    // will be embedded into it (except the last big video)
+    embedded?: boolean
+
+    saveToFilePath?: string
+
+    // note: the native select picker doesn't work in all browsers (eg. not in Firefox)
+    // but it's not an issue, in our case we can save using Node/Electron + the cloud
+    showTargetDirPopup?: boolean
+
+    // some extra text to append to the file name
+    extraLabel?: string
+  }) => Promise<number>
 }
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers

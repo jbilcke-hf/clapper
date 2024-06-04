@@ -18,7 +18,7 @@ export function Cursor({
 
   const cursorGeometries = useCursorGeometry();
 
-  console.log(`re-rendering <Cursor>`)
+  // console.log(`re-rendering <Cursor>`)
   
   return (
     <>

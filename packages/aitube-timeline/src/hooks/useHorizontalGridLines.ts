@@ -37,7 +37,7 @@ export const useHorizontalGridLines = ({
     cellWidth,
     maxWidth,
     nbMaxShots,
-    ...tracks.map(t => `${t.visible}_${t.height}`),
+    JSON.stringify(tracks.map(t => `${t.visible}_${t.height}`)),
 ]);
 
   return gridlines;

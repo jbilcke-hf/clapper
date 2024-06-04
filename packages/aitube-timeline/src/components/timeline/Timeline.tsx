@@ -32,7 +32,7 @@ export function Timeline() {
   const width = nbMaxShots * cellWidth
   const height = getVerticalCellPosition(0, nbMaxTracks)
 
-  console.log(`re-rendering <Timeline>`)
+  // console.log(`re-rendering <Timeline>`)
   return (
     <mesh
       // this any is a code smell, we are forcing the react spring data structure into

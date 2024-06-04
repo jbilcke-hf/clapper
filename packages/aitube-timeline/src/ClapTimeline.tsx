@@ -20,8 +20,7 @@ import {
 import { cn } from "./utils"
 import { TimelineCamera } from "./components/camera"
 import { useTimelineState } from "./hooks"
-import { clamp } from "./utils/clamp"
-import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "./constants/themes"
+import { topBarTimeScaleHeight } from "./constants/themes"
 import { useRef } from "react"
 
 export function ClapTimeline({
