@@ -43,7 +43,7 @@ const webglFontWidthFactor = 1.7
  */
 export function getWebGLCharWidth(char: string = ""): number {
 
-  const cellWidthInPixels = useTimelineState.getState().horizontalZoomLevel
+  const cellWidthInPixels = useTimelineState.getState().cellWidth
 
   let responsiveHack = 1.5
 

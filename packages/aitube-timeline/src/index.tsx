@@ -15,7 +15,6 @@ export {
 
 export {
   useAxis,
-  useStandardTrackHeight,
   useTimelineState,
   useVisibleSegments
 } from "./hooks"

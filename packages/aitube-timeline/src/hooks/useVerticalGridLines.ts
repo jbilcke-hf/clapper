@@ -2,18 +2,15 @@ import { useEffect, useState } from "react"
 import * as THREE from "three"
 
 import { useTimelineState } from "./useTimelineState"
+import { NB_MAX_SHOTS } from "@/constants/grid"
 
-export const useVerticalGridLines = ({
-  nbMaxShots,
-}: {
-  nbMaxShots: number
-}) => {
-  const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
+export const useVerticalGridLines = () => {
+  const cellWidth = useTimelineState(s => s.cellWidth)
+  const contentHeight = useTimelineState(s => s.contentHeight)
   const tracks = useTimelineState(s => s.tracks)
-  const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
   const [gridlines, setGridLines] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 
-  const maxHeight = useTimelineState(s => s.maxHeight)
+  const nbMaxShots = useTimelineState(s => s.nbMaxShots)
 
   useEffect(() => {
 
@@ -22,7 +19,7 @@ export const useVerticalGridLines = ({
     for (let i = 0; i < nbMaxShots; i++) {
       const verticalLinePoints = [
         new THREE.Vector3(i * cellWidth, 0, 0),
-        new THREE.Vector3(i * cellWidth, -getVerticalCellPosition(0, tracks.length), 0)
+        new THREE.Vector3(i * cellWidth, -contentHeight, 0)
       ];
       const verticalLineGeometry = new THREE.BufferGeometry().setFromPoints(verticalLinePoints);
 
@@ -31,7 +28,7 @@ export const useVerticalGridLines = ({
 
     setGridLines(thisLines);
   }, [
-    maxHeight,
+    contentHeight,
     cellWidth,
     nbMaxShots,
     JSON.stringify(tracks.map(t => `${t.visible}_${t.height}`))

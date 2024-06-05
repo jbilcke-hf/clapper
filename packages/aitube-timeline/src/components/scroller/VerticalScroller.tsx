@@ -7,7 +7,7 @@ export function VerticalScroller() {
   const timelineCamera = useTimelineState(s => s.timelineCamera)
   const timelineControls = useTimelineState(s => s.timelineControls)
 
-  const horizontalZoomLevel = useTimelineState((s) => s.horizontalZoomLevel)
+  const cellWidth = useTimelineState((s) => s.cellWidth)
   const setHorizontalZoomLevel = useTimelineState((s) => s.setHorizontalZoomLevel)
 
   // TODO: we want to control two things:

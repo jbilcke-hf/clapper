@@ -9,36 +9,23 @@ import {
 } from "@/hooks"
 
 import { hslToHex } from "@/utils"
-import { NB_MAX_SHOTS } from "@/constants/grid"
 
-export function Grid({
-  width,
-  height
-}: {
-  width: number
-  height: number
-}) {
+export function Grid() {
   const typicalSegmentDurationInSteps = useTimelineState(s => s.typicalSegmentDurationInSteps)
+  const contentHeight = useTimelineState(s => s.contentHeight)
 
-  const nbMaxShots = NB_MAX_SHOTS
-  const nbMaxTracks = DEFAULT_NB_TRACKS
 
-  const axis = useAxis(width, height)
+  const axis = useAxis()
 
-  const verticalGridLines = useVerticalGridLines({
-    nbMaxShots,
-  });
-
-  const horizontalGridLines = useHorizontalGridLines({
-    nbMaxShots,
-  });
+  const verticalGridLines = useVerticalGridLines()
+  const horizontalGridLines = useHorizontalGridLines()
 
   // console.log(`re-rendering <Grid>`)
-  
+
 
   return (
     <>
-      <group position={[0, height / 2, -12]}>
+      <group position={[0, contentHeight / 2, -12]}>
       {verticalGridLines.map((lineGeometry, idx) => (
         <line
           // @ts-ignore
@@ -57,7 +44,7 @@ export function Grid({
       ))}
       </group>
 
-      <group position={[0, height / 2, -12]}>
+      <group position={[0, contentHeight / 2, -12]}>
       {horizontalGridLines.map((lineGeometry, idx) => (
         <line
           // @ts-ignore
@@ -74,7 +61,7 @@ export function Grid({
       ))}
       </group>
 
-      <group position={[0, height / 2, -12]}>
+      <group position={[0, contentHeight / 2, -12]}>
       {axis.map((lineGeometry, idx) => (
         <line
           // @ts-ignore

@@ -59,12 +59,15 @@ export function ClapTimeline({
     // frameloop: DEFAULT_FRAMELOOP
   }) {
   const ref = useRef<HTMLCanvasElement>(null)
+
+  const handleIsCreated = () => {
+    useTimelineState.setState({ isReady: true })
+  }
+
   return (
     <div className={cn(`w-full h-full`, className)}>
       <AutoSizer style={{ height: "100%" }}>
         {({ height, width }: Size) => (
-        // kids don't try this at home
-        useTimelineState.getState().setContainerSize({ width, height }),
       <div className="flex flex-grow flex-row h-full">
         <div className="flex flex-grow flex-col w-full">
           <Canvas
@@ -87,6 +90,8 @@ export function ClapTimeline({
               height: isValidNumber(height) ? `${height}px` : "100%"
             }}
 
+            onCreated={handleIsCreated}
+  
             onWheel={(wheelEvent) => {
               const rect = ref.current?.getBoundingClientRect()
               if (!rect) { return }
@@ -118,7 +123,7 @@ export function ClapTimeline({
                 zoomSpeed={zoomSpeed}
                 zoomDampingFactor={zoomDampingFactor}
               />
-              <Timeline />
+              <Timeline width={width} height={height} />
               {showFPS && <Stats className={cn(`!left-auto right-0`)} />}
             </Canvas>
           <HorizontalScroller />

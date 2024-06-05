@@ -1,5 +1,5 @@
 import { a } from "@react-spring/three"
-import { ClapSegment } from "@aitube/clap"
+import { ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 
@@ -19,7 +19,7 @@ export function Cell({
   const getSegmentColorScheme = useTimelineState(s => s.getSegmentColorScheme)
   const colorScheme = getSegmentColorScheme(s)
 
-  const cellWidth = useTimelineState((s) => s.horizontalZoomLevel)
+  const cellWidth = useTimelineState((s) => s.cellWidth)
   const getCellHeight = useTimelineState((s) => s.getCellHeight)
   const getVerticalCellPosition = useTimelineState((s) => s.getVerticalCellPosition)
 
@@ -86,6 +86,8 @@ export function Cell({
         } else {
           setHoveredSegment(s)
         }
+        e.stopPropagation()
+        return false
       }}
 
       /*
@@ -101,10 +103,17 @@ export function Cell({
       onPointerLeave={(e) => {
         // console.log('leave')
         setHoveredSegment(undefined)
+
+        e.stopPropagation()
+        return false
       }}
 
 
-      onClick={(e) => console.log('click')}
+      onClick={(e) => {
+        console.log('click on cell ' + s.id)
+        e.stopPropagation()
+        return false
+      }}
       onContextMenu={(e) => console.log('context menu')}
       onDoubleClick={(e) => console.log('double click')}
       // onWheel={(e) => console.log('wheel spins')}

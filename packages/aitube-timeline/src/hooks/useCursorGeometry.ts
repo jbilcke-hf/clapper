@@ -7,12 +7,11 @@ import { leftBarTrackScaleWidth } from "@/constants/themes";
 
 export const useCursorGeometry = () => {
 
-  const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
 
   const [gridlines, setGridLines] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 
-  const maxHeight = useTimelineState(s => s.maxHeight)
-
+  const contentHeight = useTimelineState(s => s.contentHeight)
+ 
   useEffect(() => {
 
     const thisLines = [] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[];
@@ -20,7 +19,7 @@ export const useCursorGeometry = () => {
     for (let i = 0; i < 3; i++) {
       const verticalLinePoints = [
         new THREE.Vector3(i, 60, 7),
-        new THREE.Vector3(i, -maxHeight, 7)
+        new THREE.Vector3(i, -contentHeight, 7)
       ];
       const verticalLineGeometry = new THREE.BufferGeometry().setFromPoints(verticalLinePoints);
 
@@ -28,7 +27,7 @@ export const useCursorGeometry = () => {
     }
    
     setGridLines(thisLines);
-  }, [maxHeight, cellWidth]);
+  }, [contentHeight]);
 
   return gridlines;
 };

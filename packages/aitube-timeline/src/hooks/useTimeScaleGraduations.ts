@@ -7,16 +7,14 @@ import { useTimelineState } from "./useTimelineState"
 // maybe either we pre-compute everything and we let the runtime figure out what to render on screen,
 // or we implement our own code to do that.. I don't know
 export const useTimeScaleGraduations = ({
-  nbMaxShots,
   unit
 }: {
-  nbMaxShots: number
   unit: number
 }) => {
-  const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
+  const cellWidth = useTimelineState(s => s.cellWidth)
+  const nbMaxShots = useTimelineState(s => s.nbMaxShots)
 
   const [timeScaleGraduations, setTimeScaleGraduations] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
-  const maxHeight = useTimelineState(s => s.maxHeight)
 
   const bigTickHeight = 12
   const smallTickHeight = 8
@@ -84,7 +82,7 @@ export const useTimeScaleGraduations = ({
     }
 
     setTimeScaleGraduations(lines);
-  }, [maxHeight, cellWidth, nbMaxShots]);
+  }, [cellWidth, nbMaxShots]);
 
   return timeScaleGraduations;
 };

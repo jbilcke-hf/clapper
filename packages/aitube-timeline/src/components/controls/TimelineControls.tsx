@@ -31,13 +31,13 @@ export function TimelineControls({
   useFrame(({ gl, scene, camera }) => {
     let {
       clap,
-      horizontalZoomLevel: cellWidth,
+      cellWidth,
       scrollX,
       scrollY,
       timelineCamera,
       timelineControls,
       timelineCursor,
-      maxHeight,
+      contentHeight,
       leftBarTrackScale,
       topBarTimelineScale,
       resizeStartedAt,
@@ -60,8 +60,6 @@ export function TimelineControls({
     scrollX = Math.max(-leftBarTrackScaleWidth, scrollX)
 
     const canvasHeight = size.height // * gl.getPixelRatio()
-    const contentHeight = maxHeight
-
 
     //  *------------------------*
     //  |       scrollY          |         
