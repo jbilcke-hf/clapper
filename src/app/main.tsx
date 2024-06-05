@@ -16,9 +16,12 @@ import { TopBar } from "@/components/interface/top-bar"
 import { useTimelineState } from "@aitube/timeline"
 import { SettingsDialog } from "@/components/settings"
 import { LoadingDialog } from "@/components/interface/loader/LoadingDialog"
+import { useSettingsView } from "@/settings/view"
 
 export function Main() {
   const isEmpty = useTimelineState(s => s.isEmpty)
+  const showTimeline = useSettingsView((s) => s.showTimeline)
+
   return (
     <TooltipProvider>
       <div className={cn(`
@@ -42,11 +45,16 @@ export function Main() {
           isEmpty ? "opacity-0" : "opacity-100"
          )}>
           <ReflexContainer orientation="horizontal">
-            <ReflexElement>
+            <ReflexElement
+              >
               <RenderClap />
             </ReflexElement>
             <ReflexSplitter />
-            <ReflexElement>
+            <ReflexElement
+              size={showTimeline ? 600 : 1}
+              minSize={showTimeline ? 150 : 1}
+              maxSize={showTimeline ? 1200 : 1}
+              >
               <Timeline />
             </ReflexElement>
           </ReflexContainer>

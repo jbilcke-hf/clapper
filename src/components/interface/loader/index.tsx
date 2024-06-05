@@ -12,7 +12,7 @@ export function Loader({
   return (
     <div className={cn(`
       fixed
-      z-50
+      z-[100]
       flex
       w-screen h-screen
       top-0 left-0 right-0 bottom-0

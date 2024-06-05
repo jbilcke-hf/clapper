@@ -1,61 +1,33 @@
 import { ClapEntity, ClapSegment } from "@aitube/clap"
+import { SettingsRenderingState } from "./settings/rendering"
 
-export enum ComfyVendor {
+export enum ComputeProvider {
   NONE = "NONE",
   CUSTOM = "CUSTOM",
-  HUGGINGFACE = "HUGGINGFACE",
-  REPLICATE = "REPLICATE",
+  HUGGINGFACE = "HUGGINGFACE", // https://huggingface.co
+  COMFY_HUGGINGFACE = "COMFY_HUGGINGFACE", // https://huggingface.co
+  REPLICATE = "REPLICATE", // https://replicate.com
+  COMFY_REPLICATE = "COMFY_REPLICATE", // https://replicate.com
+  COMFY_COMFYICU = "COMFY_COMFYICU", // https://comfy.icu
+  ELEVENLABS = "ELEVENLABS", // https://elevenlabs.io
+  OPENAI = "OPENAI", // https://openai.com
+  STABILITYAI = "STABILITYAI", // https://stability.ai
+  GROQ = "GROQ", // https://groq.com
+  FALAI = "FALAI", // https://fal.ai
+  MODELSLAB = "MODELSLAB", // https://modelslab.com
 }
 
-export enum RenderingStrategy {
-
-  // render assets when the user asks for it (could be a click or mouse hover)
-  ON_DEMAND = "ON_DEMAND",
-
-  // render assets currently visible on screen, never render invisible ones
-  ON_SCREEN_ONLY = "ON_SCREEN_ONLY",
-
-  // render assets visible on screen in priority,
-  // then pre-render a few of the surrounding assets (but not the whole set)
-  ON_SCREEN_THEN_SURROUNDING = "ON_SCREEN_THEN_SURROUNDING",
-
-
-  // render assets visible on screen in priority,
-  // then pre-render *ALL* the remaining project's assets
-  // so yeah if you have 3000 storyboards, it will render that many ($$$)
-  // (note: there is a setting to cap the number of parallel renderings)
-  //
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // !! this is hardcore! only GPU-rich people shoud use this feature! !!
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  ON_SCREEN_THEN_ALL = "ON_SCREEN_THEN_ALL",
-}
-
-// TODO: rename the *Model fields to better indicate if this is a LLM or RENDER mdoel
-export type Settings = {
-  comfyVendor: ComfyVendor
-  comfyApiKey: string
-
-  storyboardGenerationStrategy: RenderingStrategy
-  videoGenerationStrategy: RenderingStrategy
-
-  maxNbAssetsToGenerateInParallel: number
+export enum ComfyIcuAccelerator {
+  T4 = "T4",
+  L4 = "L4",
+  A10 = "A10",
+  A100_40GB = "A100_40GB",
+  A100_80GB = "A100_80GB",
+  H100 = "H100"
 }
 
 export type RenderRequest = {
-  comfyUiApiVendor: ComfyVendor
-
-  // secret vendor api key to use (provided by the user)
-  comfyUiApiKey: string
-
-  // available ComfyUI workflows
-  // a render request might use multiple workflows (eg. entity + storyboard)
-  // so we need to have them all readily available
-  entityWorkflow: string
-  dialogueWorkflow: string  
-  storyboardWorkflow: string
-  videoWorkflow: string
-  musicWorkflow: string
+  settings: SettingsRenderingState
 
   // the reference segment to render (eg. storyboard or video)
   segment: ClapSegment

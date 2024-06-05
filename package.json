@@ -12,8 +12,10 @@
   "dependencies": {
     "@aitube/clap": "0.0.24",
     "@aitube/engine": "0.0.15",
-    "@aitube/timeline": "0.0.8",
+    "@aitube/timeline": "0.0.11",
+    "@fal-ai/serverless-client": "^0.10.3",
     "@huggingface/hub": "^0.15.0",
+    "@huggingface/inference": "^2.7.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",

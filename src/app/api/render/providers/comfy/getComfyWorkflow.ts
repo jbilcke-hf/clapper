@@ -9,9 +9,9 @@ export function getComfyWorkflow(request: RenderRequest) {
   let comfyWorkflow = "{}"
 
   if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
-    comfyWorkflow = request.storyboardWorkflow
+    comfyWorkflow = request.settings.comfyWorkflowForStoryboard
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
-    comfyWorkflow = request.videoWorkflow
+    comfyWorkflow = request.settings.comfyWorkflowForVideo
   }
 
   // parse the node array from the ComfyUI workflow
@@ -22,13 +22,21 @@ export function getComfyWorkflow(request: RenderRequest) {
     request.entities
   )
 
-  for (const node of nodes) {
+  const output: Record<string, ComfyNode> = {}
+
+  nodes.forEach((node, i) => {
     if (typeof node.inputs.text === "string") {
       if (node._meta.title.includes("Prompt")) {
         node.inputs.text = visualPrompt
       }
     }
-  }
+    output[`${i}`] = node
+  })
 
-  return JSON.stringify(nodes)
+  console.log("DEBUG:", {
+    nodes,
+    output
+  })
+  
+  return JSON.stringify(output)
 }
