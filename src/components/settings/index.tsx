@@ -6,7 +6,13 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { useSettingsView } from "@/settings/view"
 
-import { SettingsSectionRendering } from "./SettingsSectionRendering"
+import { SettingsSectionProvider } from "./provider"
+import { SettingsSectionAssistant } from "./assistant"
+import { SettingsSectionStoryboard } from "./storyboard"
+import { SettingsSectionVideo } from "./video"
+import { SettingsSectionSound } from "./sound"
+import { SettingsSectionMusic } from "./music"
+import { SettingsSectionSpeech } from "./speech"
 
 export function SettingsDialog() {
 
@@ -15,21 +21,33 @@ export function SettingsDialog() {
   const [_isPending, startTransition] = useTransition()
 
   const panels = {
-    rendering: <SettingsSectionRendering />,
+    provider: <SettingsSectionProvider />,
+    assistant: <SettingsSectionAssistant />,
+    storyboard: <SettingsSectionStoryboard />,
+    video: <SettingsSectionVideo />,
+    speech: <SettingsSectionSpeech />,
+    music: <SettingsSectionMusic />,
+    sound: <SettingsSectionSound />,
   }
 
   const panelLabels = {
-    rendering: "Rendering",
+    provider: "Providers",
+    assistant: "Assistant",
+    storyboard: "Image",
+    video: "Video",
+    speech: "Speech",
+    music: "Music",
+    sound: "Sound",
   } as any
 
-  const [configPanel, setConfigPanel] = useState<keyof typeof panels>("rendering")
+  const [configPanel, setConfigPanel] = useState<keyof typeof panels>("provider")
 
   return (
     <Dialog open={showSettings} onOpenChange={setShowSettings}>
       <DialogContent className={cn(
         `select-none`,
         // DialogContent comes with some hardcoded values so we need to override them
-        `w-[95w] md:w-[45vw] max-w-6xl h-[60%]`,
+        `w-[95w] md:w-[60vw] max-w-6xl h-[70%]`,
         `flex flex-row`
       )}>
          <ScrollArea className="flex flex-col h-full w-44">
@@ -46,7 +64,7 @@ export function SettingsDialog() {
 
         <div className="
         select-none
-        flex flex-col h-full flex-grow justify-between max-w-[calc(100%-200px)]
+        flex flex-col h-full flex-grow justify-between max-w-[calc(100%-150px)]
         border-l border-stone-800
         pl-8
         ">

@@ -55,6 +55,8 @@ export function TopMenuView() {
           }}>
           Toggle fullscreen
         </MenubarCheckboxItem>
+     
+       {/*
         <MenubarSeparator />
         <MenubarCheckboxItem
           checked={showTimeline}
@@ -65,6 +67,7 @@ export function TopMenuView() {
             return false
           }}
         >Show timeline</MenubarCheckboxItem>
+      
         <MenubarCheckboxItem
           checked={showExplorer}
           onClick={(e) => {
@@ -92,6 +95,7 @@ export function TopMenuView() {
             return false
           }}
           >Show video player</MenubarCheckboxItem>
+          */}
       </MenubarContent>
     </MenubarMenu>
   )

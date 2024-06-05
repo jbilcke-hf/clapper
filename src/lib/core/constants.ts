@@ -4,7 +4,7 @@
 export const HARD_LIMIT_NB_MAX_ASSETS_TO_GENERATE_IN_PARALLEL = 32
 
 export const APP_NAME = "Clapper"
-export const APP_REVISION = "nightly 20240604"
+export const APP_REVISION = "nightly 20240605"
 
 export const APP_DOMAIN = "Clapper.app"
 export const APP_LINK = "https://clapper.app"

@@ -14,10 +14,10 @@ import {
   MenubarTrigger
 } from "@/components/ui/menubar"
 import { useSettingsRendering } from "@/settings/rendering"
-import { RenderingStrategy } from "@/types"
+import { RenderingStrategy } from "@aitube/timeline"
 import { useSettingsView } from "@/settings/view"
 
-export function TopMenuRendering() {
+export function TopMenuSettings() {
   const setShowSettings = useSettingsView(s => s.setShowSettings)
 
   const storyboardRenderingStrategy = useSettingsRendering((s) => s.storyboardRenderingStrategy)
@@ -35,7 +35,7 @@ export function TopMenuRendering() {
 
   return (
     <MenubarMenu>
-      <MenubarTrigger>Rendering</MenubarTrigger>
+      <MenubarTrigger>Settings</MenubarTrigger>
       <MenubarContent>
 
         <MenubarSub>
