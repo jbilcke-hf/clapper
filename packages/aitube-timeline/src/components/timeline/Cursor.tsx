@@ -7,16 +7,11 @@ import {
 import { useCursorGeometry } from "@/hooks/useCursorGeometry"
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
 
-export function Cursor({
-  width,
-  height
-}: {
-  width: number
-  height: number
-}) {
+export function Cursor() {
   const setTimelineCursor = useTimelineState(s => s.setTimelineCursor)
 
-  const cursorGeometries = useCursorGeometry();
+  const contentHeight = useTimelineState(s => s.contentHeight)
+  const cursorGeometries = useCursorGeometry()
 
   // console.log(`re-rendering <Cursor>`)
   
@@ -25,7 +20,7 @@ export function Cursor({
       <group
       position={[
         leftBarTrackScaleWidth,
-       (height / 2),
+       (contentHeight / 2),
         -6
       ]}
       ref={r => {

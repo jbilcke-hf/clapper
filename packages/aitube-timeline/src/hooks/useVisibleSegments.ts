@@ -9,10 +9,8 @@ import { similar, sliceSegments } from "@/utils"
 import { useTimelineState } from "./useTimelineState"
 
 export const useVisibleSegments = ({
-  nbMaxTracks,
   refreshRateInMs,
 }: {
-  nbMaxTracks: number
   refreshRateInMs: number
 }): ClapSegment[] => {
   // to make it react to screen width change
@@ -36,7 +34,7 @@ export const useVisibleSegments = ({
   // we do a little trick here, to put the camera zoom inside our Zustand store
   const camera = useThree(({ camera }) => camera)
 
-  const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
+  const cellWidth = useTimelineState(s => s.cellWidth)
   const getCellHeight = useTimelineState(s => s.getCellHeight)
   // const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
   // note: only the average height change will be detected
@@ -138,7 +136,7 @@ export const useVisibleSegments = ({
     // by useTimelineState.getState()
     const state = stateRef.current
 
-    const cellWidth = useTimelineState.getState().horizontalZoomLevel
+    const cellWidth = useTimelineState.getState().cellWidth
 
     // we can adjust this threshold to only re compute the geometry
     // when a significant shift has been done by the user

@@ -138,6 +138,11 @@ export function TextCell({
           // so you will have to change the "Arial" or "bold Arial"
           // in the function which computes a character's width
           fontWeight={400}
+          onClick={(e) => {
+            console.log('click on text in cell ' + s.id)
+            e.stopPropagation()
+            return false
+          }}
         >
           {lines.join("\n")}
         </Text>}

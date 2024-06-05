@@ -14,28 +14,21 @@ import { useFrame, useThree } from "@react-three/fiber"
 
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
 
-export function TopBarTimeScale({
-  width,
-  height
-}: {
-  width: number
-  height: number
-}) {
-  const { size } = useThree()
+export function TopBarTimeScale() {
+  // const { size } = useThree()
 
   // we should use the non-reactive version
-  const cellWidth = useTimelineState((s) => s.horizontalZoomLevel)
+  const cellWidth = useTimelineState((s) => s.cellWidth)
   // const cellWidth = useTimelineState.getState().horizontalZoomLevel
+  const contentWidth = useTimelineState((s) => s.contentWidth)
+  const contentHeight = useTimelineState((s) => s.contentHeight)
   
   const isResizing = useTimelineState(s => s.isResizing)
-
-  const nbMaxShots = NB_MAX_SHOTS
 
   const unit = 10
 
   // note: recomputing this is expensive and creates a visual delay
   const timeScaleGraduations = useTimeScaleGraduations({
-    nbMaxShots,
     unit
   });
 
@@ -62,7 +55,7 @@ export function TopBarTimeScale({
 
         setHorizontalZoomLevel(
           // Math.round(
-            useTimelineState.getState().horizontalZoomLevel + (wheelFactor * e.deltaY)
+            useTimelineState.getState().cellWidth + (wheelFactor * e.deltaY)
           // )
         )
         e.stopPropagation()
@@ -72,9 +65,9 @@ export function TopBarTimeScale({
 
         position={[0, 0, -1]}>
         <Plane
-           args={[leftBarTrackScaleWidth + width, topBarTimeScaleHeight]}
+           args={[leftBarTrackScaleWidth + contentWidth, topBarTimeScaleHeight]}
            position={[
-            width / 2,
+            contentWidth / 2,
             (topBarTimeScaleHeight / 2) + 2,
             1
           ]}

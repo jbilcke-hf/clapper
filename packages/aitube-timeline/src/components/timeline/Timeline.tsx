@@ -16,21 +16,16 @@ import { clamp } from "@/utils/clamp"
 import { LeftBarTrackScale } from "./LeftBarTrackScale"
 import { Cursor } from "./Cursor"
 
-export function Timeline() {
+export function Timeline({ width, height }: { width: number; height: number }) {
   const { size } = useThree()
 
-  // careful, this will update everytime the horizontal zoom level changes
-  // which can be intensive
-  const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
-  const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
+  const setContainerSize = useTimelineState(s => s.setContainerSize)
+  useEffect(() => {
+    setContainerSize({ width, height })
+  }, [width, height, setContainerSize])
 
-  const nbMaxShots = NB_MAX_SHOTS
-  const nbMaxTracks = DEFAULT_NB_TRACKS
-
-  // const aspect = size.width / viewport.width;
-
-  const width = nbMaxShots * cellWidth
-  const height = getVerticalCellPosition(0, nbMaxTracks)
+  const contentHeight = useTimelineState(s => s.contentHeight)
+  const contentWidth = useTimelineState(s => s.contentWidth)
 
   // console.log(`re-rendering <Timeline>`)
   return (
@@ -42,7 +37,7 @@ export function Timeline() {
       position={[0,0,0]}
     >
       <Plane
-        args={[width, height]}
+        args={[contentWidth, contentHeight]}
         position={[
           -(size.width / 2),
           0,
@@ -58,11 +53,11 @@ export function Timeline() {
         {/*
         not a fan of all those props.. I think we could drop this
         */}
-        <Grid width={width} height={height} />
-        <TopBarTimeScale width={width} height={height} />
-        <LeftBarTrackScale width={width} height={height} />
-        <Cells width={width} height={height} />
-        <Cursor width={width} height={height} />
+        <Grid />
+        <TopBarTimeScale />
+        <LeftBarTrackScale />
+        <Cells />
+        <Cursor />
       </Plane>
     </mesh>
   );

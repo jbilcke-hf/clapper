@@ -1,28 +1,22 @@
 
 import * as THREE from "three"
 
-
 import { DEFAULT_NB_TRACKS, pastel, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 import { TimelineStoreState } from "@/types/timeline"
 import { RenderingStrategy } from "@/types"
-import { ClapEntity, ClapSegment } from "@aitube/clap"
+import { DEFAULT_COLUMNS_PER_SLICE, DEFAULT_DURATION_IN_MS_PER_STEP, NB_MAX_SHOTS } from "@/constants/grid"
 
-export function getDefaultState(): TimelineStoreState {
+// those settings will change between .clap project reloads
+export function getDefaultProjectState() {
   return {
-    width: 800,
-    height: 600,
     clap: undefined,
-    theme: pastel,
     segments: [],
     segmentsChanged: 0,
     visibleSegments: [],
-    nbIdentifiedTracks: 0,
 
     isEmpty: true,
     isLoading: false,
-    
-    tracks: [],
-    
+
     position: new THREE.Vector3(),
     scale: new THREE.Vector3(),
     initialized: false,
@@ -32,51 +26,58 @@ export function getDefaultState(): TimelineStoreState {
 
     minHorizontalZoomLevel: 6,
     maxHorizontalZoomLevel: 100,
-
-    // horizontalZoomLevel is the WIDTH of a grid cell, in pixels
-    // by initializing it with PROMPT_STEP_HEIGHT_IN_PX (the default grid cell HEIGHT in pixels)
-    // we can achieve a square shape
-    horizontalZoomLevel: PROMPT_STEP_HEIGHT_IN_PX,
     originalHorizontalZoomLevel: PROMPT_STEP_HEIGHT_IN_PX,
     
-    cellHeight: PROMPT_STEP_HEIGHT_IN_PX,
-
-    // @deprecated
-    cellWidth: PROMPT_STEP_HEIGHT_IN_PX,
-
+    nbMaxShots: NB_MAX_SHOTS,
     nbMaxTracks: DEFAULT_NB_TRACKS,
-
+    nbIdentifiedTracks: 0,
+    contentWidth: 1024,
+    contentHeight: 800,
+    cellWidth: PROMPT_STEP_HEIGHT_IN_PX,
+    tracks: [],
+    defaultCellHeight: PROMPT_STEP_HEIGHT_IN_PX,
+    defaultSegmentDurationInSteps: 4,
+    defaultSegmentLengthInPixels: 4 * PROMPT_STEP_HEIGHT_IN_PX,
+    defaultMediaRatio: 896 / 512,
+    defaultPreviewHeight: PROMPT_STEP_HEIGHT_IN_PX,
     typicalSegmentDurationInSteps: 4,
 
-    currentZoomLevel: 1.0,
+    // @deprecated, we now use a static WebGL camera zoom level set at 1.0
+    currentZoomLevel: 1.0, 
 
     hoveredSegment: undefined,
-    timelineControls: undefined,
 
-    maxHeight: 32,
-    
     scrollX: 0,
     scrollY: 450,
     resizeStartedAt: 0,
     isResizing: false,
 
-    topBarTimelineScale: undefined,
-    leftBarTrackScale: undefined,
-
     finalVideo: undefined,
     
     cursorTimestampAt: 0,
-    timelineCursor: undefined,
+  }
+}
 
+// those settings will NOT changes between .clap project reloads
+export function getDefaultPreferencesState() {
+  return {
+    isReady: false,
+    width: 1024,
+    height: 800,
+    theme: pastel,
+    timelineControls: undefined,
+    topBarTimelineScale: undefined,
+    leftBarTrackScale: undefined,
+    timelineCursor: undefined,
     storyboardRenderingStrategy: RenderingStrategy.ON_DEMAND,
     videoRenderingStrategy: RenderingStrategy.ON_DEMAND,
-    segmentRenderer: (params: {
-      segment: ClapSegment,
-    
-      // the slice to use for rendering
-      segments: ClapSegment[],
-    
-      entities: Record<string, ClapEntity>
-    }) => Promise.resolve(params.segment),
+    segmentRenderer: undefined,
+  }
+}
+
+export function getDefaultState(): TimelineStoreState {
+  return {
+    ...getDefaultProjectState(),
+    ...getDefaultPreferencesState(),
   }
 }

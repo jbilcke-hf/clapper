@@ -10,7 +10,7 @@ root.render(
   <React.StrictMode>
     <div>Hello</div>
     <div style={{ width: "100vw", height: "100vh", padding: 0, margin: 0 }}>
-      <Timeline />
+      <Timeline width={800} height={600} />
     </div>
   </React.StrictMode>
 );

@@ -10,15 +10,13 @@ import { useHorizontaTrackLines } from "@/hooks/useHorizontalTrackLines"
 import { LineGeometry } from "three/examples/jsm/Addons.js"
 import { hslToHex } from "@/utils"
 
-export function LeftBarTrackScale({
-  width,
-  height
-}: {
-  width: number
-  height: number
-}) {
+export function LeftBarTrackScale() {
   // console.log(`re-rendering <LeftBarTrackScale>`)
+  
+  const contentHeight = useTimelineState((s) => s.contentHeight)
+  
   const getCellHeight = useTimelineState((s) => s.getCellHeight)
+
 
   const getVerticalCellPosition = useTimelineState((s) => s.getVerticalCellPosition)
 
@@ -37,7 +35,7 @@ export function LeftBarTrackScale({
           setLeftBarTrackScale(r)
         }
       }}
-      position={[-leftBarTrackScaleWidth, height / 2, -2]}
+      position={[-leftBarTrackScaleWidth, contentHeight / 2, -2]}
       >
       <group position={[0, 0, 0]}>
       {horizontalTrackLines.map((lineGeometry, idx) => (

@@ -7,7 +7,7 @@ export function HorizontalScroller() {
 
   const minHorizontalZoomLevel = useTimelineState((s) => s.minHorizontalZoomLevel)
   const maxHorizontalZoomLevel = useTimelineState((s) => s.maxHorizontalZoomLevel)
-  const horizontalZoomLevel = useTimelineState((s) => s.horizontalZoomLevel)
+  const cellWidth = useTimelineState((s) => s.cellWidth)
   const setHorizontalZoomLevel = useTimelineState((s) => s.setHorizontalZoomLevel)
 
   if (!timelineCamera || !timelineControls) { return null }
@@ -31,7 +31,6 @@ export function HorizontalScroller() {
   ]
   
   return (
-   <>
      <div className="flex flex-row items-center">
        <HorizontalSlider
          defaultValue={range}
@@ -42,10 +41,9 @@ export function HorizontalScroller() {
          value={range}
          onValueChange={(newRange: number[]) => handleTimelinePositionChange(newRange[0])}
          onWheel={(e) => {
-          handleZoomChange(horizontalZoomLevel + e.deltaY)
+          handleZoomChange(cellWidth + e.deltaY)
          }}
        />
      </div>
-   </>
   )
 }

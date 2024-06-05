@@ -3,8 +3,8 @@ import * as THREE from "three"
 import { ClapEntity, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, newClap, serializeClap } from "@aitube/clap"
 
 import { TimelineStore, Tracks } from "@/types/timeline"
-import { getDefaultState } from "@/utils/getDefaultState"
-import { DEFAULT_COLUMNS_PER_SLICE, DEFAULT_DURATION_IN_MS_PER_STEP, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
+import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
+import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { removeFinalVideos } from "@/utils/removeFinalVideo"
 import { hslToHex } from "@/utils/hslToHex"
 import { ClapSegmentCategoryHues, ClapSegmentColorScheme, RenderingStrategy, SegmentRenderer } from "@/types"
@@ -12,17 +12,23 @@ import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { getFinalVideo } from "@/utils/getFinalVideo"
 import { TimelineCursorImpl } from "@/components/timeline/types"
+import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 
 export const useTimelineState = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
   setClap: async (clap?: ClapProject) => {
+
+    // this re-initialize everything that is related to the current .clap project
+    set({
+      ...getDefaultProjectState()
+    })
+
     if (!clap || !Array.isArray(clap?.segments)) {
-      console.log(`useTimelineState: empty clap, so resetting`)
-      set({
-        ...getDefaultState()
-      })
+      console.log(`useTimelineState: no clap to show`)
       return
     }
+    
+    (window as any).useTimelineState = useTimelineState
 
     set({ isLoading: true })
 
@@ -30,23 +36,11 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
 
     // we remove the big/long video
     const segments = removeFinalVideos(clap)
-    const { horizontalZoomLevel, getCellHeight, getVerticalCellPosition } = get()
-    const cellWidth = horizontalZoomLevel
 
-    let typicalSegmentDurationInSteps = DEFAULT_COLUMNS_PER_SLICE * DEFAULT_DURATION_IN_MS_PER_STEP
-
-    const typicalSegmentLengthInPixels = cellWidth * typicalSegmentDurationInSteps
-
-    // TODO: compute the exact image ratio instead of using the media orientation,
-    // since it might not match the actual assets
-    const ratio = (clap.meta?.width || 640) / (clap.meta?.height || 480)
-    
-    // also storyboards and videos might have different sizes / ratios
-    const previewHeight = Math.round(
-      typicalSegmentLengthInPixels / ratio
-    )
-
-    const defaultCellHeight = PROMPT_STEP_HEIGHT_IN_PX
+    const {
+      defaultCellHeight,
+      cellWidth,
+    } = get()
 
     // TODO: many of those checks about average duration, nb of tracks, collisions...
     // should be done by the Clap parser and/or serializer
@@ -56,6 +50,53 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
 
     let tracks: Tracks = []
 
+    let defaultSegmentDurationInSteps = get().defaultSegmentDurationInSteps
+ 
+    // TODO: this whole approach is a bit weak,
+    // having an heuristic is okay but we should do it:
+    // track by track
+    // for each track, count length occurrences to keep the most recurring one
+    // do something for images/videos that don't have the right ratio,
+    // eg. add black banding
+    for (const s of segments) {
+      if (s.category === ClapSegmentCategory.CAMERA) {
+        const durationInSteps = (
+          (s.endTimeInMs - s.startTimeInMs) / DEFAULT_DURATION_IN_MS_PER_STEP
+        )
+        // TODO: we should do this row by row
+        // and look at the most recurring duration,
+        // using a table
+        defaultSegmentDurationInSteps = durationInSteps
+        break
+      }
+    }
+
+    const defaultSegmentLengthInPixels = cellWidth * defaultSegmentDurationInSteps
+
+    // TODO: compute the exact image ratio instead of using the media orientation,
+    // since it might not match the actual assets
+    const defaultMediaRatio = clap ? (
+      (clap.meta.width || 896) / (clap.meta.height || 512)
+    ) : (896 / 512)
+    
+    // also storyboards and videos might have different sizes / ratios
+    const defaultPreviewHeight = Math.round(
+      defaultSegmentLengthInPixels / defaultMediaRatio
+    )
+
+    /*
+    console.log("WTF:", JSON.parse(JSON.stringify({
+      defaultSegmentDurationInSteps,
+      cellWidth,
+      defaultPreviewHeight,
+      defaultCellHeight,
+      "clap.meta.width": clap.meta.width,
+      "(clap.meta.height": clap.meta.height,
+      defaultSegmentLengthInPixels,
+      defaultMediaRatio
+    })))
+    */
+    
     for (const s of segments) {
       
       if (idCollisionDetector.has(s.id)) {
@@ -68,6 +109,7 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
         const isPreview =
           s.category === ClapSegmentCategory.STORYBOARD ||
           s.category === ClapSegmentCategory.VIDEO
+
         tracks[s.track] = {
           id: s.track,
           // name: `Track ${s.track}`,
@@ -75,7 +117,7 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
           isPreview,
           height:
             isPreview
-            ? previewHeight
+            ? defaultPreviewHeight
             : defaultCellHeight,
           hue: 0,
           occupied: true,
@@ -105,7 +147,7 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
         const durationInSteps = (
           (s.endTimeInMs - s.startTimeInMs) / DEFAULT_DURATION_IN_MS_PER_STEP
         )
-        typicalSegmentDurationInSteps = durationInSteps
+        defaultSegmentDurationInSteps = durationInSteps
       }
     }
 
@@ -117,7 +159,7 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
           id,
           name: `(empty)`,
           isPreview: false,
-          height: PROMPT_STEP_HEIGHT_IN_PX,
+          height: defaultCellHeight,
           hue: 0,
           occupied: false, // <-- setting this to false is the important part
           visible: true,
@@ -129,49 +171,49 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     
     const isEmpty = segments.length === 0
 
-    const nbIdentifiedTracks = tracks.length
-    const maxHeight = getCellHeight() + getVerticalCellPosition(0, nbIdentifiedTracks)
-  
-    /*
-    // by default the buffer ("visibleSegments") will be empty,
-    // waiting for some user interactions
-    // we bootstrap it by giving it a pre-filtered list of segments
-    //
-    // TODO: we should move those computations to useVisibleSegments instead
-    const howManyCellsAreVisible = (get().width / horizontalZoomLevel) + 10
-    const beforeTimeInMs = howManyCellsAreVisible * DEFAULT_DURATION_IN_MS_PER_STEP
 
-    const visibleSegments = await sliceSegments({
-      segments,
-      afterTimeInMs: 0,
-      beforeTimeInMs,
-      visibleSegments: []
-    })
-      */
     const visibleSegments: ClapSegment[] = []
 
     set({
-      ...getDefaultState(),
       clap,
       segments,
       visibleSegments,
       segmentsChanged: 1,
-      tracks,
-      maxHeight,
-      nbIdentifiedTracks,
-      typicalSegmentDurationInSteps,
+
       isEmpty,
       isLoading: false,
       finalVideo,
+
+      ...computeContentSizeMetrics({
+        clap,
+        tracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+      })
     })
   },
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => {
-    const { minHorizontalZoomLevel, maxHorizontalZoomLevel } = get()
-    const horizontalZoomLevel = Math.min(maxHorizontalZoomLevel, Math.max(minHorizontalZoomLevel, newHorizontalZoomLevel))
+    const {
+      minHorizontalZoomLevel,
+      maxHorizontalZoomLevel,
+      clap,
+      tracks,
+      defaultSegmentDurationInSteps,
+    } = get()
+    const cellWidth = Math.min(maxHorizontalZoomLevel, Math.max(minHorizontalZoomLevel, newHorizontalZoomLevel))
+    
+    const resizeStartedAt = performance.now()
+    const isResizing = true
+
     set({
-      horizontalZoomLevel,
-      resizeStartedAt: performance.now(),
-      isResizing: true,
+      resizeStartedAt,
+      isResizing,
+      ...computeContentSizeMetrics({
+        clap,
+        tracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+      })
     })
   },
   
@@ -181,58 +223,21 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
   setVisibleSegments: (visibleSegments: ClapSegment[] = []) => { set({ visibleSegments }) },
 
   getCellHeight: (trackNumber?: number): number => {
-    const defaultCellHeight = PROMPT_STEP_HEIGHT_IN_PX
-    let cellHeight = defaultCellHeight
- 
-    const {
-      clap,
-      horizontalZoomLevel,
-      tracks,
-      typicalSegmentDurationInSteps
-    } = get()
-    
-    if (!clap) { return cellHeight }
-
-    const cellWidth = horizontalZoomLevel
-
-    const typicalSegmentLengthInPixels = cellWidth * typicalSegmentDurationInSteps
-
-    // TODO: compute the exact image ratio instead of using the media orientation,
-    // since it might not match the actual assets
-    const ratio = clap.meta.width / clap.meta.height
-    
-    // also storyboards and videos might have different sizes / ratios
-    const previewHeight = Math.round(
-      typicalSegmentLengthInPixels / ratio
-    )
-    
-    if (typeof trackNumber === "number" && !isNaN(trackNumber) && isFinite(trackNumber)) {
-      const track = tracks[trackNumber]
-      if (track) {
-        cellHeight =
-          track.isPreview && track.visible
-          ? previewHeight
-          : track.visible
-          ? track.height
-          : defaultCellHeight
-      } else {
-        // missing data
-      }
-    }
-
-    return cellHeight
+    const { defaultCellHeight, tracks } = get()
+    const track = tracks[trackNumber!]
+    return track?.height || defaultCellHeight
   },
 
-
   getVerticalCellPosition: (start: number, end: number): number => {
-    const { getCellHeight } = get()
-
+    const { defaultCellHeight, tracks } = get()
     let height = 0
     for (let i = start; i < end; i++) {
-      height += getCellHeight(i)
+      const track = tracks[i!]
+      height += track?.height || defaultCellHeight
     }
     return height
   },
+
   getSegmentColorScheme: (segment?: ClapSegment): ClapSegmentColorScheme => {
 
     const { theme } = get()
@@ -314,36 +319,42 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
   },
   toggleTrackVisibility: (trackId: number) => {
     const {
-      tracks: oldTracks,
-      getCellHeight,
-      getVerticalCellPosition
+      clap,
+      tracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
     } = get()
 
-    const tracks = oldTracks.map(t => (
-      t.id === trackId
-      ? { ...t, visible: !t.visible }
-      : t
-    ))
-
-    const maxHeight = getCellHeight() + getVerticalCellPosition(0, tracks.length)
-  
     set({
-      tracks,
-      maxHeight,
+      ...computeContentSizeMetrics({
+        clap,
+        tracks: tracks.map(t => (
+          t.id === trackId
+          ? { ...t, visible: !t.visible }
+          : t
+        )),
+        cellWidth,
+        defaultSegmentDurationInSteps
+      })
     })
   },
   setContainerSize: ({ width, height }: { width: number; height: number }) => {
-
-    const { tracks, getCellHeight, getVerticalCellPosition  } = get()
-
-    const nbIdentifiedTracks = tracks.length
-    const maxHeight = getCellHeight() + getVerticalCellPosition(0, nbIdentifiedTracks)
-  
     set({
       width,
       height,
       resizeStartedAt: performance.now(),
       isResizing: true,
+      /*
+
+      changing the *container* size has absolutely no impact on the content
+      
+      ...computeContentSizeMetrics({
+        clap,
+        tracks,
+        cellWidth,
+        defaultSegmentDurationInSteps
+      })
+       */
     })
   },
   setTimelineCursor: (timelineCursor?: TimelineCursorImpl) => {
@@ -407,23 +418,19 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     })
   },
   setSegmentRenderer: (segmentRenderer: SegmentRenderer) => {
-    const defaultSegmentRenderer: SegmentRenderer = ( params: {
-      segment: ClapSegment,
-    
-      // the slice to use for rendering
-      segments: ClapSegment[],
-    
-      entities: Record<string, ClapEntity>
-    }) => Promise.resolve(params.segment)
-
-    set({
-      segmentRenderer: (segmentRenderer || defaultSegmentRenderer)
-    })
+    set({ segmentRenderer })
   },
-  renderSegment: async (segment: ClapSegment) => {
+  renderSegment: async (segment: ClapSegment): Promise<ClapSegment> => {
     const { segmentRenderer, clap, segments } = get()
 
-    return segmentRenderer({
+    // console.log("useTimelineState.renderSegment(): calling user-provided segmentRenderer", segmentRenderer)
+
+    if (!segmentRenderer) {
+      return segment
+      // throw new Error(`please call setSegmentRender(...) first`)
+    }
+
+    const result = await segmentRenderer({
       segment,
     
       // the slice to use for rendering
@@ -434,5 +441,7 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       // to optimize the payload size
       entities: clap?.entityIndex || {},
     })
+
+    return result
   },
 }))

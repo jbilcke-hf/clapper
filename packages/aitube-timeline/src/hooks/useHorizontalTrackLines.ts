@@ -5,7 +5,6 @@ import { useTimelineState } from "./useTimelineState"
 import { leftBarTrackScaleWidth } from "@/constants/themes"
 
 export const useHorizontaTrackLines = () => {
-  const cellWidth = useTimelineState(s => s.horizontalZoomLevel)
   const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
 
   const tracks = useTimelineState(s => s.tracks)
@@ -27,10 +26,7 @@ export const useHorizontaTrackLines = () => {
     }
 
     setLines(thisLines);
-  }, [
-    cellWidth,
-    // maxWidth,
-    // nbMaxShots,
+  }, [,
     leftBarTrackScaleWidth,
     JSON.stringify(tracks.map(t => `${t.visible}_${t.height}`))
   ]);

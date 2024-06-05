@@ -17,9 +17,10 @@ export function RedrawButton({
   durationInSteps: number
 }) {
   // const [isButtonHovered, setButtonHovered] = useState(false)
-
+  const handleClick = () => {
+    console.log('hum?')
+  }
   return (
-    <>
       <Circle
            position={[
             (durationInSteps * (cellWidth / 2)) - 26,
@@ -30,8 +31,12 @@ export function RedrawButton({
             16,
             32
           ]}
-          onClick={() => {
-            useTimelineState().renderSegment(segment)
+          onClick={(e) => {
+            // console.log(`click on RedrawButton for segment ` + segment.id)
+            useTimelineState.getState().renderSegment(segment)
+
+            e.stopPropagation()
+            return false
           }}
       >
         <meshBasicMaterial
@@ -62,6 +67,5 @@ export function RedrawButton({
           🎲
         </Text>
       </Circle>
-    </>
   )
 }

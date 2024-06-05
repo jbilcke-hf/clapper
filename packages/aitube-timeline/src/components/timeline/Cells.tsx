@@ -9,15 +9,7 @@ import {
 
 import { Cell } from "@/components/cells"
 
-export function Cells({
-  width,
-  height
-}: {
-  width: number
-  height: number
-}) {
-
-  const nbMaxTracks = DEFAULT_NB_TRACKS
+export function Cells() {
 
   // refresh rate for the grid (high value == delay before we see the "hidden" cells)
   // this should be a fact of the number of segments,
@@ -27,11 +19,12 @@ export function Cells({
   // to avoid having to re-compute
   const refreshRateInMs = 500
 
+  const contentHeight = useTimelineState(s => s.contentHeight)
+
   // note: this one is async, so it creates a delay
   // we could cheat by detecting the cell width change and apply it
   // faster on the current geometries 
   const visibleSegments = useVisibleSegments({
-    nbMaxTracks,
     refreshRateInMs,
   });
 
@@ -45,7 +38,7 @@ export function Cells({
   }))
   */
   
-  // console.log(`re-rendering ${visibleSegments.length} <Cells>`)
+  console.log(`re-rendering ${visibleSegments.length} <Cells>`)
 
   return (
     <group position={[
@@ -53,7 +46,7 @@ export function Cells({
       // height/2 is to shift the group above, to make it centered
       // cellHeight/2 is to also take into account the height of a cell
       // (baseCellHeight / 2) - (baseCellHeight / 2),
-      height / 2,
+      contentHeight / 2,
        -4
        ]}>
       {visibleSegments.map((s) =>

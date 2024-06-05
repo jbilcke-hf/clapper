@@ -19,7 +19,27 @@ export type Track = {
 
 export type Tracks = Track[]
 
+export type ContentSizeMetrics = {
+  nbMaxShots: number
+  nbMaxTracks: number
+  nbIdentifiedTracks: number
+  contentWidth: number
+  contentHeight: number
+  tracks: Tracks
+  cellWidth: number
+  defaultCellHeight: number
+  defaultSegmentDurationInSteps: number
+  defaultSegmentLengthInPixels: number
+  defaultMediaRatio: number
+  defaultPreviewHeight: number
+}
+
 export type TimelineStoreState = {
+  // used to track the timeline state
+  // this helps informing parent app user
+  // that the timeline has been recreated inside the React tree for instance
+  isReady: boolean
+
   // container width and height
   width: number
   height: number
@@ -35,11 +55,22 @@ export type TimelineStoreState = {
   isEmpty: boolean
   isLoading: boolean
 
+  // -- metrics computed by computeContentSizeMetrics --
+  nbMaxShots: number
+  nbMaxTracks: number
+  contentWidth: number
+  contentHeight: number
   tracks: Tracks
+  cellWidth: number
+  defaultCellHeight: number
+  defaultSegmentDurationInSteps: number
+  defaultSegmentLengthInPixels: number
+  defaultMediaRatio: number
+  defaultPreviewHeight: number
+  // -------------------------------------------------
 
   minHorizontalZoomLevel: number
   maxHorizontalZoomLevel: number
-  horizontalZoomLevel: number
   originalHorizontalZoomLevel: number
 
   position: THREE.Vector3
@@ -48,9 +79,6 @@ export type TimelineStoreState = {
   beforeSteps: number
   afterSteps: number
   timeout: NodeJS.Timeout
-  cellHeight: number
-  cellWidth: number
-  nbMaxTracks: number
 
   typicalSegmentDurationInSteps: number
 
@@ -77,9 +105,6 @@ export type TimelineStoreState = {
   // ref to the cursor element
   timelineCursor?: TimelineCursorImpl
 
-  // max height of the timeline
-  maxHeight: number
-
   // used to track current camera position, at zoom level 1.0
   scrollX: number
   scrollY: number
@@ -102,7 +127,7 @@ export type TimelineStoreState = {
   storyboardRenderingStrategy: RenderingStrategy
   videoRenderingStrategy: RenderingStrategy
 
-  segmentRenderer: SegmentRenderer
+  segmentRenderer?: SegmentRenderer
 }
 
 
@@ -112,7 +137,7 @@ export type TimelineStoreModifiers = {
   setSegments: (segments?: ClapSegment[]) => void
   setVisibleSegments: (visibleSegments?: ClapSegment[]) => void
   getCellHeight: (trackNumber?: number) => number
-  getVerticalCellPosition: (start: number,end: number) => number
+  getVerticalCellPosition: (start: number, end: number) => number
   getSegmentColorScheme: (segment?: ClapSegment) => ClapSegmentColorScheme
   setHoveredSegment: (hoveredSegment?: ClapSegment) => void
   setTimelineCamera: (timelineCamera?: TimelineCameraImpl) => void
