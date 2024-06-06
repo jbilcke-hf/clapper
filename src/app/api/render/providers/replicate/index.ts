@@ -6,8 +6,10 @@ import { getVideoPrompt } from "@aitube/engine"
 import { fetchContentToBase64 } from '@/lib/utils/fetchContentToBase64'
 
 export async function renderSegment(request: RenderRequest): Promise<ClapSegment> {
-
-  const replicate = new Replicate({ auth: request.settings.huggingFaceApiKey })
+  if (!request.settings.replicateApiKey) {
+    throw new Error(`Missing API key for "Replicate.com"`)
+  }
+  const replicate = new Replicate({ auth: request.settings.replicateApiKey })
 
   if (request.segment.category !== ClapSegmentCategory.STORYBOARD) {
     throw new Error(`Clapper doesn't support ${request.segment.category} generation for provider "Replicate". Please open a pull request with (working code) to solve this!`)
