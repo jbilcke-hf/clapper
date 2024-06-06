@@ -1,38 +1,38 @@
-import { FormSection } from "@/components/form/form-section"
-import { getDefaultSettingsRendering, useSettingsRendering } from "@/settings/rendering"
-import { FormSelect } from "../form/form-select"
+import { FormSection } from "@/components/forms/FormSection"
+import { getDefaultSettingsState, useSettings } from "@/controllers/settings"
+import { FormSelect } from "../forms/FormSelect"
 import { ComputeProvider } from "@/types"
-import { FormInput } from "../form/form-input"
+import { FormInput } from "../forms/FormInput"
 import { APP_NAME } from "@/lib/core/constants"
 import { availableComputeProvidersForVideos } from "./constants"
 
 export function SettingsSectionVideo() {
-  const defaultSettings = getDefaultSettingsRendering()
+  const defaultSettings = getDefaultSettingsState()
 
-  const videoProvider = useSettingsRendering(s => s.videoProvider)
-  const setVideoProvider = useSettingsRendering(s => s.setVideoProvider)
+  const videoProvider = useSettings(s => s.videoProvider)
+  const setVideoProvider = useSettings(s => s.setVideoProvider)
 
   
-  const huggingFaceModelForVideo = useSettingsRendering(s => s.huggingFaceModelForVideo)
-  const setHuggingFaceModelForVideo = useSettingsRendering(s => s.setHuggingFaceModelForVideo)
+  const huggingFaceModelForVideo = useSettings(s => s.huggingFaceModelForVideo)
+  const setHuggingFaceModelForVideo = useSettings(s => s.setHuggingFaceModelForVideo)
 
-  const replicateModelForVideo = useSettingsRendering(s => s.replicateModelForVideo)
-  const setReplicateModelForVideo = useSettingsRendering(s => s.setReplicateModelForVideo)
+  const replicateModelForVideo = useSettings(s => s.replicateModelForVideo)
+  const setReplicateModelForVideo = useSettings(s => s.setReplicateModelForVideo)
 
-  const falAiModelForVideo = useSettingsRendering(s => s.falAiModelForVideo)
-  const setFalAiModelForVideo = useSettingsRendering(s => s.setFalAiModelForVideo)
+  const falAiModelForVideo = useSettings(s => s.falAiModelForVideo)
+  const setFalAiModelForVideo = useSettings(s => s.setFalAiModelForVideo)
 
-  const modelsLabModelForVideo = useSettingsRendering(s => s.modelsLabModelForVideo)
-  const setModelsLabModelForVideo = useSettingsRendering(s => s.setModelsLabModelForVideo)
+  const modelsLabModelForVideo = useSettings(s => s.modelsLabModelForVideo)
+  const setModelsLabModelForVideo = useSettings(s => s.setModelsLabModelForVideo)
 
-  const videoRenderingStrategy = useSettingsRendering(s => s.videoRenderingStrategy)
-  const setVideoRenderingStrategy = useSettingsRendering(s => s.setVideoRenderingStrategy)
+  const videoRenderingStrategy = useSettings(s => s.videoRenderingStrategy)
+  const setVideoRenderingStrategy = useSettings(s => s.setVideoRenderingStrategy)
   
-  const maxVideosToGenerateInParallel = useSettingsRendering(s => s.maxVideosToGenerateInParallel)
-  const setMaxVideosToGenerateInParallel = useSettingsRendering(s => s.setMaxVideosToGenerateInParallel)
+  const maxVideosToGenerateInParallel = useSettings(s => s.maxVideosToGenerateInParallel)
+  const setMaxVideosToGenerateInParallel = useSettings(s => s.setMaxVideosToGenerateInParallel)
 
-  const comfyWorkflowForVideo = useSettingsRendering(s => s.comfyWorkflowForVideo)
-  const setComfyWorkflowForVideo = useSettingsRendering(s => s.setComfyWorkflowForVideo)
+  const comfyWorkflowForVideo = useSettings(s => s.comfyWorkflowForVideo)
+  const setComfyWorkflowForVideo = useSettings(s => s.setComfyWorkflowForVideo)
 
   return (
     <div className="flex flex-col space-y-6 justify-between">

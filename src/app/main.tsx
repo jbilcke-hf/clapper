@@ -1,26 +1,28 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React from "react"
 import {
   ReflexContainer,
   ReflexSplitter,
   ReflexElement
 } from 'react-reflex'
+import { useTimelineState } from "@aitube/timeline"
 
 import { Toaster } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { RenderClap } from "@/components/interface/render-clap"
-import { Timeline } from "@/components/interface/timeline"
-import { TopBar } from "@/components/interface/top-bar"
-import { useTimelineState } from "@aitube/timeline"
+import { RenderClap } from "@/components/core/render-clap"
+
 import { SettingsDialog } from "@/components/settings"
-import { LoadingDialog } from "@/components/interface/loader/LoadingDialog"
-import { useSettingsView } from "@/settings/view"
+import { LoadingDialog } from "@/components/dialogs/loader/LoadingDialog"
+import { useUI } from "@/controllers/ui"
+import { TopBar } from "@/components/toolbars/top-bar"
+import { Timeline } from "@/components/core/timeline"
 
 export function Main() {
+
   const isEmpty = useTimelineState(s => s.isEmpty)
-  const showTimeline = useSettingsView((s) => s.showTimeline)
+  const showTimeline = useUI((s) => s.showTimeline)
 
   return (
     <TooltipProvider>

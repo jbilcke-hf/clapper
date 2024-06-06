@@ -1,34 +1,34 @@
-import { FormSection } from "@/components/form/form-section"
-import { getDefaultSettingsRendering, useSettingsRendering } from "@/settings/rendering"
+import { FormSection } from "@/components/forms/FormSection"
+import { getDefaultSettingsState, useSettings } from "@/controllers/settings"
 
-import { FormInput } from "../form/form-input"
+import { FormInput } from "../forms/FormInput"
 import { ComputeProvider } from "@/types"
 import { availableComputeProvidersForStoryboards } from "./constants"
-import { FormSelect } from "../form/form-select"
+import { FormSelect } from "../forms/FormSelect"
 
 export function SettingsSectionStoryboard() {
-  const defaultSettings = getDefaultSettingsRendering()
+  const defaultSettings = getDefaultSettingsState()
 
-  const storyboardProvider = useSettingsRendering(s => s.storyboardProvider)
-  const setStoryboardProvider = useSettingsRendering(s => s.setStoryboardProvider)
+  const storyboardProvider = useSettings(s => s.storyboardProvider)
+  const setStoryboardProvider = useSettings(s => s.setStoryboardProvider)
 
-  const huggingFaceModelForImage = useSettingsRendering(s => s.huggingFaceModelForImage)
-  const setHuggingFaceModelForImage = useSettingsRendering(s => s.setHuggingFaceModelForImage)
+  const huggingFaceModelForImage = useSettings(s => s.huggingFaceModelForImage)
+  const setHuggingFaceModelForImage = useSettings(s => s.setHuggingFaceModelForImage)
 
-  const replicateModelForImage = useSettingsRendering(s => s.replicateModelForImage)
-  const setReplicateModelForImage = useSettingsRendering(s => s.setReplicateModelForImage)
+  const replicateModelForImage = useSettings(s => s.replicateModelForImage)
+  const setReplicateModelForImage = useSettings(s => s.setReplicateModelForImage)
 
-  const falAiModelForImage = useSettingsRendering(s => s.falAiModelForImage)
-  const setFalAiModelForImage = useSettingsRendering(s => s.setFalAiModelForImage)
+  const falAiModelForImage = useSettings(s => s.falAiModelForImage)
+  const setFalAiModelForImage = useSettings(s => s.setFalAiModelForImage)
 
-  const modelsLabModelForImage = useSettingsRendering(s => s.modelsLabModelForImage)
-  const setModelsLabModelForImage = useSettingsRendering(s => s.setModelsLabModelForImage)
+  const modelsLabModelForImage = useSettings(s => s.modelsLabModelForImage)
+  const setModelsLabModelForImage = useSettings(s => s.setModelsLabModelForImage)
 
-  const maxStoryboardsToGenerateInParallel = useSettingsRendering(s => s.maxStoryboardsToGenerateInParallel)
-  const setMaxStoryboardsToGenerateInParallel = useSettingsRendering(s => s.setMaxStoryboardsToGenerateInParallel)
+  const maxStoryboardsToGenerateInParallel = useSettings(s => s.maxStoryboardsToGenerateInParallel)
+  const setMaxStoryboardsToGenerateInParallel = useSettings(s => s.setMaxStoryboardsToGenerateInParallel)
 
-  const comfyWorkflowForStoryboard = useSettingsRendering(s => s.comfyWorkflowForStoryboard)
-  const setComfyWorkflowForStoryboard = useSettingsRendering(s => s.setComfyWorkflowForStoryboard)
+  const comfyWorkflowForStoryboard = useSettings(s => s.comfyWorkflowForStoryboard)
+  const setComfyWorkflowForStoryboard = useSettings(s => s.setComfyWorkflowForStoryboard)
 
   return (
     <div className="flex flex-col space-y-6 justify-between">

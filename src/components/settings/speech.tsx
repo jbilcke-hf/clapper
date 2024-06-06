@@ -1,31 +1,31 @@
-import { FormSection } from "@/components/form/form-section"
-import { getDefaultSettingsRendering, useSettingsRendering } from "@/settings/rendering"
+import { FormSection } from "@/components/forms/FormSection"
+import { getDefaultSettingsState, useSettings } from "@/controllers/settings"
 import { ComputeProvider } from "@/types"
 
-import { FormSelect } from "../form/form-select"
+import { FormSelect } from "../forms/FormSelect"
 import { availableComputeProvidersForSpeech } from "./constants"
-import { FormInput } from "../form/form-input"
+import { FormInput } from "../forms/FormInput"
 
 export function SettingsSectionSpeech() {
-  const defaultSettings = getDefaultSettingsRendering()
+  const defaultSettings = getDefaultSettingsState()
   
-  const speechProvider = useSettingsRendering(s => s.speechProvider)
-  const setSpeechProvider = useSettingsRendering(s => s.setSpeechProvider)
+  const speechProvider = useSettings(s => s.speechProvider)
+  const setSpeechProvider = useSettings(s => s.setSpeechProvider)
 
-  const huggingFaceModelForSpeech = useSettingsRendering(s => s.huggingFaceModelForSpeech)
-  const setHuggingFaceModelForSpeech = useSettingsRendering(s => s.setHuggingFaceModelForSpeech)
+  const huggingFaceModelForSpeech = useSettings(s => s.huggingFaceModelForSpeech)
+  const setHuggingFaceModelForSpeech = useSettings(s => s.setHuggingFaceModelForSpeech)
 
-  const replicateModelForSpeech = useSettingsRendering(s => s.replicateModelForSpeech)
-  const setReplicateModelForSpeech = useSettingsRendering(s => s.setReplicateModelForSpeech)
+  const replicateModelForSpeech = useSettings(s => s.replicateModelForSpeech)
+  const setReplicateModelForSpeech = useSettings(s => s.setReplicateModelForSpeech)
 
-  const falAiModelForSpeech = useSettingsRendering(s => s.falAiModelForSpeech)
-  const setFalAiModelForSpeech = useSettingsRendering(s => s.setFalAiModelForSpeech)
+  const falAiModelForSpeech = useSettings(s => s.falAiModelForSpeech)
+  const setFalAiModelForSpeech = useSettings(s => s.setFalAiModelForSpeech)
 
-  const modelsLabModelForSpeech = useSettingsRendering(s => s.modelsLabModelForSpeech)
-  const setModelsLabModelForSpeech = useSettingsRendering(s => s.setModelsLabModelForSpeech)
+  const modelsLabModelForSpeech = useSettings(s => s.modelsLabModelForSpeech)
+  const setModelsLabModelForSpeech = useSettings(s => s.setModelsLabModelForSpeech)
 
-  const comfyWorkflowForSpeech = useSettingsRendering(s => s.comfyWorkflowForSpeech)
-  const setComfyWorkflowForSpeech = useSettingsRendering(s => s.setComfyWorkflowForSpeech)
+  const comfyWorkflowForSpeech = useSettings(s => s.comfyWorkflowForSpeech)
+  const setComfyWorkflowForSpeech = useSettings(s => s.setComfyWorkflowForSpeech)
 
   return (
     <div className="flex flex-col space-y-6 justify-between">
