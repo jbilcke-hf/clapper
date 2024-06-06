@@ -1,4 +1,4 @@
-import { RoundedBox, Text } from "@react-three/drei"
+import { GradientTexture, RoundedBox, Text } from "@react-three/drei"
 import { useSpring, a, animated, config } from "@react-spring/three"
 
 import { clampWebGLText } from "@/utils"
@@ -69,7 +69,18 @@ export function TextCell({
         }
         // transparent
         // opacity={}
-        />
+        >
+          {/*
+          TODO: yes this is cool, but also expensive 
+          we should re-use the geometries and textures
+          to be able to do something like this
+        <GradientTexture
+          stops={[0, 1]} // As many stops as you want
+          colors={['aquamarine', 'hotpink']} // Colors need to match the number of stops
+          // size={1024} // Size is optional, default = 1024
+         />
+         */}
+      </meshBasicMaterial>
       {/*
         <Html
           // as='div' // Wrapping element (default: 'div')

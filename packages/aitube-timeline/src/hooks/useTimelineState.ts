@@ -5,7 +5,7 @@ import { ClapEntity, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentF
 import { TimelineStore, Tracks } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
-import { removeFinalVideos } from "@/utils/removeFinalVideo"
+import { removeFinalVideos } from "@/utils/removeFinalVideos"
 import { hslToHex } from "@/utils/hslToHex"
 import { ClapSegmentCategoryHues, ClapSegmentColorScheme, RenderingStrategy, SegmentRenderer } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -13,6 +13,7 @@ import { TimelineCameraImpl } from "@/components/camera/types"
 import { getFinalVideo } from "@/utils/getFinalVideo"
 import { TimelineCursorImpl } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
+import { findFreeTrack } from "@/utils/findFreeTrack"
 
 export const useTimelineState = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -423,11 +424,12 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
   renderSegment: async (segment: ClapSegment): Promise<ClapSegment> => {
     const { segmentRenderer, clap, segments } = get()
 
-    if (!segmentRenderer) {
+    if (!segmentRenderer || !clap) {
       return segment
       // throw new Error(`please call setSegmentRender(...) first`)
     }
 
+    console.log("going to use clap meta:", clap.meta)
     const {
       id,
       assetUrl,
@@ -444,7 +446,9 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       // TODO OPTIMIZATION:
       // we should filter the entities here,
       // to optimize the payload size
-      entities: clap?.entityIndex || {},
+      entities: clap.entityIndex || {},
+
+      meta: clap.meta
     })
 
     // note: this actually modifies the old object in-place
@@ -459,4 +463,14 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
 
     return newSegment
   },
+  findFreeTrack: ({
+    startTimeInMs,
+    endTimeInMs
+  }: {
+    startTimeInMs?: number
+    endTimeInMs?: number
+  }): number => {
+    const { segments } = get()
+    return findFreeTrack({ segments, startTimeInMs, endTimeInMs })
+  }
 }))
