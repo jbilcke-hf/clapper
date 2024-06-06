@@ -9,6 +9,8 @@ import { TextCell } from "./TextCell"
 import { useTimelineState } from "@/hooks"
 import { useHoveredSegment } from "@/hooks/useHoveredSegment"
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
+import { RedrawButton } from "./RedrawButton"
+import { Suspense } from "react"
 
 export function Cell({
   segment: s
@@ -126,6 +128,7 @@ export function Cell({
       // onPointerMissed={() => console.log('missed')}
       // onUpdate={(self) => console.log('props have been updated')}
     >
+      <Suspense fallback={<group></group>}>
       <SpecializedCell
           segment={s}
           cellWidth={cellWidth}
@@ -140,6 +143,26 @@ export function Cell({
           isResizing={isResizing}
           track={tracks[s.track]}
         />
+       </Suspense>
+      {(s.category === ClapSegmentCategory.STORYBOARD
+      || s.category === ClapSegmentCategory.VIDEO)
+      && <RedrawButton
+        segment={s}
+        cellWidth={cellWidth}
+        cellHeight={cellHeight}
+        isHovered={isHovered}
+        durationInSteps={durationInSteps}
+        /*
+        isBusy={
+          // TODO TO_GENERATE means pending,
+          // so we need an "in progress" status
+          // s.status === ClapSegmentStatus.TO_INTERPOLATE
+
+          inProgress
+        }
+        onClick={onRender}
+        */
+      />}
     </a.mesh>
   )
 }

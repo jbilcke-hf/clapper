@@ -1,7 +1,8 @@
+import { useTimelineState } from "@/hooks"
 import { ClapSegment } from "@aitube/clap"
 import { Circle, Text } from "@react-three/drei"
-
-import { useTimelineState } from "@/hooks"
+import { invalidate } from "@react-three/fiber"
+import { useState, useTransition } from "react"
 
 export function RedrawButton({
   segment,
@@ -9,22 +10,52 @@ export function RedrawButton({
   cellHeight,
   isHovered,
   durationInSteps,
+  // isBusy,
+  // onClick,
 }: {
   segment: ClapSegment
   cellWidth: number
   cellHeight: number
   isHovered: boolean
   durationInSteps: number
+  // isBusy: boolean
+  // onClick: () => void
 }) {
+  const [_isPending, startTransition] = useTransition()
+  const renderSegment = useTimelineState(s => s.renderSegment)
+
+  const [inProgress, setInProgress] = useState(false)
   // const [isButtonHovered, setButtonHovered] = useState(false)
-  const handleClick = () => {
-    console.log('hum?')
+
+  const onRender = async () => {
+    startTransition(() => {
+      setInProgress(true)
+    })
+    try {
+        // console.log(`click on RedrawButton for segment ` + segment.id)
+        const newSegment = await renderSegment(segment)
+        // if (ref.current) {
+          // update the image src
+        // }
+
+        // note that this will poison-pill the current
+        invalidate()
+      
+      // ref.current.url
+    } catch (err) {
+      
+    } finally {
+      startTransition(() => {
+        setInProgress(false)
+      })
+    }
   }
+
   return (
       <Circle
            position={[
             (durationInSteps * (cellWidth / 2)) - 26,
-            -(cellHeight / 2) + 26,
+            -(cellHeight) - (cellHeight / 2) + 26,
             1
           ]}
           args={[
@@ -32,9 +63,9 @@ export function RedrawButton({
             32
           ]}
           onClick={(e) => {
-            // console.log(`click on RedrawButton for segment ` + segment.id)
-            useTimelineState.getState().renderSegment(segment)
-
+            if (!inProgress) {
+              onRender()
+            }
             e.stopPropagation()
             return false
           }}
@@ -42,7 +73,7 @@ export function RedrawButton({
         <meshBasicMaterial
         color="#333333"
         transparent
-        opacity={isHovered ? 0.8 : 0.0}
+        opacity={inProgress ? 0.5 : isHovered ? 0.8 : 0.0}
         />
         <Text
           position={[
@@ -59,12 +90,20 @@ export function RedrawButton({
 
           lineHeight={1.0}
           color="#dddddd"
-          fillOpacity={isHovered ? 1.0 : 0.0}
+          fillOpacity={inProgress ? 0.5 : isHovered ? 1.0 : 0.0}
           anchorX="center"
           anchorY="middle"
           fontWeight={400}
         >
-          🎲
+          {inProgress ? '🕓' : '🎲'}
+          {/*
+          also for a smoother animation,
+          we should pre-render everything, and use opacity to switch between
+          the states I think
+
+          to create a "loader" we can also use this:
+            🕛🕐🕑🕒🕓🕓🕔🕧🕖🕗🕘🕚
+          */}
         </Text>
       </Circle>
   )

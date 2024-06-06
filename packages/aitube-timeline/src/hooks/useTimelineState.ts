@@ -423,14 +423,19 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
   renderSegment: async (segment: ClapSegment): Promise<ClapSegment> => {
     const { segmentRenderer, clap, segments } = get()
 
-    // console.log("useTimelineState.renderSegment(): calling user-provided segmentRenderer", segmentRenderer)
-
     if (!segmentRenderer) {
       return segment
       // throw new Error(`please call setSegmentRender(...) first`)
     }
 
-    const result = await segmentRenderer({
+    const {
+      id,
+      assetUrl,
+      assetDurationInMs,
+      assetFileFormat,
+      assetSourceType,
+      status
+    } = await segmentRenderer({
       segment,
     
       // the slice to use for rendering
@@ -442,6 +447,16 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       entities: clap?.entityIndex || {},
     })
 
-    return result
+    // note: this actually modifies the old object in-place
+    const newSegment = Object.assign(segment, {
+      id,
+      assetUrl,
+      assetDurationInMs,
+      assetFileFormat,
+      assetSourceType,
+      status
+    })
+
+    return newSegment
   },
 }))
