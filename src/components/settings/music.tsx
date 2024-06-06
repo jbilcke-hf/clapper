@@ -1,31 +1,31 @@
-import { FormSection } from "@/components/form/form-section"
-import { getDefaultSettingsRendering, useSettingsRendering } from "@/settings/rendering"
+import { FormSection } from "@/components/forms/FormSection"
+import { getDefaultSettingsState, useSettings } from "@/controllers/settings"
 import { ComputeProvider } from "@/types"
 
-import { FormSelect } from "../form/form-select"
+import { FormSelect } from "../forms/FormSelect"
 import { availableComputeProvidersForMusic } from "./constants"
-import { FormInput } from "../form/form-input"
+import { FormInput } from "../forms/FormInput"
 
 export function SettingsSectionMusic() {
-  const defaultSettings = getDefaultSettingsRendering()
+  const defaultSettings = getDefaultSettingsState()
   
-  const musicProvider = useSettingsRendering(s => s.musicProvider)
-  const setMusicProvider = useSettingsRendering(s => s.setMusicProvider)
+  const musicProvider = useSettings(s => s.musicProvider)
+  const setMusicProvider = useSettings(s => s.setMusicProvider)
 
-  const huggingFaceModelForMusic = useSettingsRendering(s => s.huggingFaceModelForMusic)
-  const setHuggingFaceModelForMusic = useSettingsRendering(s => s.setHuggingFaceModelForMusic)
+  const huggingFaceModelForMusic = useSettings(s => s.huggingFaceModelForMusic)
+  const setHuggingFaceModelForMusic = useSettings(s => s.setHuggingFaceModelForMusic)
 
-  const replicateModelForMusic = useSettingsRendering(s => s.replicateModelForMusic)
-  const setReplicateModelForMusic = useSettingsRendering(s => s.setReplicateModelForMusic)
+  const replicateModelForMusic = useSettings(s => s.replicateModelForMusic)
+  const setReplicateModelForMusic = useSettings(s => s.setReplicateModelForMusic)
 
-  const falAiModelForMusic = useSettingsRendering(s => s.falAiModelForMusic)
-  const setFalAiModelForMusic = useSettingsRendering(s => s.setFalAiModelForMusic)
+  const falAiModelForMusic = useSettings(s => s.falAiModelForMusic)
+  const setFalAiModelForMusic = useSettings(s => s.setFalAiModelForMusic)
 
-  const modelsLabModelForMusic = useSettingsRendering(s => s.modelsLabModelForMusic)
-  const setModelsLabModelForMusic = useSettingsRendering(s => s.setModelsLabModelForMusic)
+  const modelsLabModelForMusic = useSettings(s => s.modelsLabModelForMusic)
+  const setModelsLabModelForMusic = useSettings(s => s.setModelsLabModelForMusic)
 
-  const comfyWorkflowForMusic = useSettingsRendering(s => s.comfyWorkflowForMusic)
-  const setComfyWorkflowForMusic = useSettingsRendering(s => s.setComfyWorkflowForMusic)
+  const comfyWorkflowForMusic = useSettings(s => s.comfyWorkflowForMusic)
+  const setComfyWorkflowForMusic = useSettings(s => s.setComfyWorkflowForMusic)
 
   return (
     <div className="flex flex-col space-y-6 justify-between">

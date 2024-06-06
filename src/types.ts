@@ -1,5 +1,5 @@
-import { ClapEntity, ClapSegment } from "@aitube/clap"
-import { SettingsRenderingState } from "./settings/rendering"
+import { ClapEntity, ClapMeta, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+import { SettingsState } from "./controllers/settings"
 
 export enum ComputeProvider {
   NONE = "NONE",
@@ -27,7 +27,7 @@ export enum ComfyIcuAccelerator {
 }
 
 export type RenderRequest = {
-  settings: SettingsRenderingState
+  settings: SettingsState
 
   // the reference segment to render (eg. storyboard or video)
   segment: ClapSegment
@@ -36,6 +36,35 @@ export type RenderRequest = {
   segments: ClapSegment[]
 
   entities: Record<string, ClapEntity>
+
+  meta: ClapMeta
+}
+
+export type AssistantRequest = {
+  settings: SettingsState
+
+  prompt: string
+
+  // the slice to edit
+  segments: ClapSegment[]
+
+  // the full text of the current scene
+  fullScene: string
+
+  // the full text of the current action line
+  actionLine: string
+  
+  // used to provide more context
+  entities: Record<string, ClapEntity>
+
+  // used to provide more context
+  projectInfo: string
+}
+
+export type AssistantResponse = {
+  prompt: string
+  categoryName: ClapSegmentCategory
+  llmOutput: string
 }
 
 export type ComfyParameter =
@@ -64,4 +93,13 @@ export type ComfyNode = {
   _meta: {
     title: string
   }
+}
+
+export enum FalAiImageSize {
+  SQUARE_HD = "square_hd",
+  SQUARE = "square",
+  PORTRAIT_4_3 = "portrait_4_3",
+  PORTRAIT_16_9 = "portrait_16_9",
+  LANDSCAPE_4_3 = "landscape_4_3",
+  LANDSCAPE_16_9 = "landscape_16_9"
 }

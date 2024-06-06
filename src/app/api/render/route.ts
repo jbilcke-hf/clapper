@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
 
   if (!provider) { throw new Error(`Segments of category ${request.segment.category} are not supported yet`)}
 
+  // console.log(`API RenderRequest = `, request.settings)
   const renderSegment =
     provider === ComputeProvider.HUGGINGFACE
     ? renderSegmentUsingHuggingFace

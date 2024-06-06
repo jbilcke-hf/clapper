@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
-import { useSettingsView } from "@/settings/view"
+import { useUI } from "@/controllers/ui"
 
 import { SettingsSectionProvider } from "./provider"
 import { SettingsSectionAssistant } from "./assistant"
@@ -16,8 +16,8 @@ import { SettingsSectionSpeech } from "./speech"
 
 export function SettingsDialog() {
 
-  const showSettings = useSettingsView(s => s.showSettings)
-  const setShowSettings = useSettingsView(s => s.setShowSettings)
+  const showSettings = useUI(s => s.showSettings)
+  const setShowSettings = useUI(s => s.setShowSettings)
   const [_isPending, startTransition] = useTransition()
 
   const panels = {

@@ -1,13 +1,13 @@
-import { FormSection } from "@/components/form/form-section"
-import { useSettingsRendering } from "@/settings/rendering"
+import { FormSection } from "@/components/forms/FormSection"
+import { useSettings } from "@/controllers/settings"
 import { ComputeProvider } from "@/types"
 
-import { FormSelect } from "../form/form-select"
+import { FormSelect } from "../forms/FormSelect"
 import { availableComputeProvidersForAssistant } from "./constants"
 
 export function SettingsSectionAssistant() {
-  const assistantProvider = useSettingsRendering(s => s.assistantProvider)
-  const setAssistantProvider = useSettingsRendering(s => s.setAssistantProvider)
+  const assistantProvider = useSettings(s => s.assistantProvider)
+  const setAssistantProvider = useSettings(s => s.setAssistantProvider)
 
   return (
     <div className="flex flex-col space-y-6 justify-between">

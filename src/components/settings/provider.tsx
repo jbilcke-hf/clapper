@@ -1,31 +1,43 @@
-import { FormSection } from "@/components/form/form-section"
-import { getDefaultSettingsRendering, useSettingsRendering } from "@/settings/rendering"
-import { FormSelect } from "../form/form-select"
+import { FormSection } from "@/components/forms/FormSection"
+import { getDefaultSettingsState, useSettings } from "@/controllers/settings"
+import { FormSelect } from "../forms/FormSelect"
 import { ComfyIcuAccelerator } from "@/types"
-import { FormInput } from "../form/form-input"
+import { FormInput } from "../forms/FormInput"
 import { APP_NAME } from "@/lib/core/constants"
 import { availableComfyIcuAccelerators } from "./constants"
 
 export function SettingsSectionProvider() {
-  const defaultSettings = getDefaultSettingsRendering()
+  const defaultSettings = getDefaultSettingsState()
 
-  const replicateApiKey = useSettingsRendering(s => s.replicateApiKey)
-  const setReplicateApiKey = useSettingsRendering(s => s.setReplicateApiKey)
+  const replicateApiKey = useSettings(s => s.replicateApiKey)
+  const setReplicateApiKey = useSettings(s => s.setReplicateApiKey)
 
-  const comfyIcuApiKey = useSettingsRendering(s => s.comfyIcuApiKey)
-  const setComfyIcuApiKey = useSettingsRendering(s => s.setComfyIcuApiKey)
+  const comfyIcuApiKey = useSettings(s => s.comfyIcuApiKey)
+  const setComfyIcuApiKey = useSettings(s => s.setComfyIcuApiKey)
 
-  const comfyIcuAccelerator = useSettingsRendering(s => s.comfyIcuAccelerator)
-  const setComfyIcuAccelerator = useSettingsRendering(s => s.setComfyIcuAccelerator)
+  const comfyIcuAccelerator = useSettings(s => s.comfyIcuAccelerator)
+  const setComfyIcuAccelerator = useSettings(s => s.setComfyIcuAccelerator)
 
-  const huggingFaceApiKey = useSettingsRendering(s => s.huggingFaceApiKey)
-  const setHuggingFaceApiKey = useSettingsRendering(s => s.setHuggingFaceApiKey)
+  const huggingFaceApiKey = useSettings(s => s.huggingFaceApiKey)
+  const setHuggingFaceApiKey = useSettings(s => s.setHuggingFaceApiKey)
 
-  const falAiApiKey = useSettingsRendering(s => s.falAiApiKey)
-  const setFalAiApiKey = useSettingsRendering(s => s.setFalAiApiKey)
+  const falAiApiKey = useSettings(s => s.falAiApiKey)
+  const setFalAiApiKey = useSettings(s => s.setFalAiApiKey)
 
-  const modelsLabApiKey = useSettingsRendering(s => s.modelsLabApiKey)
-  const setModelsLabApiKey = useSettingsRendering(s => s.setModelsLabApiKey)
+  const modelsLabApiKey = useSettings(s => s.modelsLabApiKey)
+  const setModelsLabApiKey = useSettings(s => s.setModelsLabApiKey)
+
+  const openaiApiKey = useSettings(s => s.openaiApiKey)
+  const setOpenaiApiKey = useSettings(s => s.setOpenaiApiKey)
+
+  const groqApiKey = useSettings(s => s.groqApiKey)
+  const setGroqApiKey = useSettings(s => s.setGroqApiKey)
+
+  const googleApiKey = useSettings(s => s.googleApiKey)
+  const setGoogleApiKey = useSettings(s => s.setGoogleApiKey)
+
+  const anthropicApiKey = useSettings(s => s.anthropicApiKey)
+  const setAnthropicApiKey = useSettings(s => s.setAnthropicApiKey)
 
   return (
     <div className="flex flex-col space-y-6 justify-between">
@@ -88,6 +100,38 @@ export function SettingsSectionProvider() {
           value={modelsLabApiKey}
           defaultValue={defaultSettings.modelsLabApiKey}
           onChange={setModelsLabApiKey}
+          type="password"
+        />
+
+        <FormInput
+          label="OpenAI API Key"
+          value={openaiApiKey}
+          defaultValue={defaultSettings.openaiApiKey}
+          onChange={setOpenaiApiKey}
+          type="password"
+        />
+
+        <FormInput
+          label="Groq API Key"
+          value={groqApiKey}
+          defaultValue={defaultSettings.groqApiKey}
+          onChange={setGroqApiKey}
+          type="password"
+        />
+
+        <FormInput
+          label="Google API Key"
+          value={googleApiKey}
+          defaultValue={defaultSettings.googleApiKey}
+          onChange={setGoogleApiKey}
+          type="password"
+        />
+
+        <FormInput
+          label="Anthropic API Key"
+          value={anthropicApiKey}
+          defaultValue={defaultSettings.anthropicApiKey}
+          onChange={setAnthropicApiKey}
           type="password"
         />
 
