@@ -1,4 +1,4 @@
-import { ClapEntity, ClapSegment } from "@aitube/clap"
+import { ClapEntity, ClapMeta, ClapSegment } from "@aitube/clap"
 
 export enum RenderingStrategy {
 
@@ -31,4 +31,6 @@ export type SegmentRenderer = (params: {
   segments: ClapSegment[],
 
   entities: Record<string, ClapEntity>
+
+  meta: ClapMeta
 }) => Promise<ClapSegment>

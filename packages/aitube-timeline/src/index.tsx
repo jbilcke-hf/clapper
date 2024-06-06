@@ -10,24 +10,49 @@ export {
   ImageCell,
   VideoCell,
   TextCell,
-  SpecializedCellProps
+  type SpecializedCellProps
 } from "./components"
 
 export {
+  DEFAULT_DURATION_IN_MS_PER_STEP,
+  DEFAULT_NB_TRACKS,
+  DEFAULT_COLUMNS_PER_SLICE,
+  PROMPT_STEP_HEIGHT_IN_PX,
+  PREVIEW_STEP_HEIGHT_IN_PX,
+  NB_MAX_SHOTS,
+  baseClapSegmentCategoryHues,
+  pastel,
+  DEFAULT_THEMES,
+} from "./constants"
+
+export {
   useAxis,
+  useVerticalGridLines,
+  useHorizontalGridLines,
   useTimelineState,
-  useVisibleSegments
+  useVisibleSegments,
 } from "./hooks"
 
 export {
+  clamp,
   cn,
+  debounceAsync,
+  debounceSync,
+  findFreeTrack,
+  formatTimestamp,
+  getDefaultState,
+  getFinalVideo,
   getWebGLCharWidth,
   getWebGLTextWidth,
   clampWebGLText,
   clampWebGLTextNaive,
+  hslToHex,
+  parseRenderingStrategy,
+  removeFinalVideos,
   similar,
+  sleep,
   sliceSegments,
-  parseRenderingStrategy
+  throttle
 } from "./utils"
 
 export {
@@ -39,7 +64,7 @@ export {
   ClapSegmentCategoryHues,
   ClapSegmentColorScheme,
   RenderingStrategy,
-  SegmentRenderer
+ type SegmentRenderer
 } from "./types"
 
 export { ClapTimeline } from "./ClapTimeline"

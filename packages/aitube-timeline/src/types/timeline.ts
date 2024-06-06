@@ -168,6 +168,7 @@ export type TimelineStoreModifiers = {
   setVideoRenderingStrategy: (videoRenderingStrategy: RenderingStrategy) => void
   setSegmentRenderer: (segmentRenderer: SegmentRenderer) => void
   renderSegment: (segment: ClapSegment) => Promise<ClapSegment>
+  findFreeTrack: (params: { startTimeInMs?: number; endTimeInMs?: number }) => number
 }
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers
