@@ -27,9 +27,9 @@ const segmentRenderer: SegmentRenderer = async ({
     },
     body: JSON.stringify(request)
   })
-
+  console.log(`res:`, res)
   const newSegment = (await res.json()) as ClapSegment
-
+  console.log(`newSegment:`, newSegment)
   return newSegment
 }
 

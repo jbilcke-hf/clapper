@@ -5,11 +5,11 @@ import { getComfyWorkflow } from "../comfy/getComfyWorkflow"
 import { runWorkflow } from "./runWorkflow"
 
 export async function renderSegment(request: RenderRequest): Promise<ClapSegment> {
-
+  if (!request.settings.replicateApiKey) {
+    throw new Error(`Missing API key for "Replicate.com"`)
+  }
   const workflow = getComfyWorkflow(request)
 
-  // TODO support Hugging Face as well
-  // const await runWithHuggingFace({
   const segment: ClapSegment = { ...request.segment }
 
   try {

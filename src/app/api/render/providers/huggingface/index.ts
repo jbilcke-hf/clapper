@@ -7,6 +7,11 @@ import { blobToBase64DataUri } from "@/lib/utils/blobToBase64DataUri"
 
 export async function renderSegment(request: RenderRequest): Promise<ClapSegment> {
 
+  if (!request.settings.huggingFaceApiKey) {
+    throw new Error(`Missing API key for "Hugging Face"`)
+  }
+  
+  console.log(`key: ${request.settings.huggingFaceApiKey}`)
   const hf: HfInferenceEndpoint = new HfInference(request.settings.huggingFaceApiKey)
 
   if (request.segment.category !== ClapSegmentCategory.STORYBOARD) {
@@ -25,9 +30,10 @@ export async function renderSegment(request: RenderRequest): Promise<ClapSegment
     })
 
     segment.assetUrl = await blobToBase64DataUri(blob)
+    console.log(`successfully called Hugging Face`)
     segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)
   } catch (err) {
-    console.error(`failed to call Replicate: `, err)
+    console.error(`failed to call Hugging Face: `, err)
     segment.assetUrl = ''
     segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)
     segment.status = ClapSegmentStatus.TO_GENERATE
