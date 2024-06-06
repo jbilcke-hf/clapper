@@ -54,7 +54,8 @@ export function TopMenuFile() {
         }}>
           Open project (.clap)<MenubarShortcut>⌘O</MenubarShortcut>
         </MenubarItem>
-        <MenubarItem onClick={() => {
+        <MenubarItem
+        onClick={() => {
           saveClapAs({ embedded: true })
         }}>
           Save project (.clap)<MenubarShortcut>⌘S</MenubarShortcut>
@@ -64,6 +65,36 @@ export function TopMenuFile() {
           screenplayPicker.openFilePicker()
         }}>
           Import screenplay (.txt)
+        </MenubarItem>
+        <MenubarSeparator />
+        <MenubarItem
+        disabled
+        onClick={() => {
+          screenplayPicker.openFilePicker()
+        }}>
+          Import .fountain (not implemented)
+        </MenubarItem>
+        <MenubarItem
+        disabled
+        onClick={() => {
+          screenplayPicker.openFilePicker()
+        }}>
+          Export .fountain (not implemented)
+        </MenubarItem>
+        <MenubarSeparator />
+        <MenubarItem
+        disabled
+        onClick={() => {
+          screenplayPicker.openFilePicker()
+        }}>
+          Import .fdx (not implemented)
+        </MenubarItem>
+        <MenubarItem
+        disabled
+        onClick={() => {
+          screenplayPicker.openFilePicker()
+        }}>
+          Export .fdx (not implemented)
         </MenubarItem>
       </MenubarContent>
     </MenubarMenu>
