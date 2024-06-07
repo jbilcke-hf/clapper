@@ -200,9 +200,13 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       clap,
       tracks,
       defaultSegmentDurationInSteps,
+      cellWidth: previousCellWidth
     } = get()
     const cellWidth = Math.min(maxHorizontalZoomLevel, Math.max(minHorizontalZoomLevel, newHorizontalZoomLevel))
     
+    // nothing changed
+    if (Math.round(cellWidth) === Math.round(previousCellWidth)) { return }
+
     const resizeStartedAt = performance.now()
     const isResizing = true
 
@@ -313,6 +317,7 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
   },
   handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number, deltaY: number }) => {
     const { scrollX, scrollY } = get()
+    // TODO: compute the limits here, to avoid doing re-renderings for nothing
     set({
       scrollX: scrollX + deltaX,
       scrollY: scrollY - deltaY,
@@ -340,6 +345,12 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     })
   },
   setContainerSize: ({ width, height }: { width: number; height: number }) => {
+    const { width: previousWidth, height: previousHeight } = get()
+    const changed = 
+      (Math.round(previousWidth) !== Math.round(height))
+      || (Math.round(previousHeight) !== Math.round(height))
+    if (!changed) { return }
+
     set({
       width,
       height,
@@ -364,6 +375,8 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
   setCursorTimestampAt: (cursorTimestampAt: number) => {
     set({ cursorTimestampAt })
   },
+
+  // this function has an issue, it saves stuff as .txt, which is bad
   saveClapAs: async ({
     embedded,
 
@@ -428,8 +441,21 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       return segment
       // throw new Error(`please call setSegmentRender(...) first`)
     }
+  
+    const entities = clap.entityIndex || {}
 
-    console.log("going to use clap meta:", clap.meta)
+    const speakingCharactersIds = segments.map(s =>
+      s.category === ClapSegmentCategory.DIALOGUE ? s.entityId : null
+    ).filter(id => id) as string[]
+
+    const generalCharactersIds = segments.map(s =>
+      s.category === ClapSegmentCategory.CHARACTER ? s.entityId : null
+    ).filter(id => id) as string[]
+
+    const mainCharacterId: string | undefined = speakingCharactersIds.at(0) || generalCharactersIds.at(0) || undefined
+
+    const mainCharacterEntity: ClapEntity | undefined = mainCharacterId ? (entities[mainCharacterId] || undefined) : undefined
+
     const {
       id,
       assetUrl,
@@ -442,12 +468,13 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     
       // the slice to use for rendering
       segments: filterSegments(ClapSegmentFilteringMode.ANY, segment, segments),
-    
-      // TODO OPTIMIZATION:
-      // we should filter the entities here,
-      // to optimize the payload size
-      entities: clap.entityIndex || {},
 
+      entities,
+      
+      speakingCharactersIds,
+      generalCharactersIds,
+      mainCharacterId,
+      mainCharacterEntity,
       meta: clap.meta
     })
 

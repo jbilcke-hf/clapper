@@ -25,12 +25,17 @@ export enum RenderingStrategy {
 }
 
 export type SegmentRenderer = (params: {
-  segment: ClapSegment,
+  segment: ClapSegment
 
   // the slice to use for rendering
-  segments: ClapSegment[],
+  segments: ClapSegment[]
 
   entities: Record<string, ClapEntity>
+
+  speakingCharactersIds: string[]
+  generalCharactersIds: string[]
+  mainCharacterId?: string
+  mainCharacterEntity?: ClapEntity
 
   meta: ClapMeta
 }) => Promise<ClapSegment>
