@@ -26,13 +26,13 @@ export function getRenderRequestPrompts({
     segment.category === ClapSegmentCategory.VIDEO
     ? settings.videoPromptPrefix
     : segment.category === ClapSegmentCategory.STORYBOARD
-    ? settings.storyboardPromptPrefix
+    ? settings.imagePromptPrefix
     : "",
     videoPrompt,
     segment.category === ClapSegmentCategory.VIDEO
     ? settings.videoPromptSuffix
     : segment.category === ClapSegmentCategory.STORYBOARD
-    ? settings.storyboardPromptSuffix
+    ? settings.imagePromptSuffix
     : ""
   ].map(x => x.trim()).join(", ")
 
@@ -40,7 +40,7 @@ export function getRenderRequestPrompts({
     segment.category === ClapSegmentCategory.VIDEO
     ? settings.videoNegativePrompt
     : segment.category === ClapSegmentCategory.STORYBOARD
-    ? settings.storyboardNegativePrompt
+    ? settings.imageNegativePrompt
     : ""
   ].map(x => x.trim()).join(", ")
 

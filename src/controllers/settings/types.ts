@@ -19,8 +19,8 @@ export type SettingsState = {
   // ------------- CATEGORY PROVIDERS ---------------
   assistantProvider: ComputeProvider
   videoProvider: ComputeProvider
-  storyboardProvider: ComputeProvider
-  speechProvider: ComputeProvider
+  imageProvider: ComputeProvider
+  voiceProvider: ComputeProvider
   soundProvider: ComputeProvider
   musicProvider: ComputeProvider
 
@@ -30,22 +30,26 @@ export type SettingsState = {
 
   // -------------- MISC SETTINGS -------------------
 
-  storyboardPromptPrefix: string
-  storyboardPromptSuffix: string
-  storyboardNegativePrompt: string
+  imagePromptPrefix: string
+  imagePromptSuffix: string
+  imageNegativePrompt: string
   videoPromptPrefix: string
   videoPromptSuffix: string
   videoNegativePrompt: string
 
-  storyboardRenderingStrategy: RenderingStrategy
+  imageRenderingStrategy: RenderingStrategy
   videoRenderingStrategy: RenderingStrategy
-  maxStoryboardsToGenerateInParallel: number
+  voiceRenderingStrategy: RenderingStrategy
+  soundRenderingStrategy: RenderingStrategy
+  musicRenderingStrategy: RenderingStrategy
+
+  maxImagesToGenerateInParallel: number
   maxVideosToGenerateInParallel: number
 
   // ------------ COMFY UI WORKFLOWS -----------------
-  comfyWorkflowForStoryboard: string
+  comfyWorkflowForImage: string
   comfyWorkflowForVideo: string
-  comfyWorkflowForSpeech: string
+  comfyWorkflowForVoice: string
   comfyWorkflowForSound: string
   comfyWorkflowForMusic: string
 
@@ -54,7 +58,7 @@ export type SettingsState = {
   huggingFaceModelForAssistant: string
   huggingFaceModelForImage: string
   huggingFaceModelForVideo: string
-  huggingFaceModelForSpeech: string
+  huggingFaceModelForVoice: string
   huggingFaceModelForSound: string
   huggingFaceModelForMusic: string
 
@@ -67,44 +71,44 @@ export type SettingsState = {
 
   replicateModelForImage: string
   replicateModelForVideo: string
-  replicateModelForSpeech: string
+  replicateModelForVoice: string
   replicateModelForSound: string
   replicateModelForMusic: string
 
   stabilityAiModelForImage: string
   stabilityAiModelForVideo: string
-  stabilityAiModelForSpeech: string
+  stabilityAiModelForVoice: string
   stabilityAiModelForSound: string
   stabilityAiModelForMusic: string
 
   falAiModelForImage: string
   falAiModelForVideo: string
-  falAiModelForSpeech: string
+  falAiModelForVoice: string
   falAiModelForSound: string
   falAiModelForMusic: string
 
   modelsLabModelForImage: string
   modelsLabModelForVideo: string
-  modelsLabModelForSpeech: string
+  modelsLabModelForVoice: string
   modelsLabModelForSound: string
   modelsLabModelForMusic: string
 
   openaiModelForAssistant: string
   openaiModelForImage: string
   openaiModelForVideo: string
-  openaiModelForSpeech: string
+  openaiModelForVoice: string
 
   groqModelForAssistant: string
 
   googleModelForAssistant: string
   googleModelForImage: string
   googleModelForVideo: string
-  googleModelForSpeech: string
+  googleModelForVoice: string
   googleModelForMusic: string
 
   anthropicModelForAssistant: string
 
-  elevenLabsModelForSpeech: string
+  elevenLabsModelForVoice: string
   elevenLabsModelForSound: string
 }
 
@@ -125,34 +129,38 @@ export type SettingsControls = {
 
   setAssistantProvider: (assistantProvider?: ComputeProvider) => void
   setVideoProvider: (videoProvider?: ComputeProvider) => void
-  setStoryboardProvider: (storyboardProvider?: ComputeProvider) => void
-  setSpeechProvider: (speechProvider?: ComputeProvider) => void
+  setImageProvider: (imageProvider?: ComputeProvider) => void
+  setVoiceProvider: (voiceProvider?: ComputeProvider) => void
   setSoundProvider: (soundProvider?: ComputeProvider) => void
   setMusicProvider: (musicProvider?: ComputeProvider) => void
 
   setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => void
-  setStoryboardPromptPrefix: (storyboardPromptPrefix?: string) => void
-  setStoryboardPromptSuffix: (storyboardPromptSuffix?: string) => void
-  setStoryboardNegativePrompt: (storyboardNegativePrompt?: string) => void
+  setImagePromptPrefix: (imagePromptPrefix?: string) => void
+  setImagePromptSuffix: (imagePromptSuffix?: string) => void
+  setImageNegativePrompt: (imageNegativePrompt?: string) => void
   setVideoPromptPrefix: (videoPromptPrefix?: string) => void
   setVideoPromptSuffix: (videoPromptSuffix?: string) => void
   setVideoNegativePrompt: (videoNegativePrompt?: string) => void
 
-  setStoryboardRenderingStrategy: (storyboardRenderingStrategy?: RenderingStrategy) => void
+  setImageRenderingStrategy: (imageRenderingStrategy?: RenderingStrategy) => void
   setVideoRenderingStrategy: (videoRenderingStrategy?: RenderingStrategy) => void
-  setMaxStoryboardsToGenerateInParallel: (maxStoryboardsToGenerateInParallel?: number) => void
+  setVoiceRenderingStrategy: (voiceRenderingStrategy?: RenderingStrategy) => void
+  setSoundRenderingStrategy: (soundRenderingStrategy?: RenderingStrategy) => void
+  setMusicRenderingStrategy: (musicRenderingStrategy?: RenderingStrategy) => void
+
+  setMaxImagesToGenerateInParallel: (maxImagesToGenerateInParallel?: number) => void
   setMaxVideosToGenerateInParallel: (maxVideosToGenerateInParallel?: number) => void
 
-  setComfyWorkflowForStoryboard: (comfyWorkflowForStoryboard?: string) => void
+  setComfyWorkflowForImage: (comfyWorkflowForImage?: string) => void
   setComfyWorkflowForVideo: (comfyWorkflowForVideo?: string) => void
-  setComfyWorkflowForSpeech: (comfyWorkflowForSpeech?: string) => void
+  setComfyWorkflowForVoice: (comfyWorkflowForVoice?: string) => void
   setComfyWorkflowForSound: (comfyWorkflowForSound?: string) => void
   setComfyWorkflowForMusic: (comfyWorkflowForMusic?: string) => void
 
   setHuggingFaceModelForAssistant: (huggingFaceModelForAssistant?: string) => void
   setHuggingFaceModelForImage: (huggingFaceModelForImage?: string) => void
   setHuggingFaceModelForVideo: (huggingFaceModelForVideo?: string) => void
-  setHuggingFaceModelForSpeech: (huggingFaceModelForSpeech?: string) => void
+  setHuggingFaceModelForVoice: (huggingFaceModelForVoice?: string) => void
   setHuggingFaceModelForSound: (huggingFaceModelForSound?: string) => void
   setHuggingFaceModelForMusic: (huggingFaceModelForMusic?: string) => void
 
@@ -165,44 +173,44 @@ export type SettingsControls = {
 
   setReplicateModelForImage: (replicateModelForImage?: string) => void
   setReplicateModelForVideo: (replicateModelForVideo?: string) => void
-  setReplicateModelForSpeech: (replicateModelForSpeech?: string) => void
+  setReplicateModelForVoice: (replicateModelForVoice?: string) => void
   setReplicateModelForSound: (replicateModelForSound?: string) => void
   setReplicateModelForMusic: (replicateModelForMusic?: string) => void
 
   setStabilityAiModelForImage: (stabilityAiModelForImage?: string) => void
   setStabilityAiModelForVideo: (stabilityAiModelForVideo?: string) => void
-  setStabilityAiModelForSpeech: (stabilityAiModelForSpeech?: string) => void
+  setStabilityAiModelForVoice: (stabilityAiModelForVoice?: string) => void
   setStabilityAiModelForSound: (stabilityAiModelForSound?: string) => void
   setStabilityAiModelForMusic: (stabilityAiModelForMusic?: string) => void
 
   setFalAiModelForImage: (falAiModelForImage?: string) => void
   setFalAiModelForVideo: (falAiModelForVideo?: string) => void
-  setFalAiModelForSpeech: (falAiModelForSpeech?: string) => void
+  setFalAiModelForVoice: (falAiModelForVoice?: string) => void
   setFalAiModelForSound: (falAiModelForSound?: string) => void
   setFalAiModelForMusic: (falAiModelForMusic?: string) => void
 
   setModelsLabModelForImage: (modelsLabModelForImage?: string) => void
   setModelsLabModelForVideo: (modelsLabModelForVideo?: string) => void
-  setModelsLabModelForSpeech: (modelsLabModelForSpeech?: string) => void
+  setModelsLabModelForVoice: (modelsLabModelForVoice?: string) => void
   setModelsLabModelForSound: (modelsLabModelForSound?: string) => void
   setModelsLabModelForMusic: (modelsLabModelForMusic?: string) => void
 
   setOpenaiModelForAssistant: (openaiModelForAssistant?: string) => void
   setOpenaiModelForImage: (openaiModelForImage?: string) => void
   setOpenaiModelForVideo: (openaiModelForVideo?: string) => void
-  setOpenaiModelForSpeech: (openaiModelForSpeech?: string) => void
+  setOpenaiModelForVoice: (openaiModelForVoice?: string) => void
 
   setGroqModelForAssistant: (groqModelForAssistant?: string) => void
 
   setGoogleModelForAssistant: (googleModelForAssistant?: string) => void
   setGoogleModelForImage: (googleModelForImage?: string) => void
   setGoogleModelForVideo: (googleModelForVideo?: string) => void
-  setGoogleModelForSpeech: (googleModelForSpeech?: string) => void
+  setGoogleModelForVoice: (googleModelForVoice?: string) => void
   setGoogleModelForMusic: (googleModelForMusic?: string) => void
 
   setAnthropicModelForAssistant: (anthropicModelForAssistant?: string) => void
   
-  setElevenLabsModelForSpeech: (elevenLabsModelForSpeech?: string) => void
+  setElevenLabsModelForVoice: (elevenLabsModelForVoice?: string) => void
   setElevenLabsModelForSound: (elevenLabsModelForSound?: string) => void
   
   getSettings: () => SettingsState

@@ -3,7 +3,7 @@ import { getDefaultSettingsState, useSettings } from "@/controllers/settings"
 import { ComputeProvider } from "@/types"
 
 import { FormSelect } from "../forms/FormSelect"
-import { availableComputeProvidersForSound } from "./constants"
+import { availableComputeProvidersForSound, computeProviderShortNames } from "./constants"
 import { FormInput } from "../forms/FormInput"
 
 export function SettingsSectionSound() {
@@ -35,14 +35,14 @@ export function SettingsSectionSound() {
           label="Sound provider"
           selectedItemId={soundProvider}
           selectedItemLabel={
-            (availableComputeProvidersForSound as any)[soundProvider]
+            computeProviderShortNames[soundProvider]
             || ComputeProvider.NONE
           }
-          items={Object.entries(availableComputeProvidersForSound).map(([provider, label]) => ({
+          items={availableComputeProvidersForSound.map(provider => ({
             id: provider,
-            label,
+            label: computeProviderShortNames[soundProvider] || "(missing name)",
             disabled: false,
-            value: provider as ComputeProvider,
+            value: provider,
           }))}
           onSelect={setSoundProvider}
           horizontal

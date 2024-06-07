@@ -27,13 +27,13 @@ export const useSettings = create<SettingsStore>()(
         const { videoProvider: defaultVideoProvider } = getDefaultSettingsState()
         set({ videoProvider: parseComputeProvider(videoProvider, defaultVideoProvider) })
       },
-      setStoryboardProvider: (storyboardProvider?: ComputeProvider) => {
-        const { storyboardProvider: defaultStoryboardProvider } = getDefaultSettingsState()
-        set({ storyboardProvider: parseComputeProvider(storyboardProvider, defaultStoryboardProvider) })
+      setImageProvider: (imageProvider?: ComputeProvider) => {
+        const { imageProvider: defaultImageProvider } = getDefaultSettingsState()
+        set({ imageProvider: parseComputeProvider(imageProvider, defaultImageProvider) })
       },
-      setSpeechProvider: (speechProvider?: ComputeProvider) => {
-        const { speechProvider: defaultSpeechProvider } = getDefaultSettingsState()
-        set({ speechProvider: parseComputeProvider(speechProvider, defaultSpeechProvider) })
+      setVoiceProvider: (voiceProvider?: ComputeProvider) => {
+        const { voiceProvider: defaultSpeechProvider } = getDefaultSettingsState()
+        set({ voiceProvider: parseComputeProvider(voiceProvider, defaultSpeechProvider) })
       },
       setSoundProvider: (soundProvider?: ComputeProvider) => {
         const { soundProvider: defaultSoundProvider } = getDefaultSettingsState()
@@ -87,14 +87,14 @@ export const useSettings = create<SettingsStore>()(
       setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => {
         set({ censorNotForAllAudiencesContent: getValidBoolean(censorNotForAllAudiencesContent, getDefaultSettingsState().censorNotForAllAudiencesContent) })
       },
-      setStoryboardPromptPrefix: (storyboardPromptPrefix?: string) => {
-        set({ storyboardPromptPrefix: getValidString(storyboardPromptPrefix, getDefaultSettingsState().storyboardPromptPrefix) })
+      setImagePromptPrefix: (imagePromptPrefix?: string) => {
+        set({ imagePromptPrefix: getValidString(imagePromptPrefix, getDefaultSettingsState().imagePromptPrefix) })
       },
-      setStoryboardPromptSuffix: (storyboardPromptSuffix?: string) => {
-        set({ storyboardPromptSuffix: getValidString(storyboardPromptSuffix, getDefaultSettingsState().storyboardPromptSuffix) })
+      setImagePromptSuffix: (imagePromptSuffix?: string) => {
+        set({ imagePromptSuffix: getValidString(imagePromptSuffix, getDefaultSettingsState().imagePromptSuffix) })
       },
-      setStoryboardNegativePrompt: (storyboardNegativePrompt?: string) => {
-        set({ storyboardNegativePrompt: getValidString(storyboardNegativePrompt, getDefaultSettingsState().storyboardNegativePrompt) })
+      setImageNegativePrompt: (imageNegativePrompt?: string) => {
+        set({ imageNegativePrompt: getValidString(imageNegativePrompt, getDefaultSettingsState().imageNegativePrompt) })
       },
       setVideoPromptPrefix: (videoPromptPrefix?: string) => {
         set({ videoPromptPrefix: getValidString(videoPromptPrefix, getDefaultSettingsState().videoPromptPrefix) })
@@ -105,22 +105,34 @@ export const useSettings = create<SettingsStore>()(
       setVideoNegativePrompt: (videoNegativePrompt?: string) => {
         set({ videoNegativePrompt: getValidString(videoNegativePrompt, getDefaultSettingsState().videoNegativePrompt) })
       },
-      setStoryboardRenderingStrategy: (storyboardRenderingStrategy?: RenderingStrategy) => {
-        const { storyboardRenderingStrategy: defaulStoryboardRenderingStrategy } = getDefaultSettingsState()
-        set({ storyboardRenderingStrategy: parseRenderingStrategy(storyboardRenderingStrategy, defaulStoryboardRenderingStrategy) })
+      setImageRenderingStrategy: (imageRenderingStrategy?: RenderingStrategy) => {
+        const { imageRenderingStrategy: defaulImageRenderingStrategy } = getDefaultSettingsState()
+        set({ imageRenderingStrategy: parseRenderingStrategy(imageRenderingStrategy, defaulImageRenderingStrategy) })
       },
       setVideoRenderingStrategy: (videoRenderingStrategy?: RenderingStrategy) => {
         const { videoRenderingStrategy: defaultVideoRenderingStrategy } = getDefaultSettingsState()
         set({ videoRenderingStrategy: parseRenderingStrategy(videoRenderingStrategy, defaultVideoRenderingStrategy) })
       },
-      setMaxStoryboardsToGenerateInParallel: (maxStoryboardsToGenerateInParallel?: number) => {
-        const { maxStoryboardsToGenerateInParallel: defaultMaxStoryboardsToGenerateInParallel } = getDefaultSettingsState()
+      setVoiceRenderingStrategy: (voiceRenderingStrategy?: RenderingStrategy) => {
+        const { voiceRenderingStrategy: defaultSpeechRenderingStrategy } = getDefaultSettingsState()
+        set({ voiceRenderingStrategy: parseRenderingStrategy(voiceRenderingStrategy, defaultSpeechRenderingStrategy) })
+      },
+      setSoundRenderingStrategy: (soundRenderingStrategy?: RenderingStrategy) => {
+        const { soundRenderingStrategy: defaultSoundRenderingStrategy } = getDefaultSettingsState()
+        set({ soundRenderingStrategy: parseRenderingStrategy(soundRenderingStrategy, defaultSoundRenderingStrategy) })
+      },
+      setMusicRenderingStrategy: (musicRenderingStrategy?: RenderingStrategy) => {
+        const { musicRenderingStrategy: defaultMusicRenderingStrategy } = getDefaultSettingsState()
+        set({ musicRenderingStrategy: parseRenderingStrategy(musicRenderingStrategy, defaultMusicRenderingStrategy) })
+      },
+      setMaxImagesToGenerateInParallel: (maxImagesToGenerateInParallel?: number) => {
+        const { maxImagesToGenerateInParallel: defaultMaxImagesToGenerateInParallel } = getDefaultSettingsState()
         set({
-          maxStoryboardsToGenerateInParallel: getValidNumber(
-            maxStoryboardsToGenerateInParallel,
+          maxImagesToGenerateInParallel: getValidNumber(
+            maxImagesToGenerateInParallel,
             1,
             HARD_LIMIT_NB_MAX_ASSETS_TO_GENERATE_IN_PARALLEL,
-            defaultMaxStoryboardsToGenerateInParallel
+            defaultMaxImagesToGenerateInParallel
           )
         })
       },
@@ -135,14 +147,14 @@ export const useSettings = create<SettingsStore>()(
           )
         })
       },
-      setComfyWorkflowForStoryboard: (comfyWorkflowForStoryboard?: string) => {
-        set({ comfyWorkflowForStoryboard: getValidComfyWorkflowTemplate(comfyWorkflowForStoryboard, getDefaultSettingsState().comfyWorkflowForStoryboard) })
+      setComfyWorkflowForImage: (comfyWorkflowForImage?: string) => {
+        set({ comfyWorkflowForImage: getValidComfyWorkflowTemplate(comfyWorkflowForImage, getDefaultSettingsState().comfyWorkflowForImage) })
       },
       setComfyWorkflowForVideo: (comfyWorkflowForVideo?: string) => {
         set({ comfyWorkflowForVideo: getValidComfyWorkflowTemplate(comfyWorkflowForVideo, getDefaultSettingsState().comfyWorkflowForVideo) })
       },
-      setComfyWorkflowForSpeech: (comfyWorkflowForSpeech?: string) => {
-        set({ comfyWorkflowForSpeech: getValidComfyWorkflowTemplate(comfyWorkflowForSpeech, getDefaultSettingsState().comfyWorkflowForSpeech) })
+      setComfyWorkflowForVoice: (comfyWorkflowForVoice?: string) => {
+        set({ comfyWorkflowForVoice: getValidComfyWorkflowTemplate(comfyWorkflowForVoice, getDefaultSettingsState().comfyWorkflowForVoice) })
       },
       setComfyWorkflowForSound: (comfyWorkflowForSound?: string) => {
         set({ comfyWorkflowForSound: getValidComfyWorkflowTemplate(comfyWorkflowForSound, getDefaultSettingsState().comfyWorkflowForSound) })
@@ -160,8 +172,8 @@ export const useSettings = create<SettingsStore>()(
       setHuggingFaceModelForVideo: (huggingFaceModelForVideo?: string) => {
         set({ huggingFaceModelForVideo: getValidString(huggingFaceModelForVideo, getDefaultSettingsState().huggingFaceModelForVideo) })
       },
-      setHuggingFaceModelForSpeech: (huggingFaceModelForSpeech?: string) => {
-        set({ huggingFaceModelForSpeech: getValidString(huggingFaceModelForSpeech, getDefaultSettingsState().huggingFaceModelForSpeech) })
+      setHuggingFaceModelForVoice: (huggingFaceModelForVoice?: string) => {
+        set({ huggingFaceModelForVoice: getValidString(huggingFaceModelForVoice, getDefaultSettingsState().huggingFaceModelForVoice) })
       },
       setHuggingFaceModelForSound: (huggingFaceModelForSound?: string) => {
         set({ huggingFaceModelForSound: getValidString(huggingFaceModelForSound, getDefaultSettingsState().huggingFaceModelForSound) })
@@ -193,8 +205,8 @@ export const useSettings = create<SettingsStore>()(
       setReplicateModelForVideo: (replicateModelForVideo?: string) => {
         set({ replicateModelForVideo: getValidString(replicateModelForVideo, getDefaultSettingsState().replicateModelForVideo) })
       },
-      setReplicateModelForSpeech: (replicateModelForSpeech?: string) => {
-        set({ replicateModelForSpeech: getValidString(replicateModelForSpeech, getDefaultSettingsState().replicateModelForSpeech) })
+      setReplicateModelForVoice: (replicateModelForVoice?: string) => {
+        set({ replicateModelForVoice: getValidString(replicateModelForVoice, getDefaultSettingsState().replicateModelForVoice) })
       },
       setReplicateModelForSound: (replicateModelForSound?: string) => {
         set({ replicateModelForSound: getValidString(replicateModelForSound, getDefaultSettingsState().replicateModelForSound) })
@@ -208,8 +220,8 @@ export const useSettings = create<SettingsStore>()(
       setStabilityAiModelForVideo: (stabilityAiModelForVideo?: string) => {
         set({ stabilityAiModelForVideo: getValidString(stabilityAiModelForVideo, getDefaultSettingsState().stabilityAiModelForVideo) })
       },
-      setStabilityAiModelForSpeech: (stabilityAiModelForSpeech?: string) => {
-        set({ stabilityAiModelForSpeech: getValidString(stabilityAiModelForSpeech, getDefaultSettingsState().stabilityAiModelForSpeech) })
+      setStabilityAiModelForVoice: (stabilityAiModelForVoice?: string) => {
+        set({ stabilityAiModelForVoice: getValidString(stabilityAiModelForVoice, getDefaultSettingsState().stabilityAiModelForVoice) })
       },
       setStabilityAiModelForSound: (stabilityAiModelForSound?: string) => {
         set({ stabilityAiModelForSound: getValidString(stabilityAiModelForSound, getDefaultSettingsState().stabilityAiModelForSound) })
@@ -223,8 +235,8 @@ export const useSettings = create<SettingsStore>()(
       setFalAiModelForVideo: (falAiModelForVideo?: string) => {
         set({ falAiModelForVideo: getValidString(falAiModelForVideo, getDefaultSettingsState().falAiModelForVideo) })
       },
-      setFalAiModelForSpeech: (falAiModelForSpeech?: string) => {
-        set({ falAiModelForSpeech: getValidString(falAiModelForSpeech, getDefaultSettingsState().falAiModelForSpeech) })
+      setFalAiModelForVoice: (falAiModelForVoice?: string) => {
+        set({ falAiModelForVoice: getValidString(falAiModelForVoice, getDefaultSettingsState().falAiModelForVoice) })
       },
       setFalAiModelForSound: (falAiModelForSound?: string) => {
         set({ falAiModelForSound: getValidString(falAiModelForSound, getDefaultSettingsState().falAiModelForSound) })
@@ -238,8 +250,8 @@ export const useSettings = create<SettingsStore>()(
       setModelsLabModelForVideo: (modelsLabModelForVideo?: string) => {
         set({ modelsLabModelForVideo: getValidString(modelsLabModelForVideo, getDefaultSettingsState().modelsLabModelForVideo) })
       },
-      setModelsLabModelForSpeech: (modelsLabModelForSpeech?: string) => {
-        set({ modelsLabModelForSpeech: getValidString(modelsLabModelForSpeech, getDefaultSettingsState().modelsLabModelForSpeech) })
+      setModelsLabModelForVoice: (modelsLabModelForVoice?: string) => {
+        set({ modelsLabModelForVoice: getValidString(modelsLabModelForVoice, getDefaultSettingsState().modelsLabModelForVoice) })
       },
       setModelsLabModelForSound: (modelsLabModelForSound?: string) => {
         set({ modelsLabModelForSound: getValidString(modelsLabModelForSound, getDefaultSettingsState().modelsLabModelForSound) })
@@ -256,8 +268,8 @@ export const useSettings = create<SettingsStore>()(
       setOpenaiModelForVideo: (openaiModelForVideo?: string) => {
         set({ openaiModelForVideo: getValidString(openaiModelForVideo, getDefaultSettingsState().openaiModelForVideo) })
       },
-      setOpenaiModelForSpeech: (openaiModelForSpeech?: string) => {
-        set({ openaiModelForSpeech: getValidString(openaiModelForSpeech, getDefaultSettingsState().openaiModelForSpeech) })
+      setOpenaiModelForVoice: (openaiModelForVoice?: string) => {
+        set({ openaiModelForVoice: getValidString(openaiModelForVoice, getDefaultSettingsState().openaiModelForVoice) })
       },
       setGroqModelForAssistant: (groqModelForAssistant?: string) => {
         set({ groqModelForAssistant: getValidString(groqModelForAssistant, getDefaultSettingsState().groqModelForAssistant) })
@@ -271,8 +283,8 @@ export const useSettings = create<SettingsStore>()(
       setGoogleModelForVideo: (googleModelForVideo?: string) => {
         set({ googleModelForVideo: getValidString(googleModelForVideo, getDefaultSettingsState().googleModelForVideo) })
       },
-      setGoogleModelForSpeech: (googleModelForSpeech?: string) => {
-        set({ googleModelForSpeech: getValidString(googleModelForSpeech, getDefaultSettingsState().googleModelForSpeech) })
+      setGoogleModelForVoice: (googleModelForVoice?: string) => {
+        set({ googleModelForVoice: getValidString(googleModelForVoice, getDefaultSettingsState().googleModelForVoice) })
       },
       setGoogleModelForMusic: (googleModelForMusic?: string) => {
         set({ googleModelForMusic: getValidString(googleModelForMusic, getDefaultSettingsState().googleModelForMusic) })
@@ -280,8 +292,8 @@ export const useSettings = create<SettingsStore>()(
       setAnthropicModelForAssistant: (anthropicModelForAssistant?: string) => {
         set({ anthropicModelForAssistant: getValidString(anthropicModelForAssistant, getDefaultSettingsState().anthropicModelForAssistant) })
       },
-      setElevenLabsModelForSpeech: (elevenLabsModelForSpeech?: string) => {
-        set({ elevenLabsModelForSpeech: getValidString(elevenLabsModelForSpeech, getDefaultSettingsState().elevenLabsModelForSpeech) })
+      setElevenLabsModelForVoice: (elevenLabsModelForVoice?: string) => {
+        set({ elevenLabsModelForVoice: getValidString(elevenLabsModelForVoice, getDefaultSettingsState().elevenLabsModelForVoice) })
       },
       setElevenLabsModelForSound: (elevenLabsModelForSound?: string) => {
         set({ elevenLabsModelForSound: getValidString(elevenLabsModelForSound, getDefaultSettingsState().elevenLabsModelForSound) })
@@ -293,10 +305,10 @@ export const useSettings = create<SettingsStore>()(
           // why do we need those fallbacks? because some users will leave the fields empty,
           // eg. an empty model string.. basically we want to allow empty config that still works!
           assistantProvider: state.assistantProvider || defaultSettings.assistantProvider,
-          storyboardProvider: state.storyboardProvider || defaultSettings.storyboardProvider,
+          imageProvider: state.imageProvider || defaultSettings.imageProvider,
           videoProvider: state.videoProvider || defaultSettings.videoProvider,
           soundProvider: state.soundProvider || defaultSettings.soundProvider,
-          speechProvider: state.speechProvider || defaultSettings.speechProvider,
+          voiceProvider: state.voiceProvider || defaultSettings.voiceProvider,
           musicProvider: state.musicProvider || defaultSettings.musicProvider,
           customComfyUiApiKey: state.customComfyUiApiKey || defaultSettings.customComfyUiApiKey,
           replicateApiKey: state.replicateApiKey || defaultSettings.replicateApiKey,
@@ -311,25 +323,28 @@ export const useSettings = create<SettingsStore>()(
           anthropicApiKey: state.anthropicApiKey || defaultSettings.anthropicApiKey,
           elevenLabsApiKey: state.elevenLabsApiKey || defaultSettings.elevenLabsApiKey,
           censorNotForAllAudiencesContent: state.censorNotForAllAudiencesContent || defaultSettings.censorNotForAllAudiencesContent,
-          storyboardPromptPrefix: state.storyboardPromptPrefix || defaultSettings.storyboardPromptPrefix,
-          storyboardPromptSuffix: state.storyboardPromptSuffix || defaultSettings.storyboardPromptSuffix,
-          storyboardNegativePrompt: state.storyboardNegativePrompt || defaultSettings.storyboardNegativePrompt,
+          imagePromptPrefix: state.imagePromptPrefix || defaultSettings.imagePromptPrefix,
+          imagePromptSuffix: state.imagePromptSuffix || defaultSettings.imagePromptSuffix,
+          imageNegativePrompt: state.imageNegativePrompt || defaultSettings.imageNegativePrompt,
           videoPromptPrefix: state.videoPromptPrefix || defaultSettings.videoPromptPrefix,
           videoPromptSuffix: state.videoPromptSuffix || defaultSettings.videoPromptSuffix,
           videoNegativePrompt: state.videoNegativePrompt || defaultSettings.videoNegativePrompt,
-          storyboardRenderingStrategy: state.storyboardRenderingStrategy || defaultSettings.storyboardRenderingStrategy,
+          imageRenderingStrategy: state.imageRenderingStrategy || defaultSettings.imageRenderingStrategy,
           videoRenderingStrategy: state.videoRenderingStrategy || defaultSettings.videoRenderingStrategy,
-          maxStoryboardsToGenerateInParallel: state.maxStoryboardsToGenerateInParallel || defaultSettings.maxStoryboardsToGenerateInParallel,
+          voiceRenderingStrategy: state.voiceRenderingStrategy || defaultSettings.voiceRenderingStrategy,
+          soundRenderingStrategy: state.soundRenderingStrategy || defaultSettings.soundRenderingStrategy,
+          musicRenderingStrategy: state.musicRenderingStrategy || defaultSettings.musicRenderingStrategy,
+          maxImagesToGenerateInParallel: state.maxImagesToGenerateInParallel || defaultSettings.maxImagesToGenerateInParallel,
           maxVideosToGenerateInParallel: state.maxVideosToGenerateInParallel || defaultSettings.maxVideosToGenerateInParallel,
-          comfyWorkflowForStoryboard: state.comfyWorkflowForStoryboard || defaultSettings.comfyWorkflowForStoryboard,
+          comfyWorkflowForImage: state.comfyWorkflowForImage || defaultSettings.comfyWorkflowForImage,
           comfyWorkflowForVideo: state.comfyWorkflowForVideo || defaultSettings.comfyWorkflowForVideo,
-          comfyWorkflowForSpeech: state.comfyWorkflowForSpeech || defaultSettings.comfyWorkflowForSpeech,
+          comfyWorkflowForVoice: state.comfyWorkflowForVoice || defaultSettings.comfyWorkflowForVoice,
           comfyWorkflowForSound: state.comfyWorkflowForSound || defaultSettings.comfyWorkflowForSound,
           comfyWorkflowForMusic: state.comfyWorkflowForMusic || defaultSettings.comfyWorkflowForMusic,
           huggingFaceModelForAssistant: state.huggingFaceModelForAssistant || defaultSettings.huggingFaceModelForAssistant,
           huggingFaceModelForImage: state.huggingFaceModelForImage || defaultSettings.huggingFaceModelForImage,
           huggingFaceModelForVideo: state.huggingFaceModelForVideo || defaultSettings.huggingFaceModelForVideo,
-          huggingFaceModelForSpeech: state.huggingFaceModelForSpeech || defaultSettings.huggingFaceModelForSpeech,
+          huggingFaceModelForVoice: state.huggingFaceModelForVoice || defaultSettings.huggingFaceModelForVoice,
           huggingFaceModelForSound: state.huggingFaceModelForSound || defaultSettings.huggingFaceModelForSound,
           huggingFaceModelForMusic: state.huggingFaceModelForMusic || defaultSettings.huggingFaceModelForMusic,
           gradioApiUrlForAssistant: state.gradioApiUrlForAssistant || defaultSettings.gradioApiUrlForAssistant,
@@ -340,36 +355,36 @@ export const useSettings = create<SettingsStore>()(
           gradioApiUrlForMusic: state.gradioApiUrlForMusic || defaultSettings.gradioApiUrlForMusic,
           replicateModelForImage: state.replicateModelForImage || defaultSettings.replicateModelForImage,
           replicateModelForVideo: state.replicateModelForVideo || defaultSettings.replicateModelForVideo,
-          replicateModelForSpeech: state.replicateModelForSpeech || defaultSettings.replicateModelForSpeech,
+          replicateModelForVoice: state.replicateModelForVoice || defaultSettings.replicateModelForVoice,
           replicateModelForSound: state.replicateModelForSound || defaultSettings.replicateModelForSound,
           replicateModelForMusic: state.replicateModelForMusic || defaultSettings.replicateModelForMusic,
           stabilityAiModelForImage: state.stabilityAiModelForImage || defaultSettings.stabilityAiModelForImage,
           stabilityAiModelForVideo: state.stabilityAiModelForVideo || defaultSettings.stabilityAiModelForVideo,
-          stabilityAiModelForSpeech: state.stabilityAiModelForSpeech || defaultSettings.stabilityAiModelForSpeech,
+          stabilityAiModelForVoice: state.stabilityAiModelForVoice || defaultSettings.stabilityAiModelForVoice,
           stabilityAiModelForSound: state.stabilityAiModelForSound || defaultSettings.stabilityAiModelForSound,
           stabilityAiModelForMusic: state.stabilityAiModelForMusic || defaultSettings.stabilityAiModelForMusic,
           falAiModelForImage: state.falAiModelForImage || defaultSettings.falAiModelForImage,
           falAiModelForVideo: state.falAiModelForVideo || defaultSettings.falAiModelForVideo,
-          falAiModelForSpeech: state.falAiModelForSpeech || defaultSettings.falAiModelForSpeech,
+          falAiModelForVoice: state.falAiModelForVoice || defaultSettings.falAiModelForVoice,
           falAiModelForSound: state.falAiModelForSound || defaultSettings.falAiModelForSound,
           falAiModelForMusic: state.falAiModelForMusic || defaultSettings.falAiModelForMusic,
           modelsLabModelForImage: state.modelsLabModelForImage || defaultSettings.modelsLabModelForImage,
           modelsLabModelForVideo: state.modelsLabModelForVideo || defaultSettings.modelsLabModelForVideo,
-          modelsLabModelForSpeech: state.modelsLabModelForSpeech || defaultSettings.modelsLabModelForSpeech,
+          modelsLabModelForVoice: state.modelsLabModelForVoice || defaultSettings.modelsLabModelForVoice,
           modelsLabModelForSound: state.modelsLabModelForSound || defaultSettings.modelsLabModelForSound,
           modelsLabModelForMusic: state.modelsLabModelForMusic || defaultSettings.modelsLabModelForMusic,
           openaiModelForAssistant: state.openaiModelForAssistant || defaultSettings.openaiModelForAssistant,
           openaiModelForImage: state.openaiModelForImage || defaultSettings.openaiModelForImage,
           openaiModelForVideo: state.openaiModelForVideo || defaultSettings.openaiModelForVideo,
-          openaiModelForSpeech: state.openaiModelForSpeech || defaultSettings.openaiModelForSpeech,
+          openaiModelForVoice: state.openaiModelForVoice || defaultSettings.openaiModelForVoice,
           groqModelForAssistant: state.groqModelForAssistant || defaultSettings.groqModelForAssistant,
           googleModelForAssistant: state.googleModelForAssistant || defaultSettings.googleModelForAssistant,
           googleModelForImage: state.googleModelForImage || defaultSettings.googleModelForImage,
           googleModelForVideo: state.googleModelForVideo || defaultSettings.googleModelForVideo,
-          googleModelForSpeech: state.googleModelForSpeech || defaultSettings.googleModelForSpeech,
+          googleModelForVoice: state.googleModelForVoice || defaultSettings.googleModelForVoice,
           googleModelForMusic: state.googleModelForMusic || defaultSettings.googleModelForMusic,
           anthropicModelForAssistant: state.anthropicModelForAssistant || defaultSettings.anthropicModelForAssistant,
-          elevenLabsModelForSpeech: state.elevenLabsModelForSpeech || defaultSettings.elevenLabsModelForSpeech,
+          elevenLabsModelForVoice: state.elevenLabsModelForVoice || defaultSettings.elevenLabsModelForVoice,
           elevenLabsModelForSound: state.elevenLabsModelForSound || defaultSettings.elevenLabsModelForSound,
         }
       },

@@ -1,7 +1,7 @@
 
 
 // https://replicate.com/fofr/any-comfyui-workflow/examples#ps4f5zcthdrgm0cfqh586zed7r
-export const defaultWorkflowForStoryboards = JSON.stringify({
+export const defaultWorkflowForImages = JSON.stringify({
   "3": {
     "inputs": {
       "seed": 156680208700286,

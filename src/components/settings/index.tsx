@@ -8,11 +8,11 @@ import { useUI } from "@/controllers/ui"
 
 import { SettingsSectionProvider } from "./provider"
 import { SettingsSectionAssistant } from "./assistant"
-import { SettingsSectionStoryboard } from "./storyboard"
+import { SettingsSectionImage } from "./image"
 import { SettingsSectionVideo } from "./video"
 import { SettingsSectionSound } from "./sound"
 import { SettingsSectionMusic } from "./music"
-import { SettingsSectionSpeech } from "./speech"
+import { SettingsSectionVoice } from "./voice"
 
 export function SettingsDialog() {
 
@@ -23,9 +23,9 @@ export function SettingsDialog() {
   const panels = {
     provider: <SettingsSectionProvider />,
     assistant: <SettingsSectionAssistant />,
-    storyboard: <SettingsSectionStoryboard />,
+    image: <SettingsSectionImage />,
     video: <SettingsSectionVideo />,
-    speech: <SettingsSectionSpeech />,
+    voice: <SettingsSectionVoice />,
     music: <SettingsSectionMusic />,
     sound: <SettingsSectionSound />,
   }
@@ -33,9 +33,9 @@ export function SettingsDialog() {
   const panelLabels = {
     provider: "Providers",
     assistant: "Assistant",
-    storyboard: "Image",
+    image: "Image",
     video: "Video",
-    speech: "Speech",
+    voice: "Voice",
     music: "Music",
     sound: "Sound",
   } as any

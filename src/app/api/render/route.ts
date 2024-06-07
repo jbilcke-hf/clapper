@@ -20,11 +20,11 @@ export async function POST(req: NextRequest) {
   
   const provider =
     request.segment.category === ClapSegmentCategory.STORYBOARD
-    ? request.settings.storyboardProvider
+    ? request.settings.imageProvider
     : request.segment.category === ClapSegmentCategory.VIDEO
     ? request.settings.videoProvider
     : request.segment.category === ClapSegmentCategory.DIALOGUE
-    ? request.settings.speechProvider
+    ? request.settings.voiceProvider
     : request.segment.category === ClapSegmentCategory.SOUND
     ? request.settings.soundProvider
     : request.segment.category === ClapSegmentCategory.MUSIC

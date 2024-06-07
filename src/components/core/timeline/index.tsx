@@ -51,11 +51,11 @@ export function Timeline() {
 
   const isReady = useTimelineState(s => s.isReady)
 
-  const storyboardRenderingStrategy = useSettings(s => s.storyboardRenderingStrategy)
-  const setStoryboardRenderingStrategy = useTimelineState(s => s.setStoryboardRenderingStrategy)
+  const imageRenderingStrategy = useSettings(s => s.imageRenderingStrategy)
+  const setImageRenderingStrategy = useTimelineState(s => s.setImageRenderingStrategy)
   useEffect(() => {
-    if (isReady) setStoryboardRenderingStrategy(storyboardRenderingStrategy)
-  }, [isReady, setStoryboardRenderingStrategy, storyboardRenderingStrategy])
+    if (isReady) setImageRenderingStrategy(imageRenderingStrategy)
+  }, [isReady, setImageRenderingStrategy, imageRenderingStrategy])
   
   const videoRenderingStrategy = useSettings(s => s.videoRenderingStrategy)
   const setVideoRenderingStrategy = useTimelineState(s => s.setVideoRenderingStrategy)

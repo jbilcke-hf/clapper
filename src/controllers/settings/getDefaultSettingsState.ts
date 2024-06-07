@@ -3,7 +3,7 @@ import { RenderingStrategy } from "@aitube/timeline"
 import { ComfyIcuAccelerator, ComputeProvider } from "@/types"
 
 import { SettingsState } from "./types"
-import { defaultWorkflowForStoryboards } from "./workflows/storyboard"
+import { defaultWorkflowForImages } from "./workflows/image"
 
 export function getDefaultSettingsState(): SettingsState {
   const state: SettingsState = {
@@ -22,29 +22,33 @@ export function getDefaultSettingsState(): SettingsState {
     elevenLabsApiKey: "",
 
     assistantProvider: ComputeProvider.NONE,
-    storyboardProvider: ComputeProvider.NONE,
+    imageProvider: ComputeProvider.NONE,
     videoProvider: ComputeProvider.NONE,
     soundProvider: ComputeProvider.NONE,
-    speechProvider: ComputeProvider.NONE,
+    voiceProvider: ComputeProvider.NONE,
     musicProvider: ComputeProvider.NONE,
 
     censorNotForAllAudiencesContent: false,
 
-    storyboardPromptPrefix: "",
-    storyboardPromptSuffix: "",
-    storyboardNegativePrompt: "",
+    imagePromptPrefix: "",
+    imagePromptSuffix: "",
+    imageNegativePrompt: "",
     videoPromptPrefix: "",
     videoPromptSuffix: "",
     videoNegativePrompt: "",
 
-    storyboardRenderingStrategy: RenderingStrategy.ON_DEMAND,
+    imageRenderingStrategy: RenderingStrategy.ON_DEMAND,
     videoRenderingStrategy: RenderingStrategy.ON_DEMAND,
-    maxStoryboardsToGenerateInParallel: 1,
+    voiceRenderingStrategy: RenderingStrategy.ON_DEMAND,
+    soundRenderingStrategy: RenderingStrategy.ON_DEMAND,
+    musicRenderingStrategy: RenderingStrategy.ON_DEMAND,
+
+    maxImagesToGenerateInParallel: 1,
     maxVideosToGenerateInParallel: 1,
 
-    comfyWorkflowForStoryboard: defaultWorkflowForStoryboards,
+    comfyWorkflowForImage: defaultWorkflowForImages,
     comfyWorkflowForVideo: "{}",
-    comfyWorkflowForSpeech: "{}",
+    comfyWorkflowForVoice: "{}",
     comfyWorkflowForSound: "{}",
     comfyWorkflowForMusic: "{}",
   
@@ -53,7 +57,7 @@ export function getDefaultSettingsState(): SettingsState {
     huggingFaceModelForAssistant: "mistralai/Mixtral-8x7B-Instruct-v0.1",
     huggingFaceModelForImage: "sd-community/sdxl-flash",
     huggingFaceModelForVideo: "",
-    huggingFaceModelForSpeech: "",
+    huggingFaceModelForVoice: "",
     huggingFaceModelForSound: "",
     huggingFaceModelForMusic: "",
   
@@ -68,44 +72,44 @@ export function getDefaultSettingsState(): SettingsState {
 
     // note: this model doesn't support width and height parameters
     replicateModelForVideo: "camenduru/animatediff-lightning-4-step:be39c6d599942831314b770f03cfd062bfd0faa8cc52e9289bcce830b721fcb6",
-    replicateModelForSpeech: "lucataco/xtts-v2",
+    replicateModelForVoice: "lucataco/xtts-v2",
     replicateModelForSound: "sepal/audiogen",
     replicateModelForMusic: "meta/musicgen",
   
     stabilityAiModelForImage: "",
     stabilityAiModelForVideo: "",
-    stabilityAiModelForSpeech: "",
+    stabilityAiModelForVoice: "",
     stabilityAiModelForSound: "",
     stabilityAiModelForMusic: "",
   
     falAiModelForImage: "fal-ai/fast-sdxl", // "fal-ai/fast-lightning-sdxl",
     falAiModelForVideo: "fal-ai/fast-animatediff/turbo/text-to-video",
-    falAiModelForSpeech: "fal-ai/metavoice-v1",
+    falAiModelForVoice: "fal-ai/metavoice-v1",
     falAiModelForSound: "fal-ai/stable-audio",
     falAiModelForMusic: "fal-ai/stable-audio",
   
     modelsLabModelForImage: "",
     modelsLabModelForVideo: "",
-    modelsLabModelForSpeech: "",
+    modelsLabModelForVoice: "",
     modelsLabModelForSound: "",
     modelsLabModelForMusic: "",
 
     openaiModelForAssistant: "gpt-4-turbo",
     openaiModelForImage: "dall-e-3",
     openaiModelForVideo: "sora",
-    openaiModelForSpeech: "v1",
+    openaiModelForVoice: "v1",
 
     groqModelForAssistant: "mixtral-8x7b-32768",
   
     googleModelForAssistant: "gemini",
     googleModelForImage: "imagen",
     googleModelForVideo: "veo",
-    googleModelForSpeech: "v1",
+    googleModelForVoice: "v1",
     googleModelForMusic: "MusicLM",
 
     anthropicModelForAssistant: "claude-3-opus-20240229",
 
-    elevenLabsModelForSpeech: "v1",
+    elevenLabsModelForVoice: "v1",
     elevenLabsModelForSound: "v1",
   }
   return state

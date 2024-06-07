@@ -48,6 +48,7 @@ export async function renderSegment(request: RenderRequest): Promise<ClapSegment
           input: {
             prompt: prompts.positivePrompt,
             image_size: imageSize,
+            num_images: 1,
             sync_mode: true,
             enable_safety_checker: request.settings.censorNotForAllAudiencesContent
           },
@@ -65,6 +66,8 @@ export async function renderSegment(request: RenderRequest): Promise<ClapSegment
             prompt: prompts.positivePrompt,
             image_size: imageSize,
             sync_mode: true,
+            num_inference_steps: 20,
+            num_images: 1,
             enable_safety_checker: request.settings.censorNotForAllAudiencesContent
           },
         }) as FalAiImageResponse
@@ -131,7 +134,7 @@ export async function renderSegment(request: RenderRequest): Promise<ClapSegment
     } else if (
       request.segment.category === ClapSegmentCategory.DIALOGUE
     ) {
-      const result = await fal.run(request.settings.falAiModelForSpeech, {
+      const result = await fal.run(request.settings.falAiModelForVoice, {
         input: {
           text: request.segment.prompt,
 
