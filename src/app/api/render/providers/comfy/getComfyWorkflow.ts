@@ -9,7 +9,7 @@ export function getComfyWorkflow(request: RenderRequest) {
   let comfyWorkflow = "{}"
 
   if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
-    comfyWorkflow = request.settings.comfyWorkflowForStoryboard
+    comfyWorkflow = request.settings.comfyWorkflowForImage
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
     comfyWorkflow = request.settings.comfyWorkflowForVideo
   }

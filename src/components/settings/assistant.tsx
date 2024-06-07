@@ -3,7 +3,7 @@ import { useSettings } from "@/controllers/settings"
 import { ComputeProvider } from "@/types"
 
 import { FormSelect } from "../forms/FormSelect"
-import { availableComputeProvidersForAssistant } from "./constants"
+import { availableComputeProvidersForAssistant, computeProviderShortNames } from "./constants"
 
 export function SettingsSectionAssistant() {
   const assistantProvider = useSettings(s => s.assistantProvider)
@@ -17,18 +17,19 @@ export function SettingsSectionAssistant() {
           label="Assistant provider"
           selectedItemId={assistantProvider}
           selectedItemLabel={
-            (availableComputeProvidersForAssistant as any)[assistantProvider]
+            computeProviderShortNames[assistantProvider]
             || ComputeProvider.NONE
           }
-          items={Object.entries(availableComputeProvidersForAssistant).map(([provider, label]) => ({
+          items={availableComputeProvidersForAssistant.map(provider => ({
             id: provider,
-            label,
+            label: computeProviderShortNames[provider] || "(missing name)",
             disabled: false,
-            value: provider as ComputeProvider,
+            value: provider,
           }))}
           onSelect={setAssistantProvider}
           horizontal
         />
+
       </FormSection>
     </div>
   )

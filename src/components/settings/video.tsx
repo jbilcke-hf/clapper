@@ -4,7 +4,7 @@ import { FormSelect } from "../forms/FormSelect"
 import { ComputeProvider } from "@/types"
 import { FormInput } from "../forms/FormInput"
 import { APP_NAME } from "@/lib/core/constants"
-import { availableComputeProvidersForVideos } from "./constants"
+import { availableComputeProvidersForVideos, computeProviderShortNames } from "./constants"
 
 export function SettingsSectionVideo() {
   const defaultSettings = getDefaultSettingsState()
@@ -51,14 +51,14 @@ export function SettingsSectionVideo() {
           label="Video provider"
           selectedItemId={videoProvider}
           selectedItemLabel={
-            (availableComputeProvidersForVideos as any)[videoProvider]
+            computeProviderShortNames[videoProvider]
             || ComputeProvider.NONE
           }
-          items={Object.entries(availableComputeProvidersForVideos).map(([provider, label]) => ({
+          items={availableComputeProvidersForVideos.map(provider => ({
             id: provider,
-            label,
+            label: computeProviderShortNames[provider] || "(missing name)",
             disabled: false,
-            value: provider as ComputeProvider,
+            value: provider,
           }))}
           onSelect={setVideoProvider}
           horizontal

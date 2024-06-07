@@ -1,73 +1,73 @@
 import { ComfyIcuAccelerator, ComputeProvider } from "@/types"
 
-export const availableComputeProviders = {
-  [ComputeProvider.NONE]: "No default provider",
-  [ComputeProvider.HUGGINGFACE]: "HuggingFace",
-  [ComputeProvider.REPLICATE]: "Replicate (Cog & ComfyUI)",
-  [ComputeProvider.COMFY_COMFYICU]: "Comfy.icu (ComfyUI workflow)",
-  [ComputeProvider.FALAI]: "Fal.ai",
-  [ComputeProvider.MODELSLAB]: "ModelsLab",
-  // [ComputeProvider.CUSTOM]: "Custom server",
-}
 
-export const availableComputeProvidersForAssistant = {
-  [ComputeProvider.NONE]: "No assistant provider",
-  [ComputeProvider.HUGGINGFACE]: "Hugging Face (Inference API)",
+export const computeProviderShortNames = {
+  [ComputeProvider.NONE]: "None",
+  [ComputeProvider.CUSTOM]: "Custom API",
+  [ComputeProvider.HUGGINGFACE]: "Hugging Face",
+  [ComputeProvider.COMFY_HUGGINGFACE]: "Hugging Face Comfy",
+  [ComputeProvider.REPLICATE]: "Replicate",
+  [ComputeProvider.COMFY_REPLICATE]: "Replicate Comfy",
+  [ComputeProvider.COMFY_COMFYICU]: "Comfy.icu",
+  [ComputeProvider.ELEVENLABS]: "ElevenLabs",
+  [ComputeProvider.OPENAI]: "OpenAI",
+  [ComputeProvider.STABILITYAI]: "StabilityAI",
   [ComputeProvider.GROQ]: "Groq",
-  [ComputeProvider.OPENAI]: "OpenAI (ChatGPT)",
-}
-
-export const availableComputeProvidersForStoryboards = {
-  [ComputeProvider.NONE]: "No storyboard provider",
-  [ComputeProvider.HUGGINGFACE]: "HuggingFace",
-  [ComputeProvider.REPLICATE]: "Replicate (Cog API)",
-  [ComputeProvider.COMFY_REPLICATE]: "Replicate (Comfy API)",
-  [ComputeProvider.COMFY_COMFYICU]: "Comfy.icu (Comfy API)",
   [ComputeProvider.FALAI]: "Fal.ai",
-  [ComputeProvider.MODELSLAB]: "ModelsLab.com",
+  [ComputeProvider.MODELSLAB]: "ModelsLab"
 }
 
-export const availableComputeProvidersForVideos = {
-  [ComputeProvider.NONE]: "No video provider",
-  [ComputeProvider.HUGGINGFACE]: "HuggingFace",
-  [ComputeProvider.REPLICATE]: "Replicate (Cog API)",
-  [ComputeProvider.COMFY_REPLICATE]: "Replicate (Comfy API)",
-  [ComputeProvider.COMFY_COMFYICU]: "Comfy.icu (Comfy API)",
-  [ComputeProvider.FALAI]: "Fal.ai",
-  [ComputeProvider.MODELSLAB]: "ModelsLab.com",
-}
+export const availableComputeProvidersForAssistant = [
+  ComputeProvider.HUGGINGFACE,
+  ComputeProvider.GROQ,
+  ComputeProvider.OPENAI,
+]
 
-export const availableComputeProvidersForMusic = {
-  [ComputeProvider.NONE]: "No music provider",
-  [ComputeProvider.HUGGINGFACE]: "HuggingFace",
-  [ComputeProvider.COMFY_REPLICATE]: "Replicate (Comfy API)",
-  [ComputeProvider.COMFY_COMFYICU]: "Comfy.icu (Comfy API)",
-  [ComputeProvider.STABILITYAI]: "StabilityAI (Stable Audio API)",
-  [ComputeProvider.FALAI]: "Fal.ai",
-  [ComputeProvider.MODELSLAB]: "ModelsLab.com",
-}
+export const availableComputeProvidersForImages = [
+  ComputeProvider.HUGGINGFACE,
+  ComputeProvider.REPLICATE,
+  ComputeProvider.COMFY_REPLICATE,
+  ComputeProvider.COMFY_COMFYICU,
+  ComputeProvider.FALAI,
+  ComputeProvider.MODELSLAB,
+]
 
-export const availableComputeProvidersForSound = {
-  [ComputeProvider.NONE]: "No sound provider",
-  [ComputeProvider.HUGGINGFACE]: "HuggingFace",
-  [ComputeProvider.COMFY_REPLICATE]: "Replicate (Comfy API)",
-  [ComputeProvider.COMFY_COMFYICU]: "Comfy.icu (Comfy API)",
-  [ComputeProvider.STABILITYAI]: "StabilityAI (Stable Audio API)",
-  [ComputeProvider.FALAI]: "Fal.ai",
-  [ComputeProvider.ELEVENLABS]: "Eleven Labs (Sound Effects API)",
+export const availableComputeProvidersForVideos = [
+  ComputeProvider.HUGGINGFACE,
+  ComputeProvider.REPLICATE,
+  ComputeProvider.COMFY_REPLICATE,
+  ComputeProvider.COMFY_COMFYICU,
+  ComputeProvider.FALAI,
+  ComputeProvider.MODELSLAB,
+]
 
-}
+export const availableComputeProvidersForMusic = [
+  ComputeProvider.HUGGINGFACE,
+  ComputeProvider.COMFY_REPLICATE,
+  ComputeProvider.COMFY_COMFYICU,
+  ComputeProvider.STABILITYAI,
+  ComputeProvider.FALAI,
+  ComputeProvider.MODELSLAB,
+]
 
-export const availableComputeProvidersForSpeech = {
-  [ComputeProvider.NONE]: "No speech provider",
-  [ComputeProvider.ELEVENLABS]: "Eleven Labs (TTS API)",
-  [ComputeProvider.STABILITYAI]: "StabilityAI (Stable Audio API)",
-  [ComputeProvider.HUGGINGFACE]: "HuggingFace",
-  [ComputeProvider.COMFY_REPLICATE]: "Replicate (Comfy API)",
-  [ComputeProvider.COMFY_COMFYICU]: "Comfy.icu (Comfy API)",
-  [ComputeProvider.FALAI]: "Fal.ai",
-  [ComputeProvider.MODELSLAB]: "ModelsLab.com",
-}
+export const availableComputeProvidersForSound = [
+  ComputeProvider.HUGGINGFACE,
+  ComputeProvider.COMFY_REPLICATE,
+  ComputeProvider.COMFY_COMFYICU,
+  ComputeProvider.STABILITYAI,
+  ComputeProvider.FALAI,
+  ComputeProvider.ELEVENLABS,
+]
+
+export const availableComputeProvidersForVoice = [
+  ComputeProvider.ELEVENLABS,
+  ComputeProvider.STABILITYAI,
+  ComputeProvider.HUGGINGFACE,
+  ComputeProvider.COMFY_REPLICATE,
+  ComputeProvider.COMFY_COMFYICU,
+  ComputeProvider.FALAI,
+  ComputeProvider.MODELSLAB,
+]
 
 export const availableComfyIcuAccelerators = {
   [ComfyIcuAccelerator.L4]: "L4",

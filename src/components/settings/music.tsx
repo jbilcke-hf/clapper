@@ -3,7 +3,7 @@ import { getDefaultSettingsState, useSettings } from "@/controllers/settings"
 import { ComputeProvider } from "@/types"
 
 import { FormSelect } from "../forms/FormSelect"
-import { availableComputeProvidersForMusic } from "./constants"
+import { availableComputeProvidersForMusic, computeProviderShortNames } from "./constants"
 import { FormInput } from "../forms/FormInput"
 
 export function SettingsSectionMusic() {
@@ -35,14 +35,14 @@ export function SettingsSectionMusic() {
           label="Music provider"
           selectedItemId={musicProvider}
           selectedItemLabel={
-            (availableComputeProvidersForMusic as any)[musicProvider]
+            computeProviderShortNames[musicProvider]
             || ComputeProvider.NONE
           }
-          items={Object.entries(availableComputeProvidersForMusic).map(([provider, label]) => ({
+          items={availableComputeProvidersForMusic.map(provider => ({
             id: provider,
-            label,
+            label: computeProviderShortNames[provider] || "(missing name)",
             disabled: false,
-            value: provider as ComputeProvider,
+            value: provider,
           }))}
           onSelect={setMusicProvider}
           horizontal
