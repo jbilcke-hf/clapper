@@ -12,7 +12,7 @@
   "dependencies": {
     "@aitube/clap": "0.0.24",
     "@aitube/engine": "0.0.15",
-    "@aitube/timeline": "0.0.14",
+    "@aitube/timeline": "0.0.15",
     "@fal-ai/serverless-client": "^0.10.3",
     "@huggingface/hub": "^0.15.0",
     "@huggingface/inference": "^2.7.0",

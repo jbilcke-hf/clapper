@@ -37,6 +37,11 @@ export type RenderRequest = {
 
   entities: Record<string, ClapEntity>
 
+  speakingCharactersIds: string[]
+  generalCharactersIds: string[]
+  mainCharacterId?: string
+  mainCharacterEntity?: ClapEntity
+
   meta: ClapMeta
 }
 

@@ -12,7 +12,6 @@ export function SettingsSectionVideo() {
   const videoProvider = useSettings(s => s.videoProvider)
   const setVideoProvider = useSettings(s => s.setVideoProvider)
 
-  
   const huggingFaceModelForVideo = useSettings(s => s.huggingFaceModelForVideo)
   const setHuggingFaceModelForVideo = useSettings(s => s.setHuggingFaceModelForVideo)
 
@@ -24,6 +23,16 @@ export function SettingsSectionVideo() {
 
   const modelsLabModelForVideo = useSettings(s => s.modelsLabModelForVideo)
   const setModelsLabModelForVideo = useSettings(s => s.setModelsLabModelForVideo)
+
+
+  const videoPromptPrefix = useSettings(s => s.videoPromptPrefix)
+  const setVideoPromptPrefix = useSettings(s => s.setVideoPromptPrefix)
+
+  const videoPromptSuffix = useSettings(s => s.videoPromptSuffix)
+  const setVideoPromptSuffix = useSettings(s => s.setVideoPromptSuffix)
+
+  const videoNegativePrompt = useSettings(s => s.videoNegativePrompt)
+  const setVideoNegativePrompt = useSettings(s => s.setVideoNegativePrompt)
 
   const videoRenderingStrategy = useSettings(s => s.videoRenderingStrategy)
   const setVideoRenderingStrategy = useSettings(s => s.setVideoRenderingStrategy)
@@ -62,9 +71,31 @@ export function SettingsSectionVideo() {
           onChange={setMaxVideosToGenerateInParallel}
         />
 
+        
+      <FormInput
+        label="Default prompt prefix"
+        value={videoPromptPrefix}
+        defaultValue={defaultSettings.videoPromptPrefix}
+        onChange={setVideoPromptPrefix}
+      />
+
+      <FormInput
+        label="Default prompt suffix"
+        value={videoPromptSuffix}
+        defaultValue={defaultSettings.videoPromptSuffix}
+        onChange={setVideoPromptSuffix}
+      />
+
+      <FormInput
+        label="Default negative prompt"
+        value={videoNegativePrompt}
+        defaultValue={defaultSettings.videoNegativePrompt}
+        onChange={setVideoNegativePrompt}
+      />
+
       {videoProvider.startsWith("COMFY_")
          ? <FormInput
-          label="Default Comfy workflow template for videos"
+          label="Default Comfy workflow template for videos (not used yet)"
           value={comfyWorkflowForVideo}
           defaultValue={defaultSettings.comfyWorkflowForVideo}
           onChange={setComfyWorkflowForVideo}

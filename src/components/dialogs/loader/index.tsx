@@ -15,7 +15,14 @@ export function Loader({
       z-[100]
       flex
       w-screen h-screen
-      top-0 left-0 right-0 bottom-0
+      `,
+
+      // the purpose here is to make the background blur work a bit more nicely
+      // by going outside the edges
+      `scale-105`,
+
+      `top-0 left-0 right-0 bottom-0`,
+      `
       p-0 m-0
       overflow-hidden
       items-center justify-center

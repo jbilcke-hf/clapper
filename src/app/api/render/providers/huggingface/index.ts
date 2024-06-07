@@ -4,6 +4,8 @@ import { RenderRequest } from "@/types"
 import { ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
 import { getVideoPrompt } from "@aitube/engine"
 import { blobToBase64DataUri } from "@/lib/utils/blobToBase64DataUri"
+import { getRenderRequestPrompts } from "@/lib/utils/getRenderRequestPrompts"
+import { decodeOutput } from "@/lib/utils/decodeOutput"
 
 export async function renderSegment(request: RenderRequest): Promise<ClapSegment> {
 
@@ -20,16 +22,15 @@ export async function renderSegment(request: RenderRequest): Promise<ClapSegment
   
   const segment: ClapSegment = { ...request.segment }
 
+  const prompts = getRenderRequestPrompts(request)
+  
   try {
     const blob: Blob = await hf.textToImage({
       model: request.settings.huggingFaceModelForImage,
-      inputs: getVideoPrompt(
-        request.segments,
-        request.entities
-      )
+      inputs: prompts.positivePrompt
     })
 
-    segment.assetUrl = await blobToBase64DataUri(blob)
+    segment.assetUrl = await decodeOutput(blob)
     console.log(`successfully called Hugging Face`)
     segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)
   } catch (err) {

@@ -5,20 +5,31 @@ import { cn } from "@/lib/utils"
 
 import { useSettings } from "@/controllers/settings"
 import { RenderRequest } from "@/types"
+import { getVideoPrompt } from "@aitube/engine"
+import { getRenderRequestPrompts } from "@/lib/utils/getRenderRequestPrompts"
 
 const segmentRenderer: SegmentRenderer = async ({
   segment,
   segments,
   entities,
+  speakingCharactersIds,
+  generalCharactersIds,
+  mainCharacterId,
+  mainCharacterEntity,
   meta,
 }) => {
 
-  console.log(`custom segmentRender() called with:`, { segment, segments, entities })
+  const settings = useSettings.getState().getSettings()
+  
   const request: RenderRequest = {
-    settings: useSettings.getState().getSettings(),
+    settings,
     segment,
     segments,
     entities,
+    speakingCharactersIds,
+    generalCharactersIds,
+    mainCharacterId,
+    mainCharacterEntity,
     meta,
   }
 

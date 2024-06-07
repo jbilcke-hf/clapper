@@ -53,6 +53,7 @@ export const availableComputeProvidersForSound = {
   [ComputeProvider.COMFY_REPLICATE]: "Replicate (Comfy API)",
   [ComputeProvider.COMFY_COMFYICU]: "Comfy.icu (Comfy API)",
   [ComputeProvider.STABILITYAI]: "StabilityAI (Stable Audio API)",
+  [ComputeProvider.FALAI]: "Fal.ai",
   [ComputeProvider.ELEVENLABS]: "Eleven Labs (Sound Effects API)",
 
 }

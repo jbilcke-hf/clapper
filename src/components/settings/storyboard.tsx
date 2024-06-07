@@ -24,6 +24,15 @@ export function SettingsSectionStoryboard() {
   const modelsLabModelForImage = useSettings(s => s.modelsLabModelForImage)
   const setModelsLabModelForImage = useSettings(s => s.setModelsLabModelForImage)
 
+  const storyboardPromptPrefix = useSettings(s => s.storyboardPromptPrefix)
+  const setStoryboardPromptPrefix = useSettings(s => s.setStoryboardPromptPrefix)
+
+  const storyboardPromptSuffix = useSettings(s => s.storyboardPromptSuffix)
+  const setStoryboardPromptSuffix = useSettings(s => s.setStoryboardPromptSuffix)
+
+  const storyboardNegativePrompt = useSettings(s => s.storyboardNegativePrompt)
+  const setStoryboardNegativePrompt = useSettings(s => s.setStoryboardNegativePrompt)
+
   const maxStoryboardsToGenerateInParallel = useSettings(s => s.maxStoryboardsToGenerateInParallel)
   const setMaxStoryboardsToGenerateInParallel = useSettings(s => s.setMaxStoryboardsToGenerateInParallel)
 
@@ -52,19 +61,43 @@ export function SettingsSectionStoryboard() {
         />
 
         <FormInput
-          label="Number of storyboards to render in parallel"
+          label="Number of storyboards to render in parallel (not used yet)"
           value={maxStoryboardsToGenerateInParallel}
           defaultValue={defaultSettings.maxStoryboardsToGenerateInParallel}
           onChange={setMaxStoryboardsToGenerateInParallel}
         />
         
-        {storyboardProvider.startsWith("COMFY_")
-         ? <FormInput
-          label="Default Comfy workflow template for storyboards"
-          value={comfyWorkflowForStoryboard}
-          defaultValue={defaultSettings.comfyWorkflowForStoryboard}
-          onChange={setComfyWorkflowForStoryboard}
+        <FormInput
+          label="Default prompt prefix"
+          value={storyboardPromptPrefix}
+          defaultValue={defaultSettings.storyboardPromptPrefix}
+          onChange={setStoryboardPromptPrefix}
         />
+
+        <FormInput
+          label="Default prompt suffix"
+          value={storyboardPromptSuffix}
+          defaultValue={defaultSettings.storyboardPromptSuffix}
+          onChange={setStoryboardPromptSuffix}
+        />
+
+         <FormInput
+          label="Default negative prompt"
+          value={storyboardNegativePrompt}
+          defaultValue={defaultSettings.storyboardNegativePrompt}
+          onChange={setStoryboardNegativePrompt}
+        />
+
+        {storyboardProvider.startsWith("COMFY_")
+         ? <>
+          <FormInput
+            label="Default Comfy workflow template for storyboards"
+            value={comfyWorkflowForStoryboard}
+            defaultValue={defaultSettings.comfyWorkflowForStoryboard}
+            onChange={setComfyWorkflowForStoryboard}
+          />
+
+         </>
         : // "proprietary" parameters
           <>
             {storyboardProvider === ComputeProvider.HUGGINGFACE && <FormInput

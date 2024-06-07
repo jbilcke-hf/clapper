@@ -30,6 +30,13 @@ export type SettingsState = {
 
   // -------------- MISC SETTINGS -------------------
 
+  storyboardPromptPrefix: string
+  storyboardPromptSuffix: string
+  storyboardNegativePrompt: string
+  videoPromptPrefix: string
+  videoPromptSuffix: string
+  videoNegativePrompt: string
+
   storyboardRenderingStrategy: RenderingStrategy
   videoRenderingStrategy: RenderingStrategy
   maxStoryboardsToGenerateInParallel: number
@@ -124,6 +131,13 @@ export type SettingsControls = {
   setMusicProvider: (musicProvider?: ComputeProvider) => void
 
   setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => void
+  setStoryboardPromptPrefix: (storyboardPromptPrefix?: string) => void
+  setStoryboardPromptSuffix: (storyboardPromptSuffix?: string) => void
+  setStoryboardNegativePrompt: (storyboardNegativePrompt?: string) => void
+  setVideoPromptPrefix: (videoPromptPrefix?: string) => void
+  setVideoPromptSuffix: (videoPromptSuffix?: string) => void
+  setVideoNegativePrompt: (videoNegativePrompt?: string) => void
+
   setStoryboardRenderingStrategy: (storyboardRenderingStrategy?: RenderingStrategy) => void
   setVideoRenderingStrategy: (videoRenderingStrategy?: RenderingStrategy) => void
   setMaxStoryboardsToGenerateInParallel: (maxStoryboardsToGenerateInParallel?: number) => void
