@@ -87,6 +87,24 @@ export const useSettings = create<SettingsStore>()(
       setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => {
         set({ censorNotForAllAudiencesContent: getValidBoolean(censorNotForAllAudiencesContent, getDefaultSettingsState().censorNotForAllAudiencesContent) })
       },
+      setStoryboardPromptPrefix: (storyboardPromptPrefix?: string) => {
+        set({ storyboardPromptPrefix: getValidString(storyboardPromptPrefix, getDefaultSettingsState().storyboardPromptPrefix) })
+      },
+      setStoryboardPromptSuffix: (storyboardPromptSuffix?: string) => {
+        set({ storyboardPromptSuffix: getValidString(storyboardPromptSuffix, getDefaultSettingsState().storyboardPromptSuffix) })
+      },
+      setStoryboardNegativePrompt: (storyboardNegativePrompt?: string) => {
+        set({ storyboardNegativePrompt: getValidString(storyboardNegativePrompt, getDefaultSettingsState().storyboardNegativePrompt) })
+      },
+      setVideoPromptPrefix: (videoPromptPrefix?: string) => {
+        set({ videoPromptPrefix: getValidString(videoPromptPrefix, getDefaultSettingsState().videoPromptPrefix) })
+      },
+      setVideoPromptSuffix: (videoPromptSuffix?: string) => {
+        set({ videoPromptSuffix: getValidString(videoPromptSuffix, getDefaultSettingsState().videoPromptSuffix) })
+      },
+      setVideoNegativePrompt: (videoNegativePrompt?: string) => {
+        set({ videoNegativePrompt: getValidString(videoNegativePrompt, getDefaultSettingsState().videoNegativePrompt) })
+      },
       setStoryboardRenderingStrategy: (storyboardRenderingStrategy?: RenderingStrategy) => {
         const { storyboardRenderingStrategy: defaulStoryboardRenderingStrategy } = getDefaultSettingsState()
         set({ storyboardRenderingStrategy: parseRenderingStrategy(storyboardRenderingStrategy, defaulStoryboardRenderingStrategy) })
@@ -293,6 +311,12 @@ export const useSettings = create<SettingsStore>()(
           anthropicApiKey: state.anthropicApiKey || defaultSettings.anthropicApiKey,
           elevenLabsApiKey: state.elevenLabsApiKey || defaultSettings.elevenLabsApiKey,
           censorNotForAllAudiencesContent: state.censorNotForAllAudiencesContent || defaultSettings.censorNotForAllAudiencesContent,
+          storyboardPromptPrefix: state.storyboardPromptPrefix || defaultSettings.storyboardPromptPrefix,
+          storyboardPromptSuffix: state.storyboardPromptSuffix || defaultSettings.storyboardPromptSuffix,
+          storyboardNegativePrompt: state.storyboardNegativePrompt || defaultSettings.storyboardNegativePrompt,
+          videoPromptPrefix: state.videoPromptPrefix || defaultSettings.videoPromptPrefix,
+          videoPromptSuffix: state.videoPromptSuffix || defaultSettings.videoPromptSuffix,
+          videoNegativePrompt: state.videoNegativePrompt || defaultSettings.videoNegativePrompt,
           storyboardRenderingStrategy: state.storyboardRenderingStrategy || defaultSettings.storyboardRenderingStrategy,
           videoRenderingStrategy: state.videoRenderingStrategy || defaultSettings.videoRenderingStrategy,
           maxStoryboardsToGenerateInParallel: state.maxStoryboardsToGenerateInParallel || defaultSettings.maxStoryboardsToGenerateInParallel,

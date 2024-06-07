@@ -30,6 +30,13 @@ export function getDefaultSettingsState(): SettingsState {
 
     censorNotForAllAudiencesContent: false,
 
+    storyboardPromptPrefix: "",
+    storyboardPromptSuffix: "",
+    storyboardNegativePrompt: "",
+    videoPromptPrefix: "",
+    videoPromptSuffix: "",
+    videoNegativePrompt: "",
+
     storyboardRenderingStrategy: RenderingStrategy.ON_DEMAND,
     videoRenderingStrategy: RenderingStrategy.ON_DEMAND,
     maxStoryboardsToGenerateInParallel: 1,
@@ -73,7 +80,7 @@ export function getDefaultSettingsState(): SettingsState {
   
     falAiModelForImage: "fal-ai/fast-sdxl", // "fal-ai/fast-lightning-sdxl",
     falAiModelForVideo: "fal-ai/fast-animatediff/turbo/text-to-video",
-    falAiModelForSpeech: "fal-ai/xtts",
+    falAiModelForSpeech: "fal-ai/metavoice-v1",
     falAiModelForSound: "fal-ai/stable-audio",
     falAiModelForMusic: "fal-ai/stable-audio",
   
