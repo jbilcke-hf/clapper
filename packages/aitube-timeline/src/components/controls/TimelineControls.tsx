@@ -85,16 +85,19 @@ export function TimelineControls({
       // now, the problem is that depends
       scrollY, // + (zoomHeight / 2),
 
-      60, // min value: enough to display about one row + the top bar
+      -60, // min value: enough to display about one row + the top bar
 
+      900,
+      /*
       // TODO: find the right formula
-      size.height > 550 ? 350 :
+      size.height > 550 ? 250 :
       size.height > 500 ? 400 :
       size.height > 450 ? 450 :
       size.height > 400 ? 500 :
       size.height > 350 ? 550 :
       size.height > 300 ? 550 :
-      600 // determine how far down we can move (to see more of what is up)
+      900 // determine how far down we can move (to see more of what is up)
+      */
     )
  
     // console.log(`scrollY=${Math.round(scrollY)}`)
