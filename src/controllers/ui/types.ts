@@ -1,5 +1,7 @@
+import { SettingsCategory } from "@/types"
+
 export type UIState = {
-  showSettings: boolean
+  showSettings: SettingsCategory
   showImporter: boolean
   showTimeline: boolean
   showExplorer: boolean
@@ -10,7 +12,7 @@ export type UIState = {
 }
 
 export type UIControls = {
-  setShowSettings: (showSettings: boolean) => void
+  setShowSettings: (showSettings: SettingsCategory) => void
   setShowImporter: (showImporter: boolean) => void
   setShowTimeline: (showTimeline: boolean) => void
   setShowExplorer: (showExplorer: boolean) => void

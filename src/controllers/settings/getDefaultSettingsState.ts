@@ -37,6 +37,17 @@ export function getDefaultSettingsState(): SettingsState {
     videoPromptSuffix: "",
     videoNegativePrompt: "",
 
+    assistantModel: "",
+    assistantTurboModel: "",
+    imageGenerationModel: "",
+    imageGenerationTurboModel: "",
+    imageUpscalingModel: "",
+    videoGenerationModel: "",
+    videoUpscalingModel: "",
+    soundGenerationModel: "",
+    voiceGenerationModel: "",
+    musicGenerationModel: "",
+
     imageRenderingStrategy: RenderingStrategy.ON_DEMAND,
     videoRenderingStrategy: RenderingStrategy.ON_DEMAND,
     voiceRenderingStrategy: RenderingStrategy.ON_DEMAND,

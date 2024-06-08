@@ -36,6 +36,17 @@ export type SettingsState = {
   videoPromptPrefix: string
   videoPromptSuffix: string
   videoNegativePrompt: string
+                      
+  assistantModel: string
+  assistantTurboModel: string
+  imageGenerationModel: string
+  imageGenerationTurboModel: string
+  imageUpscalingModel: string
+  videoGenerationModel: string
+  videoUpscalingModel: string
+  soundGenerationModel: string
+  voiceGenerationModel: string
+  musicGenerationModel: string
 
   imageRenderingStrategy: RenderingStrategy
   videoRenderingStrategy: RenderingStrategy
@@ -142,6 +153,16 @@ export type SettingsControls = {
   setVideoPromptSuffix: (videoPromptSuffix?: string) => void
   setVideoNegativePrompt: (videoNegativePrompt?: string) => void
 
+  setAssistantModel: (assistantModel?: string) => void
+  setAssistantTurboModel: (assistantTurboModel?: string) => void
+  setImageGenerationModel: (imageGenerationModel?: string) => void
+  setImageGenerationTurboModel: (imageGenerationTurboModel?: string) => void
+  setImageUpscalingModel: (imageUpscalingModel?: string) => void
+  setVideoGenerationModel: (videoGenerationModel?: string) => void
+  setVideoUpscalingModel: (videoUpscalingModel?: string) => void
+  setSoundGenerationModel: (soundGenerationModel?: string) => void
+  setVoiceGenerationModel: (voiceGenerationModel?: string) => void
+  setMusicGenerationModel: (musicGenerationModel?: string) => void
   setImageRenderingStrategy: (imageRenderingStrategy?: RenderingStrategy) => void
   setVideoRenderingStrategy: (videoRenderingStrategy?: RenderingStrategy) => void
   setVoiceRenderingStrategy: (voiceRenderingStrategy?: RenderingStrategy) => void

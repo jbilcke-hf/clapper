@@ -13,37 +13,37 @@ import { SettingsSectionVideo } from "./video"
 import { SettingsSectionSound } from "./sound"
 import { SettingsSectionMusic } from "./music"
 import { SettingsSectionVoice } from "./voice"
+import { SettingsCategory } from "@/types"
+
+const panels: Record<SettingsCategory, JSX.Element> = {
+  [SettingsCategory.NONE]: <></>,
+  [SettingsCategory.PROVIDER]: <SettingsSectionProvider />,
+  [SettingsCategory.ASSISTANT]: <SettingsSectionAssistant />,
+  [SettingsCategory.IMAGE]: <SettingsSectionImage />,
+  [SettingsCategory.VIDEO]: <SettingsSectionVideo />,
+  [SettingsCategory.VOICE]: <SettingsSectionVoice />,
+  [SettingsCategory.SOUND]: <SettingsSectionSound />,
+  [SettingsCategory.MUSIC]: <SettingsSectionMusic />,
+}
+
+const panelLabels = {
+  [SettingsCategory.NONE]: "",
+  [SettingsCategory.PROVIDER]: "Providers",
+  [SettingsCategory.ASSISTANT]: "Assistant",
+  [SettingsCategory.IMAGE]: "Image",
+  [SettingsCategory.VIDEO]: "Video",
+  [SettingsCategory.VOICE]: "Voice",
+  [SettingsCategory.SOUND]: "Sound",
+  [SettingsCategory.MUSIC]: "Music",
+} as any
 
 export function SettingsDialog() {
 
   const showSettings = useUI(s => s.showSettings)
   const setShowSettings = useUI(s => s.setShowSettings)
-  const [_isPending, startTransition] = useTransition()
-
-  const panels = {
-    provider: <SettingsSectionProvider />,
-    assistant: <SettingsSectionAssistant />,
-    image: <SettingsSectionImage />,
-    video: <SettingsSectionVideo />,
-    voice: <SettingsSectionVoice />,
-    music: <SettingsSectionMusic />,
-    sound: <SettingsSectionSound />,
-  }
-
-  const panelLabels = {
-    provider: "Providers",
-    assistant: "Assistant",
-    image: "Image",
-    video: "Video",
-    voice: "Voice",
-    music: "Music",
-    sound: "Sound",
-  } as any
-
-  const [configPanel, setConfigPanel] = useState<keyof typeof panels>("provider")
 
   return (
-    <Dialog open={showSettings} onOpenChange={setShowSettings}>
+    <Dialog open={showSettings !== SettingsCategory.NONE} onOpenChange={(open) => setShowSettings(open ? SettingsCategory.PROVIDER : SettingsCategory.NONE)}>
       <DialogContent className={cn(
         `select-none`,
         // DialogContent comes with some hardcoded values so we need to override them
@@ -57,7 +57,7 @@ export function SettingsDialog() {
                 key={key}
                 variant="ghost"
                 className="flex flex-col capitalize w-full items-end text-right text-lg font-thin text-stone-300"
-                onClick={() => setConfigPanel(key as keyof typeof panels)}>{panelLabels[key]}</Button>
+                onClick={() => setShowSettings(key as SettingsCategory)}>{panelLabels[key]}</Button>
               ))}
             </div>
         </ScrollArea>
@@ -69,10 +69,10 @@ export function SettingsDialog() {
         pl-8
         ">
           <ScrollArea className="flex flex-row h-full">
-            {panels[configPanel]}
+            {panels[showSettings]}
           </ScrollArea>
           <DialogFooter>
-            <Button variant="outline" className=" dark:bg-stone-800 dark:text-stone-400 dark:border-stone-700 text-sm font-light" onClick={() => { setShowSettings(false) }}>Close</Button>
+            <Button variant="outline" className=" dark:bg-stone-800 dark:text-stone-400 dark:border-stone-700 text-sm font-light" onClick={() => { setShowSettings(SettingsCategory.NONE) }}>Close</Button>
           </DialogFooter>
         </div>
       </DialogContent>

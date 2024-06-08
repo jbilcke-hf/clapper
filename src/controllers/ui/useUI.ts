@@ -5,13 +5,14 @@ import { persist } from 'zustand/middleware'
 
 import { UIStore } from "./types"
 import { getDefaultUIState } from "./getDefaultUIState"
+import { SettingsCategory } from "@/types"
 
 export const useUI = create<UIStore>()(
   persist(
     (set, get) => ({
       ...getDefaultUIState(),
 
-      setShowSettings: (showSettings: boolean) => {
+      setShowSettings: (showSettings: SettingsCategory) => {
         set({ showSettings })
       },
       setShowImporter: (showImporter: boolean) => {

@@ -33,5 +33,6 @@ export enum TagColor {
   VIOLET = "VIOLET",
   FUCHSIA = "FUCHSIA",
   PINK = "PINK",
+  PURPLE = "PURPLE",
   ROSE = "ROSE",
 }

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/menubar"
 
 import { RenderingStrategy } from "@aitube/timeline"
-import { strategyLabels } from "./constants"
+import { strategyLabels } from "../constants"
 import { Tag } from "@/components/tags/Tag"
 import { TagColor } from "@/components/tags/types"
 

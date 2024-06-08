@@ -1,6 +1,5 @@
 import { ComfyIcuAccelerator, ComputeProvider } from "@/types"
 
-
 export const computeProviderShortNames = {
   [ComputeProvider.NONE]: "None",
   [ComputeProvider.CUSTOM]: "Custom API",
@@ -76,4 +75,68 @@ export const availableComfyIcuAccelerators = {
   [ComfyIcuAccelerator.A100_40GB]: "A100 (40 GB)",
   [ComfyIcuAccelerator.A100_80GB]: "A100 (80 GB)",
   [ComfyIcuAccelerator.H100]: "H100",
+}
+
+export const availableModelsForAssistant: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.OPENAI]: [
+    "gpt-4o",
+  ]
+}
+
+export const availableModelsForAssistantTurbo: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.OPENAI]: [
+    "gpt-4-turbo"
+  ]
+}
+
+
+// note: each of those models do different things, have different parameters..
+// so it will have to be taken into account
+export const availableModelsForImageGeneration: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.FALAI]: [
+    "fal-ai/fast-sdxl",
+    "fal-ai/stable-cascade",
+    "fal-ai/fast-lightning-sdxl",
+    "fal-ai/hyper-sdxl",
+    // "fal-ai/photomaker",
+    // "fal-ai/pulid",
+    // "fal-ai/image-to-image",
+    // "fal-ai/omni-zero",
+  ]
+}
+
+// should we call this upscaling or post-processing?
+export const availableModelsForImageUpscaling: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.FALAI]: [
+    "fal-ai/ccsr",
+  ]
+}
+
+export const availableModelsForVideoGeneration: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.FALAI]: [
+    "fal-ai/stable-video",
+  ]
+}
+
+export const availableModelsForVideoUpscaling: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.FALAI]: [
+  ]
+}
+
+export const availableModelsForSoundGeneration: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.FALAI]: [
+    "fal-ai/stable-audio"
+  ]
+}
+
+export const availableModelsForVoiceGeneration: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.FALAI]: [
+    "fal-ai/metavoice-v1"
+  ]
+}
+
+export const availableModelsForMusicGeneration: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.FALAI]: [
+    "fal-ai/stable-audio"
+  ]
 }

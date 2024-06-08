@@ -1,6 +1,17 @@
 import { ClapEntity, ClapMeta, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 import { SettingsState } from "./controllers/settings"
 
+export enum SettingsCategory {
+  NONE = "NONE",
+  PROVIDER = "PROVIDER",
+  ASSISTANT = "ASSISTANT",
+  IMAGE = "IMAGE",
+  VIDEO = "VIDEO",
+  VOICE = "VOICE",
+  MUSIC = "MUSIC",
+  SOUND = "SOUND"
+}
+
 export enum ComputeProvider {
   NONE = "NONE",
   CUSTOM = "CUSTOM",
