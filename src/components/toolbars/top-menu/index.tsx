@@ -16,7 +16,7 @@ export function TopMenu() {
   return (
     <Menubar className="w-full">
       <span className="scale-[88%] text-purple-300/80 pl-1 text-lg font-bold tracking-[-0.03em] mr-4">Clapper<span
-      className="absolute text-4xs text-purple-100/70 tracking-[0.05em] uppercase mt-1.5 -ml-0 -rotate-6  ">ai</span></span>
+      className="hidden absolute text-4xs text-purple-100/70 tracking-[0.05em] uppercase mt-1.5 -ml-0 -rotate-6  ">ai</span></span>
       <TopMenuFile />
       <TopMenuImage />
       <TopMenuVideo />
