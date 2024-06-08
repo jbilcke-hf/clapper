@@ -1,9 +1,9 @@
 import { OrthographicCamera } from "@react-three/drei"
 
-import { useTimelineState } from "@/hooks"
+import { useTimeline } from "@/hooks"
 
 export function TimelineCamera() {
-  const setTimelineCamera = useTimelineState(s => s.setTimelineCamera)
+  const setTimelineCamera = useTimeline(s => s.setTimelineCamera)
   return (
   <OrthographicCamera
     ref={(ortographicCamera) => {

@@ -1,7 +1,7 @@
 
 import {
   useSegmentLoader,
-  useTimelineState
+  useTimeline
 } from "@/hooks"
 
 import { Cell } from "@/components/cells"
@@ -16,7 +16,7 @@ export function Cells() {
   // to avoid having to re-compute
   const refreshRateInMs = 500
 
-  const contentHeight = useTimelineState(s => s.contentHeight)
+  const contentHeight = useTimeline(s => s.contentHeight)
 
   // note: this one is async, so it creates a delay
   // we could cheat by detecting the cell width change and apply it

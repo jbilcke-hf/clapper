@@ -1,16 +1,16 @@
 import React from "react"
 
 import {
-  useTimelineState
+  useTimeline
 } from "@/hooks"
 
 import { useCursorGeometry } from "@/hooks/useCursorGeometry"
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
 
 export function Cursor() {
-  const setTimelineCursor = useTimelineState(s => s.setTimelineCursor)
+  const setTimelineCursor = useTimeline(s => s.setTimelineCursor)
 
-  const contentHeight = useTimelineState(s => s.contentHeight)
+  const contentHeight = useTimeline(s => s.contentHeight)
   const cursorGeometries = useCursorGeometry()
 
   // console.log(`re-rendering <Cursor>`)

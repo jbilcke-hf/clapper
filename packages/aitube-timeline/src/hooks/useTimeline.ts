@@ -15,7 +15,7 @@ import { TimelineCursorImpl } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 import { findFreeTrack } from "@/utils/findFreeTrack"
 
-export const useTimelineState = create<TimelineStore>((set, get) => ({
+export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
   setClap: async (clap?: ClapProject) => {
 
@@ -25,15 +25,15 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     })
 
     if (!clap || !Array.isArray(clap?.segments)) {
-      console.log(`useTimelineState: no clap to show`)
+      console.log(`useTimeline: no clap to show`)
       return
     }
     
-    (window as any).useTimelineState = useTimelineState
+    (window as any).useTimeline = useTimeline
 
     set({ isLoading: true })
 
-    console.log(`useTimelineState: setting the clap to`, clap)
+    console.log(`useTimeline: setting the clap to`, clap)
 
     // we remove the big/long video
     const segments = removeFinalVideos(clap)
@@ -53,6 +53,8 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
 
     let defaultSegmentDurationInSteps = get().defaultSegmentDurationInSteps
  
+    let totalDurationInMs = 0
+  
     // TODO: this whole approach is a bit weak,
     // having an heuristic is okay but we should do it:
     // track by track
@@ -60,6 +62,8 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     // do something for images/videos that don't have the right ratio,
     // eg. add black banding
     for (const s of segments) {
+      totalDurationInMs = s.endTimeInMs > totalDurationInMs ? s.endTimeInMs : totalDurationInMs
+
       if (s.category === ClapSegmentCategory.CAMERA) {
         const durationInSteps = (
           (s.endTimeInMs - s.startTimeInMs) / DEFAULT_DURATION_IN_MS_PER_STEP
@@ -178,6 +182,7 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
       loadedSegments: [],
       visibleSegments: [],
       segmentsChanged: 1,
+      totalDurationInMs,
 
       isEmpty,
       isLoading: false,

@@ -4,7 +4,7 @@ import { useFrame, useThree } from "@react-three/fiber"
 
 import { DEFAULT_NB_TRACKS } from "@/constants"
 import {
-  useTimelineState
+  useTimeline
 } from "@/hooks"
 
 
@@ -19,13 +19,13 @@ import { Cursor } from "./Cursor"
 export function Timeline({ width, height }: { width: number; height: number }) {
   const { size } = useThree()
 
-  const setContainerSize = useTimelineState(s => s.setContainerSize)
+  const setContainerSize = useTimeline(s => s.setContainerSize)
   useEffect(() => {
     setContainerSize({ width, height })
   }, [width, height, setContainerSize])
 
-  const contentHeight = useTimelineState(s => s.contentHeight)
-  const contentWidth = useTimelineState(s => s.contentWidth)
+  const contentHeight = useTimeline(s => s.contentHeight)
+  const contentWidth = useTimeline(s => s.contentWidth)
 
   // console.log(`re-rendering <Timeline>`)
   return (

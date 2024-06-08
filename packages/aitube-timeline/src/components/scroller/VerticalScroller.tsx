@@ -1,14 +1,14 @@
 import { useThree } from "@react-three/fiber"
 
 import { VerticalSlider } from "@/components/slider"
-import { useTimelineState } from "@/hooks/useTimelineState"
+import { useTimeline } from "@/hooks/useTimeline"
 
 export function VerticalScroller() {
-  const timelineCamera = useTimelineState(s => s.timelineCamera)
-  const timelineControls = useTimelineState(s => s.timelineControls)
+  const timelineCamera = useTimeline(s => s.timelineCamera)
+  const timelineControls = useTimeline(s => s.timelineControls)
 
-  const cellWidth = useTimelineState((s) => s.cellWidth)
-  const setHorizontalZoomLevel = useTimelineState((s) => s.setHorizontalZoomLevel)
+  const cellWidth = useTimeline((s) => s.cellWidth)
+  const setHorizontalZoomLevel = useTimeline((s) => s.setHorizontalZoomLevel)
 
   // TODO: we want to control two things:
   // on mouse click & drag, we want to move horizontally inside the timeline

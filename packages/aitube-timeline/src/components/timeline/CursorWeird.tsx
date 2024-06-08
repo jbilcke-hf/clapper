@@ -1,7 +1,7 @@
 import React from "react"
 
 import {
-  useTimelineState
+  useTimeline
 } from "@/hooks"
 
 import { hslToHex } from "@/utils"

@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { ClapEntity, ClapProject, ClapSegment } from "@aitube/clap"
+import { ClapProject, ClapSegment } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -49,6 +49,7 @@ export type TimelineStoreState = {
 
   segments: ClapSegment[]
   segmentsChanged: number
+  totalDurationInMs: number
   loadedSegments: ClapSegment[]
   visibleSegments: ClapSegment[]
   nbIdentifiedTracks: number

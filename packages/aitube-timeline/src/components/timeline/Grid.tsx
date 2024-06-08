@@ -5,14 +5,14 @@ import {
   useAxis,
   useVerticalGridLines,
   useHorizontalGridLines,
-  useTimelineState
+  useTimeline
 } from "@/hooks"
 
 import { hslToHex } from "@/utils"
 
 export function Grid() {
-  const typicalSegmentDurationInSteps = useTimelineState(s => s.typicalSegmentDurationInSteps)
-  const contentHeight = useTimelineState(s => s.contentHeight)
+  const typicalSegmentDurationInSteps = useTimeline(s => s.typicalSegmentDurationInSteps)
+  const contentHeight = useTimeline(s => s.contentHeight)
 
 
   const axis = useAxis()

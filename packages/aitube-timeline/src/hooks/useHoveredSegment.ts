@@ -1,8 +1,8 @@
 import { useEffect } from "react"
-import { useTimelineState } from "./useTimelineState"
+import { useTimeline } from "./useTimeline"
 
 export function useHoveredSegment(segmentId: string): boolean {
-  const hoveredSegment = useTimelineState(s => s.hoveredSegment)
+  const hoveredSegment = useTimeline(s => s.hoveredSegment)
 
   useEffect(() => {
     const cursor = hoveredSegment ? 'pointer' : 'auto'

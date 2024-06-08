@@ -19,7 +19,7 @@ import {
 } from "./constants/defaults"
 import { cn } from "./utils"
 import { TimelineCamera } from "./components/camera"
-import { useTimelineState } from "./hooks"
+import { useTimeline } from "./hooks"
 import { topBarTimeScaleHeight } from "./constants/themes"
 import { useRef } from "react"
 
@@ -61,7 +61,7 @@ export function ClapTimeline({
   const ref = useRef<HTMLCanvasElement>(null)
 
   const handleIsCreated = () => {
-    useTimelineState.setState({ isReady: true })
+    useTimeline.setState({ isReady: true })
   }
 
   return (
@@ -108,7 +108,7 @@ export function ClapTimeline({
               // crude fix to ignore global X-Y scroll events when we are over the timeline
               if (posY <= topBarTimeScaleHeight) { return }
  
-              useTimelineState.getState().handleMouseWheel({
+              useTimeline.getState().handleMouseWheel({
                 deltaX: wheelEvent.deltaX,
                 deltaY: wheelEvent.deltaY
               })

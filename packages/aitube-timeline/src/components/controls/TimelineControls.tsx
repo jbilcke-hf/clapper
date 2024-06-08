@@ -1,4 +1,4 @@
-import { useTimelineState } from "@/hooks"
+import { useTimeline } from "@/hooks"
 import { MapControls } from "@react-three/drei"
 import { TimelineControlsImpl } from "./types"
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
@@ -44,7 +44,7 @@ export function TimelineControls({
       width,
       height,
       cursorTimestampAt,
-    } = useTimelineState.getState()
+    } = useTimeline.getState()
 
     const now = performance.now() // new Date().getTime(),
     const elapsedTimeInMs = now - resizeStartedAt
@@ -53,7 +53,7 @@ export function TimelineControls({
     const isResizing = elapsedTimeInMs < delayThreshold
     // console.log(`now=${now}, resizeStartedAt=${resizeStartedAt}, elapsedTimeInMs=${elapsedTimeInMs}, delayThreshold=${delayThreshold}, isResizing=${isResizing}`)
     if (!timelineCamera || !timelineControls) {
-      useTimelineState.setState({ isResizing })
+      useTimeline.setState({ isResizing })
       return
     }
 
@@ -104,7 +104,7 @@ export function TimelineControls({
     timelineCamera.position.setY(scrollY)
     timelineControls.target.setY(scrollY)
  
-    useTimelineState.setState({
+    useTimeline.setState({
       scrollX,
       scrollY,
       isResizing
@@ -132,7 +132,7 @@ export function TimelineControls({
   }, 1)
 
   
-  const setTimelineControls = useTimelineState(s => s.setTimelineControls)
+  const setTimelineControls = useTimeline(s => s.setTimelineControls)
   // TODO: we should create a new class extending from MapControls
   // and add some custom code to put limits, to avoid going out of bounds
   // I also don't like how scroll is working on macOS, because the mouse wheel
