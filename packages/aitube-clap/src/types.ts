@@ -126,6 +126,7 @@ export enum ClapOutputType {
 
 export enum ClapSegmentStatus {
   TO_GENERATE = "to_generate",
+  IN_PROGRESS = "in_progress",
   TO_INTERPOLATE = "to_interpolate",
   TO_UPSCALE = "to_upscale",
   COMPLETED = "completed",
