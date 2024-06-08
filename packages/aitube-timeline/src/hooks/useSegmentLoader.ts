@@ -8,11 +8,15 @@ import { similar, sliceSegments } from "@/utils"
 
 import { useTimelineState } from "./useTimelineState"
 
-export const useVisibleSegments = ({
+export const useSegmentLoader = ({
   refreshRateInMs,
 }: {
   refreshRateInMs: number
-}): ClapSegment[] => {
+}):
+  {
+    visibleSegments: ClapSegment[]
+    loadedSegments: ClapSegment[]
+  }=> {
   // to make it react to screen width change
   // however, this doesn't seem to work well
   const { size: canvasSize, viewport } = useThree()
@@ -26,6 +30,9 @@ export const useVisibleSegments = ({
 
   // console.log(`segmentsChanged:`, segmentsChanged)
   
+  const loadedSegments = useTimelineState((s) => s.loadedSegments)
+  const setLoadedSegments = useTimelineState((s) => s.setLoadedSegments)
+
   const visibleSegments = useTimelineState((s) => s.visibleSegments)
   const setVisibleSegments = useTimelineState((s) => s.setVisibleSegments)
 
@@ -50,85 +57,22 @@ export const useVisibleSegments = ({
     position: THREE.Vector3
     scale: THREE.Vector3
     initialized: boolean
-    beforeTimeInMs: number
-    afterTimeInMs: number
+    beforeTimeWithBufferInMs: number
+    afterTimeWithBufferInMs: number
+    beforeTimeWithoutBufferInMs: number
+    afterTimeWithoutBufferInMs: number
     timeout: NodeJS.Timeout
   }>({
     position: new THREE.Vector3(),
     scale: new THREE.Vector3(),
     initialized: false,
-    beforeTimeInMs: 0,
-    afterTimeInMs: 0,
+    beforeTimeWithBufferInMs: 0,
+    afterTimeWithBufferInMs: 0,
+    beforeTimeWithoutBufferInMs: 0,
+    afterTimeWithoutBufferInMs: 0,
     timeout: 0 as unknown as NodeJS.Timeout,
   })
 
-  /*
-
-  for some reason, this:
-
-    controls.addEventListener("change", onChange)
-
-  doesn't work..
-
-  useEffect(() => {
-    const previous = cameraRef.current
-    if (!previous || previous.initialized || !controls) { return }
-
-    previous.initialized = true
-
-    console.log("getting ready..", {
-      previous,
-      camera, 
-      controls
-    })
-    // Fires when the camera has been transformed by the controls.
-    const onChange = () => {
-      console.log("onChange!")
-      // we can adjust this threshold to only re compute the geometry
-      // when a significant shift has been done by the user
-      const epsilonPaneThreshold = 5
-
-      // now the zoom is tricky because it may be equivalent to a large paning,
-      // if we are in a zoom out
-      const epsilonZoomThreshold = 1
-
-      const cameraDidntPaneALot = similar(previous.position, camera.position, epsilonPaneThreshold)
-      const cameraDidntZoomALot = similar(previous.scale, camera.scale, epsilonZoomThreshold)
-
-      if (cameraDidntPaneALot && cameraDidntZoomALot) { return }
-
-      previous.position.copy(camera.position)
-      previous.scale.copy(camera.scale)
-
-      console.log("the camera has changed a lot!")
-    }
-
-    // Fires when an interaction was initiated.
-    const onStart = () => {
-      console.log("onStart!")
-    }
-
-    // Fires when an interaction has finished.
-    const onEnd = () => {
-      console.log("onEnd!")
-    }
-
-    controls.addEventListener("change", onChange)
-    controls.addEventListener("start", onStart)
-    controls.addEventListener("end", onEnd)
-
-    return () => {
-      controls.removeEventListener("change", onChange)
-      controls.removeEventListener("start", onStart)
-      controls.removeEventListener("chaendnge", onEnd)  
-    }
-  }, [controls])
-  */
-
-
-  // TODO we should use:
-  //   controls.addEventListener("change", onChange)
-  // instead, but it doesn't work for some reason..
   const sync = async (forceRerendering?: boolean) => {
     if (!stateRef.current) { return }
 
@@ -180,6 +124,8 @@ export const useVisibleSegments = ({
 
     const cellIndex = Math.max(0, pixelX / cellWidthInPixelBasedOnZoom)
 
+    // we actually don't use the camera.zoom anymore, so..
+
     const securityMargin =
       // this is useful for horizontal  scroll only
       maxPossibleNumberOfVisibleHorizontalCells
@@ -192,25 +138,45 @@ export const useVisibleSegments = ({
       // to take that into account too.
       (camera.zoom * 8) // 8 because 4 on left and 4 on right
 
+    const { segments } = useTimelineState.getState()
+      
     // we only keep segments within a given range
     // those are not necessarily visible (there is a security margin)
-    const afterSteps =  Math.floor(Math.max(0, cellIndex - securityMargin))
-    const beforeSteps = Math.floor(cellIndex + maxPossibleNumberOfVisibleHorizontalCells + securityMargin)
+    const afterStepsWithBuffer = Math.floor(Math.max(0, cellIndex - securityMargin))
+    const beforeStepsWithBuffer = Math.floor(cellIndex + maxPossibleNumberOfVisibleHorizontalCells + securityMargin)
 
-    const afterTimeInMs = afterSteps * DEFAULT_DURATION_IN_MS_PER_STEP
-    const beforeTimeInMs = beforeSteps * DEFAULT_DURATION_IN_MS_PER_STEP
+    const afterTimeWithBufferInMs = afterStepsWithBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
+    const beforeTimeWithBufferInMs = beforeStepsWithBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
 
-    if (state.afterTimeInMs !== afterTimeInMs || state.beforeTimeInMs !== beforeTimeInMs || forceRerendering) {
-      state.afterTimeInMs = afterTimeInMs
-      state.beforeTimeInMs = beforeTimeInMs
+    if (state.afterTimeWithBufferInMs !== afterTimeWithBufferInMs || state.beforeTimeWithBufferInMs !== beforeTimeWithBufferInMs || forceRerendering) {
+      state.afterTimeWithBufferInMs = afterTimeWithBufferInMs
+      state.beforeTimeWithBufferInMs = beforeTimeWithBufferInMs
 
-      const { segments, visibleSegments: previouslyVisibleSegments } = useTimelineState.getState()
-      const visibleSegments = await sliceSegments({
+      const loadedSegments = await sliceSegments({
         segments,
-        visibleSegments: previouslyVisibleSegments,
-        ...state
+        afterTimeInMs: afterTimeWithBufferInMs,
+        beforeTimeInMs: beforeTimeWithBufferInMs
       })
 
+      setLoadedSegments(loadedSegments)
+    }
+
+    const afterStepsWithoutBuffer = Math.floor(Math.max(0, cellIndex))
+    const beforeStepsWithoutBuffer = Math.floor(cellIndex + maxPossibleNumberOfVisibleHorizontalCells)
+
+    const afterTimeWithoutBufferInMs = afterStepsWithoutBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
+    const beforeTimeWithoutBufferInMs = beforeStepsWithoutBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
+  
+    if (state.afterTimeWithoutBufferInMs !== afterTimeWithoutBufferInMs || state.beforeTimeWithoutBufferInMs !== beforeTimeWithoutBufferInMs || forceRerendering) {
+      state.afterTimeWithoutBufferInMs = afterTimeWithoutBufferInMs
+      state.beforeTimeWithoutBufferInMs = beforeTimeWithoutBufferInMs
+  
+      const visibleSegments = await sliceSegments({
+        segments: loadedSegments, // <- yeah, to save compute we sub-filter this previously filtered set
+        afterTimeInMs: afterTimeWithoutBufferInMs,
+        beforeTimeInMs: beforeTimeWithoutBufferInMs
+      })
+  
       setVisibleSegments(visibleSegments)
     }
   }
@@ -249,5 +215,5 @@ export const useVisibleSegments = ({
     fn()
   }, [cellHeight, cellWidth, segmentsChanged])
   
-  return visibleSegments
-};
+  return { visibleSegments, loadedSegments }
+}

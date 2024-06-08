@@ -1,9 +1,6 @@
-import React, { useEffect } from "react"
-import { useSpring, a, animated, config } from "@react-spring/three"
 
-import { DEFAULT_NB_TRACKS } from "@/constants"
 import {
-  useVisibleSegments,
+  useSegmentLoader,
   useTimelineState
 } from "@/hooks"
 
@@ -24,7 +21,7 @@ export function Cells() {
   // note: this one is async, so it creates a delay
   // we could cheat by detecting the cell width change and apply it
   // faster on the current geometries 
-  const visibleSegments = useVisibleSegments({
+  const { visibleSegments, loadedSegments } = useSegmentLoader({
     refreshRateInMs,
   });
 
@@ -38,7 +35,7 @@ export function Cells() {
   }))
   */
   
-  console.log(`re-rendering ${visibleSegments.length} <Cells>`)
+  console.log(`re-rendering <Cells> (${visibleSegments.length} strictly  visible, ${loadedSegments.length} loaded in total)`)
 
   return (
     <group position={[
@@ -49,7 +46,7 @@ export function Cells() {
       contentHeight / 2,
        -4
        ]}>
-      {visibleSegments.map((s) =>
+      {loadedSegments.map((s) =>
         <Cell
           key={s.id}
           segment={s}

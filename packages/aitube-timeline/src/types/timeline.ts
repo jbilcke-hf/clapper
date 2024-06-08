@@ -49,6 +49,7 @@ export type TimelineStoreState = {
 
   segments: ClapSegment[]
   segmentsChanged: number
+  loadedSegments: ClapSegment[]
   visibleSegments: ClapSegment[]
   nbIdentifiedTracks: number
 
@@ -124,8 +125,11 @@ export type TimelineStoreState = {
   // position of the current timestamp
   cursorTimestampAt: number
 
-  storyboardRenderingStrategy: RenderingStrategy
+  imageRenderingStrategy: RenderingStrategy
   videoRenderingStrategy: RenderingStrategy
+  soundRenderingStrategy: RenderingStrategy
+  voiceRenderingStrategy: RenderingStrategy
+  musicRenderingStrategy: RenderingStrategy
 
   segmentRenderer?: SegmentRenderer
 }
@@ -135,6 +139,7 @@ export type TimelineStoreModifiers = {
   setClap: (clap?: ClapProject) => Promise<void>
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => void
   setSegments: (segments?: ClapSegment[]) => void
+  setLoadedSegments: (loadedSegments?: ClapSegment[]) => void
   setVisibleSegments: (visibleSegments?: ClapSegment[]) => void
   getCellHeight: (trackNumber?: number) => number
   getVerticalCellPosition: (start: number, end: number) => number
@@ -164,10 +169,14 @@ export type TimelineStoreModifiers = {
     // some extra text to append to the file name
     extraLabel?: string
   }) => Promise<number>
-  setStoryboardRenderingStrategy: (storyboardRenderingStrategy: RenderingStrategy) => void
+  setImageRenderingStrategy: (imageRenderingStrategy: RenderingStrategy) => void
   setVideoRenderingStrategy: (videoRenderingStrategy: RenderingStrategy) => void
+  setSoundRenderingStrategy: (soundRenderingStrategy: RenderingStrategy) => void
+  setVoiceRenderingStrategy: (voiceRenderingStrategy: RenderingStrategy) => void
+  setMusicRenderingStrategy: (musicRenderingStrategy: RenderingStrategy) => void
   setSegmentRenderer: (segmentRenderer: SegmentRenderer) => void
   renderSegment: (segment: ClapSegment) => Promise<ClapSegment>
+  findStuffToRender: () => Promise<void>
   findFreeTrack: (params: { startTimeInMs?: number; endTimeInMs?: number }) => number
 }
 

@@ -30,7 +30,7 @@ export {
   useVerticalGridLines,
   useHorizontalGridLines,
   useTimelineState,
-  useVisibleSegments,
+  useSegmentLoader,
 } from "./hooks"
 
 export {

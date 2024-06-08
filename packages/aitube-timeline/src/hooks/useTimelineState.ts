@@ -172,13 +172,11 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     
     const isEmpty = segments.length === 0
 
-
-    const visibleSegments: ClapSegment[] = []
-
     set({
       clap,
       segments,
-      visibleSegments,
+      loadedSegments: [],
+      visibleSegments: [],
       segmentsChanged: 1,
 
       isEmpty,
@@ -223,8 +221,9 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
   },
   
   setSegments: (segments: ClapSegment[] = []) => {
-    set({ segments, visibleSegments: [] })
+    set({ segments, loadedSegments: [] })
   },
+  setLoadedSegments: (loadedSegments: ClapSegment[] = []) => { set({ loadedSegments }) },
   setVisibleSegments: (visibleSegments: ClapSegment[] = []) => { set({ visibleSegments }) },
 
   getCellHeight: (trackNumber?: number): number => {
@@ -421,14 +420,29 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
 
     return objectUrl.length
   },
-  setStoryboardRenderingStrategy: (storyboardRenderingStrategy: RenderingStrategy) => {
+  setImageRenderingStrategy: (imageRenderingStrategy: RenderingStrategy) => {
     set({
-      storyboardRenderingStrategy: storyboardRenderingStrategy || RenderingStrategy.ON_DEMAND
+      imageRenderingStrategy: imageRenderingStrategy || RenderingStrategy.ON_DEMAND
     })
   },
   setVideoRenderingStrategy: (videoRenderingStrategy: RenderingStrategy) => {
     set({
       videoRenderingStrategy: videoRenderingStrategy || RenderingStrategy.ON_DEMAND
+    })
+  },
+  setSoundRenderingStrategy: (soundRenderingStrategy: RenderingStrategy) => {
+    set({
+      soundRenderingStrategy: soundRenderingStrategy || RenderingStrategy.ON_DEMAND
+    })
+  },
+  setVoiceRenderingStrategy: (voiceRenderingStrategy: RenderingStrategy) => {
+    set({
+      voiceRenderingStrategy: voiceRenderingStrategy || RenderingStrategy.ON_DEMAND
+    })
+  },
+  setMusicRenderingStrategy: (musicRenderingStrategy: RenderingStrategy) => {
+    set({
+      musicRenderingStrategy: musicRenderingStrategy || RenderingStrategy.ON_DEMAND
     })
   },
   setSegmentRenderer: (segmentRenderer: SegmentRenderer) => {
@@ -489,6 +503,31 @@ export const useTimelineState = create<TimelineStore>((set, get) => ({
     })
 
     return newSegment
+  },
+  findStuffToRender: async () => {
+    // note: this run independently for the manual re-render,
+    // which the user can always do
+    const {
+      imageRenderingStrategy,
+      videoRenderingStrategy,
+      soundRenderingStrategy,
+      voiceRenderingStrategy,
+      musicRenderingStrategy,
+      segments,
+      loadedSegments,
+    } = get()
+
+    if (imageRenderingStrategy === RenderingStrategy.ON_DEMAND) {
+      // for now this has its own workflow, managed elsewhere
+    } else if (imageRenderingStrategy === RenderingStrategy.ON_SCREEN_ONLY) {
+
+    } else if (imageRenderingStrategy === RenderingStrategy.ON_SCREEN_THEN_SURROUNDING) {
+      
+    } else if (imageRenderingStrategy === RenderingStrategy.ON_SCREEN_THEN_ALL) {
+          
+    } else {
+      // do nothing
+    }
   },
   findFreeTrack: ({
     startTimeInMs,

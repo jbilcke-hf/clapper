@@ -47,7 +47,7 @@ export function TopBarTimeScale() {
           setTopBarTimelineScale(r)
         }
       }}
-      position={[-leftBarTrackScaleWidth, 0, 0]}
+      position={[-leftBarTrackScaleWidth, 0, -3]}
       onWheel={(e) => {
         if (e.offsetY > topBarTimeScaleHeight) { return }
 

@@ -4,7 +4,7 @@ import { TimelineControlsImpl } from "./types"
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
 import { clamp } from "@/utils/clamp"
 import { useFrame, useThree } from "@react-three/fiber"
-import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
+import { DEFAULT_DURATION_IN_MS_PER_STEP, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 
 // for doc see:
 // https://threejs.org/docs/index.html?q=controls#examples/en/controls/MapControls
@@ -59,45 +59,42 @@ export function TimelineControls({
 
     scrollX = Math.max(-leftBarTrackScaleWidth, scrollX)
 
-    const canvasHeight = size.height // * gl.getPixelRatio()
+    /*
+    const topBottomSize = (size.height > canvasHeight)
+     ? ((size.height / 2) - (canvasHeight / 2))
+     : ((canvasHeight / 2) - (size.height / 2))
+    */
 
-    //  *------------------------*
-    //  |       scrollY          |         
-    //  |  *---------------*     |
-    //  |  |               |     |   \
-    //  |  |               |     |    <--- canvasHeight
-    //  |  |               |     |   /
-    //  *--|---------------|-----*
-    //     |               |
-    //     | ------------- |
-    //     |               |
-    //     |               |   \
-    //     |               |    <------ contentHeight (can be > or < than the canvasHeight)
-    //     |               |   /
-    //     |               | 
-    //     *---------------*
-    //
 
+    const calculateTopBottomSizeSmooth = (height: number): number => {
+      // note: contentHeight seems to depends on cellWidth zoop,
+      // because when we change the horizontal "zoom" (the cellWidth)
+      // this messes up our calculation
+      const maxHeight = contentHeight // 820
+      const minHeight = 0
+      const maxTopBottomSize = maxHeight / 2
+      if (height >= maxHeight) {
+        return 0
+      } else {
+        const normalizedHeight = (height - minHeight) / (maxHeight - minHeight)
+
+        return Math.max(0, maxTopBottomSize - (normalizedHeight * maxTopBottomSize))
+      }
+    };
+  
+
+    // if you find the exact formula, please submit a PR!
+    const topBottomSize = calculateTopBottomSizeSmooth(size.height)  
+
+    // console.log(`size.height=${size.height} contentHeight=${contentHeight} topBottomSize=${topBottomSize}`)
     scrollY = clamp(
-      // should depend upon the current zoom level
-      // if we are "high" in the sky (low zoom value)
-      // then we need to to go further noth
-      // now, the problem is that depends
-      scrollY, // + (zoomHeight / 2),
+      scrollY,
 
-      -60, // min value: enough to display about one row + the top bar
-
-      900,
-      /*
-      // TODO: find the right formula
-      size.height > 550 ? 250 :
-      size.height > 500 ? 400 :
-      size.height > 450 ? 450 :
-      size.height > 400 ? 500 :
-      size.height > 350 ? 550 :
-      size.height > 300 ? 550 :
-      900 // determine how far down we can move (to see more of what is up)
-      */
+      // if you want to change those, fine,
+      // but make sure the timeline still works properly when you change its height,
+      // horizontal zoom, and number of tracks 
+      -topBottomSize + PROMPT_STEP_HEIGHT_IN_PX, // to take to top time scroll bar into account
+      topBottomSize + 38,
     )
  
     // console.log(`scrollY=${Math.round(scrollY)}`)
