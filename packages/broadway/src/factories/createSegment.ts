@@ -1,3 +1,4 @@
+// this is a deprecated module, we should get rid of it
 import { getSegment, segmentCategories, ClapSegmentCategorySettings } from "@aitube/colors"
 
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants/general"
