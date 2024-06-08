@@ -29,7 +29,7 @@ export {
   useAxis,
   useVerticalGridLines,
   useHorizontalGridLines,
-  useTimelineState,
+  useTimeline,
   useSegmentLoader,
 } from "./hooks"
 
@@ -56,6 +56,9 @@ export {
 } from "./utils"
 
 export {
+  Track,
+  Tracks,
+  ContentSizeMetrics,
   RenderedCell,
   TimelineStore,
   TimelineStoreState,
@@ -64,8 +67,9 @@ export {
   ClapSegmentCategoryHues,
   ClapSegmentColorScheme,
   RenderingStrategy,
- type SegmentRenderer
+ type SegmentRenderer,
 } from "./types"
+
 
 export { ClapTimeline } from "./ClapTimeline"
 

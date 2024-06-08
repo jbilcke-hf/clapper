@@ -2,7 +2,7 @@ import React from "react"
 import { Plane, Text } from "@react-three/drei"
 
 import {
-useTimelineState
+useTimeline
 } from "@/hooks"
 
 import { leftBarTrackScaleWidth } from "@/constants/themes"
@@ -13,17 +13,17 @@ import { hslToHex } from "@/utils"
 export function LeftBarTrackScale() {
   // console.log(`re-rendering <LeftBarTrackScale>`)
   
-  const contentHeight = useTimelineState((s) => s.contentHeight)
+  const contentHeight = useTimeline((s) => s.contentHeight)
   
-  const getCellHeight = useTimelineState((s) => s.getCellHeight)
+  const getCellHeight = useTimeline((s) => s.getCellHeight)
 
 
-  const getVerticalCellPosition = useTimelineState((s) => s.getVerticalCellPosition)
+  const getVerticalCellPosition = useTimeline((s) => s.getVerticalCellPosition)
 
-  const tracks = useTimelineState(s => s.tracks)
-  const toggleTrackVisibility = useTimelineState((s) => s.toggleTrackVisibility)
+  const tracks = useTimeline(s => s.tracks)
+  const toggleTrackVisibility = useTimeline((s) => s.toggleTrackVisibility)
 
-  const setLeftBarTrackScale = useTimelineState(s => s.setLeftBarTrackScale)
+  const setLeftBarTrackScale = useTimeline(s => s.setLeftBarTrackScale)
 
 
   const horizontalTrackLines = useHorizontaTrackLines()

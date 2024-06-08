@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react"
 import * as THREE from "three"
 
-import { useTimelineState } from "./useTimelineState"
+import { useTimeline } from "./useTimeline"
 
 export const useHorizontalGridLines = () => {
 
-  const contentWidth = useTimelineState(s => s.contentWidth)
-  const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
+  const contentWidth = useTimeline(s => s.contentWidth)
+  const getVerticalCellPosition = useTimeline(s => s.getVerticalCellPosition)
 
-  const tracks = useTimelineState(s => s.tracks)
+  const tracks = useTimeline(s => s.tracks)
 
   const [gridlines, setGridLines] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 

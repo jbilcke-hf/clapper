@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
 
 import * as THREE from "three"
-import { useTimelineState } from "./useTimelineState"
+import { useTimeline } from "./useTimeline"
 
 export const useAxis = () => {
   const [axis, setAxis] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 
-  const contentHeight = useTimelineState(s => s.contentHeight)
-  const contentWidth = useTimelineState(s => s.contentWidth)
+  const contentHeight = useTimeline(s => s.contentHeight)
+  const contentWidth = useTimeline(s => s.contentWidth)
 
   useEffect(() => {
     const horizontalTop = new THREE.BufferGeometry().setFromPoints([

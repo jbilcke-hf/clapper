@@ -1,14 +1,14 @@
 import { HorizontalSlider } from "@/components/slider"
-import { useTimelineState } from "@/hooks/useTimelineState"
+import { useTimeline } from "@/hooks/useTimeline"
 
 export function HorizontalScroller() {
-  const timelineCamera = useTimelineState(s => s.timelineCamera)
-  const timelineControls = useTimelineState(s => s.timelineControls)
+  const timelineCamera = useTimeline(s => s.timelineCamera)
+  const timelineControls = useTimeline(s => s.timelineControls)
 
-  const minHorizontalZoomLevel = useTimelineState((s) => s.minHorizontalZoomLevel)
-  const maxHorizontalZoomLevel = useTimelineState((s) => s.maxHorizontalZoomLevel)
-  const cellWidth = useTimelineState((s) => s.cellWidth)
-  const setHorizontalZoomLevel = useTimelineState((s) => s.setHorizontalZoomLevel)
+  const minHorizontalZoomLevel = useTimeline((s) => s.minHorizontalZoomLevel)
+  const maxHorizontalZoomLevel = useTimeline((s) => s.maxHorizontalZoomLevel)
+  const cellWidth = useTimeline((s) => s.cellWidth)
+  const setHorizontalZoomLevel = useTimeline((s) => s.setHorizontalZoomLevel)
 
   if (!timelineCamera || !timelineControls) { return null }
 

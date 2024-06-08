@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react"
 import * as THREE from "three"
 
-import { useTimelineState } from "./useTimelineState"
+import { useTimeline } from "./useTimeline"
 import { NB_MAX_SHOTS } from "@/constants/grid"
 
 export const useVerticalGridLines = () => {
-  const cellWidth = useTimelineState(s => s.cellWidth)
-  const contentHeight = useTimelineState(s => s.contentHeight)
-  const tracks = useTimelineState(s => s.tracks)
+  const cellWidth = useTimeline(s => s.cellWidth)
+  const contentHeight = useTimeline(s => s.contentHeight)
+  const tracks = useTimeline(s => s.tracks)
   const [gridlines, setGridLines] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 
-  const nbMaxShots = useTimelineState(s => s.nbMaxShots)
+  const nbMaxShots = useTimeline(s => s.nbMaxShots)
 
   useEffect(() => {
 

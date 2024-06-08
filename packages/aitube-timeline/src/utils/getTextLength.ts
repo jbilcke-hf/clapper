@@ -7,7 +7,7 @@
   * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
   */
 
-import { useTimelineState } from ".."
+import { useTimeline } from ".."
 
 function getTextWidthInCanvas(text: string, font: string) {
   if (typeof window === "undefined") {
@@ -43,7 +43,7 @@ const webglFontWidthFactor = 1.7
  */
 export function getWebGLCharWidth(char: string = ""): number {
 
-  const cellWidthInPixels = useTimelineState.getState().cellWidth
+  const cellWidthInPixels = useTimeline.getState().cellWidth
 
   let responsiveHack = 1.5
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import * as THREE from "three"
 
-import { useTimelineState } from "./useTimelineState"
+import { useTimeline } from "./useTimeline"
 
 // note: those bug for loop just to render graduations might not be efficient
 // maybe either we pre-compute everything and we let the runtime figure out what to render on screen,
@@ -11,8 +11,8 @@ export const useTimeScaleGraduations = ({
 }: {
   unit: number
 }) => {
-  const cellWidth = useTimelineState(s => s.cellWidth)
-  const nbMaxShots = useTimelineState(s => s.nbMaxShots)
+  const cellWidth = useTimeline(s => s.cellWidth)
+  const nbMaxShots = useTimeline(s => s.nbMaxShots)
 
   const [timeScaleGraduations, setTimeScaleGraduations] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 

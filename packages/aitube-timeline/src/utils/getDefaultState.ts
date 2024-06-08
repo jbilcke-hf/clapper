@@ -11,6 +11,7 @@ export function getDefaultProjectState() {
     clap: undefined,
     segments: [],
     segmentsChanged: 0,
+    totalDurationInMs: 0,
     loadedSegments: [],
     visibleSegments: [],
 

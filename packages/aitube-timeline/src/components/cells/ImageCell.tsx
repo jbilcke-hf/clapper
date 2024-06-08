@@ -19,7 +19,7 @@ export function ImageCell({
   // const ref = useRef<Mesh<BufferGeometry<NormalBufferAttributes>, Material | Material[], Object3DEventMap>>(null)
  
   /*
-  const renderSegment = useTimelineState(s => s.renderSegment)
+  const renderSegment = useTimeline(s => s.renderSegment)
 
   const [inProgress, setInProgress] = useState(false)
   // const [isButtonHovered, setButtonHovered] = useState(false)

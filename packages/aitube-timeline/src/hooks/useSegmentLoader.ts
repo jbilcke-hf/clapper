@@ -6,7 +6,7 @@ import { ClapSegment } from "@aitube/clap"
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { similar, sliceSegments } from "@/utils"
 
-import { useTimelineState } from "./useTimelineState"
+import { useTimeline } from "./useTimeline"
 
 export const useSegmentLoader = ({
   refreshRateInMs,
@@ -25,32 +25,32 @@ export const useSegmentLoader = ({
   // this will help us in case of fast canvas resize (eg. resize using the mouse)
   const size = { width: typeof window !== "undefined" ? window.innerWidth : canvasSize.width }
 
-  const segments = useTimelineState((s) => s.segments)
-  const segmentsChanged = useTimelineState((s) => s.segmentsChanged)
+  const segments = useTimeline((s) => s.segments)
+  const segmentsChanged = useTimeline((s) => s.segmentsChanged)
 
   // console.log(`segmentsChanged:`, segmentsChanged)
   
-  const loadedSegments = useTimelineState((s) => s.loadedSegments)
-  const setLoadedSegments = useTimelineState((s) => s.setLoadedSegments)
+  const loadedSegments = useTimeline((s) => s.loadedSegments)
+  const setLoadedSegments = useTimeline((s) => s.setLoadedSegments)
 
-  const visibleSegments = useTimelineState((s) => s.visibleSegments)
-  const setVisibleSegments = useTimelineState((s) => s.setVisibleSegments)
+  const visibleSegments = useTimeline((s) => s.visibleSegments)
+  const setVisibleSegments = useTimeline((s) => s.setVisibleSegments)
 
   const controls = useThree((state) => state.controls)
 
   // we do a little trick here, to put the camera zoom inside our Zustand store
   const camera = useThree(({ camera }) => camera)
 
-  const cellWidth = useTimelineState(s => s.cellWidth)
-  const getCellHeight = useTimelineState(s => s.getCellHeight)
-  // const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
+  const cellWidth = useTimeline(s => s.cellWidth)
+  const getCellHeight = useTimeline(s => s.getCellHeight)
+  // const getVerticalCellPosition = useTimeline(s => s.getVerticalCellPosition)
   // note: only the average height change will be detected
   const cellHeight = getCellHeight()
 
   // TODO: maybe refactor this, put it inside the Zustand state
 
   useEffect(() => {
-    useTimelineState.setState({ currentZoomLevel: camera.zoom })
+    useTimeline.setState({ currentZoomLevel: camera.zoom })
   }, [camera])
   
   const stateRef = useRef<{
@@ -77,10 +77,10 @@ export const useSegmentLoader = ({
     if (!stateRef.current) { return }
 
     // TODO: replace our usage of stateRef.current
-    // by useTimelineState.getState()
+    // by useTimeline.getState()
     const state = stateRef.current
 
-    const cellWidth = useTimelineState.getState().cellWidth
+    const cellWidth = useTimeline.getState().cellWidth
 
     // we can adjust this threshold to only re compute the geometry
     // when a significant shift has been done by the user
@@ -138,7 +138,7 @@ export const useSegmentLoader = ({
       // to take that into account too.
       (camera.zoom * 8) // 8 because 4 on left and 4 on right
 
-    const { segments } = useTimelineState.getState()
+    const { segments } = useTimeline.getState()
       
     // we only keep segments within a given range
     // those are not necessarily visible (there is a security margin)

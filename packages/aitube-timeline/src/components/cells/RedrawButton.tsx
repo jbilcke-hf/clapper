@@ -1,4 +1,4 @@
-import { useTimelineState } from "@/hooks"
+import { useTimeline } from "@/hooks"
 import { ClapSegment } from "@aitube/clap"
 import { Circle, Text } from "@react-three/drei"
 import { invalidate } from "@react-three/fiber"
@@ -22,7 +22,7 @@ export function RedrawButton({
   // onClick: () => void
 }) {
   const [_isPending, startTransition] = useTransition()
-  const renderSegment = useTimelineState(s => s.renderSegment)
+  const renderSegment = useTimeline(s => s.renderSegment)
 
   const [inProgress, setInProgress] = useState(false)
   // const [isButtonHovered, setButtonHovered] = useState(false)

@@ -6,7 +6,7 @@ import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { ImageCell } from "./ImageCell"
 import { VideoCell } from "./VideoCell"
 import { TextCell } from "./TextCell"
-import { useTimelineState } from "@/hooks"
+import { useTimeline } from "@/hooks"
 import { useHoveredSegment } from "@/hooks/useHoveredSegment"
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
 import { RedrawButton } from "./RedrawButton"
@@ -18,18 +18,18 @@ export function Cell({
   segment: ClapSegment
 }) {
 
-  const getSegmentColorScheme = useTimelineState(s => s.getSegmentColorScheme)
+  const getSegmentColorScheme = useTimeline(s => s.getSegmentColorScheme)
   const colorScheme = getSegmentColorScheme(s)
 
-  const cellWidth = useTimelineState((s) => s.cellWidth)
-  const getCellHeight = useTimelineState((s) => s.getCellHeight)
-  const getVerticalCellPosition = useTimelineState((s) => s.getVerticalCellPosition)
+  const cellWidth = useTimeline((s) => s.cellWidth)
+  const getCellHeight = useTimeline((s) => s.getCellHeight)
+  const getVerticalCellPosition = useTimeline((s) => s.getVerticalCellPosition)
 
   const cellHeight = getCellHeight(s.track)
   const verticalCellPosition = getVerticalCellPosition(0, s.track)
 
   // used to react to changes impacting tracks
-  const tracks = useTimelineState(s => s.tracks)
+  const tracks = useTimeline(s => s.tracks)
 
   const durationInSteps = (
     (s.endTimeInMs - s.startTimeInMs) / DEFAULT_DURATION_IN_MS_PER_STEP
@@ -41,7 +41,7 @@ export function Cell({
 
   const widthInPx = durationInSteps * cellWidth
 
-  const currentZoomLevel = useTimelineState(s => s.currentZoomLevel)
+  const currentZoomLevel = useTimeline(s => s.currentZoomLevel)
 
   // we need to round this one to avoid *too* many re-renders
   const widthInPxAfterZoom = Math.round(currentZoomLevel * durationInSteps * cellWidth)
@@ -50,8 +50,8 @@ export function Cell({
 
   // note: this is not reactive (as a general rule, we never want to be reactive in here)
   // note: as a general rule, we should avoid "reactive" state updates like this
-  const isResizing = useTimelineState(s => s.isResizing)
-  // const isResizing = useTimelineState.getState().isResizing
+  const isResizing = useTimeline(s => s.isResizing)
+  // const isResizing = useTimeline.getState().isResizing
 
   const SpecializedCell =
     s.assetUrl.startsWith("data:image/")
@@ -60,7 +60,7 @@ export function Cell({
       ? VideoCell
       : TextCell
 
-  const setHoveredSegment = useTimelineState(s => s.setHoveredSegment)
+  const setHoveredSegment = useTimeline(s => s.setHoveredSegment)
     
   // cells are rendered often (eg. whenever we mouse the mouse from one cell to another)
   // because we need to handle their color change on hover / transition

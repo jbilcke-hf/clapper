@@ -4,6 +4,9 @@ export {
 } from "./grid"
 
 export {
+  Track,
+  Tracks,
+  ContentSizeMetrics,
   TimelineStore,
   TimelineStoreState,
   TimelineStoreModifiers

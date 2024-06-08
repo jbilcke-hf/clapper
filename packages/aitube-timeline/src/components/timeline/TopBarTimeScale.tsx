@@ -3,7 +3,7 @@ import React, { useRef } from "react"
 import { Plane, Text } from "@react-three/drei"
 
 import {
-useTimelineState
+useTimeline
 } from "@/hooks"
 
 import { hslToHex } from "@/utils"
@@ -18,12 +18,12 @@ export function TopBarTimeScale() {
   // const { size } = useThree()
 
   // we should use the non-reactive version
-  const cellWidth = useTimelineState((s) => s.cellWidth)
-  // const cellWidth = useTimelineState.getState().horizontalZoomLevel
-  const contentWidth = useTimelineState((s) => s.contentWidth)
-  const contentHeight = useTimelineState((s) => s.contentHeight)
+  const cellWidth = useTimeline((s) => s.cellWidth)
+  // const cellWidth = useTimeline.getState().horizontalZoomLevel
+  const contentWidth = useTimeline((s) => s.contentWidth)
+  const contentHeight = useTimeline((s) => s.contentHeight)
   
-  const isResizing = useTimelineState(s => s.isResizing)
+  const isResizing = useTimeline(s => s.isResizing)
 
   const unit = 10
 
@@ -34,11 +34,11 @@ export function TopBarTimeScale() {
 
   let timestampInMs = 0
 
-  const setHorizontalZoomLevel = useTimelineState((s) => s.setHorizontalZoomLevel)
+  const setHorizontalZoomLevel = useTimeline((s) => s.setHorizontalZoomLevel)
 
   // console.log(`re-rendering <TopBarTimeScale>`)
 
-  const setTopBarTimelineScale = useTimelineState(s => s.setTopBarTimelineScale)
+  const setTopBarTimelineScale = useTimeline(s => s.setTopBarTimelineScale)
   
   return (
     <group
@@ -55,7 +55,7 @@ export function TopBarTimeScale() {
 
         setHorizontalZoomLevel(
           // Math.round(
-            useTimelineState.getState().cellWidth + (wheelFactor * e.deltaY)
+            useTimeline.getState().cellWidth + (wheelFactor * e.deltaY)
           // )
         )
         e.stopPropagation()

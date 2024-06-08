@@ -1,5 +1,5 @@
 export { useAxis } from "./useAxis"
 export { useVerticalGridLines } from "./useVerticalGridLines"
 export { useHorizontalGridLines } from "./useHorizontalGridLines"
-export { useTimelineState } from "./useTimelineState"
+export { useTimeline } from "./useTimeline"
 export { useSegmentLoader } from "./useSegmentLoader"

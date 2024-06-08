@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import * as THREE from "three"
 
-import { useTimelineState } from "./useTimelineState"
+import { useTimeline } from "./useTimeline"
 import { useThree } from "@react-three/fiber";
 import { leftBarTrackScaleWidth } from "@/constants/themes";
 
@@ -10,7 +10,7 @@ export const useCursorGeometry = () => {
 
   const [gridlines, setGridLines] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 
-  const contentHeight = useTimelineState(s => s.contentHeight)
+  const contentHeight = useTimeline(s => s.contentHeight)
  
   useEffect(() => {
 

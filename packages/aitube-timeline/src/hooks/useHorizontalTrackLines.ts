@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
 import * as THREE from "three"
 
-import { useTimelineState } from "./useTimelineState"
+import { useTimeline } from "./useTimeline"
 import { leftBarTrackScaleWidth } from "@/constants/themes"
 
 export const useHorizontaTrackLines = () => {
-  const getVerticalCellPosition = useTimelineState(s => s.getVerticalCellPosition)
+  const getVerticalCellPosition = useTimeline(s => s.getVerticalCellPosition)
 
-  const tracks = useTimelineState(s => s.tracks)
+  const tracks = useTimeline(s => s.tracks)
 
   const [lines, setLines] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 
