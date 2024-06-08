@@ -46,7 +46,7 @@ export function VideoCell({
       position={[
         0,
         -cellHeight,
-        1
+        0
       ]}
     >
       <planeGeometry

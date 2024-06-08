@@ -35,7 +35,7 @@ export function LeftBarTrackScale() {
           setLeftBarTrackScale(r)
         }
       }}
-      position={[-leftBarTrackScaleWidth, contentHeight / 2, -2]}
+      position={[-leftBarTrackScaleWidth, contentHeight / 2, 0]}
       >
       <group position={[0, 0, 0]}>
       {horizontalTrackLines.map((lineGeometry, idx) => (

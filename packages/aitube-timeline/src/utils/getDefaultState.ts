@@ -1,10 +1,9 @@
-
 import * as THREE from "three"
 
 import { DEFAULT_NB_TRACKS, pastel, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 import { TimelineStoreState } from "@/types/timeline"
 import { RenderingStrategy } from "@/types"
-import { DEFAULT_COLUMNS_PER_SLICE, DEFAULT_DURATION_IN_MS_PER_STEP, NB_MAX_SHOTS } from "@/constants/grid"
+import { NB_MAX_SHOTS } from "@/constants/grid"
 
 // those settings will change between .clap project reloads
 export function getDefaultProjectState() {
@@ -12,6 +11,7 @@ export function getDefaultProjectState() {
     clap: undefined,
     segments: [],
     segmentsChanged: 0,
+    loadedSegments: [],
     visibleSegments: [],
 
     isEmpty: true,
@@ -69,8 +69,11 @@ export function getDefaultPreferencesState() {
     topBarTimelineScale: undefined,
     leftBarTrackScale: undefined,
     timelineCursor: undefined,
-    storyboardRenderingStrategy: RenderingStrategy.ON_DEMAND,
+    imageRenderingStrategy: RenderingStrategy.ON_DEMAND,
     videoRenderingStrategy: RenderingStrategy.ON_DEMAND,
+    soundRenderingStrategy: RenderingStrategy.ON_DEMAND,
+    voiceRenderingStrategy: RenderingStrategy.ON_DEMAND,
+    musicRenderingStrategy: RenderingStrategy.ON_DEMAND,
     segmentRenderer: undefined,
   }
 }

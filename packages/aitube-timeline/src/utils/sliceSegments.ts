@@ -6,14 +6,11 @@ export function sliceSegments({
   segments,
   afterTimeInMs,
   beforeTimeInMs,
-  visibleSegments,
 }: {
   segments: ClapSegment[]
   afterTimeInMs: number
   beforeTimeInMs: number
-  visibleSegments: ClapSegment[]
 }): ClapSegment[] {
-  // console.log(`sliceSegments(): extracting [${afterTimeInMs}:${beforeTimeInMs}] out of ${segments.length} segments`)
   const result = filterSegmentsWithinRange(
     ClapSegmentFilteringMode.ANY,
     afterTimeInMs,
