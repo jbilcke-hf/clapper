@@ -12,9 +12,9 @@
   "dependencies": {
     "@aitube/clap": "0.0.24",
     "@aitube/engine": "0.0.15",
-    "@aitube/timeline": "file:/Users/jbilcke/Projects/Typescript_Libraries/aitube-timeline",
+    "@aitube/timeline": "0.0.16",
     "@fal-ai/serverless-client": "^0.10.3",
-    "@huggingface/hub": "^0.15.0",
+    "@huggingface/hub": "^0.15.1",
     "@huggingface/inference": "^2.7.0",
     "@langchain/anthropic": "^0.2.0",
     "@langchain/core": "^0.2.6",

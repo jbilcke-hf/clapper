@@ -54,8 +54,8 @@ export function Main() {
             <ReflexSplitter />
             <ReflexElement
               size={showTimeline ? 600 : 1}
-              minSize={showTimeline ? 150 : 1}
-              maxSize={showTimeline ? 1200 : 1}
+              minSize={showTimeline ? 100 : 1}
+              maxSize={showTimeline ? 8200 : 1}
               >
               <Timeline />
             </ReflexElement>

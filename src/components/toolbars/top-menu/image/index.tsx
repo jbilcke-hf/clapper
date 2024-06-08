@@ -14,15 +14,21 @@ import {
 import { useSettings } from "@/controllers/settings"
 import { useUI } from "@/controllers/ui"
 
-import { ProviderList } from "../ProviderList"
-import { RenderingStrategyList } from "../RenderingStrategyList"
+import { ProviderList } from "../lists/ProviderList"
+import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { availableComputeProvidersForImages } from "@/components/settings/constants"
-
+import { ImageGenerationModelList } from "../lists/ImageGenerationModelList"
+import { ImageUpscalingModelList } from "../lists/ImageUpscalingModelList"
+import { SettingsCategory } from "@/types"
 
 export function TopMenuImage() {
   const setShowSettings = useUI(s => s.setShowSettings)
   const imageProvider = useSettings(s => s.imageProvider)
   const setImageProvider = useSettings(s => s.setImageProvider)
+  const imageGenerationModel = useSettings(s => s.imageGenerationModel)
+  const setImageGenerationModel = useSettings(s => s.setImageGenerationModel)
+  const imageUpscalingModel = useSettings(s => s.imageUpscalingModel)
+  const setImageUpscalingModel = useSettings(s => s.setImageUpscalingModel)
   const imageRenderingStrategy = useSettings((s) => s.imageRenderingStrategy)
   const setImageRenderingStrategy = useSettings((s) => s.setImageRenderingStrategy)
   return (
@@ -30,8 +36,10 @@ export function TopMenuImage() {
       <MenubarTrigger>Image</MenubarTrigger>
       <MenubarContent>
         <MenubarSub>
-          <MenubarItem onClick={() => { setShowSettings(true) }}>Show advanced settings</MenubarItem>
+          <MenubarItem onClick={() => { setShowSettings(SettingsCategory.IMAGE) }}>Show advanced settings</MenubarItem>
           <MenubarSeparator />
+          <ImageGenerationModelList provider={imageProvider} current={imageGenerationModel} setter={setImageGenerationModel} />
+          <ImageUpscalingModelList provider={imageProvider} current={imageUpscalingModel} setter={setImageUpscalingModel} />
           <ProviderList providers={availableComputeProvidersForImages} current={imageProvider} setter={setImageProvider} />
           <RenderingStrategyList current={imageRenderingStrategy} setter={setImageRenderingStrategy} />
           <MenubarSeparator />

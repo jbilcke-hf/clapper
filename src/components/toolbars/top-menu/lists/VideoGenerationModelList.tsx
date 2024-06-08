@@ -13,21 +13,26 @@ import {
 
 import { TagColor } from "@/components/tags/types"
 import { Tag } from "@/components/tags/Tag"
+import { ComputeProvider } from "@/types"
+import { availableModelsForVideoGeneration } from "@/components/settings/constants"
 
-
-export function ModelList({
-  models = [],
+export function VideoGenerationModelList({
+  provider,
   current,
   setter,
 }: {
-  models?: string[]
+  provider?: ComputeProvider
   current?: string
   setter: (model: string) => void
 }) {
+  const models: string[] = provider ? (availableModelsForVideoGeneration[provider] || []) : []
+
+  if (models.length === 0) { return null }
+  
   return (
     <MenubarSub>
       <MenubarSubTrigger>
-        <Tag size="lg" color={TagColor.ZINC}>ai&nbsp;model</Tag>
+        <Tag size="lg" color={TagColor.VIOLET}>generate&nbsp;video</Tag>
         {current || "None"}
       </MenubarSubTrigger>
       <MenubarSubContent>

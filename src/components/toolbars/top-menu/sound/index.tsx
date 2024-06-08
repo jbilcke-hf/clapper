@@ -14,10 +14,10 @@ import {
 import { useSettings } from "@/controllers/settings"
 import { useUI } from "@/controllers/ui"
 
-import { ProviderList } from "../ProviderList"
-import { RenderingStrategyList } from "../RenderingStrategyList"
+import { ProviderList } from "../lists/ProviderList"
+import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { availableComputeProvidersForSound } from "@/components/settings/constants"
-
+import { SettingsCategory } from "@/types"
 
 export function TopMenuSound() {
   const setShowSettings = useUI(s => s.setShowSettings)
@@ -30,7 +30,7 @@ export function TopMenuSound() {
       <MenubarTrigger>Sound</MenubarTrigger>
       <MenubarContent>
         <MenubarSub>
-          <MenubarItem onClick={() => { setShowSettings(true) }}>Show advanced settings</MenubarItem>
+          <MenubarItem onClick={() => { setShowSettings(SettingsCategory.SOUND) }}>Show advanced settings</MenubarItem>
           <MenubarSeparator />
           <ProviderList providers={availableComputeProvidersForSound} current={soundProvider} setter={setSoundProvider} />
           <RenderingStrategyList current={soundRenderingStrategy} setter={setSoundRenderingStrategy} />

@@ -30,5 +30,6 @@ export const tagColorToTailwindClass: Record<TagColor, string> = {
   [TagColor.VIOLET]: `bg-violet-800 border-violet-600 text-violet-300`,
   [TagColor.FUCHSIA]: `bg-fuchsia-800 border-fuchsia-600 text-fuchsia-300`,
   [TagColor.PINK]: `bg-pink-800 border-pink-600 text-pink-300`,
+  [TagColor.PURPLE]: `bg-purple-800 border-purple-600 text-purple-300`,
   [TagColor.ROSE]: `bg-rose-800 border-rose-600 text-rose-300`
 }

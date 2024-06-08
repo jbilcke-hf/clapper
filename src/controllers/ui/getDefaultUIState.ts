@@ -1,8 +1,9 @@
+import { SettingsCategory } from "@/types"
 import { UIState } from "./types"
 
 export function getDefaultUIState(): UIState {
   const state: UIState = {
-    showSettings: false,
+    showSettings: SettingsCategory.NONE,
     showImporter: false,
     showTimeline: true,
     showExplorer: true,

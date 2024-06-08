@@ -105,6 +105,46 @@ export const useSettings = create<SettingsStore>()(
       setVideoNegativePrompt: (videoNegativePrompt?: string) => {
         set({ videoNegativePrompt: getValidString(videoNegativePrompt, getDefaultSettingsState().videoNegativePrompt) })
       },
+      setAssistantModel: (assistantModel?: string) => {
+        const { assistantModel: defaultAssistantModel } = getDefaultSettingsState()
+        set({ assistantModel: getValidString(assistantModel, defaultAssistantModel) })
+      },
+      setAssistantTurboModel: (assistantTurboModel?: string) => {
+        const { assistantTurboModel: defaultAssistantTurboModel } = getDefaultSettingsState()
+        set({ assistantTurboModel: getValidString(assistantTurboModel, defaultAssistantTurboModel) })
+      },
+      setImageGenerationModel: (imageGenerationModel?: string) => {
+        const { imageGenerationModel: defaultImageGenerationModel } = getDefaultSettingsState()
+        set({ imageGenerationModel: getValidString(imageGenerationModel, defaultImageGenerationModel) })
+      },
+      setImageGenerationTurboModel: (imageGenerationTurboModel?: string) => {
+        const { imageGenerationTurboModel: defaultImageGenerationTurboModel } = getDefaultSettingsState()
+        set({ imageGenerationTurboModel: getValidString(imageGenerationTurboModel, defaultImageGenerationTurboModel) })
+      },
+      setImageUpscalingModel: (imageUpscalingModel?: string) => {
+        const { imageUpscalingModel: defaultImageUpscalingModel } = getDefaultSettingsState()
+        set({ imageUpscalingModel: getValidString(imageUpscalingModel, defaultImageUpscalingModel) })
+      },
+      setVideoGenerationModel: (videoGenerationModel?: string) => {
+        const { videoGenerationModel: defaultVideoGenerationModel } = getDefaultSettingsState()
+        set({ videoGenerationModel: getValidString(videoGenerationModel, defaultVideoGenerationModel) })
+      },
+      setVideoUpscalingModel: (videoUpscalingModel?: string) => {
+        const { videoUpscalingModel: defaultVideoUpscalingModel} = getDefaultSettingsState()
+        set({ videoUpscalingModel: getValidString(videoUpscalingModel, defaultVideoUpscalingModel) })
+      },
+      setSoundGenerationModel: (soundGenerationModel?: string) => {
+        const { soundGenerationModel: defaultSoundGenerationModel } = getDefaultSettingsState()
+        set({ soundGenerationModel: getValidString(soundGenerationModel, defaultSoundGenerationModel) })
+      },
+      setVoiceGenerationModel: (voiceGenerationModel?: string) => {
+        const { voiceGenerationModel: defaultVoiceGenerationModel } = getDefaultSettingsState()
+        set({ voiceGenerationModel: getValidString(voiceGenerationModel, defaultVoiceGenerationModel) })
+      },
+      setMusicGenerationModel: (musicGenerationModel?: string) => {
+        const { musicGenerationModel: defaultVoiceGenerationModel } = getDefaultSettingsState()
+        set({ musicGenerationModel: getValidString(musicGenerationModel, defaultVoiceGenerationModel) })
+      },
       setImageRenderingStrategy: (imageRenderingStrategy?: RenderingStrategy) => {
         const { imageRenderingStrategy: defaulImageRenderingStrategy } = getDefaultSettingsState()
         set({ imageRenderingStrategy: parseRenderingStrategy(imageRenderingStrategy, defaulImageRenderingStrategy) })
@@ -328,7 +368,19 @@ export const useSettings = create<SettingsStore>()(
           imageNegativePrompt: state.imageNegativePrompt || defaultSettings.imageNegativePrompt,
           videoPromptPrefix: state.videoPromptPrefix || defaultSettings.videoPromptPrefix,
           videoPromptSuffix: state.videoPromptSuffix || defaultSettings.videoPromptSuffix,
-          videoNegativePrompt: state.videoNegativePrompt || defaultSettings.videoNegativePrompt,
+          videoNegativePrompt: state.videoNegativePrompt || defaultSettings.videoNegativePrompt,       
+                    
+          assistantModel: state.assistantModel || defaultSettings.assistantModel,
+          assistantTurboModel: state.assistantTurboModel || defaultSettings.assistantTurboModel,
+          imageGenerationModel: state.imageGenerationModel || defaultSettings.imageGenerationModel,
+          imageGenerationTurboModel: state.imageGenerationTurboModel || defaultSettings.imageGenerationTurboModel,
+          imageUpscalingModel: state.imageUpscalingModel || defaultSettings.imageUpscalingModel,
+          videoGenerationModel: state.videoGenerationModel || defaultSettings.videoGenerationModel,
+          videoUpscalingModel: state.videoUpscalingModel || defaultSettings.videoUpscalingModel,
+          soundGenerationModel: state.soundGenerationModel || defaultSettings.soundGenerationModel,
+          voiceGenerationModel: state.voiceGenerationModel || defaultSettings.voiceGenerationModel,
+          musicGenerationModel: state.musicGenerationModel || defaultSettings.musicGenerationModel,
+                    
           imageRenderingStrategy: state.imageRenderingStrategy || defaultSettings.imageRenderingStrategy,
           videoRenderingStrategy: state.videoRenderingStrategy || defaultSettings.videoRenderingStrategy,
           voiceRenderingStrategy: state.voiceRenderingStrategy || defaultSettings.voiceRenderingStrategy,
