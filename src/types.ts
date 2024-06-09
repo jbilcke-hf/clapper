@@ -1,4 +1,4 @@
-import { ClapEntity, ClapMeta, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+import { ClapEntity, ClapMeta, ClapSegment, ClapSegmentCategory, ClapSegmentStatus } from "@aitube/clap"
 import { SettingsState } from "./controllers/settings"
 
 export enum SettingsCategory {
@@ -119,3 +119,20 @@ export enum FalAiImageSize {
   LANDSCAPE_4_3 = "landscape_4_3",
   LANDSCAPE_16_9 = "landscape_16_9"
 }
+
+export interface ImageSegment {
+    id: number;
+    box: number[];
+    color: number[];
+    label: string;
+    score: number;
+}
+
+// some data can only exist inside a browser session (eg. AudioBuffer)
+// or at least data that only make sense on client side
+// we could put things like a mouse hover or selected state in here
+export type BrowserOnlySegmentData = {
+  audioBuffer?: AudioBuffer
+}
+
+export type RuntimeSegment = ClapSegment & BrowserOnlySegmentData

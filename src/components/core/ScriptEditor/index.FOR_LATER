@@ -1,0 +1,191 @@
+import { useEffect, useState } from "react"
+import MonacoEditor from "monaco-editor"
+import Editor from "@monaco-editor/react"
+
+const beforeMount = ({ editor }: { editor: typeof MonacoEditor.editor }) => {
+  // Define a custom theme with the provided color palette
+  editor.defineTheme('customTheme', {
+   base: 'vs-dark', // Base theme (you can change to vs for a lighter theme if preferred)
+   inherit: true, // Inherit the default rules
+   rules: [
+     // You can define token-specific styles here if needed
+   ],
+   colors: {
+     'editor.background': '#111827', // Editor background color (given)
+     'editorCursor.foreground': '#e5e7eb', // Cursor color
+     'editor.lineHighlightBackground': '#374151', // Highlighted line color
+     'editorLineNumber.foreground': '#6b7280', // Line Numbers color
+     'editor.selectionBackground': '#2c333c', // Selection color
+     'editor.foreground': '#d1d5db', // Main text color
+     'editorIndentGuide.background': '#4b5563', // Indent guides color
+     'editorIndentGuide.activeBackground': '#6b7280', // Active indent guides color
+     'editorWhitespace.foreground': '#3b4049', // Whitespace symbols color
+     // Add more color overrides if needed here
+   },
+ })
+
+ // Apply the custom theme immediately after defining it
+ editor.setTheme('customTheme')
+}
+
+export function ScriptEditor() {
+  const [editor, setEditor] = useState<MonacoEditor.editor.IStandaloneCodeEditor>()
+  const script = useApp(state => state.script)
+  const rewriteCurrentScript = useApp(state => state.rewriteCurrentScript)
+  const isPlaying = useApp(state => state.isPlaying)
+  const setCursorAt = useApp((state) => state.setCursorAt)
+  const [scriptContent, setScriptContent] = useState("")
+  
+  const activeSegments = useApp(state => state.activeSegments)
+  const stepsToPreviews = useApp(state => state.stepsToPreviews)
+
+  const screenplayScroll = useInterface(state => state.screenplayScroll)
+  const setScreenplayScroll = useInterface(state => state.setScreenplayScroll)
+
+  const timelineScroll = useInterface(state => state.timelineScroll)
+
+  const leftmostVisibleScene = stepsToPreviews[timelineScroll.scrollLeftInSteps]?.scene
+
+  // console.log("linesToPreview:", linesToPreviews)
+
+  useEffect(() => {
+    if (editor && leftmostVisibleScene) {
+      // console.log("ScriptEditor: timelineScrollLeftInStep changed to scene " + leftmostVisibleScene.line)
+
+      // in Monaco editor the line index doesn't start at 0 but 1
+      // however, it appears that we are already good, and the 1 is just here as a backup
+      const lineNumber = (leftmostVisibleScene.startAtLine) || 1
+      editor.revealLineInCenter(lineNumber)
+    }
+  }, [editor, leftmostVisibleScene])
+
+
+  const activeScene = activeSegments
+    .find(s => s.category === "video")?.scene
+
+  const activeSceneLineNumber = (activeScene?.startAtLine || 0)
+
+  useEffect(() => {
+    const fn = async () => {
+    // support both text and Blob
+      let content = ""
+      if (typeof script.content !== "string") {
+        content = await script.content.text()
+      } else {
+        content = script.content
+      }
+      editor?.setValue(content)
+      setScriptContent(content)
+    }
+    fn()
+
+  }, [editor, script.content])
+
+  useEffect(() => {
+    if (editor && activeSceneLineNumber) {
+      // console.log("useEffect:", activeSceneLineNumber)
+
+      // in Monaco editor the line index doesn't start at 0 but 1
+      // however, it appears that we are already good, and the 1 is just here as a backup
+      const lineNumber = activeSceneLineNumber || 1
+      const column = 1
+
+      // editor.revealRangeInCenter
+
+      // IMPORTANT: we only alter the position if we are currently NOT focused
+      // that way we don't annoy the user while they are clicking/typing
+      if (!editor.hasTextFocus()) {
+
+        // scroll to a specific line
+        // this will be used whenever the horizontal timeline scrolls to somewhere
+        // (to avoid infinite loops, we should do this only if the timeline scroll event
+        // is originating from the timeline and not the screenplay reader)
+        editor.revealLineInCenter(lineNumber)
+
+        // console.log(`editor.setPosition({ lineNumber: ${lineNumber}, column: ${column} })`)
+        editor.setPosition({ lineNumber, column })
+      }
+    }
+  }, [editor, activeSceneLineNumber])
+
+  const onMount = (editor: MonacoEditor.editor.IStandaloneCodeEditor) => {
+    const model = editor.getModel()
+    if (!model) { return }
+
+    setEditor(editor)
+
+    editor.onMouseDown((e) => {
+      const currentPosition = editor.getPosition()
+
+      const line = currentPosition?.lineNumber
+      if (typeof line !== "number") { return }
+
+      // so... due to how monaco callbacks work, we cannot use the hook context
+      // to get the linesToPreview.. but that's okay!
+      const linesToPreviews = useApp.getState().linesToPreviews
+    
+      const startTimeInSteps = linesToPreviews[line]?.startTimeInSteps
+      if (typeof startTimeInSteps !== "number") { return }
+
+      setCursorAt(startTimeInSteps * DEFAULT_DURATION_IN_MS_PER_STEP)
+    })
+
+    editor.onDidScrollChange(({ scrollTop, scrollLeft, scrollWidth, scrollHeight }: MonacoEditor.IScrollEvent) => {
+      /*if (scrollHeight !== screenplayScroll.scrollHeight &&
+        scrollLeft !== screenplayScroll.scrollLeft &&
+        scrollTop !== screenplayScroll.scrollTop &&
+        scrollWidth !== screenplayScroll.scrollWidth) {
+          */
+        // console.log(`ScriptEditor:onDidScrollChange(${JSON.stringify({ scrollTop, scrollLeft, scrollWidth, scrollHeight }, null, 2)})`) 
+        setScreenplayScroll({
+          shouldRerender: false,
+          scrollTop,
+          scrollLeft,
+          scrollWidth,
+          scrollHeight
+        })
+      //}
+
+      // TODO we need to grab the leftmost segment
+      // now the problem is that this might be a bit costly to do
+    })
+
+    // as an optimization we can use this later, for surgical edits,
+    // to perform real time updates of the timeline
+
+    model.onDidChangeContent((modelContentChangedEvent: MonacoEditor.editor.IModelContentChangedEvent) => {
+      // console.log("onDidChangeContent:")
+      for (const change of modelContentChangedEvent.changes) {
+        // console.log(" - change:", change)
+      }
+    })
+  }
+
+  const onChange = (plainText?: string) => {
+    if (!plainText) { return }
+
+    if (plainText === scriptContent) { return }
+
+    console.log("generic onChange:")
+    // this function is currently *very* expensive
+    // the only optimization right now is that we debounce it
+    rewriteCurrentScript(plainText)
+  }
+
+  return (
+    <div className="h-full">
+      <Editor
+        height="100%"
+        defaultLanguage="plaintext"
+        defaultValue={scriptContent}
+        beforeMount={beforeMount}
+        onMount={onMount}
+        onChange={onChange}
+        theme="customTheme"
+        options={{
+          fontSize: 14
+        }}
+      />
+    </div>
+  )
+}

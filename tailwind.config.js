@@ -18,6 +18,7 @@ module.exports = {
     extend: {
       fontFamily: {
         salsa: ['var(--font-salsa)'],
+        clock: ["var(--font-clock)"],
       },
       fontSize: {
         "7xs": "5px",
@@ -54,6 +55,7 @@ module.exports = {
     },
   },
   plugins: [
-    require("tailwindcss-animate")
+    require("tailwindcss-animate"),
+    require("@tailwindcss/container-queries"),
   ],
 }

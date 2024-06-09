@@ -1,0 +1,121 @@
+"use client"
+
+import { ClapOutputType, ClapSegment, ClapSegmentCategory, generateSeed, newSegment, UUID } from "@aitube/clap"
+import { findFreeTrack } from "@aitube/timeline"
+
+import { RuntimeSegment } from "@/types"
+
+import { analyzeAudio } from "../audio/analyzeAudio"
+import { ResourceCategory, ResourceType } from "./types"
+
+export async function parseFileIntoSegments({ file, segments }: {
+  /**
+   * The file to import
+   */
+  file: File
+
+
+  /**
+   * all existing segments
+   */
+  segments: ClapSegment[]
+}): Promise<ClapSegment[]> {
+  console.log(`filename: ${file.name}`)
+  console.log(`file size: ${file.size} bytes`)
+  console.log(`file type: ${file.type}`)
+
+  const extension = file.name.split(".").pop()?.toLowerCase()
+
+  console.log("TODO: open a popup to ask if this is a voice character sample, dialogue, music etc")
+  
+  let type: ResourceType = "misc"
+  let category: ResourceCategory = "misc"
+
+  const newSegments: ClapSegment[] = []
+
+  switch (file.type) {
+    case "image/webp":
+      type = "image"
+      category = "control_image"
+      break;
+
+    case "audio/mpeg":
+    case "audio/wav":
+    case "audio/mp4":
+    case "audio/m4a": // shouldn't exist
+    case "audio/x-m4a": // should be rare, normallyt is is audio/mp4
+    case "audio/webm":
+      // for background track, or as an inspiration track, or a voice etc
+      type = "audio"
+      category = "background_music"
+
+      // TODO: add caption analysis
+      const { durationInMs,durationInSteps, bpm, audioBuffer } = await analyzeAudio(file)
+      console.log("User dropped an audio sample:", {
+        bpm, durationInMs, durationInSteps
+      })
+
+      // TODO: use the correct drop time
+      const startTimeInMs = 0
+      const startTimeInSteps = 1
+
+      const endTimeInSteps = durationInSteps
+      const endTimeInMs = startTimeInMs + durationInMs
+
+      const clapSegment = newSegment({
+        prompt: "audio track",
+        startTimeInMs, // start time of the segment
+        endTimeInMs, // end time of the segment (startTimeInMs + durationInMs)
+        track: findFreeTrack({ segments, startTimeInMs, endTimeInMs }), // track row index
+        label: `${file.name} (${Math.round(durationInMs / 1000)}s @ ${Math.round(bpm * 100) / 100} BPM)`, // a short label to name the segment (optional, can be human or LLM-defined)
+        category: ClapSegmentCategory.MUSIC,
+      })
+
+      const audioSegment: RuntimeSegment = {
+        ...clapSegment,
+        outputType: ClapOutputType.AUDIO,
+        outputGain: 1,
+        audioBuffer,
+      }
+
+      // console.log("newSegment:", audioSegment)
+
+      // poof! type disappears.. it's magic
+      newSegments.push(audioSegment as ClapSegment)
+      break;
+    
+    case "text/plain":
+      // for dialogue, prompts..
+      type = "text"
+      category = "text_prompt"
+      break;
+
+    default:
+      console.log(`unrecognized file type "${file.type}"`)
+      break;
+  }
+
+  // note: we always upload the files, because even if it is an unhandled format (eg. a PDF)
+  // this can still be part of the project as a resource for humans (inspiration, guidelines etc)
+
+  const id = UUID()
+  const fileName = `${id}.${extension}`
+
+  const storage = `resources`
+  const filePath = `${type}/${fileName}`
+
+  /*
+  const { data, error } = await supabase
+    .storage
+    .from('avatars')
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false
+    })
+  */
+
+  // Note: uploading is optional, some file type don't need it (eg. text prompt)
+
+  return [...segments, ...newSegments]
+}
+

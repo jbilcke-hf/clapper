@@ -6,8 +6,8 @@ import { ClapOutputType, ClapProject, ClapScene, ClapSegment, ClapSegmentCategor
 import { Input } from "@/components/ui/input"
 
 import { queryAssistant } from "@/app/api/assistant/providers/openai/askAssistant"
-import { useSettings } from "@/controllers/settings"
-import { DEFAULT_DURATION_IN_MS_PER_STEP, findFreeTrack, useTimelineState } from "@aitube/timeline"
+import { useSettingsa } from "@/controllers/settings"
+import { DEFAULT_DURATION_IN_MS_PER_STEP, findFreeTrack, useTimeline } from "@aitube/timeline"
 import { useAssistant } from "@/controllers/assistant/useAssistant"
 
 export function ChatView() {
@@ -63,10 +63,10 @@ export function ChatView() {
       }
     
 
-      const clap: ClapProject = useTimelineState.getState().clap
+      const clap: ClapProject = useTimeline.getState().clap
 
       console.log(`TODO @julian: restore the concept of "addSegment()", "updateSegment()", "active segment" and "cursor position" inside @aitube-timeline`)
-      // const { addSegment, activeSegments, cursorInSteps,  } = useTimelineState.getState()
+      // const { addSegment, activeSegments, cursorInSteps,  } = useTimeline.getState()
 
       const activeSegments: ClapSegment[] = []
       const cursorInSteps = 0

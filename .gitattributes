@@ -1,1 +1,2 @@
 *.clap filter=lfs diff=lfs merge=lfs -text
+*.xcf filter=lfs diff=lfs merge=lfs -text

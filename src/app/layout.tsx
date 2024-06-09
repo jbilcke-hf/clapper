@@ -8,8 +8,8 @@ import type { Metadata } from 'next'
 import { inter } from './fonts'
 
 export const metadata: Metadata = {
-  title: '🎬 Clapper',
-  description: '🎬 Clapper',
+  title: 'Clapper',
+  description: 'Clapper - The free and open-source AI Video Editor',
 }
 
 export default function RootLayout({
