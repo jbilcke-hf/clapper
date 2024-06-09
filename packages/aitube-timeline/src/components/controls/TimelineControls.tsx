@@ -70,7 +70,7 @@ export function TimelineControls({
       // note: contentHeight seems to depends on cellWidth zoop,
       // because when we change the horizontal "zoom" (the cellWidth)
       // this messes up our calculation
-      const maxHeight = contentHeight // 820
+      const maxHeight = Math.max(670, contentHeight) // 820
       const minHeight = 0
       const maxTopBottomSize = maxHeight / 2
       if (height >= maxHeight) {
@@ -94,7 +94,10 @@ export function TimelineControls({
       // but make sure the timeline still works properly when you change its height,
       // horizontal zoom, and number of tracks 
       -topBottomSize + PROMPT_STEP_HEIGHT_IN_PX, // to take to top time scroll bar into account
-      topBottomSize + 38,
+     
+      // the +38px as here to represent the top scroll bar,
+      // but I'm not so sure we need it anymore?
+      topBottomSize //+ 38,
     )
  
     // console.log(`scrollY=${Math.round(scrollY)}`)

@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useEffect, useRef } from "react"
 
 import { Plane, Text } from "@react-three/drei"
 
@@ -26,8 +26,7 @@ export function TopBarTimeScale() {
   const cellWidth = useTimeline((s) => s.cellWidth)
   // const cellWidth = useTimeline.getState().horizontalZoomLevel
   const contentWidth = useTimeline((s) => s.contentWidth)
-  const contentHeight = useTimeline((s) => s.contentHeight)
-  
+
   const isResizing = useTimeline(s => s.isResizing)
 
   const unit = 10
@@ -47,6 +46,48 @@ export function TopBarTimeScale() {
   const setIsDraggingCursor = useTimeline(s => s.setIsDraggingCursor)
   const setTopBarTimeScale = useTimeline(s => s.setTopBarTimeScale)
   
+  // it can be annoying to have to be exactly on the right top bar track when dragging the cursor
+  // to improve the UX, we allow the user to move the mouse ANYWHERE on the screen while doing so
+  useEffect(() => {
+    const onMouseMove = (evt: MouseEvent) => {
+      const {
+        isDraggingCursor,
+        timelineCursor,
+        topBarTimeScale,
+        timelineCamera
+      } = useTimeline.getState()
+      if (!timelineCursor || !isDraggingCursor || !topBarTimeScale || !timelineCamera) { return }
+
+      // if we are actualling pressing a button
+      if (evt.buttons) {
+        const mouseX = evt.x
+
+        const newPositionOfTheCursorX = mouseX //- leftBarTrackScaleWidth 
+        // TODO: take the left column into account for the calculation
+
+        const positionInsideTheTimelineX = newPositionOfTheCursorX + timelineCamera.position.x
+
+        const newCursorTimestampAtInMs = (positionInsideTheTimelineX / cellWidth) * DEFAULT_DURATION_IN_MS_PER_STEP
+        
+        setCursorTimestampAtInMs(newCursorTimestampAtInMs)
+        jumpAt(newCursorTimestampAtInMs)
+      } else {
+        // user stopped pressing the mouse outside the timeline area
+
+        setIsDraggingCursor(false)
+        if (typeof wasPlayingRef.current === "boolean") {
+          if (wasPlayingRef.current) {
+            togglePlayback(true)
+          }
+        }
+      }
+    }
+    document.addEventListener("mousemove", onMouseMove)
+    return () => {
+      document.removeEventListener("mousemove", onMouseMove)
+    }
+  }, [])
+
   return (
     <group
       ref={r => {
@@ -97,7 +138,6 @@ export function TopBarTimeScale() {
         if (e.pressure > 0) {
           const cursorX = e.point.x + (size.width / 2)
           const cursorTimestampAtInMs = (cursorX / cellWidth) * DEFAULT_DURATION_IN_MS_PER_STEP
-          // console.log(`setCursorTimestampAtInMs(${cursorTimestampAtInMs})`)
           setCursorTimestampAtInMs(cursorTimestampAtInMs)
           jumpAt(cursorTimestampAtInMs)
         }
