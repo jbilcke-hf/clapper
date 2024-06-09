@@ -4,9 +4,9 @@ export {
   ImageCell,
   VideoCell,
   TextCell,
-  SpecializedCellProps
+  type SpecializedCellProps
 } from "./cells"
 
 export { TimelineControls } from "./controls"
 export { HorizontalScroller, VerticalScroller } from "./scroller"
-export { Timeline, TopBarTimeScale, Cells, Grid } from "./timeline"
+export { Timeline, TopBarTimeScale, Cells, Grid, type JumpAt } from "./timeline"

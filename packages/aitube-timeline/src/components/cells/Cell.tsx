@@ -112,7 +112,7 @@ export function Cell({
 
 
       onClick={(e) => {
-        console.log('click on cell ' + s.id)
+        // console.log('click on cell ' + s.id)
         e.stopPropagation()
         return false
       }}

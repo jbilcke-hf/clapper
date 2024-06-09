@@ -146,7 +146,7 @@ export function TextCell({
           // in the function which computes a character's width
           fontWeight={400}
           onClick={(e) => {
-            console.log('click on text in cell ' + s.id)
+            // 'click on text in cell ' + s.id)
             e.stopPropagation()
             return false
           }}

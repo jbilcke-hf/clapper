@@ -1,12 +1,12 @@
 import * as THREE from "three"
 
 import { DEFAULT_NB_TRACKS, pastel, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
-import { TimelineStoreState } from "@/types/timeline"
+import { TimelineStorePreferencesState, TimelineStoreProjectState, TimelineStoreState } from "@/types/timeline"
 import { RenderingStrategy } from "@/types"
 import { NB_MAX_SHOTS } from "@/constants/grid"
 
 // those settings will change between .clap project reloads
-export function getDefaultProjectState() {
+export function getDefaultProjectState(): TimelineStoreProjectState {
   return {
     clap: undefined,
     segments: [],
@@ -55,27 +55,35 @@ export function getDefaultProjectState() {
 
     finalVideo: undefined,
     
-    cursorTimestampAt: 0,
+    cursorTimestampAtInMs: 0,
+    isDraggingCursor: false,
   }
 }
 
 // those settings will NOT changes between .clap project reloads
-export function getDefaultPreferencesState() {
+export function getDefaultPreferencesState(): TimelineStorePreferencesState {
   return {
     isReady: false,
     width: 1024,
     height: 800,
     theme: pastel,
     timelineControls: undefined,
-    topBarTimelineScale: undefined,
+    topBarTimeScale: undefined,
     leftBarTrackScale: undefined,
     timelineCursor: undefined,
+
     imageRenderingStrategy: RenderingStrategy.ON_DEMAND,
     videoRenderingStrategy: RenderingStrategy.ON_DEMAND,
     soundRenderingStrategy: RenderingStrategy.ON_DEMAND,
     voiceRenderingStrategy: RenderingStrategy.ON_DEMAND,
     musicRenderingStrategy: RenderingStrategy.ON_DEMAND,
-    segmentRenderer: undefined,
+
+    // note: those are stateless functions, use as empty
+    // mocls that are normally overriden at runtime
+    segmentRenderer: async (params) => params.segment,
+    jumpAt: () => {},
+    isPlaying: () => false,
+    togglePlayback: () => ({ wasPlaying: false, isPlaying: false })
   }
 }
 

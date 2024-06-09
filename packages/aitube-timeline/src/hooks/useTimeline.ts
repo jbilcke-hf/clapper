@@ -11,7 +11,7 @@ import { ClapSegmentCategoryHues, ClapSegmentColorScheme, RenderingStrategy, Seg
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { getFinalVideo } from "@/utils/getFinalVideo"
-import { TimelineCursorImpl } from "@/components/timeline/types"
+import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 import { findFreeTrack } from "@/utils/findFreeTrack"
 
@@ -33,7 +33,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     set({ isLoading: true })
 
-    console.log(`useTimeline: setting the clap to`, clap)
+    // console.log(`useTimeline: setting the clap to`, clap)
 
     // we remove the big/long video
     const segments = removeFinalVideos(clap)
@@ -313,8 +313,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   setTimelineControls: (timelineControls?: TimelineControlsImpl) => {
     set({ timelineControls })
   },
-  setTopBarTimelineScale: (topBarTimelineScale?: THREE.Group<THREE.Object3DEventMap>) => {
-    set({ topBarTimelineScale })
+  setTopBarTimeScale: (topBarTimeScale?: THREE.Group<THREE.Object3DEventMap>) => {
+    set({ topBarTimeScale })
   },
   setLeftBarTrackScale: (leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>) => {
     set({ leftBarTrackScale })
@@ -376,10 +376,23 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   setTimelineCursor: (timelineCursor?: TimelineCursorImpl) => {
     set({ timelineCursor })
   },
-  setCursorTimestampAt: (cursorTimestampAt: number) => {
-    set({ cursorTimestampAt })
+  setIsDraggingCursor: (isDraggingCursor: boolean) => {
+    set({ isDraggingCursor })
   },
-
+  setCursorTimestampAtInMs: (cursorTimestampAtInMs: number = 0) => {
+    if (cursorTimestampAtInMs !== get().cursorTimestampAtInMs) {
+      set({ cursorTimestampAtInMs })
+    }
+  },
+  setJumpAt: (jumpAt: JumpAt) => {
+    set({ jumpAt })
+  },
+  setIsPlaying: (isPlaying: IsPlaying) => {
+    set({ isPlaying })
+  },
+  setTogglePlayback: (togglePlayback: TogglePlayback) => {
+    set({ togglePlayback })
+  },
   // this function has an issue, it saves stuff as .txt, which is bad
   saveClapAs: async ({
     embedded,

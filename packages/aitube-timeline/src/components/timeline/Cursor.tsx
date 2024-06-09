@@ -5,7 +5,7 @@ import {
 } from "@/hooks"
 
 import { useCursorGeometry } from "@/hooks/useCursorGeometry"
-import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
+import { leftBarTrackScaleWidth } from "@/constants/themes"
 
 export function Cursor() {
   const setTimelineCursor = useTimeline(s => s.setTimelineCursor)
@@ -21,7 +21,7 @@ export function Cursor() {
       position={[
         leftBarTrackScaleWidth,
        (contentHeight / 2),
-        -5
+        -4
       ]}
       ref={r => {
         if (r) {

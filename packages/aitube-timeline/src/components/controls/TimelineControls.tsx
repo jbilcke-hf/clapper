@@ -39,11 +39,11 @@ export function TimelineControls({
       timelineCursor,
       contentHeight,
       leftBarTrackScale,
-      topBarTimelineScale,
+      topBarTimeScale,
       resizeStartedAt,
       width,
       height,
-      cursorTimestampAt,
+      cursorTimestampAtInMs,
     } = useTimeline.getState()
 
     const now = performance.now() // new Date().getTime(),
@@ -113,15 +113,13 @@ export function TimelineControls({
 
     if (timelineCursor) {
    
-      const positionInSteps = (
-        (cursorTimestampAt * 1000) / DEFAULT_DURATION_IN_MS_PER_STEP
+      timelineCursor.position.x = (
+        (cursorTimestampAtInMs) / DEFAULT_DURATION_IN_MS_PER_STEP
       ) * cellWidth
-
-      timelineCursor.position.x = positionInSteps
     }
 
-    if (topBarTimelineScale) {
-      topBarTimelineScale.position.y = (-topBarTimeScaleHeight + scrollY) + (size.height / 2)
+    if (topBarTimeScale) {
+      topBarTimeScale.position.y = (-topBarTimeScaleHeight + scrollY) + (size.height / 2)
     }
 
     if (leftBarTrackScale) {
