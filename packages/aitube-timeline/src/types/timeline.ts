@@ -4,7 +4,7 @@ import { ClapProject, ClapSegment } from "@aitube/clap"
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
-import { TimelineCursorImpl } from "@/components/timeline/types"
+import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { RenderingStrategy, SegmentRenderer } from "./rendering"
 
 export type Track = {
@@ -34,18 +34,10 @@ export type ContentSizeMetrics = {
   defaultPreviewHeight: number
 }
 
-export type TimelineStoreState = {
-  // used to track the timeline state
-  // this helps informing parent app user
-  // that the timeline has been recreated inside the React tree for instance
-  isReady: boolean
 
-  // container width and height
-  width: number
-  height: number
-  
+
+export type TimelineStoreProjectState = {
   clap?: ClapProject
-  theme: ClapTimelineTheme
 
   segments: ClapSegment[]
   segmentsChanged: number
@@ -90,6 +82,38 @@ export type TimelineStoreState = {
 
   hoveredSegment?: ClapSegment
 
+  isDraggingCursor: boolean
+
+  // used to track current camera position, at zoom level 1.0
+  scrollX: number
+  scrollY: number
+
+  // used to determine how long it has been since we touch the scroll
+  // we use this information to render the grid faster, by disabling all text
+  // until a given debouncing time has elapsed
+  resizeStartedAt: number
+  isResizing: boolean
+
+  // the final video, if available
+  finalVideo?: ClapSegment
+
+  // position of the current timestamp
+  cursorTimestampAtInMs: number
+}
+
+
+export type TimelineStorePreferencesState = {
+  // used to track the timeline state
+  // this helps informing parent app user
+  // that the timeline has been recreated inside the React tree for instance
+  isReady: boolean
+
+  // container width and height
+  width: number
+  height: number
+  
+  theme: ClapTimelineTheme
+  
   /**
    * The timeline camera
    * 
@@ -107,24 +131,8 @@ export type TimelineStoreState = {
   // ref to the cursor element
   timelineCursor?: TimelineCursorImpl
 
-  // used to track current camera position, at zoom level 1.0
-  scrollX: number
-  scrollY: number
-
-  // used to determine how long it has been since we touch the scroll
-  // we use this information to render the grid faster, by disabling all text
-  // until a given debouncing time has elapsed
-  resizeStartedAt: number
-  isResizing: boolean
-
-  topBarTimelineScale?: THREE.Group<THREE.Object3DEventMap>
+  topBarTimeScale?: THREE.Group<THREE.Object3DEventMap>
   leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>
-
-  // the final video, if available
-  finalVideo?: ClapSegment
-
-  // position of the current timestamp
-  cursorTimestampAt: number
 
   imageRenderingStrategy: RenderingStrategy
   videoRenderingStrategy: RenderingStrategy
@@ -132,8 +140,14 @@ export type TimelineStoreState = {
   voiceRenderingStrategy: RenderingStrategy
   musicRenderingStrategy: RenderingStrategy
 
-  segmentRenderer?: SegmentRenderer
+  // those can be overridden
+  segmentRenderer: SegmentRenderer
+  jumpAt: JumpAt
+  isPlaying: IsPlaying
+  togglePlayback: TogglePlayback
 }
+
+export type TimelineStoreState = TimelineStoreProjectState & TimelineStorePreferencesState
 
 
 export type TimelineStoreModifiers = {
@@ -148,13 +162,17 @@ export type TimelineStoreModifiers = {
   setHoveredSegment: (hoveredSegment?: ClapSegment) => void
   setTimelineCamera: (timelineCamera?: TimelineCameraImpl) => void
   setTimelineControls: (timelineControls?: TimelineControlsImpl) => void
-  setTopBarTimelineScale: (topBarTimelineScale?: THREE.Group<THREE.Object3DEventMap>) => void
+  setTopBarTimeScale: (topBarTimeScale?: THREE.Group<THREE.Object3DEventMap>) => void
   setLeftBarTrackScale: (leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>) => void
   handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number; deltaY: number }) => void
   toggleTrackVisibility: (trackId: number) => void
   setContainerSize: ({ width, height }: { width: number; height: number }) => void
   setTimelineCursor: (timelineCursor?: TimelineCursorImpl) => void
-  setCursorTimestampAt: (cursorTimestampAt: number) => void
+  setIsDraggingCursor: (isDraggingCursor: boolean) => void
+  setCursorTimestampAtInMs: (cursorTimestampAtInMs?: number) => void
+  setJumpAt: (jumpAt: JumpAt) => void
+  setIsPlaying: (isPlaying: IsPlaying) => void
+  setTogglePlayback: (togglePlayback: TogglePlayback) => void
   saveClapAs: (params: {
     // if embedded is true, the file will be larger, as all the content,
     // image, video, audio..

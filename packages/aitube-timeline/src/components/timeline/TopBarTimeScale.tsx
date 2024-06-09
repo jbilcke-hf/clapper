@@ -10,12 +10,17 @@ import { hslToHex } from "@/utils"
 import { useTimeScaleGraduations } from "@/hooks/useTimeScaleGraduations"
 import { DEFAULT_DURATION_IN_MS_PER_STEP, NB_MAX_SHOTS } from "@/constants/grid"
 import { formatTimestamp } from "@/utils/formatTimestamp"
-import { useFrame, useThree } from "@react-three/fiber"
 
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
+import { useThree } from "@react-three/fiber"
 
 export function TopBarTimeScale() {
-  // const { size } = useThree()
+  const { size } = useThree()
+
+  const jumpAt = useTimeline(s => s.jumpAt)
+  const togglePlayback = useTimeline(s => s.togglePlayback)
+
+  const wasPlayingRef = useRef<boolean | undefined>(undefined)
 
   // we should use the non-reactive version
   const cellWidth = useTimeline((s) => s.cellWidth)
@@ -32,19 +37,21 @@ export function TopBarTimeScale() {
     unit
   });
 
-  let timestampInMs = 0
+  let timestampInMs = -DEFAULT_DURATION_IN_MS_PER_STEP
 
   const setHorizontalZoomLevel = useTimeline((s) => s.setHorizontalZoomLevel)
 
   // console.log(`re-rendering <TopBarTimeScale>`)
 
-  const setTopBarTimelineScale = useTimeline(s => s.setTopBarTimelineScale)
+  const setCursorTimestampAtInMs = useTimeline(s => s.setCursorTimestampAtInMs)
+  const setIsDraggingCursor = useTimeline(s => s.setIsDraggingCursor)
+  const setTopBarTimeScale = useTimeline(s => s.setTopBarTimeScale)
   
   return (
     <group
       ref={r => {
         if (r) {
-          setTopBarTimelineScale(r)
+          setTopBarTimeScale(r)
         }
       }}
       position={[-leftBarTrackScaleWidth, 0, -3]}
@@ -59,6 +66,43 @@ export function TopBarTimeScale() {
           // )
         )
         e.stopPropagation()
+      }}
+      onPointerDown={(e) => {
+        const cursorX = e.point.x + (size.width / 2)
+        const cursorTimestampAtInMs = (cursorX / cellWidth) * DEFAULT_DURATION_IN_MS_PER_STEP
+        const { wasPlaying } = togglePlayback(false)
+        wasPlayingRef.current = wasPlaying
+        setCursorTimestampAtInMs(cursorTimestampAtInMs)
+        setIsDraggingCursor(true)
+        jumpAt(cursorTimestampAtInMs)
+        e.stopPropagation()
+        return false
+      }}
+      onPointerUp={(e) => {
+        setIsDraggingCursor(false)
+        if (typeof wasPlayingRef.current === "boolean") {
+          if (wasPlayingRef.current) {
+            togglePlayback(true)
+          }
+        }
+        e.stopPropagation()
+        return false
+      }}
+      onPointerMove={e => {
+        // TODO move this into the whole parent container?
+        // the problem is.. are we still gonna get events
+
+        // console.log(e)
+        // handle the "timeline cursor drag"
+        if (e.pressure > 0) {
+          const cursorX = e.point.x + (size.width / 2)
+          const cursorTimestampAtInMs = (cursorX / cellWidth) * DEFAULT_DURATION_IN_MS_PER_STEP
+          // console.log(`setCursorTimestampAtInMs(${cursorTimestampAtInMs})`)
+          setCursorTimestampAtInMs(cursorTimestampAtInMs)
+          jumpAt(cursorTimestampAtInMs)
+        }
+        e.stopPropagation()
+        return false
       }}
       >
       <group

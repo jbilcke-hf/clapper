@@ -10,7 +10,8 @@ export {
   ImageCell,
   VideoCell,
   TextCell,
-  type SpecializedCellProps
+  type SpecializedCellProps,
+  type JumpAt
 } from "./components"
 
 export {
