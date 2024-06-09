@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import { useFilePicker } from "use-file-picker"
 import { parseClap } from "@aitube/clap"
-import { useTimelineState } from "@aitube/timeline"
+import { useTimeline } from "@aitube/timeline"
 
 
 export function useClapFilePicker() {
-  const setClap = useTimelineState(s => s.setClap)
+  const setClap = useTimeline(s => s.setClap)
   const [isLoading, setIsLoading] = useState(false)
 
   const { openFilePicker, filesContent, loading } = useFilePicker({

@@ -2,7 +2,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 
-import { useTasks } from "../../core/tasks/useTasks"
+import { useTasks } from "../../tasks/useTasks"
 
 // a loading dialog that cannot be closed once it's loading
 export function LoadingDialog({ className = "" }: { className?: string }) {

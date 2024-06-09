@@ -1,12 +1,11 @@
 import { useEffect, useTransition } from "react"
 import { ClapSegment } from "@aitube/clap"
-import { ClapTimeline, useTimelineState, SegmentRenderer } from "@aitube/timeline"
-import { cn } from "@/lib/utils"
+import { ClapTimeline, useTimeline, SegmentRenderer } from "@aitube/timeline"
 
+import { cn } from "@/lib/utils"
 import { useSettings } from "@/controllers/settings"
 import { RenderRequest } from "@/types"
-import { getVideoPrompt } from "@aitube/engine"
-import { getRenderRequestPrompts } from "@/lib/utils/getRenderRequestPrompts"
+import { useMonitor } from "@/controllers/monitor/useMonitor"
 
 const segmentRenderer: SegmentRenderer = async ({
   segment,
@@ -49,25 +48,37 @@ const segmentRenderer: SegmentRenderer = async ({
 export function Timeline() {
   const [_isPending, startTransition] = useTransition()
 
-  const isReady = useTimelineState(s => s.isReady)
+  const isReady = useTimeline(s => s.isReady)
 
   const imageRenderingStrategy = useSettings(s => s.imageRenderingStrategy)
-  const setImageRenderingStrategy = useTimelineState(s => s.setImageRenderingStrategy)
+  const setImageRenderingStrategy = useTimeline(s => s.setImageRenderingStrategy)
   useEffect(() => {
     if (isReady) setImageRenderingStrategy(imageRenderingStrategy)
   }, [isReady, setImageRenderingStrategy, imageRenderingStrategy])
   
   const videoRenderingStrategy = useSettings(s => s.videoRenderingStrategy)
-  const setVideoRenderingStrategy = useTimelineState(s => s.setVideoRenderingStrategy)
+  const setVideoRenderingStrategy = useTimeline(s => s.setVideoRenderingStrategy)
   useEffect(() => {
     if (isReady) setVideoRenderingStrategy(videoRenderingStrategy)
   }, [isReady, setVideoRenderingStrategy, videoRenderingStrategy])
   
   const getSettings = useSettings(s => s.getSettings)
-  const setSegmentRenderer = useTimelineState(s => s.setSegmentRenderer)
+  const setSegmentRenderer = useTimeline(s => s.setSegmentRenderer)
 
+  const jumpAt = useMonitor(s => s.jumpAt)
+  const checkIfPlaying = useMonitor(s => s.checkIfPlaying)
+  const togglePlayback = useMonitor(s => s.togglePlayback)
+
+  const setJumpAt = useTimeline(s => s.setJumpAt)
+  const setIsPlaying = useTimeline(s => s.setIsPlaying)
+  const setTogglePlayback = useTimeline(s => s.setTogglePlayback)
+
+  // this is important: we connect the monitor to the timeline
   useEffect(() => {
     setSegmentRenderer(segmentRenderer)
+    setJumpAt(jumpAt)
+    setIsPlaying(checkIfPlaying)
+    setTogglePlayback(togglePlayback)
   }, [isReady])
   
   return (
