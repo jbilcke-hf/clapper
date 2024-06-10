@@ -1,4 +1,4 @@
-import { ClapEntity, ClapMeta, ClapSegment } from "@aitube/clap"
+import { ClapEntity, ClapMeta, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 
 export enum RenderingStrategy {
 
@@ -24,18 +24,11 @@ export enum RenderingStrategy {
   ON_SCREEN_THEN_ALL = "ON_SCREEN_THEN_ALL",
 }
 
-export type SegmentRenderer = (params: {
-  segment: ClapSegment
+export type SegmentResolver = (segment: ClapSegment) => Promise<ClapSegment>
 
-  // the slice to use for rendering
-  segments: ClapSegment[]
-
-  entities: Record<string, ClapEntity>
-
-  speakingCharactersIds: string[]
-  generalCharactersIds: string[]
-  mainCharacterId?: string
-  mainCharacterEntity?: ClapEntity
-
-  meta: ClapMeta
-}) => Promise<ClapSegment>
+export type RenderableSegmentCategory =
+  | ClapSegmentCategory.VIDEO
+  | ClapSegmentCategory.STORYBOARD
+  | ClapSegmentCategory.DIALOGUE
+  | ClapSegmentCategory.SOUND
+  | ClapSegmentCategory.MUSIC

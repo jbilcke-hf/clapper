@@ -5,6 +5,7 @@ import {
 } from "@/hooks"
 
 import { Cell } from "@/components/cells"
+import { Suspense } from "react";
 
 export function Cells() {
 
@@ -35,7 +36,7 @@ export function Cells() {
   }))
   */
   
-  console.log(`re-rendering <Cells> (${visibleSegments.length} strictly  visible, ${loadedSegments.length} loaded in total)`)
+  // console.log(`re-rendering <Cells> (${visibleSegments.length} strictly  visible, ${loadedSegments.length} loaded in total)`)
 
   return (
     <group position={[
@@ -47,10 +48,11 @@ export function Cells() {
        -4
        ]}>
       {loadedSegments.map((s) =>
-        <Cell
+        <Suspense key={s.id} fallback={<></>}><Cell
           key={s.id}
           segment={s}
         />
+        </Suspense>
       )}
     </group>
   );

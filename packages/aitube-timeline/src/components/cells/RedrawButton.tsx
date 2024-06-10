@@ -22,7 +22,7 @@ export function RedrawButton({
   // onClick: () => void
 }) {
   const [_isPending, startTransition] = useTransition()
-  const renderSegment = useTimeline(s => s.renderSegment)
+  const resolveSegment = useTimeline(s => s.resolveSegment)
 
   const [inProgress, setInProgress] = useState(false)
   // const [isButtonHovered, setButtonHovered] = useState(false)
@@ -33,19 +33,22 @@ export function RedrawButton({
     })
     try {
         // console.log(`click on RedrawButton for segment ` + segment.id)
-        const newSegment = await renderSegment(segment)
+        const newSegment = await resolveSegment(segment)
         // if (ref.current) {
           // update the image src
         // }
 
-        // note that this will poison-pill the current
-        invalidate()
+        // note that this will poison-pill the current element,
+        // since we transform a text mesh node into an image node
+        // TODO: we should only have one mesh to avoid this
+        // invalidate()
       
       // ref.current.url
     } catch (err) {
       
     } finally {
       startTransition(() => {
+        // this fail/trigger an error, since the parent element will be destroyed
         setInProgress(false)
       })
     }

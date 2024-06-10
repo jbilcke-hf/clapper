@@ -20,5 +20,5 @@ export {
 
 export {
   RenderingStrategy,
-  SegmentRenderer
+  SegmentResolver
 } from "./rendering"

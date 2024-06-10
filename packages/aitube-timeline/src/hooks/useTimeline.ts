@@ -1,19 +1,20 @@
 import { create } from "zustand"
 import * as THREE from "three"
-import { ClapEntity, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, newClap, serializeClap } from "@aitube/clap"
+import { ClapEntity, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, ClapSegmentStatus, filterSegments, newClap, serializeClap } from "@aitube/clap"
 
 import { TimelineStore, Tracks } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { removeFinalVideos } from "@/utils/removeFinalVideos"
 import { hslToHex } from "@/utils/hslToHex"
-import { ClapSegmentCategoryHues, ClapSegmentColorScheme, RenderingStrategy, SegmentRenderer } from "@/types"
+import { ClapSegmentCategoryHues, ClapSegmentColorScheme, RenderingStrategy, SegmentResolver } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { getFinalVideo } from "@/utils/getFinalVideo"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 import { findFreeTrack } from "@/utils/findFreeTrack"
+import { RenderableSegmentCategory } from "@/types/rendering"
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -307,6 +308,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     }
 
   },
+  trackSilentChangeInSegments: () => {
+    const { silentChangesInSegments } = get()
+    set({ silentChangesInSegments: silentChangesInSegments + 1 })
+  },
   setTimelineCamera: (timelineCamera?: TimelineCameraImpl) => {
     set({ timelineCamera })
   },
@@ -438,114 +443,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     return objectUrl.length
   },
-  setImageRenderingStrategy: (imageRenderingStrategy: RenderingStrategy) => {
-    set({
-      imageRenderingStrategy: imageRenderingStrategy || RenderingStrategy.ON_DEMAND
-    })
+  setSegmentResolver: (segmentResolver: SegmentResolver) => {
+    set({ segmentResolver })
   },
-  setVideoRenderingStrategy: (videoRenderingStrategy: RenderingStrategy) => {
-    set({
-      videoRenderingStrategy: videoRenderingStrategy || RenderingStrategy.ON_DEMAND
-    })
-  },
-  setSoundRenderingStrategy: (soundRenderingStrategy: RenderingStrategy) => {
-    set({
-      soundRenderingStrategy: soundRenderingStrategy || RenderingStrategy.ON_DEMAND
-    })
-  },
-  setVoiceRenderingStrategy: (voiceRenderingStrategy: RenderingStrategy) => {
-    set({
-      voiceRenderingStrategy: voiceRenderingStrategy || RenderingStrategy.ON_DEMAND
-    })
-  },
-  setMusicRenderingStrategy: (musicRenderingStrategy: RenderingStrategy) => {
-    set({
-      musicRenderingStrategy: musicRenderingStrategy || RenderingStrategy.ON_DEMAND
-    })
-  },
-  setSegmentRenderer: (segmentRenderer: SegmentRenderer) => {
-    set({ segmentRenderer })
-  },
-  renderSegment: async (segment: ClapSegment): Promise<ClapSegment> => {
-    const { segmentRenderer, clap, segments } = get()
-
-    if (!segmentRenderer || !clap) {
-      return segment
-      // throw new Error(`please call setSegmentRender(...) first`)
-    }
-  
-    const entities = clap.entityIndex || {}
-
-    const speakingCharactersIds = segments.map(s =>
-      s.category === ClapSegmentCategory.DIALOGUE ? s.entityId : null
-    ).filter(id => id) as string[]
-
-    const generalCharactersIds = segments.map(s =>
-      s.category === ClapSegmentCategory.CHARACTER ? s.entityId : null
-    ).filter(id => id) as string[]
-
-    const mainCharacterId: string | undefined = speakingCharactersIds.at(0) || generalCharactersIds.at(0) || undefined
-
-    const mainCharacterEntity: ClapEntity | undefined = mainCharacterId ? (entities[mainCharacterId] || undefined) : undefined
-
-    const {
-      id,
-      assetUrl,
-      assetDurationInMs,
-      assetFileFormat,
-      assetSourceType,
-      status
-    } = await segmentRenderer({
-      segment,
-    
-      // the slice to use for rendering
-      segments: filterSegments(ClapSegmentFilteringMode.ANY, segment, segments),
-
-      entities,
-      
-      speakingCharactersIds,
-      generalCharactersIds,
-      mainCharacterId,
-      mainCharacterEntity,
-      meta: clap.meta
-    })
-
-    // note: this actually modifies the old object in-place
-    const newSegment = Object.assign(segment, {
-      id,
-      assetUrl,
-      assetDurationInMs,
-      assetFileFormat,
-      assetSourceType,
-      status
-    })
-
-    return newSegment
-  },
-  findStuffToRender: async () => {
-    // note: this run independently for the manual re-render,
-    // which the user can always do
-    const {
-      imageRenderingStrategy,
-      videoRenderingStrategy,
-      soundRenderingStrategy,
-      voiceRenderingStrategy,
-      musicRenderingStrategy,
-      segments,
-      loadedSegments,
-    } = get()
-
-    if (imageRenderingStrategy === RenderingStrategy.ON_DEMAND) {
-      // for now this has its own workflow, managed elsewhere
-    } else if (imageRenderingStrategy === RenderingStrategy.ON_SCREEN_ONLY) {
-
-    } else if (imageRenderingStrategy === RenderingStrategy.ON_SCREEN_THEN_SURROUNDING) {
-      
-    } else if (imageRenderingStrategy === RenderingStrategy.ON_SCREEN_THEN_ALL) {
-          
-    } else {
-      // do nothing
-    }
+  resolveSegment: async (segment: ClapSegment): Promise<ClapSegment> => {
+    const { segmentResolver } = get()
+    if (!segmentResolver) { return segment }
+    return segmentResolver(segment)
   },
   findFreeTrack: ({
     startTimeInMs,
@@ -556,5 +460,5 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   }): number => {
     const { segments } = get()
     return findFreeTrack({ segments, startTimeInMs, endTimeInMs })
-  }
+  },
 }))

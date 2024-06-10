@@ -5,7 +5,7 @@ import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
-import { RenderingStrategy, SegmentRenderer } from "./rendering"
+import { RenderingStrategy, SegmentResolver } from "./rendering"
 
 export type Track = {
   id: number
@@ -82,6 +82,10 @@ export type TimelineStoreProjectState = {
 
   hoveredSegment?: ClapSegment
 
+  // used to track silent in-line changes in the segments
+  // that way we don't need to re-draw the whole thing
+  silentChangesInSegments: number
+
   isDraggingCursor: boolean
 
   // used to track current camera position, at zoom level 1.0
@@ -134,14 +138,8 @@ export type TimelineStorePreferencesState = {
   topBarTimeScale?: THREE.Group<THREE.Object3DEventMap>
   leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>
 
-  imageRenderingStrategy: RenderingStrategy
-  videoRenderingStrategy: RenderingStrategy
-  soundRenderingStrategy: RenderingStrategy
-  voiceRenderingStrategy: RenderingStrategy
-  musicRenderingStrategy: RenderingStrategy
-
   // those can be overridden
-  segmentRenderer: SegmentRenderer
+  segmentResolver: SegmentResolver
   jumpAt: JumpAt
   isPlaying: IsPlaying
   togglePlayback: TogglePlayback
@@ -160,6 +158,11 @@ export type TimelineStoreModifiers = {
   getVerticalCellPosition: (start: number, end: number) => number
   getSegmentColorScheme: (segment?: ClapSegment) => ClapSegmentColorScheme
   setHoveredSegment: (hoveredSegment?: ClapSegment) => void
+
+  // used to track silent in-line changes in the segments
+  // that way we don't need to re-draw the whole thing
+  trackSilentChangeInSegments: () => void
+
   setTimelineCamera: (timelineCamera?: TimelineCameraImpl) => void
   setTimelineControls: (timelineControls?: TimelineControlsImpl) => void
   setTopBarTimeScale: (topBarTimeScale?: THREE.Group<THREE.Object3DEventMap>) => void
@@ -188,15 +191,9 @@ export type TimelineStoreModifiers = {
     // some extra text to append to the file name
     extraLabel?: string
   }) => Promise<number>
-  setImageRenderingStrategy: (imageRenderingStrategy: RenderingStrategy) => void
-  setVideoRenderingStrategy: (videoRenderingStrategy: RenderingStrategy) => void
-  setSoundRenderingStrategy: (soundRenderingStrategy: RenderingStrategy) => void
-  setVoiceRenderingStrategy: (voiceRenderingStrategy: RenderingStrategy) => void
-  setMusicRenderingStrategy: (musicRenderingStrategy: RenderingStrategy) => void
-  setSegmentRenderer: (segmentRenderer: SegmentRenderer) => void
-  renderSegment: (segment: ClapSegment) => Promise<ClapSegment>
-  findStuffToRender: () => Promise<void>
-  findFreeTrack: (params: { startTimeInMs?: number; endTimeInMs?: number }) => number
+  setSegmentResolver: (segmentResolver: SegmentResolver) => void
+  resolveSegment: (segment: ClapSegment) => Promise<ClapSegment>
+  findFreeTrack: (params: { startTimeInMs?: number; endTimeInMs?: number }) => number 
 }
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers
