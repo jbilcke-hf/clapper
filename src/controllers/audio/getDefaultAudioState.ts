@@ -11,7 +11,10 @@ export function getDefaultAudioState(): AudioState {
   }
   
   const state: AudioState = {
+    isPlaying: false,
     isMuted: false,
+    userDefinedGain: 1.0,
+    currentGain: 1.0,
     audioContext,
     currentlyPlaying: [],
   }

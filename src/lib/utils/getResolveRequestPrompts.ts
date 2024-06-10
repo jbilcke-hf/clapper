@@ -3,7 +3,7 @@ import { getVideoPrompt } from "@aitube/engine"
 
 import { SettingsState } from "@/controllers/settings"
 
-export function getRenderRequestPrompts({
+export function getResolveRequestPrompts({
   settings,
   segment,
   segments,
@@ -17,6 +17,7 @@ export function getRenderRequestPrompts({
   positivePrompt: string
   negativePrompt: string
 } {
+
   const videoPrompt = getVideoPrompt(
     segments,
     entities
@@ -34,7 +35,7 @@ export function getRenderRequestPrompts({
     : segment.category === ClapSegmentCategory.STORYBOARD
     ? settings.imagePromptSuffix
     : ""
-  ].map(x => x.trim()).join(", ")
+  ].map(x => x.trim()).filter(x => x).join(", ")
 
   const negativePrompt =  [
     segment.category === ClapSegmentCategory.VIDEO
@@ -42,7 +43,7 @@ export function getRenderRequestPrompts({
     : segment.category === ClapSegmentCategory.STORYBOARD
     ? settings.imageNegativePrompt
     : ""
-  ].map(x => x.trim()).join(", ")
+  ].map(x => x.trim()).filter(x => x).join(", ")
 
   return {
     positivePrompt,

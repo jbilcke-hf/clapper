@@ -1,13 +1,13 @@
 import Replicate from 'replicate'
 
-import { RenderRequest } from "@/types"
+import { ResolveRequest } from "@/types"
 import { ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
 import { getVideoPrompt } from "@aitube/engine"
 import { fetchContentToBase64 } from '@/lib/utils/fetchContentToBase64'
-import { getRenderRequestPrompts } from '@/lib/utils/getRenderRequestPrompts'
+import { getResolveRequestPrompts } from '@/lib/utils/getResolveRequestPrompts'
 import { decodeOutput } from '@/lib/utils/decodeOutput'
 
-export async function renderSegment(request: RenderRequest): Promise<ClapSegment> {
+export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
   if (!request.settings.replicateApiKey) {
     throw new Error(`Missing API key for "Replicate.com"`)
   }
@@ -19,7 +19,7 @@ export async function renderSegment(request: RenderRequest): Promise<ClapSegment
   
   const segment: ClapSegment = { ...request.segment }
 
-  const prompts = getRenderRequestPrompts(request)
+  const prompts = getResolveRequestPrompts(request)
 
   try {
 

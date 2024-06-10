@@ -1,13 +1,13 @@
 import * as fal from '@fal-ai/serverless-client'
 
-import { FalAiImageSize, RenderRequest } from "@/types"
+import { FalAiImageSize, ResolveRequest } from "@/types"
 import { ClapMediaOrientation, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
 import { getVideoPrompt } from "@aitube/engine"
 import { decodeOutput } from '@/lib/utils/decodeOutput'
 import { FalAiAudioResponse, FalAiImageResponse, FalAiSpeechResponse, FalAiVideoResponse } from './types'
-import { getRenderRequestPrompts } from '@/lib/utils/getRenderRequestPrompts'
+import { getResolveRequestPrompts } from '@/lib/utils/getResolveRequestPrompts'
 
-export async function renderSegment(request: RenderRequest): Promise<ClapSegment> {
+export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
   if (!request.settings.falAiApiKey) {
     throw new Error(`Missing API key for "Fal.ai"`)
   }
@@ -20,8 +20,8 @@ export async function renderSegment(request: RenderRequest): Promise<ClapSegment
 
   let content = ''
 
-  const prompts = getRenderRequestPrompts(request)
-  
+  const prompts = getResolveRequestPrompts(request)
+
   try {
 
     // for doc see: 
@@ -29,10 +29,11 @@ export async function renderSegment(request: RenderRequest): Promise<ClapSegment
     
     if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
 
-      const visualPrompt = getVideoPrompt(
-        request.segments,
-        request.entities
-      )
+            
+      if (!prompts.positivePrompt) {
+        console.error(`resolveSegment: cannot resolve a storyboard with an empty prompt`)
+        return segment
+      }
 
       const imageSize =
         request.meta.orientation === ClapMediaOrientation.SQUARE
@@ -43,10 +44,22 @@ export async function renderSegment(request: RenderRequest): Promise<ClapSegment
 
       let result: FalAiImageResponse | undefined = undefined
 
-      if (request.settings.falAiModelForImage === "fal-ai/pulid" && request.mainCharacterEntity?.imageId) {
+      if (request.settings.falAiModelForImage === "fal-ai/pulid") {
+        if (!request.mainCharacterEntity?.imageId) {
+          // throw new Error(`you selected model ${request.settings.falAiModelForImage}, but no character was found, so skipping`)
+          // console.log(`warning: user selected model ${request.settings.falAiModelForImage}, but no character was found. Falling back to fal-ai/fast-sdxl`)
+          
+          // dirty fix to fallback to a non-face model
+          request.settings.falAiModelForImage = "fal-ai/fast-sdxl"
+        }
+      }
+
+      if (request.settings.falAiModelForImage === "fal-ai/pulid") {
         result = await fal.run(request.settings.falAiModelForImage, {
           input: {
-            prompt: prompts.positivePrompt,
+            reference_images: [{
+              image_url: request.mainCharacterEntity?.imageId
+            }],
             image_size: imageSize,
             num_images: 1,
             sync_mode: true,
@@ -55,12 +68,6 @@ export async function renderSegment(request: RenderRequest): Promise<ClapSegment
         }) as FalAiImageResponse
     
       } else {
-        //throw new Error(`you selected model ${request.settings.falAiModelForImage}, but no character was found, so skipping`)
-        console.log(`warning: user selected model ${request.settings.falAiModelForImage}, but no character was found. Falling back to fal-ai/fast-sdxl`)
-        
-        // dirty fix to fallback to a non-face model
-        request.settings.falAiModelForImage = "fal-ai/fast-sdxl"
-
         result = await fal.run(request.settings.falAiModelForImage, {
           input: {
             prompt: prompts.positivePrompt,

@@ -1,3 +1,4 @@
+import { RuntimeSegment } from "@/types"
 
 export type AudioAnalysis = {
   audioBuffer: AudioBuffer
@@ -7,12 +8,22 @@ export type AudioAnalysis = {
 }
 
 export type AudioState = {
+  isPlaying: boolean
   isMuted: boolean
+  userDefinedGain: number
+  currentGain: number
   audioContext: AudioContext // we keep a single audio context
   currentlyPlaying: CurrentlyPlayingAudioSource[]
 }
 
 export type AudioControls = {
+  play: () => void
+  stop: () => void
+  setUserDefinedGain: (userDefinedGain: number) =>  void
+  setCurrentGain: (currentGain: number) => void
+  mute: () => void
+  unmute: () =>  void
+  syncAudioToCurrentCursorPosition: (activeAudioSegments: RuntimeSegment[]) => void
 }
 
 export type AudioStore = AudioState & AudioControls
@@ -38,6 +49,9 @@ export type CurrentlyPlayingAudioSource = {
    * The actual source node (this allows us to call .stop() on it)
    */
   sourceNode: AudioScheduledSourceNode
+
+  // the original value that was set to the segment
+  originalGain: number
 
   /**
    * The gain node, to control the volume

@@ -37,7 +37,7 @@ export enum ComfyIcuAccelerator {
   H100 = "H100"
 }
 
-export type RenderRequest = {
+export type ResolveRequest = {
   settings: SettingsState
 
   // the reference segment to render (eg. storyboard or video)
@@ -128,11 +128,48 @@ export interface ImageSegment {
     score: number;
 }
 
+export enum SegmentVisibility {
+  // the segment is visible, and the user explicitly requested to render it before the others
+  DEMANDED = "DEMANDED",
+
+  // TODO: add some implicit intermediary priority options
+  // such as SELECTED, HOVERED..
+
+  // the segment (or at least a portion of it) is currently visible in the sliding window
+  VISIBLE = "VISIBLE",
+
+  // the segment is hidden, but not too far from the sliding window
+  BUFFERED = "BUFFERED",
+
+  // fully hidden, far from the sliding window
+  HIDDEN = "HIDDEN"
+}
+
+// used for sort
+export const SegmentVisibilityPriority: Record<SegmentVisibility, number> = {
+    // the segment is visible, and the user explicitly requested to render it before the others
+  [SegmentVisibility.DEMANDED]: 3,
+
+  // TODO: add some implicit intermediary priority options
+  // such as SELECTED, HOVERED..
+
+  // the segment (or at least a portion of it) is currently visible in the sliding window
+  [SegmentVisibility.VISIBLE]: 2,
+
+  // the segment is hidden, but not too far from the sliding window
+  [SegmentVisibility.BUFFERED]: 1,
+
+  // fully hidden, far from the sliding window
+  [SegmentVisibility.HIDDEN]: 0
+}
+
 // some data can only exist inside a browser session (eg. AudioBuffer)
 // or at least data that only make sense on client side
 // we could put things like a mouse hover or selected state in here
 export type BrowserOnlySegmentData = {
   audioBuffer?: AudioBuffer
+
+  visibility?: SegmentVisibility
 }
 
 export type RuntimeSegment = ClapSegment & BrowserOnlySegmentData
