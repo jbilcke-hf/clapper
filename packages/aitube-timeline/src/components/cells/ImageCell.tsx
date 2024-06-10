@@ -19,7 +19,7 @@ export function ImageCell({
   // const ref = useRef<Mesh<BufferGeometry<NormalBufferAttributes>, Material | Material[], Object3DEventMap>>(null)
  
   /*
-  const renderSegment = useTimeline(s => s.renderSegment)
+  const resolveSegment = useTimeline(s => s.resolveSegment)
 
   const [inProgress, setInProgress] = useState(false)
   // const [isButtonHovered, setButtonHovered] = useState(false)
@@ -27,7 +27,7 @@ export function ImageCell({
     setInProgress(true)
     try {
       // console.log(`click on RedrawButton for segment ` + segment.id)
-      const segment = await renderSegment(s)
+      const segment = await resolveSegment(s)
       if (ref.current) {
         // update the image src
       }

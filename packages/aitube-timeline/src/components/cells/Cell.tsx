@@ -11,6 +11,7 @@ import { useHoveredSegment } from "@/hooks/useHoveredSegment"
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
 import { RedrawButton } from "./RedrawButton"
 import { Suspense } from "react"
+import { useSegmentChanges } from "@/hooks/useSegmentChanges"
 
 export function Cell({
   segment: s
@@ -18,6 +19,14 @@ export function Cell({
   segment: ClapSegment
 }) {
 
+
+  // TODO JULIAN: we should optimize this component because it causes
+  // some performance issues due to the numerous re-renders
+
+
+  // this is only used to react to changes in the segment
+  const segmentChanged = useSegmentChanges(s)
+  
   const getSegmentColorScheme = useTimeline(s => s.getSegmentColorScheme)
   const colorScheme = getSegmentColorScheme(s)
 
@@ -129,7 +138,7 @@ export function Cell({
       // onUpdate={(self) => console.log('props have been updated')}
     >
       <Suspense fallback={<group></group>}>
-      <SpecializedCell
+       <SpecializedCell
           segment={s}
           cellWidth={cellWidth}
           cellHeight={cellHeight}
@@ -144,7 +153,10 @@ export function Cell({
           track={tracks[s.track]}
         />
        </Suspense>
-      {(s.category === ClapSegmentCategory.STORYBOARD
+      {
+        // TODO also add the buttons to Dialogue, Sound, Music etc..
+        // also maybe fix the display, as when zoomed out it doesn't look good
+      (s.category === ClapSegmentCategory.STORYBOARD
       || s.category === ClapSegmentCategory.VIDEO)
       && <RedrawButton
         segment={s}

@@ -172,11 +172,10 @@ export const useSegmentLoader = ({
       state.beforeTimeWithoutBufferInMs = beforeTimeWithoutBufferInMs
   
       const visibleSegments = await sliceSegments({
-        segments: loadedSegments, // <- yeah, to save compute we sub-filter this previously filtered set
+        segments: segments, // <- apparently we cannot use the loadedSegments which is supposedly larger? weird
         afterTimeInMs: afterTimeWithoutBufferInMs,
         beforeTimeInMs: beforeTimeWithoutBufferInMs
       })
-  
       setVisibleSegments(visibleSegments)
     }
   }
@@ -190,7 +189,7 @@ export const useSegmentLoader = ({
     // console.log("scheduling a sync(false)")
     // we could also use useInterval, but we need something async-friendly
     const fn = async () => {
-      // we want a relatively "high" refresh rate in order to get smooth camera movement
+      // we want a relatively low refresh rate (high delay) in order to get smooth camera movement
       // eg a rate of 500ms
       //
       // ideally I would say we should also debounce the call, to defer

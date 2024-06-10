@@ -47,6 +47,11 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     currentZoomLevel: 1.0, 
 
     hoveredSegment: undefined,
+    
+    // used to track silent in-line changes in the segments
+    // that way we don't need to re-draw the whole thing
+    silentChangesInSegments: 0,
+
 
     scrollX: 0,
     scrollY: 450,
@@ -72,15 +77,9 @@ export function getDefaultPreferencesState(): TimelineStorePreferencesState {
     leftBarTrackScale: undefined,
     timelineCursor: undefined,
 
-    imageRenderingStrategy: RenderingStrategy.ON_DEMAND,
-    videoRenderingStrategy: RenderingStrategy.ON_DEMAND,
-    soundRenderingStrategy: RenderingStrategy.ON_DEMAND,
-    voiceRenderingStrategy: RenderingStrategy.ON_DEMAND,
-    musicRenderingStrategy: RenderingStrategy.ON_DEMAND,
-
     // note: those are stateless functions, use as empty
     // mocls that are normally overriden at runtime
-    segmentRenderer: async (params) => params.segment,
+    segmentResolver: async (segment) => segment,
     jumpAt: () => {},
     isPlaying: () => false,
     togglePlayback: () => ({ wasPlaying: false, isPlaying: false })

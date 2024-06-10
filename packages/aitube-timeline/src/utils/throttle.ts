@@ -1,24 +1,29 @@
-export function throttle<T>(wait: number, fn: T): T {
-  let inThrottle: boolean
-  let lastFn: ReturnType<typeof setTimeout>
-  let lastTime: number
-  const result = function (this: any) {
-    const context = this
-    const args = arguments
-    if (!inThrottle) {
-      (fn as any).apply(context, args)
-      lastTime = Date.now()
-      inThrottle = true
-    } else {
-      clearTimeout(lastFn)
-      lastFn = setTimeout(() => {
-        if (Date.now() - lastTime >= wait) {
-          (fn as any).apply(context, args)
-          lastTime = Date.now()
-        }
-      }, Math.max(wait - (Date.now() - lastTime), 0))
-    }
-  }
+export const throttle = <R, A extends any[]>(
+  fn: (...args: A) => R,
+  delay: number
+): [(...args: A) => R | undefined, () => void] => {
+  let wait = false;
+  let timeout: undefined | number;
+  let cancelled = false;
 
-  return result as unknown as T
-}
+  return [
+    (...args: A) => {
+      if (cancelled) return undefined;
+      if (wait) return undefined;
+
+      const val = fn(...args);
+
+      wait = true;
+
+      timeout = window.setTimeout(() => {
+        wait = false;
+      }, delay);
+
+      return val;
+    },
+    () => {
+      cancelled = true;
+      clearTimeout(timeout);
+    },
+  ];
+};
