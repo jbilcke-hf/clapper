@@ -12,7 +12,8 @@ import { getCharacterPrompt } from "@/prompts/getCharacterPrompt"
 export function getVideoPrompt(
   segments: ClapSegment[] = [],
   entitiesIndex: Record<string, ClapEntity> = {},
-  extraPositivePrompt: string[] = []
+  extraPositivePrompt: string[] = [],
+  debug: boolean = false,
 ): string {
 
   // console.log("entitiesIndex:", entitiesIndex)
@@ -52,7 +53,7 @@ export function getVideoPrompt(
       // if we can't find the entity, then we are unable
       // to make any assumption about the gender, age or appearance
       if (!entity) {
-        console.log("ERROR: this is a dialogue, but couldn't find the entity!")
+        // console.log("ERROR: this is a dialogue, but couldn't find the entity!")
         return `portrait of a person speaking, blurry background, bokeh`
       }
 
@@ -71,7 +72,7 @@ export function getVideoPrompt(
   
       // if we can't find the location's entity, we default to returning the prompt
       if (!entity) {
-        console.log("ERROR: this is a location, but couldn't find the entity!")
+        // console.log("ERROR: this is a location, but couldn't find the entity!")
         return segment.prompt
       }
 
