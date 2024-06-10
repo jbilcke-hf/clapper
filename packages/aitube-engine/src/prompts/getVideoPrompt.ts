@@ -1,7 +1,9 @@
-import { ClapEntity, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+import { ClapEntity, ClapOutputType, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 
 import { deduplicatePrompt } from "@/utils/deduplicatePrompt"
 import { getCharacterPrompt } from "@/prompts/getCharacterPrompt"
+
+import { SegmentCategoryPromptPriority } from "./priorities"
 
 /**
  * Construct a video prompt from a list of active segments
@@ -22,11 +24,12 @@ export function getVideoPrompt(
   // we ignore unrelated categories (music, dialogue) or non-prompt items (eg. an audio sample)
   const tmp = segments
     .filter(({ category, outputType }) => {
-      if (outputType === "audio") {
+      if (outputType === ClapOutputType.AUDIO) {
         return false
       }
 
       if (
+        category === ClapSegmentCategory.STORYBOARD ||
         category === ClapSegmentCategory.CHARACTER ||
         category === ClapSegmentCategory.LOCATION ||
         category === ClapSegmentCategory.TIME ||
@@ -43,7 +46,13 @@ export function getVideoPrompt(
       return false
     })
 
-  tmp.sort((a, b) => b.label.localeCompare(a.label))
+  // this step is *SUPER* important, it determines the order of the prompt!
+  tmp.sort((segment1, segment2) => {
+    const priority1 = SegmentCategoryPromptPriority[segment1.category || SegmentCategoryPromptPriority.generic] || 0
+    const priority2 = SegmentCategoryPromptPriority[segment2.category || SegmentCategoryPromptPriority.generic] || 0
+    
+    return priority2 - priority1
+  })
 
   let videoPrompt = tmp.map(segment => {
     const entity: ClapEntity | undefined = entitiesIndex[segment?.entityId || ""] || undefined
