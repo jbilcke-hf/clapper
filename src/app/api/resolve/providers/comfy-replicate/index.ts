@@ -1,10 +1,10 @@
 import { ClapSegment, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
 
-import { RenderRequest } from "@/types"
+import { ResolveRequest } from "@/types"
 import { getComfyWorkflow } from "../comfy/getComfyWorkflow"
 import { runWorkflow } from "./runWorkflow"
 
-export async function renderSegment(request: RenderRequest): Promise<ClapSegment> {
+export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
   if (!request.settings.replicateApiKey) {
     throw new Error(`Missing API key for "Replicate.com"`)
   }

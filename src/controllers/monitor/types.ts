@@ -6,6 +6,7 @@ export enum MonitoringMode {
 
 export type MonitorState = {
   mode: MonitoringMode
+  lastTimelineUpdateAtInMs: number
   isPlaying: boolean
   staticVideoRef?: HTMLVideoElement
 }
@@ -34,5 +35,7 @@ export type MonitorControls = {
    * @returns 
    */
   jumpAt: (timeInMs?: number) => void
+
+  setLastTimelineUpdateAtInMs: (lastTimelineUpdateAtInMs: number) => void
 }
 export type MonitorStore = MonitorState & MonitorControls

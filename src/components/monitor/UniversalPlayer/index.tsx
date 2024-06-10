@@ -2,6 +2,7 @@ import { ClapSegment } from "@aitube/clap"
 import { useTimeline } from "@aitube/timeline"
 
 import { StaticPlayer } from "../../monitor/StaticPlayer"
+import { DynamicPlayer } from "../DynamicPlayer"
 
 // TODO: put this in a separate component eg @aitube-player or @aitube/monitor
 export function UniversalPlayer() {
@@ -9,8 +10,12 @@ export function UniversalPlayer() {
 
   const assetUrl: string = finalVideo?.assetUrl || ""
 
-  console.log('finalVideo:', finalVideo)
+  // console.log('finalVideo:', finalVideo)
   
+  // note: I think we are going to only display the final video in specific cases,
+  // and use the dynamic player 99% the time
+
+  /*
   if (assetUrl) {
     return (
       <div className="
@@ -28,16 +33,17 @@ export function UniversalPlayer() {
       </div>
     )
   }
+    */
 
-  console.log(`TODO: render the scene dynamically`)
 
   return (
     <div className="
-      flex flex-col 
+      flex flex-col flex-grow
       items-center justify-center
-      w-full h-full
-    ">
-    <p>TODO</p>
+      w-full h-[calc(100%-60px)]
+      ">
+      <DynamicPlayer
+      />
     </div>
   )
 }

@@ -1,8 +1,11 @@
 "use client"
 
 import { create } from "zustand"
+import { ClapSegment } from "@aitube/clap"
 import { useTimeline } from "@aitube/timeline"
 
+
+import { useAudio } from "../audio/useAudio"
 import { MonitoringMode, MonitorStore } from "./types"
 import { getDefaultMonitorState } from "./getDefaultMonitorState"
 
@@ -34,8 +37,13 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
     isPlaying: boolean
   } => {
     const { isPlaying: wasPlaying, mode, staticVideoRef } = get()
+    const { play, stop } = useAudio.getState()
 
     if (mode === MonitoringMode.NONE) {
+      set({
+        isPlaying: false,
+        lastTimelineUpdateAtInMs: performance.now()
+      })
       return {
         wasPlaying: false,
         isPlaying: false
@@ -43,21 +51,29 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
     }
 
     const isPlaying = typeof forcePlaying === "boolean" ? forcePlaying : !wasPlaying
-    
-    set({
-      isPlaying
-    })
+
 
     if (mode === MonitoringMode.STATIC && staticVideoRef) {
       if (isPlaying) {
-        console.log(`previous value = ` + staticVideoRef.currentTime)
+        //  console.log(`previous value = ` + staticVideoRef.currentTime)
         staticVideoRef.play()
       } else {
         staticVideoRef.pause()
       }
     } else if (mode === MonitoringMode.DYNAMIC) {
-      console.log(`TODO Julian: implement dynamic mode`)
+      // console.log(`TODO Julian: implement dynamic mode`)
+      if (isPlaying) {
+        // restart audio
+        play()
+      } else {
+        stop()
+      }
     }
+        
+    set({
+      isPlaying,
+      lastTimelineUpdateAtInMs: performance.now()
+    })
 
     return {
        wasPlaying,
@@ -79,8 +95,13 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
       // console.log("resetting static video current time")
       staticVideoRef.currentTime = timeInMs / 1000
     } else if (mode === MonitoringMode.DYNAMIC) {
-      console.log(`TODO Julian: implement dynamic mode`)
+      // console.log(`TODO Julian: implement jump`)
+      // for audio I think it will be automatic
     }
+  },
+
+  setLastTimelineUpdateAtInMs: (lastTimelineUpdateAtInMs: number) => {
+    set({ lastTimelineUpdateAtInMs })
   },
 
 }))

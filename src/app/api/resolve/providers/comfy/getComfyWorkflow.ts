@@ -1,10 +1,10 @@
 import { ClapSegmentCategory } from "@aitube/clap"
 import { getVideoPrompt } from "@aitube/engine"
 
-import { ComfyNode, RenderRequest } from "@/types"
+import { ComfyNode, ResolveRequest } from "@/types"
 
 // TODO move this to @aitube/engine or @aitube/engine-comfy
-export function getComfyWorkflow(request: RenderRequest) {
+export function getComfyWorkflow(request: ResolveRequest) {
 
   let comfyWorkflow = "{}"
 

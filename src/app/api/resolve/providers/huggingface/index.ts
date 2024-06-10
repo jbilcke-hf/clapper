@@ -1,13 +1,13 @@
 import { HfInference, HfInferenceEndpoint } from "@huggingface/inference"
 
-import { RenderRequest } from "@/types"
+import { ResolveRequest } from "@/types"
 import { ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
 import { getVideoPrompt } from "@aitube/engine"
 import { blobToBase64DataUri } from "@/lib/utils/blobToBase64DataUri"
-import { getRenderRequestPrompts } from "@/lib/utils/getRenderRequestPrompts"
+import { getResolveRequestPrompts } from "@/lib/utils/getResolveRequestPrompts"
 import { decodeOutput } from "@/lib/utils/decodeOutput"
 
-export async function renderSegment(request: RenderRequest): Promise<ClapSegment> {
+export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
 
   if (!request.settings.huggingFaceApiKey) {
     throw new Error(`Missing API key for "Hugging Face"`)
@@ -22,7 +22,7 @@ export async function renderSegment(request: RenderRequest): Promise<ClapSegment
   
   const segment: ClapSegment = { ...request.segment }
 
-  const prompts = getRenderRequestPrompts(request)
+  const prompts = getResolveRequestPrompts(request)
   
   try {
     const blob: Blob = await hf.textToImage({

@@ -25,7 +25,7 @@ export function SingleIcon({
 
        // icons is a bit too fat, let's thin them out
        // for a bit of flair we increase the stroke width on group hover
-       thickOnHover ? `stroke-1 group-hover:stroke-2` : ``,
+       thickOnHover ? `stroke-[0.5] group-hover:stroke-[1]` : ``,
       className,
     )}
   />

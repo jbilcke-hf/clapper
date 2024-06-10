@@ -14,7 +14,7 @@ import { CurrentlyPlayingAudioSource } from "./types"
 export function startAudioSourceNode({
   audioContext,
   segment,
-  elapsedTimeInMs,
+  cursorTimestampAtInMs,
   onEnded
 }: {
   /**
@@ -32,7 +32,7 @@ export function startAudioSourceNode({
    * 
    * This is the position of the playback cursor in the project, in milliseconds (eg. 20000ms)
    */
-  elapsedTimeInMs: number
+  cursorTimestampAtInMs: number
 
   /**
    * Called whenever the audio source will finish playing
@@ -73,7 +73,7 @@ export function startAudioSourceNode({
   gainNode.connect(audioContext.destination)
 
   // make sure we play the segment at a specific time
-  const startTimeInMs = elapsedTimeInMs - segment.startTimeInMs
+  const startTimeInMs = cursorTimestampAtInMs - segment.startTimeInMs
 
   // convert milliseconds to seconds by dividing by 1000
   source.start(audioContext.currentTime, startTimeInMs >= 1000 ? (startTimeInMs / 1000) : 0)
@@ -82,6 +82,7 @@ export function startAudioSourceNode({
     sourceId: UUID(),
     segmentId: segment.id,
     sourceNode: source,
+    originalGain: segment.outputGain,
     gainNode: gainNode,
   }
 
