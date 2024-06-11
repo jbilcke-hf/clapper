@@ -2,8 +2,6 @@ import Replicate from 'replicate'
 
 import { ResolveRequest } from "@/types"
 import { ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
-import { getVideoPrompt } from "@aitube/engine"
-import { fetchContentToBase64 } from '@/lib/utils/fetchContentToBase64'
 import { getResolveRequestPrompts } from '@/lib/utils/getResolveRequestPrompts'
 import { decodeOutput } from '@/lib/utils/decodeOutput'
 
