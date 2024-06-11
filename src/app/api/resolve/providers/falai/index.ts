@@ -89,6 +89,8 @@ export async function resolveSegment(request: ResolveRequest): Promise<ClapSegme
 
       content = result.images[0]?.url
     } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
+
+      // console.log(`request.settings.falAiModelForVideo = `, request.settings.falAiModelForVideo)
       if (request.settings.falAiModelForVideo !== "fal-ai/stable-video") {
         throw new Error(`only "fal-ai/stable-video" is supported by Clapper for the moment`)
       }

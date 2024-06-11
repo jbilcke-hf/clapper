@@ -11,13 +11,18 @@ export async function decodeOutput(input: any): Promise<string> {
       ? urlOrBase64
       : (await fetchContentToBase64(urlOrBase64))
 
-  // this step is important since some providers store data as PNG,
-  // which is a unreasonable since a few frames quickly add up to 10 Mb,
-  // we can't afford to have a 20 Gb .clap file
-  //
-  // if you really want to have a pro, Hollywood-grade storyboard storage,
-  // this isn't impossible but then you need to use either file paths or remote URL paths
-  const jpegImageAsBase64 = await convertToJpeg(base64Url)
+    
+  if (base64Url.startsWith("data:image/")) {
+    // this step is important since some providers store data as PNG,
+    // which is a unreasonable since a few frames quickly add up to 10 Mb,
+    // we can't afford to have a 20 Gb .clap file
+    //
+    // if you really want to have a pro, Hollywood-grade storyboard storage,
+    // this isn't impossible but then you need to use either file paths or remote URL paths
+    const jpegImageAsBase64 = await convertToJpeg(base64Url)
 
-  return jpegImageAsBase64
+    return jpegImageAsBase64
+  }
+
+  return base64Url
 }

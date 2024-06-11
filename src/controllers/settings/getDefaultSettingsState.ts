@@ -30,12 +30,12 @@ export function getDefaultSettingsState(): SettingsState {
 
     censorNotForAllAudiencesContent: false,
 
-    imagePromptPrefix: "",
-    imagePromptSuffix: "",
-    imageNegativePrompt: "",
-    videoPromptPrefix: "",
-    videoPromptSuffix: "",
-    videoNegativePrompt: "",
+    imagePromptPrefix: "movie screencap, photo",
+    imagePromptSuffix: "high quality, beautiful, amazing, intricate details",
+    imageNegativePrompt: "ugly, imperfect, cropped, low resolution",
+    videoPromptPrefix: "movie screencap, photo",
+    videoPromptSuffix: "high quality, beautiful, amazing, intricate details",
+    videoNegativePrompt: "ugly, imperfect, cropped, low resolution",
 
     assistantModel: "",
     assistantTurboModel: "",
@@ -94,7 +94,7 @@ export function getDefaultSettingsState(): SettingsState {
     stabilityAiModelForMusic: "",
   
     falAiModelForImage: "fal-ai/fast-sdxl", // "fal-ai/fast-lightning-sdxl",
-    falAiModelForVideo: "fal-ai/fast-animatediff/turbo/text-to-video",
+    falAiModelForVideo: "fal-ai/stable-video",
     falAiModelForVoice: "fal-ai/metavoice-v1",
     falAiModelForSound: "fal-ai/stable-audio",
     falAiModelForMusic: "fal-ai/stable-audio",
