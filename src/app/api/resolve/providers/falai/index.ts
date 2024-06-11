@@ -131,7 +131,7 @@ export async function resolveSegment(request: ResolveRequest): Promise<ClapSegme
     ) {
       const result = await fal.run(request.settings.falAiModelForSound, {
         input: {
-          // note how we use the *segment* prompt for music
+          // note how we use the *segment* prompt for music or sound
           prompt: request.segment.prompt,
 
           sync_mode: true,
@@ -139,7 +139,7 @@ export async function resolveSegment(request: ResolveRequest): Promise<ClapSegme
         },
       }) as FalAiAudioResponse
 
-      content = result?.audio_file?.url
+      content = await decodeOutput(result?.audio_file?.url)
     } else if (
       request.segment.category === ClapSegmentCategory.DIALOGUE
     ) {

@@ -33,14 +33,6 @@ export const DynamicPlayer = ({
     upcomingStoryboardSegment
   } = useRenderer(s => s.bufferedSegments)
 
-  console.log(`DynamicPlayer:`, {
-    activeVideoSegment,
-    upcomingVideoSegment,
-    activeStoryboardSegment,
-    upcomingStoryboardSegment
-  })
-
-
   const currentSegment =
     activeVideoSegment?.assetUrl
     ? activeVideoSegment
@@ -123,10 +115,10 @@ export const DynamicPlayer = ({
     return () => {
       clearTimeout(timeoutRef.current)
     }
-}, [
-  currentSegmentKey,
-  preloadSegmentKey
-])
+  }, [
+    currentSegmentKey,
+    preloadSegmentKey
+  ])
 
   return (
     <div className={cn(`@container flex flex-col items-center flex-grow w-full`, className)}>
