@@ -53,7 +53,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     let defaultSegmentDurationInSteps = get().defaultSegmentDurationInSteps
  
-    let totalDurationInMs = 0
+    // let's trust developers for respecting this
+    let totalDurationInMs = Math.max(0, clap.meta.durationInMs || 0)
   
     // TODO: this whole approach is a bit weak,
     // having an heuristic is okay but we should do it:
@@ -62,7 +63,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // do something for images/videos that don't have the right ratio,
     // eg. add black banding
     for (const s of segments) {
-      totalDurationInMs = s.endTimeInMs > totalDurationInMs ? s.endTimeInMs : totalDurationInMs
 
       if (s.category === ClapSegmentCategory.CAMERA) {
         const durationInSteps = (
@@ -89,19 +89,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       defaultSegmentLengthInPixels / defaultMediaRatio
     )
 
-    /*
-    console.log("WTF:", JSON.parse(JSON.stringify({
-      defaultSegmentDurationInSteps,
-      cellWidth,
-      defaultPreviewHeight,
-      defaultCellHeight,
-      "clap.meta.width": clap.meta.width,
-      "(clap.meta.height": clap.meta.height,
-      defaultSegmentLengthInPixels,
-      defaultMediaRatio
-    })))
-    */
-    
     for (const s of segments) {
       
       if (idCollisionDetector.has(s.id)) {
@@ -145,14 +132,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           */
         }
         
-  
-      }
-
-      if (s.category === ClapSegmentCategory.CAMERA) {
-        const durationInSteps = (
-          (s.endTimeInMs - s.startTimeInMs) / DEFAULT_DURATION_IN_MS_PER_STEP
-        )
-        defaultSegmentDurationInSteps = durationInSteps
       }
     }
 
