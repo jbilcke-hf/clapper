@@ -14,7 +14,7 @@ export function StoryboardBuffer({
     <img    
       className={cn(
         `absolute`,
-        `h-full w-full rounded-md overflow-hidden`,
+        `h-full rounded-md overflow-hidden`,
 
         // iseally we could only use the ease-out and duration-150
         // to avoid a weird fade to grey,
