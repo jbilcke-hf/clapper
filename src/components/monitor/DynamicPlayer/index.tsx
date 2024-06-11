@@ -8,9 +8,10 @@ import { useTimeline } from "@aitube/timeline"
 
 import { useRequestAnimationFrame } from "@/lib/hooks"
 import { MonitoringMode } from "@/controllers/monitor/types"
-import { VideoClipBuffer } from "./VideoClipBuffer"
 import { useRenderLoop } from "@/controllers/renderer/useRenderLoop"
 import { useRenderer } from "@/controllers/renderer/useRenderer"
+import { ClapSegment } from "@aitube/clap"
+import { DynamicBuffer } from "./DynamicBuffer"
 
 export const DynamicPlayer = ({
   className,
@@ -25,20 +26,43 @@ export const DynamicPlayer = ({
   // this should only be called once and at only one place in the project!
   useRenderLoop()
 
-  const { activeVideoSegment, upcomingVideoSegment } = useRenderer(s => s.bufferedSegments)
+  const {
+    activeVideoSegment,
+    upcomingVideoSegment,
+    activeStoryboardSegment,
+    upcomingStoryboardSegment
+  } = useRenderer(s => s.bufferedSegments)
 
-  const currentVideoUrl = activeVideoSegment?.assetUrl || ""
+  console.log(`DynamicPlayer:`, {
+    activeVideoSegment,
+    upcomingVideoSegment,
+    activeStoryboardSegment,
+    upcomingStoryboardSegment
+  })
 
-  // the upcoming video we want to preload (note: we just want to preload it, not display it just yet)
-  const preloadVideoUrl = upcomingVideoSegment?.assetUrl || ""
 
-  const [buffer1Value, setBuffer1Value] = useState("")
-  const [buffer2Value, setBuffer2Value] = useState("")
+  const currentSegment =
+    activeVideoSegment?.assetUrl
+    ? activeVideoSegment
+    : activeStoryboardSegment?.assetUrl
+    ? activeStoryboardSegment
+    : undefined
+  
+  // the upcoming asset we want to preload (note: we just want to preload it, not display it just yet)
+  const preloadSegment =
+    upcomingVideoSegment?.assetUrl
+    ? upcomingVideoSegment
+    : upcomingStoryboardSegment?.assetUrl
+    ? upcomingStoryboardSegment
+    : undefined
+
+  const [dataUriBuffer1, setDataUriBuffer1] = useState<ClapSegment | undefined>()
+  const [dataUriBuffer2, setDataUriBuffer2] = useState<ClapSegment | undefined>()
   const [activeBufferNumber, setActiveBufferNumber] = useState(1)
 
   const timeoutRef = useRef<NodeJS.Timeout>()
 
-  const fadeDurationInMs = 300
+  const fadeDurationInMs = 250
 
   useEffect(() => {
     setMonitoringMode(MonitoringMode.DYNAMIC)
@@ -56,57 +80,65 @@ export const DynamicPlayer = ({
 
   })
 
+  // performance optimization:
+  // we only look at the first part since it might be huge
+  // for assets, using a smaller header lookup like 256 or even 512 doesn't seem to be enough
+  const currentSegmentKey = `${currentSegment?.assetUrl || ""}`.slice(0, 1024)
+  const preloadSegmentKey = `${preloadSegment?.assetUrl || ""}`.slice(0, 1024)
+
+  const dataUriBuffer1Key = `${dataUriBuffer1?.assetUrl || ""}`.slice(0, 1024)
+  const dataUriBuffer2Key = `${dataUriBuffer2?.assetUrl || ""}`.slice(0, 1024)
+
   useEffect(() => {
     // trivial case: we are at the initial state
-    if (!buffer1Value && !buffer2Value) {
-      setBuffer1Value(currentVideoUrl)
-      setBuffer2Value(preloadVideoUrl)
+    if (!dataUriBuffer1 && !dataUriBuffer2) {
+      setDataUriBuffer1(currentSegment)
+      setDataUriBuffer2(preloadSegment)
       setActiveBufferNumber(1)
     }
-  }, [buffer1Value, currentVideoUrl, preloadVideoUrl])
+  }, [
+    dataUriBuffer1Key,
+    dataUriBuffer2Key,
+    currentSegmentKey,
+    preloadSegmentKey
+  ])
 
-
-  // console.log("cursorInSteps:", cursorInSteps)
   useEffect(() => {
-    /*
-    console.log("ATTENTION: something changed among those: ", {
-      currentVideoUrl, preloadVideoUrl
-    })
-    */
 
     clearTimeout(timeoutRef.current)
 
     const newActiveBufferNumber = activeBufferNumber === 1 ? 2 : 1
-    // console.log(`our pre-loaded video should already be available in buffer ${newActiveBufferNumber}`)
-
     setActiveBufferNumber(newActiveBufferNumber)
 
     timeoutRef.current = setTimeout(() => {
       // by now one buffer should be visible, and the other should be hidden
       // so let's update the invisible one
       if (newActiveBufferNumber === 2) {
-        setBuffer1Value(preloadVideoUrl)
+        setDataUriBuffer1(preloadSegment)
       } else {
-        setBuffer2Value(preloadVideoUrl)
+        setDataUriBuffer2(preloadSegment)
       }
     }, fadeDurationInMs + 200) // let's add some security in here
 
     return () => {
       clearTimeout(timeoutRef.current)
     }
-  }, [currentVideoUrl, preloadVideoUrl])
+}, [
+  currentSegmentKey,
+  preloadSegmentKey
+])
 
   return (
     <div className={cn(`@container flex flex-col flex-grow w-full`, className)}>
-      <VideoClipBuffer
-        src={buffer1Value}
+      <DynamicBuffer
+        segment={dataUriBuffer1}
         isPlaying={isPlaying}
-        className={cn(activeBufferNumber === 1 ? `opacity-100` : `opacity-0`)}
+        isVisible={activeBufferNumber === 1}
       />
-      <VideoClipBuffer
-        src={buffer2Value}
+      <DynamicBuffer
+        segment={dataUriBuffer2}
         isPlaying={isPlaying}
-        className={cn(activeBufferNumber === 2 ? `opacity-100` : `opacity-0`)}
+        isVisible={activeBufferNumber === 2}
       />
     </div>
   )
