@@ -157,7 +157,11 @@ export function Cell({
         // TODO also add the buttons to Dialogue, Sound, Music etc..
         // also maybe fix the display, as when zoomed out it doesn't look good
       (s.category === ClapSegmentCategory.STORYBOARD
-      || s.category === ClapSegmentCategory.VIDEO)
+      || s.category === ClapSegmentCategory.VIDEO
+      || s.category === ClapSegmentCategory.DIALOGUE
+      || s.category === ClapSegmentCategory.SOUND
+      || s.category === ClapSegmentCategory.MUSIC
+      )
       && <RedrawButton
         segment={s}
         cellWidth={cellWidth}
