@@ -9,6 +9,9 @@ import { filterSegmentsWithinRange } from "./filterSegmentsWithinRange"
  * - ANY: any end of a segment must be within the provided segment's range
  * - BOTH: both ends of a segment must be within the provided segment's range
  * 
+ * Note: we use a loose definition for the input segment,
+ * to get a bit more flexibility
+ * 
  * @param mode 
  * @param segment 
  * @param segments 
@@ -17,7 +20,11 @@ import { filterSegmentsWithinRange } from "./filterSegmentsWithinRange"
  */
 export function filterSegments(
   mode: ClapSegmentFilteringMode,
-  segment?: ClapSegment,
+  segment?: {
+    startTimeInMs: number
+    endTimeInMs: number
+    category?: ClapSegmentCategory
+  },
   segments?: ClapSegment[],
   category?: ClapSegmentCategory
 ): ClapSegment[] {

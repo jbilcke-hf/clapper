@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "description": "Types and helpers to manipulate .clap files",
   "scripts": {
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=yaml && bun run build:declaration",
@@ -14,12 +14,12 @@
   },
   "devDependencies": {
     "bun-types": "latest",
-    "prettier": "^3.3.0",
+    "prettier": "^3.3.2",
     "rimraf": "^5.0.7",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
-    "yaml": "^2.4.3"
+    "yaml": "^2.4.5"
   },
   "dependencies": {
     "pure-uuid": "^1.8.1"
@@ -29,7 +29,9 @@
     "url": "https://github.com/jbilcke-hf/aitube-clap.git"
   },
   "keywords": [
+    "Clapper.app",
     "OpenClap",
+    "AiTube.at",
     "AI cinema",
     "file format",
     "specification"
