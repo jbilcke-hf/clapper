@@ -5,6 +5,7 @@ export enum MonitoringMode {
 }
 
 export type MonitorState = {
+  shortcutsAreBound: boolean
   mode: MonitoringMode
   lastTimelineUpdateAtInMs: number
   isPlaying: boolean
@@ -12,6 +13,9 @@ export type MonitorState = {
 }
 
 export type MonitorControls = {
+
+  bindShortcuts: () => void
+
   setMonitoringMode: (mode: MonitoringMode) => void
 
   setStaticVideoRef: (staticVideoRef: HTMLVideoElement) => void

@@ -4,7 +4,7 @@
 export const HARD_LIMIT_NB_MAX_ASSETS_TO_GENERATE_IN_PARALLEL = 32
 
 export const APP_NAME = "Clapper AI"
-export const APP_REVISION = "r2024-06-11"
+export const APP_REVISION = "r20240611-2256"
 
 export const APP_DOMAIN = "Clapper.app"
 export const APP_LINK = "https://clapper.app"

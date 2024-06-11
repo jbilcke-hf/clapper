@@ -4,11 +4,11 @@ import { useEffect, useState } from "react"
 import Head from "next/head"
 import Script from "next/script"
 
-import { Main } from "./main"
+import { Embed } from "./embed"
 
 // https://nextjs.org/docs/pages/building-your-application/optimizing/fonts 
 
-export default function MainPage() {
+export default function EmbedPage() {
   const [isLoaded, setLoaded] = useState(false)
   useEffect(() => { setLoaded(true) }, [])
   return (
@@ -26,7 +26,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WD55Z2KN"
 height="0" width="0" style={{ display: "none", visibility: "hidden" }}></iframe></noscript>
       <main>
-        {isLoaded && <Main />}
+        {isLoaded && <Embed />}
       </main>
     </>
   )

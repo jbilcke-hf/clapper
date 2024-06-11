@@ -11,7 +11,32 @@ import { getDefaultMonitorState } from "./getDefaultMonitorState"
 
 export const useMonitor = create<MonitorStore>((set, get) => ({
   ...getDefaultMonitorState(),
+  
+  bindShortcuts: () => {
+    if (get().shortcutsAreBound) { return }
 
+    document.addEventListener("keydown", (event) => {
+      const element = event.target as unknown as HTMLElement
+
+      if (event.code === "Space" &&
+        // those exception are important, otherwise we won't be able to add spaces
+        // in the search boxes, edit fields, or even the script editor
+        element.nodeName !== "INPUT" &&
+        element.nodeName !== "TEXTAREA") {
+        console.log("[SHORTCUT DETECTED] User pressed space key outside a text input: toggling video playback")
+
+        // prevent the default behavior, which is strange (automatic scroll to the buttom)
+        // https://www.jankollars.com/posts/preventing-space-scrolling/
+        event.preventDefault()
+
+        get().togglePlayback()
+      }
+    })
+
+    set({
+      shortcutsAreBound: true
+    })
+  },
   setMonitoringMode: (mode: MonitoringMode) => {
     set({ mode })
   },
@@ -105,3 +130,9 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
   },
 
 }))
+
+setTimeout(() => {
+  if (typeof document !== "undefined") {
+    useMonitor.getState().bindShortcuts()
+  }
+}, 0)

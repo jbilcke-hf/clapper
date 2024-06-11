@@ -1,14 +1,15 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { ClapOutputType, ClapProject, ClapScene, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, newSegment } from "@aitube/clap"
-
-import { Input } from "@/components/ui/input"
-
-import { queryAssistant } from "@/app/api/assistant/providers/openai/askAssistant"
-import { useSettingsa } from "@/controllers/settings"
+import { ClapOutputType, ClapProject, ClapSegment, ClapSegmentCategory, newSegment } from "@aitube/clap"
 import { DEFAULT_DURATION_IN_MS_PER_STEP, findFreeTrack, useTimeline } from "@aitube/timeline"
+
 import { useAssistant } from "@/controllers/assistant/useAssistant"
+import { queryAssistant } from "@/app/api/assistant/providers/openai/askAssistant"
+import { useSettings } from "@/controllers/settings"
+
+import { ChatBubble } from "./ChatBubble"
+import { Input } from "../ui/input"
 
 export function ChatView() {
   const [_isPending, startTransition] = useTransition()
@@ -20,9 +21,9 @@ export function ChatView() {
   */
   
   const [draft, setDraft] = useState("")
-  const runCommand = useAssistant((state) => state.runCommand)
-  const history = useAssistant((state) => state.history)
-  const addEventToHistory = useAssistant((state) => state.addEventToHistory)
+  const runCommand = useAssistant((s) => s.runCommand)
+  const history = useAssistant((s) => s.history)
+  const addEventToHistory = useAssistant((s) => s.addEventToHistory)
 
   /*
   const updateSegment = useApp((state) => state.updateSegment)
@@ -142,7 +143,8 @@ export function ChatView() {
         })
         console.log("Creating new existing segment:", newSeg)
   
-        addSegment(newSeg)
+        console.log(`TODO Julian: add the segment!!`)
+        // addSegment(newSeg)
 
         addEventToHistory({
           senderId: "assistant",
@@ -157,11 +159,16 @@ export function ChatView() {
           label: prompt,
         })
   
+        console.log(`TODO Julian: update the segment!!`)
+        // addSegment(newSeg)
+
+        /*
         updateSegment({
           ...match,
           prompt,
           label: prompt,
         })
+          */
 
         addEventToHistory({
           senderId: "assistant",

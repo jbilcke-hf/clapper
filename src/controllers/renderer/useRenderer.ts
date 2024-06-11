@@ -46,8 +46,7 @@ export const useRenderer = create<RendererStore>((set, get) => ({
     const segments = clapSegments as RuntimeSegment[]
   
     const results: BufferedSegments = getDefaultBufferedSegments()
-    // console.log("useRenderer: computeBufferedSegments() called")
-  
+
   
     // we could use a temporal index to keep things efficient here
     // thiere is this relatively recent algorithm, the IB+ Tree, 
@@ -60,7 +59,6 @@ export const useRenderer = create<RendererStore>((set, get) => ({
   
       if (inActiveShot) {
         const isActiveVideo = segment.category === ClapSegmentCategory.VIDEO && segment.assetUrl
-        // const isActiveStoryboard = segment.category === ClapSegmentCategory.STORYBOARD && segment.assetUrl
         if (isActiveVideo) {
           results.activeSegments.push(segment)
           results.activeVideoSegment = segment
@@ -79,6 +77,14 @@ export const useRenderer = create<RendererStore>((set, get) => ({
           results.activeAudioSegments.push(segment)
           results.activeSegmentsCacheKey = getSegmentCacheKey(segment, results.activeSegmentsCacheKey)
         }
+
+        const isActiveStoryboard = segment.category === ClapSegmentCategory.STORYBOARD && segment.assetUrl
+        if (isActiveStoryboard) {
+          results.activeSegments.push(segment)
+          results.activeStoryboardSegment = segment
+          results.activeSegmentsCacheKey = getSegmentCacheKey(segment, results.activeSegmentsCacheKey)
+        }
+  
       }
       
       const inUpcomingShot =
@@ -107,6 +113,14 @@ export const useRenderer = create<RendererStore>((set, get) => ({
           results.upcomingAudioSegments.push(segment)
           results.upcomingSegmentsCacheKey = getSegmentCacheKey(segment, results.upcomingSegmentsCacheKey)
         }
+
+        const isUpcomingStoryboard = segment.category === ClapSegmentCategory.STORYBOARD && segment.assetUrl
+        if (isUpcomingStoryboard) {
+          results.upcomingSegments.push(segment)
+          results.upcomingStoryboardSegment = segment
+          results.upcomingSegmentsCacheKey = getSegmentCacheKey(segment, results.upcomingSegmentsCacheKey)
+        }
+  
       }
         
     }
