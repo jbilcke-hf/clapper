@@ -8,6 +8,8 @@ import { ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode } from "@/ty
  * - ANY: any end of a segment must be within the range
  * - BOTH: both ends of a segment must be within the range
  * 
+ * Note: this is a strict inclusion
+ * 
  * @param mode 
  * @param startTimeInMs 
  * @param endTimeInMs 
@@ -29,27 +31,27 @@ export function filterSegmentsWithinRange(
 
   switch (mode) {
     case ClapSegmentFilteringMode.START:
-      return array.filter(s => (startTimeInMs <= s.startTimeInMs && s.startTimeInMs <= endTimeInMs) && (category ? s.category === category : true))
+      return array.filter(s => (startTimeInMs <= s.startTimeInMs && s.startTimeInMs < endTimeInMs) && ((category && s?.category) ? s.category === category : true))
     case ClapSegmentFilteringMode.END:
-      return array.filter(s => (startTimeInMs <= s.endTimeInMs && s.endTimeInMs <= endTimeInMs) && (category ? s.category === category : true))
+      return array.filter(s => (startTimeInMs < s.endTimeInMs && s.endTimeInMs <= endTimeInMs) && ((category && s?.category) ? s.category === category : true))
     case ClapSegmentFilteringMode.BOTH:
-      return array.filter(s => (startTimeInMs <= s.startTimeInMs && s.endTimeInMs <= endTimeInMs) && (category ? s.category === category : true))
+      return array.filter(s => (startTimeInMs <= s.startTimeInMs && s.endTimeInMs <= endTimeInMs) && ((category && s?.category) ? s.category === category : true))
 
       // less efficient version is:
       // array.filter(s =>
-      //   (startTimeInMs <= s.startTimeInMs && s.startTimeInMs <= endTimeInMs)
+      //   (startTimeInMs <= s.startTimeInMs && s.startTimeInMs < endTimeInMs)
       //   &&
-      //   (startTimeInMs <= s.endTimeInMs && s.endTimeInMs <= endTimeInMs)
+      //   (startTimeInMs < s.endTimeInMs && s.endTimeInMs <= endTimeInMs)
       //   &&
-      //   (category ? s.category === category : true)
+      //   ((category && s?.category) ? s.category === category : true)
       // )
 
     case ClapSegmentFilteringMode.ANY:
       return array.filter(s => (
-          (startTimeInMs <= s.startTimeInMs && s.startTimeInMs <= endTimeInMs)
+          (startTimeInMs <= s.startTimeInMs && s.startTimeInMs < endTimeInMs)
           ||
-          (startTimeInMs <= s.endTimeInMs && s.endTimeInMs <= endTimeInMs)
-        ) && (category ? s.category === category : true)
+          (startTimeInMs < s.endTimeInMs && s.endTimeInMs <= endTimeInMs)
+        ) && ((category && s?.category) ? s.category === category : true)
       )
     default:
       throw new Error(`unknown ClapSegmentFilteringMode "${mode}"`)
