@@ -1,20 +1,19 @@
 import { create } from "zustand"
 import * as THREE from "three"
-import { ClapEntity, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, ClapSegmentStatus, filterSegments, newClap, serializeClap } from "@aitube/clap"
+import { ClapEntity, ClapProject, ClapSegment, ClapSegmentCategory, newClap, serializeClap } from "@aitube/clap"
 
 import { TimelineStore, Tracks } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { removeFinalVideos } from "@/utils/removeFinalVideos"
 import { hslToHex } from "@/utils/hslToHex"
-import { ClapSegmentCategoryHues, ClapSegmentColorScheme, RenderingStrategy, SegmentResolver } from "@/types"
+import { ClapSegmentCategoryHues, ClapSegmentColorScheme, SegmentResolver } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { getFinalVideo } from "@/utils/getFinalVideo"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 import { findFreeTrack } from "@/utils/findFreeTrack"
-import { RenderableSegmentCategory } from "@/types/rendering"
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
