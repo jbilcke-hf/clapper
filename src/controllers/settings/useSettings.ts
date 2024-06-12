@@ -84,6 +84,18 @@ export const useSettings = create<SettingsStore>()(
       setElevenLabsApiKey: (elevenLabsApiKey?: string) => {
         set({ elevenLabsApiKey: getValidString(elevenLabsApiKey, getDefaultSettingsState().elevenLabsApiKey) })
       },
+      setKitsAiApiKey: (kitsAiApiKey?: string) => {
+        set({ kitsAiApiKey: getValidString(kitsAiApiKey, getDefaultSettingsState().kitsAiApiKey) })
+      },
+      setCohereApiKey: (cohereApiKey?: string) => {
+        set({ cohereApiKey: getValidString(cohereApiKey, getDefaultSettingsState().cohereApiKey) })
+      },
+      setMistralAiApiKey: (mistralAiApiKey?: string) => {
+        set({ mistralAiApiKey: getValidString(mistralAiApiKey, getDefaultSettingsState().mistralAiApiKey) })
+      },
+      setFireworksAiApiKey: (fireworksAiApiKey?: string) => {
+        set({ fireworksAiApiKey: getValidString(fireworksAiApiKey, getDefaultSettingsState().fireworksAiApiKey) })
+      },
       setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => {
         set({ censorNotForAllAudiencesContent: getValidBoolean(censorNotForAllAudiencesContent, getDefaultSettingsState().censorNotForAllAudiencesContent) })
       },
@@ -269,6 +281,24 @@ export const useSettings = create<SettingsStore>()(
       setStabilityAiModelForMusic: (stabilityAiModelForMusic?: string) => {
         set({ stabilityAiModelForMusic: getValidString(stabilityAiModelForMusic, getDefaultSettingsState().stabilityAiModelForMusic) })
       },
+      setFireworksAiModelForAssistant: (fireworksAiModelForAssistant?: string) => {
+        set({ fireworksAiModelForAssistant: getValidString(fireworksAiModelForAssistant, getDefaultSettingsState().fireworksAiModelForAssistant) })
+      },
+      setFireworksAiModelForImage: (fireworksAiModelForImage?: string) => {
+        set({ fireworksAiModelForImage: getValidString(fireworksAiModelForImage, getDefaultSettingsState().fireworksAiModelForImage) })
+      },
+      setFireworksAiModelForVideo: (fireworksAiModelForVideo?: string) => {
+        set({ fireworksAiModelForVideo: getValidString(fireworksAiModelForVideo, getDefaultSettingsState().fireworksAiModelForVideo) })
+      },
+      setFireworksAiModelForVoice: (fireworksAiModelForVoice?: string) => {
+        set({ fireworksAiModelForVoice: getValidString(fireworksAiModelForVoice, getDefaultSettingsState().fireworksAiModelForVoice) })
+      },
+      setFireworksAiModelForSound: (fireworksAiModelForSound?: string) => {
+        set({ fireworksAiModelForSound: getValidString(fireworksAiModelForSound, getDefaultSettingsState().fireworksAiModelForSound) })
+      },
+      setFireworksAiModelForMusic: (fireworksAiModelForMusic?: string) => {
+        set({ fireworksAiModelForMusic: getValidString(fireworksAiModelForMusic, getDefaultSettingsState().fireworksAiModelForMusic) })
+      },
       setFalAiModelForImage: (falAiModelForImage?: string) => {
         set({ falAiModelForImage: getValidString(falAiModelForImage, getDefaultSettingsState().falAiModelForImage) })
       },
@@ -338,6 +368,15 @@ export const useSettings = create<SettingsStore>()(
       setElevenLabsModelForSound: (elevenLabsModelForSound?: string) => {
         set({ elevenLabsModelForSound: getValidString(elevenLabsModelForSound, getDefaultSettingsState().elevenLabsModelForSound) })
       },
+      setCohereModelForAssistant: (cohereModelForAssistant?: string) => {
+        set({ cohereModelForAssistant: getValidString(cohereModelForAssistant, getDefaultSettingsState().cohereModelForAssistant) })
+      },
+      setMistralAiModelForAssistant: (mistralAiModelForAssistant?: string) => {
+        set({ mistralAiModelForAssistant: getValidString(mistralAiModelForAssistant, getDefaultSettingsState().mistralAiModelForAssistant) })
+      },
+      setKitsAiModelForVoice: (kitsAiModelForVoice?: string) => {
+        set({ kitsAiModelForVoice: getValidString(kitsAiModelForVoice, getDefaultSettingsState().kitsAiModelForVoice) })
+      },
       getSettings: (): SettingsState => {
         const state = get()
         const defaultSettings = getDefaultSettingsState()
@@ -362,6 +401,10 @@ export const useSettings = create<SettingsStore>()(
           googleApiKey: state.googleApiKey || defaultSettings.googleApiKey,
           anthropicApiKey: state.anthropicApiKey || defaultSettings.anthropicApiKey,
           elevenLabsApiKey: state.elevenLabsApiKey || defaultSettings.elevenLabsApiKey,
+          cohereApiKey: state.cohereApiKey || defaultSettings.cohereApiKey,
+          mistralAiApiKey: state.mistralAiApiKey || defaultSettings.mistralAiApiKey,
+          kitsAiApiKey: state.kitsAiApiKey || defaultSettings.kitsAiApiKey,
+          fireworksAiApiKey: state.fireworksAiApiKey || defaultSettings.fireworksAiApiKey,
           censorNotForAllAudiencesContent: state.censorNotForAllAudiencesContent || defaultSettings.censorNotForAllAudiencesContent,
           imagePromptPrefix: state.imagePromptPrefix || defaultSettings.imagePromptPrefix,
           imagePromptSuffix: state.imagePromptSuffix || defaultSettings.imagePromptSuffix,
@@ -415,6 +458,12 @@ export const useSettings = create<SettingsStore>()(
           stabilityAiModelForVoice: state.stabilityAiModelForVoice || defaultSettings.stabilityAiModelForVoice,
           stabilityAiModelForSound: state.stabilityAiModelForSound || defaultSettings.stabilityAiModelForSound,
           stabilityAiModelForMusic: state.stabilityAiModelForMusic || defaultSettings.stabilityAiModelForMusic,
+          fireworksAiModelForAssistant: state.fireworksAiModelForAssistant || defaultSettings.fireworksAiModelForAssistant,
+          fireworksAiModelForImage: state.fireworksAiModelForImage || defaultSettings.fireworksAiModelForImage,
+          fireworksAiModelForVideo: state.fireworksAiModelForVideo || defaultSettings.fireworksAiModelForVideo,
+          fireworksAiModelForVoice: state.fireworksAiModelForVoice || defaultSettings.fireworksAiModelForVoice,
+          fireworksAiModelForSound: state.fireworksAiModelForSound || defaultSettings.fireworksAiModelForSound,
+          fireworksAiModelForMusic: state.fireworksAiModelForMusic || defaultSettings.fireworksAiModelForMusic,
           falAiModelForImage: state.falAiModelForImage || defaultSettings.falAiModelForImage,
           falAiModelForVideo: state.falAiModelForVideo || defaultSettings.falAiModelForVideo,
           falAiModelForVoice: state.falAiModelForVoice || defaultSettings.falAiModelForVoice,
@@ -438,6 +487,9 @@ export const useSettings = create<SettingsStore>()(
           anthropicModelForAssistant: state.anthropicModelForAssistant || defaultSettings.anthropicModelForAssistant,
           elevenLabsModelForVoice: state.elevenLabsModelForVoice || defaultSettings.elevenLabsModelForVoice,
           elevenLabsModelForSound: state.elevenLabsModelForSound || defaultSettings.elevenLabsModelForSound,
+          cohereModelForAssistant: state.cohereModelForAssistant || defaultSettings.cohereModelForAssistant,
+          mistralAiModelForAssistant: state.mistralAiModelForAssistant || defaultSettings.mistralAiModelForAssistant,
+          kitsAiModelForVoice: state.kitsAiModelForVoice || defaultSettings.kitsAiModelForVoice,
         }
       },
     }),

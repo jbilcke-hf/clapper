@@ -34,12 +34,13 @@ export type AssistantState = {
   socket?: WebSocket
 }
 export type AssistantControls = {
+
   /**
    * Toggle the speech to text on or off
    * 
    * @returns true if operation succeeded, false otherwise
    */
-  toggleVoice: () => Promise<boolean>
+  // toggleVoice: () => Promise<boolean>
 
   /**
    * Run a prompt command (which can come from a transcript or somewhere else)
@@ -59,6 +60,8 @@ export type AssistantControls = {
   addEventToHistory: (event: Partial<ChatEvent>) => ChatEvent
 
   clearHistory: () => void
+
+  processMessage: (input: string) => void
 }
 
 export type AssistantStore =

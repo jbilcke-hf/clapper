@@ -20,6 +20,10 @@ export function getDefaultSettingsState(): SettingsState {
     groqApiKey: "",
     anthropicApiKey: "",
     elevenLabsApiKey: "",
+    kitsAiApiKey: "",
+    cohereApiKey: "",
+    mistralAiApiKey: "",
+    fireworksAiApiKey: "",
 
     assistantProvider: ComputeProvider.NONE,
     imageProvider: ComputeProvider.NONE,
@@ -93,6 +97,13 @@ export function getDefaultSettingsState(): SettingsState {
     stabilityAiModelForSound: "",
     stabilityAiModelForMusic: "",
   
+    fireworksAiModelForAssistant: "",
+    fireworksAiModelForImage: "",
+    fireworksAiModelForVideo: "",
+    fireworksAiModelForVoice: "",
+    fireworksAiModelForSound: "",
+    fireworksAiModelForMusic: "",
+  
     falAiModelForImage: "fal-ai/fast-sdxl", // "fal-ai/fast-lightning-sdxl",
     falAiModelForVideo: "fal-ai/stable-video",
     falAiModelForVoice: "fal-ai/metavoice-v1",
@@ -122,6 +133,10 @@ export function getDefaultSettingsState(): SettingsState {
 
     elevenLabsModelForVoice: "v1",
     elevenLabsModelForSound: "v1",
+
+    kitsAiModelForVoice: "",
+    cohereModelForAssistant: "",
+    mistralAiModelForAssistant: ""
   }
   return state
 }

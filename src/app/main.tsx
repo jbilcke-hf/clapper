@@ -21,6 +21,7 @@ import { useUI } from "@/controllers/ui"
 import { TopBar } from "@/components/toolbars/top-bar"
 import { Timeline } from "@/components/core/timeline"
 import { useIO } from "@/controllers/io/useIO"
+import { ChatView } from "@/components/assistant/ChatView"
 
 type DroppableThing = { files: File[] }
 
@@ -71,23 +72,31 @@ function MainContent() {
           `flex flex-row flex-grow w-full overflow-hidden`, 
           isEmpty ? "opacity-0" : "opacity-100"
         )}>
-          <ReflexContainer orientation="horizontal">
-            <ReflexElement
-               minSize={showTimeline ? 100 : 1}
-              >
-              <Monitor />
+          <ReflexContainer orientation="vertical">
+          
+            <ReflexElement>
+              <ReflexContainer orientation="horizontal">
+                <ReflexElement
+                  minSize={showTimeline ? 100 : 1}
+                  >
+                  <Monitor />
+                </ReflexElement>
+                <ReflexSplitter />
+                <ReflexElement
+                  size={showTimeline ? 400 : 1}
+                  minSize={showTimeline ? 100 : 1}
+                  maxSize={showTimeline ? 1600 : 1}
+                  >
+                  <Timeline />
+                </ReflexElement>
+              </ReflexContainer>
             </ReflexElement>
-            <ReflexSplitter />
-            <ReflexElement
-              size={showTimeline ? 400 : 1}
-              minSize={showTimeline ? 100 : 1}
-              maxSize={showTimeline ? 1600 : 1}
-              >
-              <Timeline />
-            </ReflexElement>
-            {/* showChat && <ReflexSplitter /> */}
-            {/* showChat && <ReflexElement size={300}><ChatView /></ReflexElement> */}
+
+          {showChat && <ReflexSplitter />}
+          {showChat && <ReflexElement size={300}><ChatView /></ReflexElement>}
+
           </ReflexContainer>
+          
         </div>
 
       <SettingsDialog />

@@ -44,7 +44,25 @@ export const estimatedMetrics: Record<ComputeProvider, Record<string, ProviderMe
   [ComputeProvider.STABILITYAI]: {
     // TODO list the most popular models
   },
+  [ComputeProvider.FIREWORKSAI]: {
+
+  },
   [ComputeProvider.GROQ]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.KITSAI]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.ANTHROPIC]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.GOOGLE]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.MISTRALAI]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.COHERE]: {
     // TODO list the most popular models
   },
   [ComputeProvider.FALAI]: {

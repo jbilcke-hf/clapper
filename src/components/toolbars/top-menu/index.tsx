@@ -7,6 +7,7 @@ import { TopMenuVideo } from "./video"
 import { TopMenuVoice } from "./voice"
 import { TopMenuSound } from "./sound"
 import { TopMenuMusic } from "./music"
+import { TopMenuAssistant } from "./assistant"
 
 import { TopMenuView } from "./view"
 import { cn } from "@aitube/timeline"
@@ -30,6 +31,7 @@ export function TopMenu() {
       <TopMenuVoice />
       <TopMenuSound />
       <TopMenuMusic />
+      <TopMenuAssistant />
       <TopMenuView />
       <div className={cn(`
         flex flex-row flex-grow

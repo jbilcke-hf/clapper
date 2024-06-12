@@ -91,8 +91,8 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     // segments visible on screen are show first,
     // then those nearby, then the hidden ones
     const segments: RuntimeSegment[] = ([...allSegments] as RuntimeSegment[]).sort((segment1, segment2) => {
-      const priority1 = SegmentVisibilityPriority[segment1.visibility || SegmentVisibility.HIDDEN] || 0
-      const priority2 = SegmentVisibilityPriority[segment2.visibility || SegmentVisibility.HIDDEN] || 0
+      const priority1 = (SegmentVisibilityPriority as any)[segment1.visibility || SegmentVisibility.HIDDEN] || 0
+      const priority2 = (SegmentVisibilityPriority as any)[segment2.visibility || SegmentVisibility.HIDDEN] || 0
       
       return priority2 - priority1
     })
@@ -278,7 +278,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       // throw new Error(`please call setSegmentRender(...) first`)
     }
 
-    const shotSegments = filterSegments(
+    const shotSegments: ClapSegment[] = filterSegments(
       ClapSegmentFilteringMode.ANY,
       segment,
       allSegments
