@@ -34,6 +34,9 @@ export function parseComputeProvider(input: any, defaultVendor?: ComputeProvider
   else if (unknownString === "stabilityai") {
     vendor = ComputeProvider.STABILITYAI
   } 
+  else if (unknownString === "fireworksai") {
+    vendor = ComputeProvider.FIREWORKSAI
+  }
   else if (unknownString === "groq") {
     vendor = ComputeProvider.GROQ
   } 

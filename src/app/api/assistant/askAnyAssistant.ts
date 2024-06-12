@@ -1,13 +1,24 @@
 "use server"
 
-import { ClapSegmentCategory, ClapScene, } from "@aitube/clap"
-import { ChatOpenAI } from "@langchain/openai"
-
+import { ClapSegmentCategory } from "@aitube/clap"
+import { RunnableLike } from "@langchain/core/runnables"
+import { ChatPromptValueInterface } from "@langchain/core/dist/prompt_values"
+import { AIMessageChunk } from "@langchain/core/messages"
 import { ChatPromptTemplate } from "@langchain/core/prompts"
 import { StructuredOutputParser } from "@langchain/core/output_parsers"
-import { AssistantRequest, AssistantResponse } from "@/types"
-import { SimplifiedSegmentData, simplifiedSegmentDataZ } from "../../types"
-import { examples, humanTemplate, systemTemplate } from "../../templates"
+import { ChatOpenAI } from "@langchain/openai"
+import { ChatGroq } from "@langchain/groq"
+import { ChatAnthropic } from "@langchain/anthropic"
+import { ChatCohere } from "@langchain/cohere"
+import { ChatMistralAI } from "@langchain/mistralai"
+import { ChatVertexAI } from "@langchain/google-vertexai"
+// Hugging Face will be supported once the following package becomes available
+// import { ChatHuggingFace } from "@langchain/huggingface"
+
+import { AssistantRequest, AssistantResponse, ComputeProvider } from "@/types"
+
+import { SimplifiedSegmentData, simplifiedSegmentDataZ } from "./types"
+import { examples, humanTemplate, systemTemplate } from "./templates"
 
 const parser = StructuredOutputParser.fromZodSchema(simplifiedSegmentDataZ)
 
@@ -15,11 +26,12 @@ const formatInstructions = parser.getFormatInstructions()
 
 /**
  * Query the preferred language model on the user prompt + the segments of the current scene
+ *
  * @param userPrompt 
  * @param segments 
  * @returns 
  */
-export async function askAssistant({
+export async function askAnyAssistant({
   settings,
 
   prompt,
@@ -38,12 +50,50 @@ export async function askAssistant({
   projectInfo = ""
 }: AssistantRequest): Promise<AssistantResponse> {
 
-    // TODO: 
-  const model = new ChatOpenAI({
-    openAIApiKey: settings.openaiApiKey,
-    modelName: settings.openaiModelForAssistant,
-    temperature: 0.7,
-  })
+  const provider = settings.assistantProvider
+
+  if (!provider) { throw new Error(`Missing assistant provider`)}
+
+  let coerceable: undefined | RunnableLike<ChatPromptValueInterface, AIMessageChunk> =
+    provider === ComputeProvider.GROQ
+    ? new ChatGroq({
+      apiKey: settings.groqApiKey,
+      modelName: settings.groqModelForAssistant,
+      // temperature: 0.7,
+    })
+    : provider === ComputeProvider.OPENAI
+    ? new ChatOpenAI({
+        openAIApiKey: settings.openaiApiKey,
+        modelName: settings.openaiModelForAssistant,
+       // temperature: 0.7,
+      })
+    : provider === ComputeProvider.ANTHROPIC
+    ? new ChatAnthropic({
+      anthropicApiKey: settings.anthropicApiKey,
+      modelName: settings.anthropicModelForAssistant,
+      // temperature: 0.7,
+    })
+    : provider === ComputeProvider.COHERE
+    ? new ChatCohere({
+      apiKey: settings.cohereApiKey,
+      model: settings.cohereModelForAssistant,
+      // temperature: 0.7,
+    })
+    : provider === ComputeProvider.MISTRALAI
+    ? new ChatMistralAI({
+      apiKey: settings.mistralAiApiKey,
+      modelName: settings.mistralAiModelForAssistant,
+      // temperature: 0.7,
+    })
+    : provider === ComputeProvider.GOOGLE
+    ? new ChatVertexAI({
+      apiKey: settings.googleApiKey,
+      modelName: settings.googleModelForAssistant,
+      // temperature: 0.7,
+    })
+    : undefined
+
+  if (!coerceable) { throw new Error(`Provider ${provider} is not supported yet. If a LangChain bridge exists for this provider, then you can add it to Clapper.`)}
 
   const chatPrompt = ChatPromptTemplate.fromMessages(
     [
@@ -61,7 +111,7 @@ export async function askAssistant({
 
  // console.log("INPUT:", JSON.stringify(inputData, null, 2))
 
-  const chain = chatPrompt.pipe(model).pipe(parser)
+  const chain = chatPrompt.pipe(coerceable).pipe(parser)
 
   try {
     const result = await chain.invoke({
@@ -86,7 +136,6 @@ export async function askAssistant({
       match = segments.find(s => s.category === result.category) || undefined
     }
     */
-
     
     // let's create a new segment then!
     const categoryName: ClapSegmentCategory =

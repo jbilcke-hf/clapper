@@ -1,4 +1,5 @@
 import { NextResponse, NextRequest } from "next/server"
+import { ClapSegmentCategory } from "@aitube/clap"
 
 import { resolveSegment as resolveSegmentUsingHuggingFace } from "./providers/huggingface"
 import { resolveSegment as resolveSegmentUsingComfyReplicate } from "./providers/comfy-replicate"
@@ -8,7 +9,6 @@ import { resolveSegment as resolveSegmentUsingFalAi } from "./providers/falai"
 import { resolveSegment as resolveSegmentUsingModelsLab } from "./providers/modelslab"
 
 import { ComputeProvider, ResolveRequest } from "@/types"
-import { ClapSegmentCategory } from "@aitube/clap"
 
 export async function POST(req: NextRequest) {
   // do we really need to secure it?

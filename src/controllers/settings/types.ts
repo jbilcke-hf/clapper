@@ -15,6 +15,10 @@ export type SettingsState = {
   groqApiKey: string
   anthropicApiKey: string
   elevenLabsApiKey: string
+  kitsAiApiKey: string
+  cohereApiKey: string
+  mistralAiApiKey: string
+  fireworksAiApiKey: string
 
   // ------------- CATEGORY PROVIDERS ---------------
   assistantProvider: ComputeProvider
@@ -92,6 +96,13 @@ export type SettingsState = {
   stabilityAiModelForSound: string
   stabilityAiModelForMusic: string
 
+  fireworksAiModelForAssistant: string
+  fireworksAiModelForImage: string
+  fireworksAiModelForVideo: string
+  fireworksAiModelForVoice: string
+  fireworksAiModelForSound: string
+  fireworksAiModelForMusic: string
+
   falAiModelForImage: string
   falAiModelForVideo: string
   falAiModelForVoice: string
@@ -121,6 +132,12 @@ export type SettingsState = {
 
   elevenLabsModelForVoice: string
   elevenLabsModelForSound: string
+
+  kitsAiModelForVoice: string
+
+  cohereModelForAssistant: string
+
+  mistralAiModelForAssistant: string
 }
 
 export type SettingsControls = {
@@ -131,12 +148,15 @@ export type SettingsControls = {
   setHuggingFaceApiKey: (huggingFaceApiKey?: string) => void
   setModelsLabApiKey: (modelsLabApiKey?: string) => void
   setFalAiApiKey: (falAiApiKey?: string) => void
-  
   setOpenaiApiKey: (openaiApiKey?: string) => void
   setGoogleApiKey: (googleApiKey?: string) => void
   setGroqApiKey: (groqApiKey?: string) => void
+  setFireworksAiApiKey: (fireworksAiApiKey?: string) => void
   setAnthropicApiKey: (anthropicApiKey?: string) => void
   setElevenLabsApiKey: (elevenLabsApiKey?: string) => void
+  setCohereApiKey: (cohereApiKey?: string) => void
+  setMistralAiApiKey: (mistralAiApiKey?: string) => void
+  setKitsAiApiKey: (kitsAiApiKey?: string) => void
 
   setAssistantProvider: (assistantProvider?: ComputeProvider) => void
   setVideoProvider: (videoProvider?: ComputeProvider) => void
@@ -204,6 +224,13 @@ export type SettingsControls = {
   setStabilityAiModelForSound: (stabilityAiModelForSound?: string) => void
   setStabilityAiModelForMusic: (stabilityAiModelForMusic?: string) => void
 
+  setFireworksAiModelForAssistant: (fireworksAiModelForAssistant?: string) => void
+  setFireworksAiModelForImage: (fireworksAiModelForImage?: string) => void
+  setFireworksAiModelForVideo: (fireworksAiModelForVideo?: string) => void
+  setFireworksAiModelForVoice: (fireworksAiModelForVoice?: string) => void
+  setFireworksAiModelForSound: (fireworksAiModelForSound?: string) => void
+  setFireworksAiModelForMusic: (fireworksAiModelForMusic?: string) => void
+
   setFalAiModelForImage: (falAiModelForImage?: string) => void
   setFalAiModelForVideo: (falAiModelForVideo?: string) => void
   setFalAiModelForVoice: (falAiModelForVoice?: string) => void
@@ -233,6 +260,11 @@ export type SettingsControls = {
   
   setElevenLabsModelForVoice: (elevenLabsModelForVoice?: string) => void
   setElevenLabsModelForSound: (elevenLabsModelForSound?: string) => void
+  
+  setCohereModelForAssistant: (cohereModelForAssistant?: string) => void
+  setMistralAiModelForAssistant: (mistralAiModelForAssistant?: string) => void
+  
+  setKitsAiModelForVoice: (kitsAiModelForVoice?: string) => void
   
   getSettings: () => SettingsState
 }

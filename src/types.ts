@@ -21,9 +21,15 @@ export enum ComputeProvider {
   COMFY_REPLICATE = "COMFY_REPLICATE", // https://replicate.com
   COMFY_COMFYICU = "COMFY_COMFYICU", // https://comfy.icu
   ELEVENLABS = "ELEVENLABS", // https://elevenlabs.io
+  KITSAI = "KITSAI", // https://kits.ai
   OPENAI = "OPENAI", // https://openai.com
   STABILITYAI = "STABILITYAI", // https://stability.ai
+  FIREWORKSAI = "FIREWORKSAI", // https://fireworks.ai
   GROQ = "GROQ", // https://groq.com
+  ANTHROPIC = "ANTHROPIC", // https://anthropic.com
+  GOOGLE = "GOOGLE", // https://google.com (in case you didn't know)
+  MISTRALAI = "MISTRALAI", // https://mistral.ai
+  COHERE = "COHERE", // https://cohere.com
   FALAI = "FALAI", // https://fal.ai
   MODELSLAB = "MODELSLAB", // https://modelslab.com
 }

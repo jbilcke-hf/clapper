@@ -18,13 +18,17 @@ import { ProviderList } from "../lists/ProviderList"
 import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { availableComputeProvidersForMusic } from "@/components/settings/constants"
 import { SettingsCategory } from "@/types"
+import { MusicGenerationModelList } from "../lists/MusicGenerationModelList"
 
 export function TopMenuMusic() {
   const setShowSettings = useUI(s => s.setShowSettings)
   const musicProvider = useSettings(s => s.musicProvider)
   const setMusicProvider = useSettings(s => s.setMusicProvider)
+  const musicGenerationModel = useSettings(s => s.musicGenerationModel)
+  const setMusicGenerationModel = useSettings(s => s.setMusicGenerationModel)
   const musicRenderingStrategy = useSettings((s) => s.musicRenderingStrategy)
   const setMusicRenderingStrategy = useSettings((s) => s.setMusicRenderingStrategy)
+
   return (
     <MenubarMenu>
       <MenubarTrigger>Music</MenubarTrigger>
@@ -32,6 +36,7 @@ export function TopMenuMusic() {
         <MenubarSub>
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.MUSIC) }}>Show advanced settings</MenubarItem>
           <MenubarSeparator />
+          <MusicGenerationModelList provider={musicProvider} current={musicGenerationModel} setter={setMusicGenerationModel} />
           <ProviderList providers={availableComputeProvidersForMusic} current={musicProvider} setter={setMusicProvider} />
           <RenderingStrategyList current={musicRenderingStrategy} setter={setMusicRenderingStrategy} />
           <MenubarSeparator />

@@ -35,6 +35,9 @@ export function getDefaultMetricsPerProvider(): MetricsPerProvider {
     [ComputeProvider.STABILITYAI]: {
       ...getDefaultComputeProviderMetrics(),
     },
+    [ComputeProvider.FIREWORKSAI]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
     [ComputeProvider.GROQ]: {
       ...getDefaultComputeProviderMetrics(),
     },
@@ -42,6 +45,21 @@ export function getDefaultMetricsPerProvider(): MetricsPerProvider {
       ...getDefaultComputeProviderMetrics(),
     },
     [ComputeProvider.MODELSLAB]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
+    [ComputeProvider.KITSAI]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
+    [ComputeProvider.ANTHROPIC]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
+    [ComputeProvider.GOOGLE]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
+    [ComputeProvider.MISTRALAI]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
+    [ComputeProvider.COHERE]: {
       ...getDefaultComputeProviderMetrics(),
     },
   }

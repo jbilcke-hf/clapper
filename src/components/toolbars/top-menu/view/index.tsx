@@ -77,6 +77,7 @@ export function TopMenuView() {
             return false
           }}
           >Show asset explorer</MenubarCheckboxItem>
+      */}
         <MenubarCheckboxItem
           checked={showChat}
           onClick={(e) => {
@@ -86,6 +87,7 @@ export function TopMenuView() {
             return false
           }}
           >Show chat assistant</MenubarCheckboxItem>
+        {/*
         <MenubarCheckboxItem
           checked={showVideoPlayer}
           onClick={(e) => {
