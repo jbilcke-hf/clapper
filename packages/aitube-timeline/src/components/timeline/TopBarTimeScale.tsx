@@ -81,6 +81,8 @@ export function TopBarTimeScale() {
           }
         }
       }
+      evt.stopPropagation()
+      return false
     }
     document.addEventListener("mousemove", onMouseMove)
     return () => {
@@ -99,6 +101,13 @@ export function TopBarTimeScale() {
       onWheel={(e) => {
         if (e.offsetY > topBarTimeScaleHeight) { return }
 
+        const disableWheel = true
+        if (disableWheel) {
+        console.log(`user tried to change the horizontal scale, but it is disabled due to rescaling bugs (@Julian fix this!)`)
+        e.stopPropagation()
+        return false
+        }
+
         const wheelFactor = 0.3
 
         setHorizontalZoomLevel(
@@ -107,6 +116,7 @@ export function TopBarTimeScale() {
           // )
         )
         e.stopPropagation()
+        return false
       }}
       onPointerDown={(e) => {
         const cursorX = e.point.x + (size.width / 2)
@@ -114,8 +124,8 @@ export function TopBarTimeScale() {
         const { wasPlaying } = togglePlayback(false)
         wasPlayingRef.current = wasPlaying
         setCursorTimestampAtInMs(cursorTimestampAtInMs)
-        setIsDraggingCursor(true)
         jumpAt(cursorTimestampAtInMs)
+        setIsDraggingCursor(true)
         e.stopPropagation()
         return false
       }}

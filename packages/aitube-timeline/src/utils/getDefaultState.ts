@@ -51,7 +51,7 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     // used to track silent in-line changes in the segments
     // that way we don't need to re-draw the whole thing
     silentChangesInSegments: 0,
-
+    silentChangesInSegment: {},
 
     scrollX: 0,
     scrollY: 450,

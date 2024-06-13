@@ -17,12 +17,19 @@ import { findFreeTrack } from "@/utils/findFreeTrack"
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
-  setClap: async (clap?: ClapProject) => {
 
+
+  clear: () => {
     // this re-initialize everything that is related to the current .clap project
     set({
       ...getDefaultProjectState()
     })
+  },
+
+  setClap: async (clap?: ClapProject) => {
+    const { clear } = get()
+
+    clear()
 
     if (!clap || !Array.isArray(clap?.segments)) {
       console.log(`useTimeline: no clap to show`)
@@ -134,8 +141,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         
       }
     }
-
-
 
     for (let id = 0; id < tracks.length; id++) {
       if (!tracks[id]) {
@@ -286,9 +291,14 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     }
 
   },
-  trackSilentChangeInSegments: () => {
-    const { silentChangesInSegments } = get()
-    set({ silentChangesInSegments: silentChangesInSegments + 1 })
+  trackSilentChangeInSegment: (segmentId: string) => {
+    const { silentChangesInSegments, silentChangesInSegment } = get()
+    set({
+      silentChangesInSegments: 1 + silentChangesInSegments,
+      silentChangesInSegment: Object.assign(silentChangesInSegment, {
+        [segmentId]: 1 + (silentChangesInSegment[segmentId] || 0)
+      })
+    })
   },
   setTimelineCamera: (timelineCamera?: TimelineCameraImpl) => {
     set({ timelineCamera })
