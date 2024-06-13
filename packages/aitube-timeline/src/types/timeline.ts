@@ -85,6 +85,7 @@ export type TimelineStoreProjectState = {
   // used to track silent in-line changes in the segments
   // that way we don't need to re-draw the whole thing
   silentChangesInSegments: number
+  silentChangesInSegment: Record<string, number>
 
   isDraggingCursor: boolean
 
@@ -149,6 +150,7 @@ export type TimelineStoreState = TimelineStoreProjectState & TimelineStorePrefer
 
 
 export type TimelineStoreModifiers = {
+  clear: () => void
   setClap: (clap?: ClapProject) => Promise<void>
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => void
   setSegments: (segments?: ClapSegment[]) => void
@@ -161,7 +163,7 @@ export type TimelineStoreModifiers = {
 
   // used to track silent in-line changes in the segments
   // that way we don't need to re-draw the whole thing
-  trackSilentChangeInSegments: () => void
+  trackSilentChangeInSegment: (segmentId: string) => void
 
   setTimelineCamera: (timelineCamera?: TimelineCameraImpl) => void
   setTimelineControls: (timelineControls?: TimelineControlsImpl) => void

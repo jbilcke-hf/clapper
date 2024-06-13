@@ -27,8 +27,11 @@ export const useSegmentLoader = ({
 
   const segments = useTimeline((s) => s.segments)
   const segmentsChanged = useTimeline((s) => s.segmentsChanged)
-
   // console.log(`segmentsChanged:`, segmentsChanged)
+  
+  // why do we have to do this?
+  //const silentChangesInSegments = useTimeline(s => s.silentChangesInSegments)
+  //console.log(`silentChangesInSegments:`, silentChangesInSegments)
   
   const loadedSegments = useTimeline((s) => s.loadedSegments)
   const setLoadedSegments = useTimeline((s) => s.setLoadedSegments)
