@@ -73,7 +73,10 @@ export async function resolveSegment(request: ResolveRequest): Promise<ClapSegme
             prompt: prompts.positivePrompt,
             image_size: imageSize,
             sync_mode: true,
-            num_inference_steps: 20,
+            num_inference_steps:
+              request.settings.falAiModelForImage === "fal-ai/stable-diffusion-v3-medium"
+                ? 40
+                : 25,
             num_images: 1,
             enable_safety_checker: request.settings.censorNotForAllAudiencesContent
           },

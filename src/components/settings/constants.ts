@@ -20,6 +20,12 @@ export const computeProviderShortNames = {
   [ComputeProvider.OPENAI]: "OpenAI",
   [ComputeProvider.REPLICATE]: "Replicate",
   [ComputeProvider.STABILITYAI]: "StabilityAI",
+  [ComputeProvider.MIDJOURNEY]: "Midjourney (no image API)",
+  [ComputeProvider.SUNO]: "Suno (no music API)",
+  [ComputeProvider.UDIO]: "Udio (no music API)",
+  [ComputeProvider.LUMALABS]: "LumaLabs (no video API)",
+  [ComputeProvider.KUAISHOU]: "KuaiShou (no video API)",
+  [ComputeProvider.RUNWAYML]: "RunwayML (no video API)",
 }
 
 export const availableComputeProvidersForAssistant = [
@@ -39,6 +45,7 @@ export const availableComputeProvidersForImages = [
   ComputeProvider.FIREWORKSAI,
   ComputeProvider.FALAI,
   ComputeProvider.MODELSLAB,
+  ComputeProvider.MIDJOURNEY,
 ]
 
 export const availableComputeProvidersForVideos = [
@@ -50,6 +57,10 @@ export const availableComputeProvidersForVideos = [
   // ComputeProvider.FIREWORKSAI,
   ComputeProvider.FALAI,
   ComputeProvider.MODELSLAB,
+  ComputeProvider.OPENAI,
+  ComputeProvider.GOOGLE,
+  ComputeProvider.LUMALABS,
+  ComputeProvider.KUAISHOU,
 ]
 
 export const availableComputeProvidersForMusic = [
@@ -60,6 +71,8 @@ export const availableComputeProvidersForMusic = [
   // ComputeProvider.FIREWORKSAI,
   ComputeProvider.FALAI,
   ComputeProvider.MODELSLAB,
+  ComputeProvider.SUNO,
+  ComputeProvider.UDIO,
 ]
 
 export const availableComputeProvidersForSound = [
@@ -139,6 +152,7 @@ export const availableModelsForAssistantTurbo: Partial<Record<ComputeProvider, s
 // so it will have to be taken into account
 export const availableModelsForImageGeneration: Partial<Record<ComputeProvider, string[]>> = {
   [ComputeProvider.FALAI]: [
+    "fal-ai/stable-diffusion-v3-medium",
     "fal-ai/fast-sdxl",
     "fal-ai/stable-cascade",
     "fal-ai/fast-lightning-sdxl",
@@ -158,6 +172,9 @@ export const availableModelsForImageGeneration: Partial<Record<ComputeProvider, 
     "accounts/stability/models/sd3-turbo",
     "fireworks/stable-diffusion-xl-1024-v1-0",
     "accounts/fireworks/models/playground-v2-5-1024px-aesthetic",
+  ],
+  [ComputeProvider.MIDJOURNEY]: [
+    "(No public API)",
   ]
 }
 
@@ -178,6 +195,21 @@ export const availableModelsForVideoGeneration: Partial<Record<ComputeProvider, 
   ],
   [ComputeProvider.STABILITYAI]: [
     "image-to-video",
+  ],
+  [ComputeProvider.OPENAI]: [
+    "Sora is unavailable (no public API)",
+  ],
+  [ComputeProvider.GOOGLE]: [
+    "Veo is unavailable (no public API)",
+  ],
+  [ComputeProvider.RUNWAYML]: [
+    "Gen-3 is unavailable (no public API)",
+  ],
+  [ComputeProvider.LUMALABS]: [
+    "Dream Machine is unavailable (no public API)",
+  ],
+  [ComputeProvider.KUAISHOU]: [
+    "Kling is unavailable (no public API)",
   ]
 }
 
@@ -201,5 +233,11 @@ export const availableModelsForVoiceGeneration: Partial<Record<ComputeProvider, 
 export const availableModelsForMusicGeneration: Partial<Record<ComputeProvider, string[]>> = {
   [ComputeProvider.FALAI]: [
     "fal-ai/stable-audio"
-  ]
+  ],
+  [ComputeProvider.SUNO]: [
+    "Suno is unavailable (No public API)"
+  ],
+  [ComputeProvider.UDIO]: [
+    "Udio is unavailable (No public API)"
+  ],
 }

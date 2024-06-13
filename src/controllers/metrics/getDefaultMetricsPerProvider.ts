@@ -62,6 +62,24 @@ export function getDefaultMetricsPerProvider(): MetricsPerProvider {
     [ComputeProvider.COHERE]: {
       ...getDefaultComputeProviderMetrics(),
     },
+    [ComputeProvider.MIDJOURNEY]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
+    [ComputeProvider.SUNO]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
+    [ComputeProvider.UDIO]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
+    [ComputeProvider.LUMALABS]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
+    [ComputeProvider.KUAISHOU]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
+    [ComputeProvider.RUNWAYML]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
   }
   return metricsPerProvider
 }

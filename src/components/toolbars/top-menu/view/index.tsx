@@ -78,14 +78,18 @@ export function TopMenuView() {
           }}
           >Show asset explorer</MenubarCheckboxItem>
       */}
+      
         <MenubarCheckboxItem
           checked={showChat}
+          disabled
+          /*
           onClick={(e) => {
             setShowChat(!showChat)
             e.stopPropagation()
             e.preventDefault()
             return false
           }}
+          */
           >Show chat assistant</MenubarCheckboxItem>
         {/*
         <MenubarCheckboxItem

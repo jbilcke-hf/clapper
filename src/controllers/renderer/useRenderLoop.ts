@@ -3,6 +3,7 @@ import { useRenderer } from "./useRenderer"
 import { useAudio } from "@/controllers/audio/useAudio"
 import { useMonitor } from "../monitor/useMonitor"
 
+let globalState = { isInstalled: false }
 /**
  * Runs a rendering loop
  * 

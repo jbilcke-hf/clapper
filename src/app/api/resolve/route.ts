@@ -7,6 +7,7 @@ import { resolveSegment as resolveSegmentUsingReplicate } from "./providers/repl
 import { resolveSegment as resolveSegmentUsingComfyComfyIcu } from "./providers/comfy-comfyicu"
 import { resolveSegment as resolveSegmentUsingFalAi } from "./providers/falai"
 import { resolveSegment as resolveSegmentUsingModelsLab } from "./providers/modelslab"
+import { resolveSegment as resolveSegmentUsingStabilityAi } from "./providers/stabilityai"
 
 import { ComputeProvider, ResolveRequest } from "@/types"
 
@@ -43,6 +44,8 @@ export async function POST(req: NextRequest) {
     ? resolveSegmentUsingReplicate
     : provider === ComputeProvider.COMFY_COMFYICU
     ? resolveSegmentUsingComfyComfyIcu
+    : provider === ComputeProvider.STABILITYAI
+    ? resolveSegmentUsingStabilityAi
     : provider === ComputeProvider.FALAI
     ? resolveSegmentUsingFalAi
     : provider === ComputeProvider.MODELSLAB

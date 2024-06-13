@@ -21,7 +21,7 @@ export const useSettings = create<SettingsStore>()(
 
       setAssistantProvider: (assistantProvider?: ComputeProvider) => {
         const { videoProvider: defaultAssistantProvider } = getDefaultSettingsState()
-        set({ assistantProvider: parseComputeProvider(assistantProvider, defaultAssistantProvider) })
+        set({assistantProvider: parseComputeProvider(assistantProvider, defaultAssistantProvider) })
       },
       setVideoProvider: (videoProvider?: ComputeProvider) => {
         const { videoProvider: defaultVideoProvider } = getDefaultSettingsState()
@@ -95,6 +95,9 @@ export const useSettings = create<SettingsStore>()(
       },
       setFireworksAiApiKey: (fireworksAiApiKey?: string) => {
         set({ fireworksAiApiKey: getValidString(fireworksAiApiKey, getDefaultSettingsState().fireworksAiApiKey) })
+      },
+      setStabilityAiApiKey: (stabilityAiApiKey?: string) => {
+        set({ stabilityAiApiKey: getValidString(stabilityAiApiKey, getDefaultSettingsState().stabilityAiApiKey) })
       },
       setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => {
         set({ censorNotForAllAudiencesContent: getValidBoolean(censorNotForAllAudiencesContent, getDefaultSettingsState().censorNotForAllAudiencesContent) })
@@ -405,6 +408,7 @@ export const useSettings = create<SettingsStore>()(
           mistralAiApiKey: state.mistralAiApiKey || defaultSettings.mistralAiApiKey,
           kitsAiApiKey: state.kitsAiApiKey || defaultSettings.kitsAiApiKey,
           fireworksAiApiKey: state.fireworksAiApiKey || defaultSettings.fireworksAiApiKey,
+          stabilityAiApiKey: state.stabilityAiApiKey || defaultSettings.stabilityAiApiKey,
           censorNotForAllAudiencesContent: state.censorNotForAllAudiencesContent || defaultSettings.censorNotForAllAudiencesContent,
           imagePromptPrefix: state.imagePromptPrefix || defaultSettings.imagePromptPrefix,
           imagePromptSuffix: state.imagePromptSuffix || defaultSettings.imagePromptSuffix,

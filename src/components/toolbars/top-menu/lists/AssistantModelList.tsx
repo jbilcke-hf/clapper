@@ -15,6 +15,7 @@ import { TagColor } from "@/components/tags/types"
 import { Tag } from "@/components/tags/Tag"
 import { ComputeProvider } from "@/types"
 import { availableModelsForAssistant } from "@/components/settings/constants"
+import { hasNoPublicAPI } from "./hasNoPublicAPI"
 
 export function AssistantModelList({
   provider,
@@ -32,7 +33,7 @@ export function AssistantModelList({
   return (
     <MenubarSub>
       <MenubarSubTrigger>
-        <Tag size="lg" color={TagColor.GREEN}>ai&nbsp;assistant</Tag>
+        <Tag size="lg" color={TagColor.FUCHSIA}>ai&nbsp;assistant</Tag>
         {current || "None"}
       </MenubarSubTrigger>
       <MenubarSubContent>
@@ -40,7 +41,13 @@ export function AssistantModelList({
           <MenubarCheckboxItem
              key={model}
             checked={current === model}
+            disabled={hasNoPublicAPI(model)}
             onClick={(e) => {
+              if (hasNoPublicAPI(model)) {
+                e.stopPropagation()
+                e.preventDefault()
+                return false
+              }
               setter(model)
               e.stopPropagation()
               e.preventDefault()

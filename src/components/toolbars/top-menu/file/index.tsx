@@ -4,7 +4,7 @@ import { useTimeline } from "@aitube/timeline"
 import { useHotkeys } from "react-hotkeys-hook"
 
 import { MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarTrigger } from "@/components/ui/menubar"
-import { useClapFilePicker, useQueryStringParams, useScreenplayFilePicker } from "@/lib/hooks"
+import { useOpenFilePicker, useQueryStringParams } from "@/lib/hooks"
 import { Loader } from "@/components/dialogs/loader"
 import { IframeWarning } from "@/components/dialogs/iframe-warning"
 import { useIO } from "@/controllers/io/useIO"
@@ -22,10 +22,9 @@ export function TopMenuFile() {
   //const saveClapAs = useTimeline(s => s.saveClapAs)
   //const setFullVideo = useTimeline(s => s.fullVideo)
 
-  const clapPicker = useClapFilePicker()
-  const screenplayPicker = useScreenplayFilePicker()
+  const { openFilePicker, isLoading: filePickerIsLoading } = useOpenFilePicker()
 
-  const isLoading = isTimelineLoading || clapPicker.isLoading || screenplayPicker.isLoading
+  const isLoading = isTimelineLoading || filePickerIsLoading
 
   const openClapUrl = useIO(s => s.openClapUrl)
   const saveClap = useIO(s => s.saveClap)
@@ -43,8 +42,8 @@ export function TopMenuFile() {
   }, [clapUrl])
 
   // const setShowSettings = useUISettings(s => s.setShowSettings)
-  useHotkeys('ctrl+o', () => clapPicker.openFilePicker(), { preventDefault: true }, [])
-  useHotkeys('meta+o', () => clapPicker.openFilePicker(), { preventDefault: true }, [])
+  useHotkeys('ctrl+o', () => openFilePicker(), { preventDefault: true }, [])
+  useHotkeys('meta+o', () => openFilePicker(), { preventDefault: true }, [])
   // useHotkeys('ctrl+s', () => saveClapAs({ embedded: true }), { preventDefault: true }, [])
   // useHotkeys('meta+s', () => saveClapAs({ embedded: true }), { preventDefault: true }, [])
   useHotkeys('ctrl+s', () => saveClap(), { preventDefault: true }, [])
@@ -57,9 +56,9 @@ export function TopMenuFile() {
       <MenubarTrigger>File</MenubarTrigger>
       <MenubarContent>
         <MenubarItem onClick={() => {
-          clapPicker.openFilePicker()
+          openFilePicker()
         }}>
-          Open project (.clap)<MenubarShortcut>⌘O</MenubarShortcut>
+          Open file (.clap, .txt)<MenubarShortcut>⌘O</MenubarShortcut>
         </MenubarItem>
         <MenubarItem
         onClick={() => {
@@ -72,13 +71,7 @@ export function TopMenuFile() {
         onClick={() => {
           saveVideoFile()
         }}>
-          Render project (.mp4)
-        </MenubarItem>
-        <MenubarSeparator />
-        <MenubarItem onClick={() => {
-          screenplayPicker.openFilePicker()
-        }}>
-          Import screenplay (.txt)
+          Export project to MP4
         </MenubarItem>
         <MenubarSeparator />
         {/*
@@ -92,14 +85,14 @@ export function TopMenuFile() {
         <MenubarItem
         disabled
         onClick={() => {
-          screenplayPicker.openFilePicker()
+         
         }}>
           Import .fountain (not implemented)
         </MenubarItem>
         <MenubarItem
         disabled
         onClick={() => {
-          screenplayPicker.openFilePicker()
+          
         }}>
           Export .fountain (not implemented)
         </MenubarItem>
@@ -107,14 +100,14 @@ export function TopMenuFile() {
         <MenubarItem
         disabled
         onClick={() => {
-          screenplayPicker.openFilePicker()
+        
         }}>
           Import .fdx (not implemented)
         </MenubarItem>
         <MenubarItem
         disabled
         onClick={() => {
-          screenplayPicker.openFilePicker()
+
         }}>
           Export .fdx (not implemented)
         </MenubarItem>

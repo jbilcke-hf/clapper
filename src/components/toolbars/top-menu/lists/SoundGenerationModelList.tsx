@@ -15,6 +15,7 @@ import { TagColor } from "@/components/tags/types"
 import { Tag } from "@/components/tags/Tag"
 import { ComputeProvider } from "@/types"
 import { availableModelsForSoundGeneration } from "@/components/settings/constants"
+import { hasNoPublicAPI } from "./hasNoPublicAPI"
 
 export function SoundGenerationModelList({
   provider,
@@ -40,7 +41,13 @@ export function SoundGenerationModelList({
           <MenubarCheckboxItem
              key={model}
             checked={current === model}
+            disabled={hasNoPublicAPI(model)}
             onClick={(e) => {
+              if (hasNoPublicAPI(model)) {
+                e.stopPropagation()
+                e.preventDefault()
+                return false
+              }
               setter(model)
               e.stopPropagation()
               e.preventDefault()

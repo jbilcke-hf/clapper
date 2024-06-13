@@ -1,36 +1,36 @@
 import { ReactNode } from "react"
 
-export type TaskVisibility =
-  | "blocker"
-  | "background"
-  | "invisible"
+export enum TaskVisibility {
+  BLOCKER = "BLOCKER",
+  BACKGROUND = "BACKGROUND",
+  INVISIBLE = "INVISIBLE"
+}
 
-export type TaskProgressType =
-  | "ratio" // number between 0 and 1
-  | "percentage" // number between 0 and 100
-  | "counter" // number between min and max
+export enum TaskProgressType {
+  RATIO = "RATIO", // number between 0 and 1
+  PERCENTAGE = "PERCENTAGE", // number between 0 and 100
+  COUNTER = "COUNTER"  // number between min and max
+}
 
-export type TaskCategory =
-  | "download"
-  | "import"
-  | "analysis"
-  | "storyboard"
-  | "video"
-  | "depth"
-  | "mesh"
-  | "splat"
-  | "phenomenon"
-  | "interface"
-  | "generic"
+export enum TaskCategory {
+  DOWNLOAD = "DOWNLOAD",
+  EXPORT = "EXPORT",
+  IMPORT = "IMPORT",
+  ANALYSIS = "ANALYSIS",
+  STORYBOARD = "STORYBOARD",
+  VIDEO = "VIDEO",
+  GENERIC = "GENERIC"
+}
 
-export type TaskStatus =
-  | "upcoming"
-  | "running"
-  | "paused"
-  | "cancelled"
-  | "error"
-  | "success"
-  | "deleted"
+export enum TaskStatus {
+  UPCOMING = "UPCOMING",
+  RUNNING = "RUNNING",
+  PAUSED = "PAUSED",
+  CANCELLED = "CANCELLED",
+  ERROR = "ERROR",
+  SUCCESS = "SUCCESS",
+  DELETED = "DELETED"
+}
 
 export type StatusGetter = () => TaskStatus
 export type TaskRunner = (getStatus: StatusGetter) => Promise<TaskStatus>

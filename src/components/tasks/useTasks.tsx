@@ -11,9 +11,9 @@ import { sleep } from "@/lib/utils/sleep"
 // we enforce the impossibility of some transitions
 function statusTransition(current: TaskStatus, requested: TaskStatus): TaskStatus {
   switch (current) {
-    case "upcoming":
-    case "running":
-    case "paused":
+    case TaskStatus.UPCOMING:
+    case TaskStatus.RUNNING:
+    case TaskStatus.PAUSED:
       return requested
 
     default:
@@ -131,25 +131,21 @@ export const useTasks = create<{
     return list
   },
   add: (partialTask: Partial<NewTask>, status?: TaskStatus): TaskRemoteControl => {
-    const mode: TaskProgressType =
-    partialTask?.mode === "counter" ? "counter" :
-    partialTask?.mode === "ratio" ? "ratio" :
-      partialTask?.mode === "percentage" ? "percentage" :
-        "percentage"
-  
-    const min = mode === "counter" && partialTask?.min ? partialTask.min : 0
-    const max = mode === "counter" && partialTask?.max ? partialTask.max : mode === "ratio" ? 1 : mode === "percentage" ? 100 : 100
+    const mode: TaskProgressType = partialTask?.mode || TaskProgressType.PERCENTAGE
+
+    const min = mode === TaskProgressType.COUNTER && partialTask?.min ? partialTask.min : 0
+    const max = mode === TaskProgressType.COUNTER && partialTask?.max ? partialTask.max : mode === TaskProgressType.RATIO ? 1 : mode === TaskProgressType.PERCENTAGE ? 100 : 100
   
     const id = UUID()
 
     const newTask: NewTask = {
       id,
-      visibility: partialTask?.visibility || "background",
-      category: partialTask?.category || "generic",
+      visibility: partialTask?.visibility || TaskVisibility.BACKGROUND,
+      category: partialTask?.category || TaskCategory.GENERIC,
       initialMessage: partialTask?.initialMessage || "Loading..",
       successMessage: partialTask?.successMessage || "Task completed!",
       priority: partialTask?.priority || 0, // 0 = lowest, 1 or more = more and more important
-      status: status || "running",
+      status: status || TaskStatus.RUNNING,
       value: partialTask?.value || 0,
       progress: partialTask?.progress || 0,
       min,
@@ -163,7 +159,7 @@ export const useTasks = create<{
       currentMessage: newTask.initialMessage,
       startedAt: new Date().toISOString(),
       endedAt: "",
-      promise: Promise.resolve("running"),
+      promise: Promise.resolve(TaskStatus.RUNNING),
     }
 
     task.promise = new Promise<TaskStatus>((resolve, reject) => {
@@ -173,7 +169,7 @@ export const useTasks = create<{
           const t = get().get(id)!
           
           if (!t) {
-            resolve("success" )
+            resolve(TaskStatus.SUCCESS)
             return
           }
 
@@ -182,15 +178,15 @@ export const useTasks = create<{
 
           console.log(`useTasks[${id}]: checkStatus: checking task, current status is: "${status}"`)
           if (
-            status === "error" ||
-            status === "success" ||
-            status === "deleted" ||
-            status === "cancelled"
+            status === TaskStatus.ERROR ||
+            status === TaskStatus.SUCCESS ||
+            status === TaskStatus.DELETED ||
+            status === TaskStatus.CANCELLED
           ) {
             console.log(`useTasks[${id}]: checkStatus: status is "${status}", interrupting task loop..`)
 
             // this call might be redundant
-            if (status === "success") {
+            if (status === TaskStatus.SUCCESS) {
               get().setProgress(id, { isFinished: true })
             }
             resolve(status)
@@ -198,8 +194,8 @@ export const useTasks = create<{
             console.log(`useTasks[${id}]: checkStatus: task is completed at 100%, interrupting task loop..`)
             // this call might be redundant
             get().setProgress(id, { isFinished: true })
-            // get().setStatus("success", id)
-            resolve("success")
+            // get().setStatus(TaskStatus.SUCCESS, id)
+            resolve(TaskStatus.SUCCESS)
           } else {
             console.log(`useTasks[${id}]: checkStatus: status is "${status}", continuing task loop..`)
             setTimeout(checkStatus, 1000)
@@ -215,7 +211,7 @@ export const useTasks = create<{
     toast.promise<TaskStatus>(task.promise, {
       loading: <TaskStatusUpdate taskId={id} />,
       success: (finalStatus) => {
-        return finalStatus === "success" ? task.successMessage : `Task ended`;
+        return finalStatus === TaskStatus.SUCCESS ? task.successMessage : `Task ended`;
       },
       error: 'Task aborted',
     });
@@ -257,10 +253,10 @@ export const useTasks = create<{
     return remoteControl
   },
   pause: (taskId?: string) => {
-    get().setStatus("paused", taskId)
+    get().setStatus(TaskStatus.PAUSED, taskId)
   },
   continue: (taskId?: string) => {
-    get().setStatus("running", taskId)
+    get().setStatus(TaskStatus.RUNNING, taskId)
   },
   setStatus: (status: TaskStatus, taskId?: string) => {
     const { tasks } = get()
@@ -304,9 +300,9 @@ export const useTasks = create<{
       if (task) {
 
         let progress =
-          task.mode === "percentage"
+          task.mode === TaskProgressType.PERCENTAGE
             ? value :
-          task.mode === "ratio"
+          task.mode === TaskProgressType.RATIO
             ? (value * 100)
           : ((value - task.min) / (task.max - task.min)) * 100
       
@@ -319,7 +315,7 @@ export const useTasks = create<{
               [task.id]: {
                 ...task,
                 currentMessage,
-                status: "error",
+                status: TaskStatus.ERROR,
                 endedAt: new Date().toISOString(),
               }
             }
@@ -341,7 +337,7 @@ export const useTasks = create<{
                 progress,
                 value,
                 currentMessage,
-                status: isFinished ? "success" : "running",
+                status: isFinished ? TaskStatus.SUCCESS : TaskStatus.RUNNING,
                 endedAt: isFinished ? new Date().toISOString() : task.endedAt,
               }
             }
@@ -360,7 +356,7 @@ export const useTasks = create<{
   },
   success: (taskId: string) => {
     get().setProgress(taskId, { isFinished: true })
-    get().setStatus("success", taskId)
+    get().setStatus(TaskStatus.SUCCESS, taskId)
   },
   fail: (taskId: string, reason?: string) => {
     get().setProgress(taskId, {
@@ -368,9 +364,9 @@ export const useTasks = create<{
       isFinished: true,
       hasFailed: true,
     })
-    get().setStatus("error", taskId)
+    get().setStatus(TaskStatus.ERROR, taskId)
   },
   cancel: (taskId?: string) => {
-    get().setStatus("cancelled", taskId)
+    get().setStatus(TaskStatus.CANCELLED, taskId)
   }
 }))

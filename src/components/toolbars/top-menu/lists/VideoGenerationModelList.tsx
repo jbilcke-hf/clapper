@@ -15,6 +15,7 @@ import { TagColor } from "@/components/tags/types"
 import { Tag } from "@/components/tags/Tag"
 import { ComputeProvider } from "@/types"
 import { availableModelsForVideoGeneration } from "@/components/settings/constants"
+import { hasNoPublicAPI } from "./hasNoPublicAPI"
 
 export function VideoGenerationModelList({
   provider,
@@ -32,7 +33,7 @@ export function VideoGenerationModelList({
   return (
     <MenubarSub>
       <MenubarSubTrigger>
-        <Tag size="lg" color={TagColor.VIOLET}>generate&nbsp;video</Tag>
+        <Tag size="lg" color={TagColor.RED}>generate&nbsp;video</Tag>
         {current || "None"}
       </MenubarSubTrigger>
       <MenubarSubContent>
@@ -40,13 +41,23 @@ export function VideoGenerationModelList({
           <MenubarCheckboxItem
              key={model}
             checked={current === model}
+            disabled={hasNoPublicAPI(model)}
             onClick={(e) => {
+              if (hasNoPublicAPI(model)) {
+                e.stopPropagation()
+                e.preventDefault()
+                return false
+              }
               setter(model)
               e.stopPropagation()
               e.preventDefault()
               return false
             }}>
-            {model}
+            {
+              // if the model is unavailable, we should add a tooltip like this:
+              // https://x.com/flngr/status/1800968844581929094
+              model
+            }
           </MenubarCheckboxItem>
         ))}
       </MenubarSubContent>

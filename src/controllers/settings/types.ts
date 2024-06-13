@@ -18,6 +18,7 @@ export type SettingsState = {
   kitsAiApiKey: string
   cohereApiKey: string
   mistralAiApiKey: string
+  stabilityAiApiKey: string
   fireworksAiApiKey: string
 
   // ------------- CATEGORY PROVIDERS ---------------
@@ -157,6 +158,7 @@ export type SettingsControls = {
   setCohereApiKey: (cohereApiKey?: string) => void
   setMistralAiApiKey: (mistralAiApiKey?: string) => void
   setKitsAiApiKey: (kitsAiApiKey?: string) => void
+  setStabilityAiApiKey: (stabilityAiApiKey?: string) => void
 
   setAssistantProvider: (assistantProvider?: ComputeProvider) => void
   setVideoProvider: (videoProvider?: ComputeProvider) => void

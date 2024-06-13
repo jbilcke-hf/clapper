@@ -19,7 +19,7 @@ import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { availableComputeProvidersForImages } from "@/components/settings/constants"
 import { ImageGenerationModelList } from "../lists/ImageGenerationModelList"
 import { ImageUpscalingModelList } from "../lists/ImageUpscalingModelList"
-import { SettingsCategory } from "@/types"
+import { ComputeProvider, SettingsCategory } from "@/types"
 
 export function TopMenuImage() {
   const setShowSettings = useUI(s => s.setShowSettings)
@@ -40,7 +40,12 @@ export function TopMenuImage() {
           <MenubarSeparator />
           <ImageGenerationModelList provider={imageProvider} current={imageGenerationModel} setter={setImageGenerationModel} />
           <ImageUpscalingModelList provider={imageProvider} current={imageUpscalingModel} setter={setImageUpscalingModel} />
-          <ProviderList providers={availableComputeProvidersForImages} current={imageProvider} setter={setImageProvider} />
+          <ProviderList providers={availableComputeProvidersForImages} current={imageProvider} setter={(newProvider: ComputeProvider) => {
+            if (imageProvider === newProvider) { return }
+            setImageProvider(newProvider)
+            setImageGenerationModel(undefined)
+            setImageUpscalingModel(undefined)
+          }} />
           <RenderingStrategyList current={imageRenderingStrategy} setter={setImageRenderingStrategy} />
           <MenubarSeparator />
           <MenubarItem

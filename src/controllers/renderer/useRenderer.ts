@@ -15,6 +15,11 @@ import { getDefaultBufferedSegments } from "./getDefaultBufferedSegments"
 export const useRenderer = create<RendererStore>((set, get) => ({
   ...getDefaultRendererState(),
 
+  clear: () => {
+    set({
+      ...getDefaultRendererState(),
+    })
+  },
 
   // this will be called at 60 FPS - and yes, it is expensive
   // we could probably improve things by using a temporal tree index

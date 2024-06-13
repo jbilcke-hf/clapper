@@ -18,7 +18,7 @@ import { ProviderList } from "../lists/ProviderList"
 import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { availableComputeProvidersForVoice } from "@/components/settings/constants"
 import { VoiceGenerationModelList } from "../lists/VoiceGenerationModelList"
-import { SettingsCategory } from "@/types"
+import { ComputeProvider, SettingsCategory } from "@/types"
 
 export function TopMenuVoice() {
   const setShowSettings = useUI(s => s.setShowSettings)
@@ -36,7 +36,11 @@ export function TopMenuVoice() {
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.VOICE) }}>Show advanced settings</MenubarItem>
           <MenubarSeparator />
           <VoiceGenerationModelList provider={voiceProvider} current={voiceGenerationModel} setter={setVoiceGenerationModel} />
-          <ProviderList providers={availableComputeProvidersForVoice} current={voiceProvider} setter={setVoiceProvider} />
+          <ProviderList providers={availableComputeProvidersForVoice} current={voiceProvider} setter={(newProvider: ComputeProvider) => {
+            if (voiceProvider === newProvider) { return }
+            setVoiceProvider(newProvider)
+            setVoiceGenerationModel(undefined)
+           }} />
           <RenderingStrategyList current={voiceRenderingStrategy} setter={setVoiceRenderingStrategy} />
           <MenubarSeparator />
           <MenubarItem

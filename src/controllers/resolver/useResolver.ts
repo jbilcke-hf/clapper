@@ -266,12 +266,12 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
     const settings = useSettings.getState().getSettings()
   
-    const timelineState: TimelineStore = useTimeline.getState()
+    const timeline: TimelineStore = useTimeline.getState()
 
     // note: do NOT use the visibleSegments here
     // that's because resolveSegment is 100% asynchronous,
     // meaning it might be called on invisible segments too!
-    const { clap, segments: allSegments } = timelineState
+    const { clap, segments: allSegments, trackSilentChangeInSegment } = timeline
 
     if (!clap?.meta || !allSegments.length) {
       return segment
@@ -349,17 +349,15 @@ export const useResolver = create<ResolverStore>((set, get) => ({
         status
       })
 
-    
+      newSegment.status = ClapSegmentStatus.COMPLETED
+      trackSilentChangeInSegment(newSegment.id)
       return newSegment
     } catch (err) {
       console.error(`useResolver.resolveSegment(): error: ${err}`)
-
+      segment.status = ClapSegmentStatus.TO_GENERATE
       // we could do that in a future version to improve error tracking
       // segment.status = ClapSegmentStatus.ERROR
-    } finally {
-      segment.status = ClapSegmentStatus.COMPLETED
     }
-
     return segment
   }
 
