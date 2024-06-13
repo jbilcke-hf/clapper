@@ -8,6 +8,7 @@ import { useTimeline } from "@aitube/timeline"
 import { useAudio } from "../audio/useAudio"
 import { MonitoringMode, MonitorStore } from "./types"
 import { getDefaultMonitorState } from "./getDefaultMonitorState"
+import { useRenderer } from "../renderer"
 
 export const useMonitor = create<MonitorStore>((set, get) => ({
   ...getDefaultMonitorState(),
@@ -108,20 +109,24 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
   jumpAt: (timeInMs: number = 0) => {
     const { isPlaying, mode, staticVideoRef } = get()
 
+    const { renderLoop } = useRenderer.getState()
     const { setCursorTimestampAtInMs } = useTimeline.getState()
 
     setCursorTimestampAtInMs(timeInMs)
 
-    if (mode === MonitoringMode.NONE || !staticVideoRef) {
+    if (mode === MonitoringMode.NONE) {
       return
     }
 
     if (mode === MonitoringMode.STATIC) {
+      if (!staticVideoRef) {
+        return
+      }
       // console.log("resetting static video current time")
       staticVideoRef.currentTime = timeInMs / 1000
     } else if (mode === MonitoringMode.DYNAMIC) {
-      // console.log(`TODO Julian: implement jump`)
-      // for audio I think it will be automatic
+      // we force a state update
+      renderLoop()
     }
   },
 

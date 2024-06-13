@@ -23,6 +23,10 @@ export type RendererState = {
 }
 
 export type RendererControls = {
+
+  // used to clear the renderer eg. when we load a new project
+  clear: () => void
+
   // this will be called at 60 FPS - and yes, it is expensive
   // we could probably improve things by using a temporal tree index
 

@@ -101,4 +101,22 @@ export const estimatedMetrics: Record<ComputeProvider, Record<string, ProviderMe
   [ComputeProvider.MODELSLAB]: {
     // TODO list the most popular models
   },
+  [ComputeProvider.MIDJOURNEY]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.SUNO]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.UDIO]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.LUMALABS]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.KUAISHOU]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.RUNWAYML]: {
+    // TODO list the most popular models
+  },
 }

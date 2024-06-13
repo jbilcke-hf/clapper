@@ -32,6 +32,12 @@ export enum ComputeProvider {
   COHERE = "COHERE", // https://cohere.com
   FALAI = "FALAI", // https://fal.ai
   MODELSLAB = "MODELSLAB", // https://modelslab.com
+  MIDJOURNEY = "MIDJOURNEY",
+  SUNO = "SUNO",
+  UDIO = "UDIO",
+  LUMALABS = "LUMALABS",
+  KUAISHOU = "KUAISHOU",
+  RUNWAYML = "RUNWAYML",
 }
 
 export enum ComfyIcuAccelerator {
@@ -117,6 +123,7 @@ export type ComfyNode = {
   }
 }
 
+// note: they keep the high digit first in all cases
 export enum FalAiImageSize {
   SQUARE_HD = "square_hd",
   SQUARE = "square",
@@ -124,6 +131,23 @@ export enum FalAiImageSize {
   PORTRAIT_16_9 = "portrait_16_9",
   LANDSCAPE_4_3 = "landscape_4_3",
   LANDSCAPE_16_9 = "landscape_16_9"
+}
+
+export enum StabilityAiImageSize {
+  SQUARE = "1:1",
+  PORTRAIT_2_3 = "2:3",
+  PORTRAIT_4_5 = "4:5",
+  PORTRAIT_9_16 = "9:16",
+  PORTRAIT_9_21 = "9:21",
+  LANDSCAPE_3_2 = "3:2",
+  LANDSCAPE_5_4 = "5:4",
+  LANDSCAPE_16_9 = "16:9",
+  LANDSCAPE_21_9 = "21:9"
+}
+
+export enum StabilityAiGenerationMode {
+  "TEXT_TO_IMAGE" = "text-to-image",
+  "IMAGE_TO_IMAGE" = "image-to-image"
 }
 
 export interface ImageSegment {

@@ -3,12 +3,13 @@ import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 
 import { useTasks } from "../../tasks/useTasks"
+import { TaskStatus, TaskVisibility } from "@/components/tasks/types"
 
 // a loading dialog that cannot be closed once it's loading
 export function LoadingDialog({ className = "" }: { className?: string }) {
   const { find } = useTasks()
 
-  const runningBlockerTasks = find({ status: "running", visibility: "blocker" })
+  const runningBlockerTasks = find({ status: TaskStatus.RUNNING, visibility: TaskVisibility.BLOCKER })
   const isLoading = runningBlockerTasks.length > 0
   const currentMessage = runningBlockerTasks[0]?.currentMessage || ""
   const progress = runningBlockerTasks[0]?.progress || 0

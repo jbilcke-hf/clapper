@@ -15,6 +15,7 @@ import { TagColor } from "@/components/tags/types"
 import { Tag } from "@/components/tags/Tag"
 import { ComputeProvider } from "@/types"
 import { availableModelsForImageGeneration } from "@/components/settings/constants"
+import { hasNoPublicAPI } from "./hasNoPublicAPI"
 
 export function ImageGenerationModelList({
   provider,
@@ -32,7 +33,7 @@ export function ImageGenerationModelList({
   return (
     <MenubarSub>
       <MenubarSubTrigger>
-        <Tag size="lg" color={TagColor.SKY}>generate&nbsp;image</Tag>
+        <Tag size="lg" color={TagColor.BLUE}>generate&nbsp;image</Tag>
         {current || "None"}
       </MenubarSubTrigger>
       <MenubarSubContent>
@@ -40,7 +41,13 @@ export function ImageGenerationModelList({
           <MenubarCheckboxItem
              key={model}
             checked={current === model}
+            disabled={hasNoPublicAPI(model)}
             onClick={(e) => {
+              if (hasNoPublicAPI(model)) {
+                e.stopPropagation()
+                e.preventDefault()
+                return false
+              }
               setter(model)
               e.stopPropagation()
               e.preventDefault()

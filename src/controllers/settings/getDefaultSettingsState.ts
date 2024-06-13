@@ -23,6 +23,7 @@ export function getDefaultSettingsState(): SettingsState {
     kitsAiApiKey: "",
     cohereApiKey: "",
     mistralAiApiKey: "",
+    stabilityAiApiKey: "",
     fireworksAiApiKey: "",
 
     assistantProvider: ComputeProvider.NONE,
@@ -36,10 +37,10 @@ export function getDefaultSettingsState(): SettingsState {
 
     imagePromptPrefix: "movie screencap, photo",
     imagePromptSuffix: "high quality, beautiful, amazing, intricate details",
-    imageNegativePrompt: "ugly, imperfect, cropped, low resolution",
+    imageNegativePrompt: "black banding, ugly, imperfect, cropped, low resolution",
     videoPromptPrefix: "movie screencap, photo",
     videoPromptSuffix: "high quality, beautiful, amazing, intricate details",
-    videoNegativePrompt: "ugly, imperfect, cropped, low resolution",
+    videoNegativePrompt: "black banding, ugly, imperfect, cropped, low resolution",
 
     assistantModel: "",
     assistantTurboModel: "",

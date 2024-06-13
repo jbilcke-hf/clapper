@@ -17,7 +17,7 @@ import { useUI } from "@/controllers/ui"
 import { ProviderList } from "../lists/ProviderList"
 import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { availableComputeProvidersForMusic } from "@/components/settings/constants"
-import { SettingsCategory } from "@/types"
+import { ComputeProvider, SettingsCategory } from "@/types"
 import { MusicGenerationModelList } from "../lists/MusicGenerationModelList"
 
 export function TopMenuMusic() {
@@ -37,7 +37,11 @@ export function TopMenuMusic() {
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.MUSIC) }}>Show advanced settings</MenubarItem>
           <MenubarSeparator />
           <MusicGenerationModelList provider={musicProvider} current={musicGenerationModel} setter={setMusicGenerationModel} />
-          <ProviderList providers={availableComputeProvidersForMusic} current={musicProvider} setter={setMusicProvider} />
+          <ProviderList providers={availableComputeProvidersForMusic} current={musicProvider} setter={(newProvider: ComputeProvider) => {
+            if (musicProvider === newProvider) { return }
+            setMusicProvider(newProvider)
+            setMusicGenerationModel(undefined)
+          }} />
           <RenderingStrategyList current={musicRenderingStrategy} setter={setMusicRenderingStrategy} />
           <MenubarSeparator />
           <MenubarItem

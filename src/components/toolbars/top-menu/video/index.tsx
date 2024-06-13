@@ -19,7 +19,7 @@ import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { availableComputeProvidersForVideos } from "@/components/settings/constants"
 import { VideoGenerationModelList } from "../lists/VideoGenerationModelList"
 import { VideoUpscalingModelList } from "../lists/VideoUpscalingModelList"
-import { SettingsCategory } from "@/types"
+import { ComputeProvider, SettingsCategory } from "@/types"
 
 export function TopMenuVideo() {
   const setShowSettings = useUI(s => s.setShowSettings)
@@ -40,7 +40,12 @@ export function TopMenuVideo() {
           <MenubarSeparator />
           <VideoGenerationModelList provider={videoProvider} current={videoGenerationModel} setter={setVideoGenerationModel} />
           <VideoUpscalingModelList provider={videoProvider} current={videoUpscalingModel} setter={setVideoUpscalingModel} />
-          <ProviderList providers={availableComputeProvidersForVideos} current={videoProvider} setter={setVideoProvider} />
+          <ProviderList providers={availableComputeProvidersForVideos} current={videoProvider} setter={(newProvider: ComputeProvider) => {
+            if (videoProvider === newProvider) { return }
+            setVideoProvider(newProvider)
+            setVideoGenerationModel(undefined)
+            setVideoUpscalingModel(undefined)
+           }} />
           <RenderingStrategyList current={videoRenderingStrategy} setter={setVideoRenderingStrategy} />
           <MenubarSeparator />
           <MenubarItem

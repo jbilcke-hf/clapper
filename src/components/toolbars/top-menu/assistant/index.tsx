@@ -16,7 +16,7 @@ import { useUI } from "@/controllers/ui"
 
 import { ProviderList } from "../lists/ProviderList"
 import { availableComputeProvidersForAssistant } from "@/components/settings/constants"
-import { SettingsCategory } from "@/types"
+import { ComputeProvider, SettingsCategory } from "@/types"
 import { AssistantModelList } from "../lists/AssistantModelList"
 
 export function TopMenuAssistant() {
@@ -33,7 +33,11 @@ export function TopMenuAssistant() {
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.ASSISTANT) }}>Show advanced settings</MenubarItem>
           <MenubarSeparator />
           <AssistantModelList provider={assistantProvider} current={assistantModel} setter={setAssistantModel} />
-          <ProviderList providers={availableComputeProvidersForAssistant} current={assistantProvider} setter={setAssistantProvider} />
+          <ProviderList providers={availableComputeProvidersForAssistant} current={assistantProvider} setter={(newProvider: ComputeProvider) => {
+            if (assistantProvider === newProvider) { return }
+            setAssistantProvider(newProvider)
+            setAssistantModel(undefined)
+          }} />
           <MenubarSeparator />
           <MenubarItem
              disabled

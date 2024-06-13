@@ -39,6 +39,21 @@ export function SettingsSectionProvider() {
   const anthropicApiKey = useSettings(s => s.anthropicApiKey)
   const setAnthropicApiKey = useSettings(s => s.setAnthropicApiKey)
 
+  const cohereApiKey = useSettings(s => s.cohereApiKey)
+  const setCohereApiKey = useSettings(s => s.setCohereApiKey)
+
+  const mistralAiApiKey = useSettings(s => s.mistralAiApiKey)
+  const setMistralAiApiKey = useSettings(s => s.setMistralAiApiKey)
+
+  const stabilityAiApiKey = useSettings(s => s.stabilityAiApiKey)
+  const setStabilityAiApiKey = useSettings(s => s.setStabilityAiApiKey)
+
+  const elevenLabsApiKey = useSettings(s => s.elevenLabsApiKey)
+  const setElevenLabsApiKey = useSettings(s => s.setElevenLabsApiKey)
+
+  const kitsAiApiKey = useSettings(s => s.kitsAiApiKey)
+  const setKitsAiApiKey = useSettings(s => s.setKitsAiApiKey)
+
   return (
     <div className="flex flex-col space-y-6 justify-between">
       <FormSection label="Compute providers">
@@ -135,6 +150,45 @@ export function SettingsSectionProvider() {
           type="password"
         />
 
+        <FormInput
+          label="Cohere API Key"
+          value={cohereApiKey}
+          defaultValue={defaultSettings.cohereApiKey}
+          onChange={setCohereApiKey}
+          type="password"
+        />
+
+        <FormInput
+          label="MistralAI API Key"
+          value={mistralAiApiKey}
+          defaultValue={defaultSettings.mistralAiApiKey}
+          onChange={setMistralAiApiKey}
+          type="password"
+        />
+
+        <FormInput
+          label="StabilityAI API Key"
+          value={stabilityAiApiKey}
+          defaultValue={defaultSettings.stabilityAiApiKey}
+          onChange={setStabilityAiApiKey}
+          type="password"
+        />
+
+        <FormInput
+          label="ElevenLabs API Key"
+          value={elevenLabsApiKey}
+          defaultValue={defaultSettings.elevenLabsApiKey}
+          onChange={setElevenLabsApiKey}
+          type="password"
+        />
+        
+        <FormInput
+          label="KitsAI API Key"
+          value={kitsAiApiKey}
+          defaultValue={defaultSettings.kitsAiApiKey}
+          onChange={setKitsAiApiKey}
+          type="password"
+        />
       </FormSection>
     </div>
   )

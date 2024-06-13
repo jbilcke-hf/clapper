@@ -1,7 +1,7 @@
 "use client"
 
-import { ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, ClapSegmentStatus, filterSegments, getClapAssetSourceType, newSegment, parseClap, serializeClap } from "@aitube/clap"
-import { Track, Tracks, useTimeline } from "@aitube/timeline"
+import { ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType, newSegment, parseClap, serializeClap } from "@aitube/clap"
+import { TimelineStore, useTimeline } from "@aitube/timeline"
 import { create } from "zustand"
 import { mltToXml } from "mlt-xml"
 
@@ -10,6 +10,10 @@ import { IOStore } from "./types"
 
 import { blobToBase64DataUri } from "@/lib/utils/blobToBase64DataUri"
 import { parseFileIntoSegments } from "./parseFileIntoSegments"
+import { useTasks } from "@/components/tasks/useTasks"
+import { Task, TaskCategory, TaskVisibility } from "@/components/tasks/types"
+import { parseFileName } from "./parseFileName"
+import { useRenderer } from "../renderer"
 // import { Entry, Project } from "@/lib/kdenlive"
 // import { formatDuration } from "@/lib/utils/formatDuration"
 
@@ -17,24 +21,47 @@ import { parseFileIntoSegments } from "./parseFileIntoSegments"
 export const useIO = create<IOStore>((set, get) => ({
   ...getDefaultIOState(),
 
-  openFiles: async (files: File[]) => {
-    const segments: ClapSegment[] = useTimeline.getState().segments
+  clear: () => {
+    const renderer = useRenderer.getState()
+    const timeline: TimelineStore = useTimeline.getState()
     
-    console.log("File", File)
-    if (Array.isArray(File)) {
-      console.log("user tried to drop some files:", File)
+    // reset various things
+    renderer.clear()
+    timeline.clear()
+  },
+  openFiles: async (files: File[]) => {
+    const { openClapBlob, openScreenplay } = get()
+    const segments: ClapSegment[] = useTimeline.getState().segments
+
+    if (Array.isArray(files)) {
+      console.log("user tried to drop some files:", files)
 
       // for now let's simplify things, and only import the first file
-      const file = File.at(0)
+      const file: File | undefined = files.at(0)
       if (!file) { return }
 
-      console.log(`file type: ${file.type}`)
+      const input = `${file.name || ""}`
+      const { fileName, projectName, extension } = parseFileName(input)
 
-      const isClapFile = file.name.endsWith(".clap")
-      const isAudioFile = file.type.startsWith("audio/")
-      const isVideoFile = file.type.startsWith("video/")
-      const isTextFile = file.type.startsWith("text/")
+      const fileType = `${file.type || ""}`
 
+      console.log(`file type: ${fileType}`)
+
+      const isClapFile = extension === "clap"
+
+      if (isClapFile) {
+        await openClapBlob(projectName, fileName, file)
+        return
+      }
+
+      const isTextFile = fileType.startsWith("text/")
+      if (isTextFile) {
+        await openScreenplay(projectName, fileName, file)
+        return
+      }
+
+      const isAudioFile = fileType.startsWith("audio/")
+   
       // TODO: detect the type of file, and do a different treatment based on this
       // screenplay files: -> analyze (if there is existing data, show a modal asking to save or not)
       // mp3 file: -> 
@@ -44,6 +71,9 @@ export const useIO = create<IOStore>((set, get) => ({
           segments,
         })
       }
+
+      const isVideoFile = fileType.startsWith("video/")
+  
 
       // for the moment let's not care of the coordinates at all
       /*
@@ -55,6 +85,60 @@ export const useIO = create<IOStore>((set, get) => ({
         segment
       })
       */
+    }
+  },
+  openScreenplay: async (projectName: string, fileName: string, fileContent: string | Blob): Promise<void> => {
+    const plainText =
+      typeof fileContent === "string"
+      ? fileContent :
+      (await new Response(fileContent).text())
+    
+    const timeline: TimelineStore = useTimeline.getState()
+    const task = useTasks.getState().add({
+      category: TaskCategory.IMPORT,
+      visibility: TaskVisibility.BLOCKER,
+      initialMessage:  `Loading ${fileName}`,
+      successMessage: `Successfully loaded the screenplay!`,
+      value: 0,
+    })
+    task.setProgress({
+      message: "Analyzing screenplay..",
+      value: 10
+    })
+    try {
+        const res = await fetch("https://jbilcke-hf-broadway-api.hf.space", {
+          method: "POST",
+          headers: { 'Content-Type': 'text/plain' },
+          body: plainText,
+        })
+      const blob = await res.blob()
+        task.setProgress({
+          message: "Loading scenes..",
+          value: 50
+        })
+      // TODO: parseClap should feature a progress callback
+      const clap = await parseClap(blob)
+
+      clap.meta.title = `${projectName || ""}`
+
+      task.setProgress({
+        message: "Loading rendering engine..",
+        value: 70
+      })
+
+      await timeline.setClap(clap)
+
+      task.setProgress({
+        message: "Nearly there..",
+        value: 95
+      })
+
+      task.success()
+    } catch (err) {
+       console.error("failed to import the screenplay:", err)
+      task.fail(`${err || "unknown screenplay import error"}`)
+    } finally {
+
     }
   },
   saveAnyFile: (blob: Blob, fileName: string) => {
@@ -76,12 +160,82 @@ export const useIO = create<IOStore>((set, get) => ({
     URL.revokeObjectURL(objectUrl)
     document.body.removeChild(anchor)
   },
+
   openClapUrl: async (url: string) => {
-    const { setClap } = useTimeline.getState()
-    const res = await fetch(url)
-    const blob = await res.blob()
-    const clap = await parseClap(blob)
-    await setClap(clap)
+    const timeline: TimelineStore = useTimeline.getState()
+    const { setClap } = timeline
+
+    const { fileName, projectName } = parseFileName(`${url.split("/").pop() || url}`)
+    
+    const task = useTasks.getState().add({
+      category: TaskCategory.IMPORT,
+      visibility: TaskVisibility.BLOCKER,
+      initialMessage:  `Loading ${fileName}`,
+      successMessage: `Successfully downloaded the project!`,
+      value: 0,
+    })
+
+    task.setProgress({
+      message: "Downloading file..",
+      value: 10
+    })
+
+    try {
+      const res = await fetch(url)
+      const blob = await res.blob()
+
+      task.setProgress({
+        message: "Loading scenes..",
+        value: 30
+      })
+
+      const clap = await parseClap(blob)
+      clap.meta.title = `${projectName}`
+
+      task.setProgress({
+        message: "Loading rendering engine..",
+        value: 70
+      })
+
+      await setClap(clap)
+
+      task.success()
+    } catch (err) {
+      task.fail(`${err || "unknown error"}`)
+    }
+  },
+  openClapBlob: async (projectName: string, fileName: string, blob: Blob) => {
+    const timeline: TimelineStore = useTimeline.getState()
+    const { setClap } = timeline
+
+    const task = useTasks.getState().add({
+      category: TaskCategory.IMPORT,
+      visibility: TaskVisibility.BLOCKER,
+      initialMessage:  `Loading ${fileName}`,
+      successMessage: `Successfully loaded the project!`,
+      value: 0,
+    })
+    try {
+
+      task.setProgress({
+        message: "Loading scenes..",
+        value: 30
+      })
+
+      const clap = await parseClap(blob)
+      clap.meta.title = `${projectName}`
+
+      task.setProgress({
+        message: "Loading rendering engine..",
+        value: 70
+      })
+
+      await setClap(clap)
+
+      task.success()
+    } catch (err) {
+      task.fail(`${err || "unknown error"}`)
+    }
   },
   saveClap: async () => {
     const { saveAnyFile } = get()
@@ -89,6 +243,18 @@ export const useIO = create<IOStore>((set, get) => ({
 
     if (!clap) { throw new Error(`cannot save a clap.. if there is no clap`) }
 
+    const tasks = useTasks.getState()
+    
+    const task = tasks.add({
+      category: TaskCategory.EXPORT,
+      visibility: TaskVisibility.BLOCKER,
+      initialMessage: `Exporting project to OpenClap..`,
+      successMessage: `Successfully exported the project!`
+      // mode: "percentage", // default
+      // min: 0, // default
+      // max: 100 // default
+    })
+    
     // make sure we update the total duration
     for (const s of clap.segments) {
       if (s.endTimeInMs > clap.meta.durationInMs) {
@@ -96,8 +262,15 @@ export const useIO = create<IOStore>((set, get) => ({
       }
     }
 
+    // TODO: serializeClap should have a progress callback, so that we can
+    // track the progression.
+    //
+    // also, I'm 100% aware that at some point we will just want to use the
+    // desktop version of Clapper, so that we can write the gzip stream directly to the disk 
     const blob: Blob = await serializeClap(clap)
-    saveAnyFile(blob,  `my_project.clap`)
+    saveAnyFile(blob, `my_project.clap`) // <-- TODO use the project filename
+
+    task.success()
   },
 
   saveVideoFile: async () => {
