@@ -822,6 +822,16 @@ export const placeSounds: NamedEntity[] = [
     "label": "birds singing",
     "aliases": {
       "en": [
+        "birds",
+        "bird",
+        "birdsong",
+        "birdsongs",
+        "bird song",
+        "bird songs",
+        "bird singing",
+        "birds singing",
+        "singing bird",
+        "singing birds",
         "garden",
         "forest",
         "meadow",
@@ -1636,6 +1646,55 @@ export const actionSounds: NamedEntity[] = [
     }
   },
   {
+    "label": "boots clattering",
+    "aliases": {
+      "en": [
+        "boots clattering",
+        "boots footsteps",
+      ]
+    }, 
+    prompts: {
+      character: [],
+      location: [],
+      transition: [],
+      time: [],
+      era: [],
+      lighting: [],
+      weather: [],
+      action: [],
+      music: [],
+      sound: [],
+      dialogue: [],
+      style: [],
+      camera: [],
+    }
+  },
+  {
+    "label": "wood clattering",
+    "aliases": {
+      "en": [
+        "wood clattering",
+        "clattering over the wood",
+        "clattering over the wooden",
+      ]
+    }, 
+    prompts: {
+      character: [],
+      location: [],
+      transition: [],
+      time: [],
+      era: [],
+      lighting: [],
+      weather: [],
+      action: [],
+      music: [],
+      sound: [],
+      dialogue: [],
+      style: [],
+      camera: [],
+    }
+  },
+  {
     "label": "liquid pouring",
     "aliases": {
       "en": [
@@ -1697,6 +1756,8 @@ export const actionSounds: NamedEntity[] = [
     "aliases": {
       "en": [
         "little laugh",
+        "lets out a laugh",
+        "a laugh"
       ]
     }, 
     prompts: {
@@ -2528,6 +2589,55 @@ export const eventSounds: NamedEntity[] = [
       "en": [
         "rustling",
         "rustles"
+      ]
+    }, 
+    prompts: {
+      character: [],
+      location: [],
+      transition: [],
+      time: [],
+      era: [],
+      lighting: [],
+      weather: [],
+      action: [],
+      music: [],
+      sound: [],
+      dialogue: [],
+      style: [],
+      camera: [],
+    }
+  },
+  {
+    "label": "rummaging",
+    "aliases": {
+      "en": [
+        "rummages in his pocket",
+        "rummages in his pockets",
+        "rummages in",
+        "rummaging"
+      ]
+    }, 
+    prompts: {
+      character: [],
+      location: [],
+      transition: [],
+      time: [],
+      era: [],
+      lighting: [],
+      weather: [],
+      action: [],
+      music: [],
+      sound: [],
+      dialogue: [],
+      style: [],
+      camera: [],
+    }
+  },
+  {
+    "label": "breaking bread",
+    "aliases": {
+      "en": [
+        "breaks the bread"
       ]
     }, 
     prompts: {

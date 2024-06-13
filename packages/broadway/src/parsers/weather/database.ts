@@ -26,13 +26,15 @@ export const data: NamedEntity[] = [
     }
   },
   {
-    "label": "storm",
+    "label": "stormy",
     "aliases": {
       "en": [
         "tempest",
         "lightning",
         "thunder",
-        "storm"
+        "storm",
+        "stormy",
+        "storms"
       ]
     }, 
     prompts: {
@@ -52,7 +54,31 @@ export const data: NamedEntity[] = [
     }
   },
   {
-    "label": "rain",
+    "label": "no rain",
+    "aliases": {
+      "en": [
+        "no rain",
+        "not raining"
+      ]
+    }, 
+    prompts: {
+      character: [],
+      location: [],
+      transition: [],
+      time: [],
+      era: [],
+      lighting: [],
+      weather: [],
+      action: [],
+      music: [],
+      sound: [],
+      dialogue: [],
+      style: [],
+      camera: [],
+    }
+  },
+  {
+    "label": "raining",
     "aliases": {
       "en": [
         "heavy rain",
@@ -78,12 +104,14 @@ export const data: NamedEntity[] = [
     }
   },
   {
-    "label": "fog",
+    "label": "foggy",
     "aliases": {
       "en": [
         "fog",
         "foggy",
-        "mist"
+        "mist",
+        "misty",
+        "soft mist"
       ]
     }, 
     prompts: {
@@ -103,7 +131,7 @@ export const data: NamedEntity[] = [
     }
   },
   {
-    "label": "sun",
+    "label": "sunny",
     "aliases": {
       "en": [
         "sun",

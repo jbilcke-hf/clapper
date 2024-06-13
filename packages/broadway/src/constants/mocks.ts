@@ -190,8 +190,8 @@ export const mockCategoryPrompts: Record<ClapSegmentCategory, string[]> = {
     "at night, moonlit"
   ],
   era: [
-    "in 1700",
-    "during piracy times"
+    // "in 1700",
+    // "during piracy times"
   ],
   weather: [
     "cloudy, soft mist",
@@ -211,9 +211,14 @@ export const mockCategoryPrompts: Record<ClapSegmentCategory, string[]> = {
     "sea noises",
   ],
   music: [
-    "instrumental orchestra for sailing a ship, 1700",
-    "epic orchestral with strings, 1800",
-    "suspensful instrumental orchestra, 1700",
+    "cinematic music",
+    "adventurous instrumental orchestra",
+    "epic orchestral with strings",
+    "cinematic instrumental orchestra",
+    "suspensful instrumental orchestra",
+    // "instrumental orchestra for sailing a ship, 1700",
+    // "epic orchestral with strings, 1800",
+    // "suspensful instrumental orchestra, 1700",
   ],
   transition: [
     "cut to"

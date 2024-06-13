@@ -30,7 +30,7 @@ export async function parseScriptToClap(
 
   await onProgressUpdate({ value: 20 })
 
-  const { segments, entitiesById, entitiesByScreenplayLabel } = await analyzeScreenplay(
+  const { movieGenreLabel, extraPositivePrompt, segments, entitiesById, entitiesByScreenplayLabel } = await analyzeScreenplay(
   screenplay,
   async (progress, message) => {
     // progress is a value between 0 and 100
@@ -46,22 +46,29 @@ export async function parseScriptToClap(
   
   await onProgressUpdate({ value: 60 })
 
+  let durationInMs = 0
+  segments.forEach(s => {
+    if (s.endTimeInMs > durationInMs) {
+      durationInMs = s.endTimeInMs
+    }
+  })
+    
   // TODO: return a ClapProject instead
   const clap = newClap({
     meta: {
       id: UUID(),
       title: "Untitled",
-      description: "",
+      description: `${movieGenreLabel}`,
       synopsis: "",
       licence: "All rights reserved by the IP holder",
     
       orientation: ClapMediaOrientation.LANDSCAPE,
-      durationInMs: 0,
+      durationInMs: segments.filter(s => s.endTimeInMs),
     
       width: 1024,
       height: 576,
       defaultVideoModel: "",
-      extraPositivePrompt: [],
+      extraPositivePrompt: extraPositivePrompt,
       screenplay,
       isLoop: false,
       isInteractive: false,
