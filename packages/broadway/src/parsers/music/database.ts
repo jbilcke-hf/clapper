@@ -54,7 +54,8 @@ export const data: NamedEntity[] = [
     "aliases": {
       "en": [
         "spaceship",
-        "astronaut"
+        "astronaut",
+        "blaster"
       ]
     }, 
     prompts: {
@@ -81,6 +82,32 @@ export const data: NamedEntity[] = [
         "faint radio music",
         "radio music in the background",
         "music in the background"
+      ]
+    }, 
+    prompts: {
+      character: [],
+      location: [],
+      transition: [],
+      time: [],
+      era: [],
+      lighting: [],
+      weather: [],
+      action: [],
+      music: [],
+      sound: [],
+      dialogue: [],
+      style: [],
+      camera: [],
+    }
+  },
+  {
+    "label": "club music",
+    "aliases": {
+      "en": [
+        "club music",
+        "dancing in the club",
+        "entering the nightclub",
+        "nightclubbers"
       ]
     }, 
     prompts: {

@@ -26,6 +26,8 @@ export async function analyzeScreenplay(
   screenplay: Screenplay,
    onProgress?: (value: number, message?: string) => Promise<void>
   ): Promise<{
+  movieGenreLabel: string
+  extraPositivePrompt: string[]
   segments: ClapSegment[]
   entitiesByScreenplayLabel: Record<string, ClapEntity>
   entitiesById: Record<string, ClapEntity>
@@ -55,17 +57,19 @@ export async function analyzeScreenplay(
 
   let movieEras = await getMostProbableEras(screenplay.fullText, 2)
   let movieEraLabel = Object.keys(movieEras)[0] || "contemporary"
-  // console.log("movieEras:", movieEras)
   let movieEra = getEra(movieEraLabel)
+  // console.log("movieEras:", { movieEras, movieEraLabel, movieEra })
   await onProgress?.(progress += 10, "Analyzing genre..")
 
   // using the movie genre isn't probably a good idea because thousands of words will be mentionned,
   // triggering a lot of different and unrelated genres
   // still this is useful when the genre if a given sequence cannot be guessed
   let movieGenres = await getMostProbableGenres(screenplay.fullText, 20)
-  let movieGenreLabel = Object.keys(movieGenres)[0] || "classic"
+  let movieGenreLabel = Object.keys(movieGenres)[0] || ""
   let movieGenre = getGenre(movieGenreLabel)
   await onProgress?.(progress += 10, "Analyzing each scenes..")
+
+  const extraPositivePrompt = movieGenreLabel ? [movieGenreLabel]: []
 
   /*
   console.log("movie:", {
@@ -248,17 +252,23 @@ export async function analyzeScreenplay(
           const sequenceLocation = sequence.location.join(", ")
 
           if (sequenceLocation) {
-            // console.log("new non-empty location detected, so resetting all buffers")
-            currentDescription = "" // this should be slightly long-lived
-            currentAction = "" // this should be short lived
-            currentLocationName = ""
-            currentLocationType = "UNKNOWN"
-            currentTime = ""
-            currentLighting = ""
-            currentWeather = ""
+            const weAreStillAtTheSameLocation = sequenceLocation !== currentLocationName
+
+            // we reset those for each shot
             currentShotType = ""
             currentSound = ""
-            currentMusic = ""
+            currentAction = ""
+              
+            // while those last for longer spans of time
+            if (weAreStillAtTheSameLocation) {
+              currentDescription = ""
+              currentLocationName = ""
+              currentLocationType = "UNKNOWN"
+              currentTime = ""
+              currentLighting = ""
+              currentWeather = ""
+              currentMusic = ""
+            }
           }
 
           currentDescription = (
@@ -590,7 +600,11 @@ export async function analyzeScreenplay(
 
           const defaultSoundPrompt =
             event.type === ClapSegmentCategory.DIALOGUE
-              ? ["people talking"]
+
+            // a generic "people talking" sound isn't very interesting
+            ? []
+            // ? ["people talking"]
+
             // event.description.includes(" SOUND ")
             //   ? event.description :
             : currentLocationType === "EXTERIOR" && currentTime !== "night"
@@ -729,5 +743,11 @@ export async function analyzeScreenplay(
   // }
 
 
-  return { segments, entitiesByScreenplayLabel, entitiesById }
+  return {
+    movieGenreLabel,
+    extraPositivePrompt,
+    segments,
+    entitiesByScreenplayLabel,
+    entitiesById
+  }
 }

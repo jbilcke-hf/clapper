@@ -552,6 +552,7 @@ export const data: NamedEntity[] = [
         "bomber",
         "bombers",
         "bombardier",
+        "Western Front"
       ]
     }, 
     prompts: {
@@ -584,6 +585,7 @@ export const data: NamedEntity[] = [
         "1917",
         "1918",
         "WW1",
+        "Western Front"
       ]
     }, 
     prompts: {
@@ -618,6 +620,7 @@ export const data: NamedEntity[] = [
         "1945",
         "WW2",
         "WWII",
+        "Western Front"
       ]
     }, 
     prompts: {

@@ -3,7 +3,7 @@ import { SimpleNamedEntityParser, SimpleOccurrencesCounter } from "@/types"
 export const createOccurrenceCounter = (parser: SimpleNamedEntityParser): SimpleOccurrencesCounter => {
   
   return async (input: string, minimumOccurrences: number): Promise<Record<string, number>>  => {
-    
+    // console.log("input:", input)
     const detected = await parser(
       [ input ],
       [],
@@ -15,7 +15,7 @@ export const createOccurrenceCounter = (parser: SimpleNamedEntityParser): Simple
     detected.forEach(value => {
       stats[value] = (stats[value] || 0) + 1
     })
-
+    // console.log("detected:", detected)
     const finalStats: Record<string, number> = {}
 
     Object.entries(stats)
@@ -28,6 +28,7 @@ export const createOccurrenceCounter = (parser: SimpleNamedEntityParser): Simple
         finalStats[s.key] = s.value
       })
 
+    //console.log("DEBUG:", stats)
     return finalStats
   }
 }

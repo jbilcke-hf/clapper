@@ -458,6 +458,52 @@ export const artificalLights: NamedEntity[] = [
     }
   },
   {
+    "label": "braizer",
+    "aliases": {
+      "en": [
+        "brazier",
+      ]
+    }, 
+    prompts: {
+      character: [],
+      transition: [],
+      location: [],
+      time: [],
+      era: [],
+      lighting: [],
+      weather: [],
+      action: [],
+      music: [],
+      sound: [],
+      dialogue: [],
+      style: [],
+      camera: [],
+    }
+  },
+  {
+    "label": "braziers",
+    "aliases": {
+      "en": [
+        "braziers",
+      ]
+    }, 
+    prompts: {
+      character: [],
+      transition: [],
+      location: [],
+      time: [],
+      era: [],
+      lighting: [],
+      weather: [],
+      action: [],
+      music: [],
+      sound: [],
+      dialogue: [],
+      style: [],
+      camera: [],
+    }
+  },
+  {
     "label": "candelabre",
     "aliases": {
       "en": [

@@ -1,5 +1,7 @@
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 
+tests/cache/*.csv
+
 .age_and_gender_dataset_cache
 
 # Logs

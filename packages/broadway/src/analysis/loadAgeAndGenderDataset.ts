@@ -21,8 +21,10 @@ export const state: {
   nameToStats: {},
 }
 
+const DEFAULT_DOWNLOAD_URL = "https://huggingface.co/datasets/jbilcke-hf/detection-of-age-and-gender/resolve/main/baby-names-us-year-of-birth-full.csv?download=true"
+
 // note: this takes about 140 Mb of memory
-export async function loadAgeGenderNameStats() {
+export async function loadAgeGenderNameStats(url = DEFAULT_DOWNLOAD_URL) {
   let nameToStats = {} as Record<string, AgeNameGenderStats[]>
 
   // unfortunately we cannot use this kind of caching for now,
@@ -48,8 +50,6 @@ export async function loadAgeGenderNameStats() {
   //     nameToStats = {}
   //   }
   // }
-
-  const url = "https://huggingface.co/datasets/jbilcke-hf/detection-of-age-and-gender/resolve/main/baby-names-us-year-of-birth-full.csv?download=true"
 
   console.log(`downloading age and gender detection dataset from Hugging Face (jbilcke-hf/detection-of-age-and-gender)`)
   
