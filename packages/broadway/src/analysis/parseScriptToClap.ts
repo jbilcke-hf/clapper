@@ -4,6 +4,7 @@ import { cleanUTF8Characters } from "@/utils"
 import { analyzeScreenplay } from "@/analysis/analyzeScreenplay"
 
 import { getScreenplayFromText } from "./getScreenplayFromText"
+import { Scene } from "@/types"
 
 export type ParseScriptProgressUpdate = ({
   value,
@@ -52,6 +53,11 @@ export async function parseScriptToClap(
       durationInMs = s.endTimeInMs
     }
   })
+
+  let scenes: Scene[] = []
+  screenplay.sequences.forEach(sequence => {
+    scenes = [...scenes, ...sequence.scenes]
+  })
     
   // TODO: return a ClapProject instead
   const clap = newClap({
@@ -73,7 +79,7 @@ export async function parseScriptToClap(
       isLoop: false,
       isInteractive: false,
     },
-    scenes: [], // TODO
+    scenes,
     entities: Object.values(entitiesById),
     segments,
   })
