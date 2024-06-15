@@ -23,13 +23,13 @@ export function ChatBubble({
         )}>
         <div className={cn(
           `flex flex-col p-4`,
-          isCurrentUser ? `bg-sky-700/60 text-sky-100/80` : `bg-indigo-700/60 text-indigo-100/80`,
+          isCurrentUser ? `bg-sky-800 text-sky-200` : `bg-indigo-800 text-indigo-200`,
           `rounded-lg`
         )}>
-          <p>{message}</p>
+          <p className={cn(`text-sm select-text`)}>{message}</p>
         </div>
         <div className={cn(
-          `text-sm`,
+          `text-sm select-text`,
           isCurrentUser ? ` text-sky-100/60` : `text-indigo-100/60`,
         )}>{senderName}</div>
       </div>

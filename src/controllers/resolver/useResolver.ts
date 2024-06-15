@@ -362,3 +362,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
   }
 
 }))
+
+if (typeof window !== "undefined") {
+  (window as any).useResolver = useResolver
+}

@@ -130,6 +130,11 @@ export function getDefaultSettingsState(): SettingsState {
     googleModelForVoice: "v1",
     googleModelForMusic: "MusicLM",
 
+
+    // Claud 3 stats:
+    // Context window	200K*
+    // *~150K words, ~680K unicode characters
+    // Max output	4096 tokens
     anthropicModelForAssistant: "claude-3-opus-20240229",
 
     elevenLabsModelForVoice: "v1",

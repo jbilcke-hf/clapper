@@ -40,7 +40,9 @@ export type AssistantControls = {
    * 
    * @returns true if operation succeeded, false otherwise
    */
-  // toggleVoice: () => Promise<boolean>
+  toggleVoice: () => boolean
+
+  setVoiceTranscript: (transcript: string) => void
 
   /**
    * Run a prompt command (which can come from a transcript or somewhere else)

@@ -11,7 +11,12 @@ export const useUI = create<UIStore>()(
   persist(
     (set, get) => ({
       ...getDefaultUIState(),
-
+      setHasBetaAccess: (hasBetaAccess: boolean) => {
+        set({ hasBetaAccess })
+      },
+      setShowApiKeys: (showApiKeys: boolean) => {
+        set({ showApiKeys })
+      },
       setShowSettings: (showSettings: SettingsCategory) => {
         set({ showSettings })
       },
@@ -27,8 +32,8 @@ export const useUI = create<UIStore>()(
       setShowVideoPlayer: (showVideoPlayer: boolean) => {
         set({ showVideoPlayer })
       },
-      setShowChat: (showChat: boolean) => {
-        set({ showChat })
+      setShowAssistant: (showAssistant: boolean) => {
+        set({ showAssistant })
       },
       setShowFPS: (showFPS: boolean) => {
         set({ showFPS })
@@ -38,7 +43,7 @@ export const useUI = create<UIStore>()(
       },
     }),
     {
-      name: 'CLAPPER_REVISION_0_SETTINGS_VIEW'
+      name: 'CLAPPER_REVISION_0_CONTROLLERS_UI'
     },
   ),
 )

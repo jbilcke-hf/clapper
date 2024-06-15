@@ -126,6 +126,7 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
       staticVideoRef.currentTime = timeInMs / 1000
     } else if (mode === MonitoringMode.DYNAMIC) {
       // we force a state update
+      // console.log(`forcing a state update`)
       renderLoop()
     }
   },
@@ -141,3 +142,8 @@ setTimeout(() => {
     useMonitor.getState().bindShortcuts()
   }
 }, 0)
+
+
+if (typeof window !== "undefined") {
+  (window as any).useMonitor = useMonitor
+}

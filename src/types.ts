@@ -1,5 +1,6 @@
 import { ClapEntity, ClapMeta, ClapSegment, ClapSegmentCategory, ClapSegmentStatus } from "@aitube/clap"
 import { SettingsState } from "./controllers/settings"
+import { ChatEvent } from "./controllers/assistant/types"
 
 export enum SettingsCategory {
   NONE = "NONE",
@@ -87,6 +88,8 @@ export type AssistantRequest = {
 
   // used to provide more context
   projectInfo: string
+
+  history: ChatEvent[]
 }
 
 export type AssistantResponse = {

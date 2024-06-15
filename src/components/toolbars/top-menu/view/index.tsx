@@ -29,11 +29,13 @@ export function TopMenuView() {
   const showExplorer = useUI((s) => s.showExplorer)
   const setShowExplorer = useUI((s) => s.setShowExplorer)
 
-  const showChat = useUI((s) => s.showChat)
-  const setShowChat = useUI((s) => s.setShowChat)
+  const showAssistant = useUI((s) => s.showAssistant)
+  const setShowAssistant = useUI((s) => s.setShowAssistant)
 
   const showVideoPlayer = useUI((s) => s.showVideoPlayer)
   const setShowVideoPlayer = useUI((s) => s.setShowVideoPlayer)
+
+  const hasBetaAccess = useUI(s => s.hasBetaAccess)
 
   return (
     <MenubarMenu>
@@ -78,19 +80,17 @@ export function TopMenuView() {
           }}
           >Show asset explorer</MenubarCheckboxItem>
       */}
-      
+        {hasBetaAccess &&
         <MenubarCheckboxItem
-          checked={showChat}
-          disabled
-          /*
+          checked={showAssistant}
           onClick={(e) => {
-            setShowChat(!showChat)
+            setShowAssistant(!showAssistant)
             e.stopPropagation()
             e.preventDefault()
             return false
           }}
-          */
-          >Show chat assistant</MenubarCheckboxItem>
+          >Show assistant</MenubarCheckboxItem>
+        }
         {/*
         <MenubarCheckboxItem
           checked={showVideoPlayer}

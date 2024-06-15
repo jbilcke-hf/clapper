@@ -85,6 +85,7 @@
     "react-hotkeys-hook": "^4.5.0",
     "react-icons": "^5.2.1",
     "react-reflex": "^4.2.6",
+    "react-speakup": "^1.0.0",
     "replicate": "^0.30.2",
     "sharp": "^0.33.4",
     "sonner": "^1.4.41",

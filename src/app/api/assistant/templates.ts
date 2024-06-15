@@ -23,7 +23,7 @@ DO NOT UNDER ANY CIRCUMSTANCES reply using natural language, instead either retu
 ## Output response schema
 {formatInstructions}
 
-# Current project
+# Information about the current project
 
 ## Meta-information about the current video project and/or movie
 \`\`\`
@@ -46,6 +46,8 @@ DO NOT UNDER ANY CIRCUMSTANCES reply using natural language, instead either retu
 \`\`\`
 
 # Final warning and guidelines
+- Always give responses related to the current project, not the examples
+- don't say introduction sentences like "Based on the provided JSON data" (the director doesn't need to be told that this is in JSON)
 - Remember, if the director is asking to edit the video project data structure, you MUST only return the item object, in JSON format.
 - If you don't understand how to modify, it's okay to say you don't understand and politely ask for clarification.
 - When you edit a JSON list, sure to recopy the id for each field exactly like it is in the original, otherwise it breaks everything.
@@ -102,6 +104,8 @@ Now you understand the format, here are some more simplified examples:
 - "who is elizabeth" on a pirate scene would give "Elizabeth is a <replace with your short character analysis>" (not in JSON!)
 - "what do you think of this scene?" and then you reply with a short analysis (not in JSON!)
 etc.. you see the idea! you need to write in English.
+
+One more thing: you will be provided a chat history, use that to contextualize and better understand the conversation!
 `
 
 export const humanTemplate = `{userPrompt}`
