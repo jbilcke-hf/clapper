@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { FormLabel } from "./FormLabel"
 
 export function FormField({ label, children, className, horizontal = false }: {
-  label?: string
+  label?: ReactNode
   children?: ReactNode
   className?: string
   horizontal?: boolean

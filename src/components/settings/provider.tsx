@@ -1,13 +1,31 @@
+import { ReactNode } from "react"
+
 import { FormSection } from "@/components/forms/FormSection"
 import { getDefaultSettingsState, useSettings } from "@/controllers/settings"
-import { FormSelect } from "../forms/FormSelect"
 import { ComfyIcuAccelerator } from "@/types"
-import { FormInput } from "../forms/FormInput"
 import { APP_NAME } from "@/lib/core/constants"
+
 import { availableComfyIcuAccelerators } from "./constants"
 
+import { FormSelect } from "../forms/FormSelect"
+import { FormInput } from "../forms/FormInput"
+import { useUI } from "@/controllers/ui"
+import { FormSwitch } from "../forms/FormSwitch"
+
+function GetItHere({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <span>{children} (<a 
+      className="underline text-stone-500 hover:text-stone-400"
+      href={href}
+      target="_blank"
+    >get one</a>)</span>
+  )
+}
 export function SettingsSectionProvider() {
   const defaultSettings = getDefaultSettingsState()
+
+  const showApiKeys = useUI(s => s.showApiKeys)
+  const setShowApiKeys = useUI(s => s.setShowApiKeys)
 
   const replicateApiKey = useSettings(s => s.replicateApiKey)
   const setReplicateApiKey = useSettings(s => s.setReplicateApiKey)
@@ -54,20 +72,29 @@ export function SettingsSectionProvider() {
   const kitsAiApiKey = useSettings(s => s.kitsAiApiKey)
   const setKitsAiApiKey = useSettings(s => s.setKitsAiApiKey)
 
+  const apiKeyType = showApiKeys ? "text" : "password"
+
   return (
     <div className="flex flex-col space-y-6 justify-between">
       <FormSection label="Compute providers">
 
-      <p className="italic text-sm text-stone-500 max-w-80">
+        <p className="italic text-sm text-stone-500 max-w-80">
           Note: preferences and credentials are stored inside your browser local storage.<br/>{APP_NAME} uses them to perform API calls on your behalf, but forgets them immediately.
         </p>
         
+        <FormSwitch
+          label="Hide API Keys"
+          checked={!showApiKeys}
+          onCheckedChange={setShowApiKeys}
+          horizontal
+        />
+
         <FormInput
           label="Hugging Face API key"
           value={huggingFaceApiKey}
           defaultValue={""}
           onChange={setHuggingFaceApiKey}
-          type="password"
+          type={apiKeyType}
         />
 
         <FormInput
@@ -75,14 +102,14 @@ export function SettingsSectionProvider() {
           value={replicateApiKey}
           defaultValue={defaultSettings.replicateApiKey}
           onChange={setReplicateApiKey}
-          type="password"
+          type={apiKeyType}
         />
         <FormInput
           label="Comfy.icu API key"
           value={comfyIcuApiKey}
           defaultValue={defaultSettings.comfyIcuApiKey}
           onChange={setComfyIcuApiKey}
-          type="password"
+          type={apiKeyType}
         />
 
         <FormSelect<ComfyIcuAccelerator>
@@ -103,11 +130,11 @@ export function SettingsSectionProvider() {
         />
 
         <FormInput
-          label="Fal.ai API Key"
+          label={<GetItHere href="https://fal.ai/dashboard/keys">Fal.ai API Key</GetItHere>}
           value={falAiApiKey}
           defaultValue={defaultSettings.falAiApiKey}
           onChange={setFalAiApiKey}
-          type="password"
+          type={apiKeyType}
         />
 
         <FormInput
@@ -115,15 +142,15 @@ export function SettingsSectionProvider() {
           value={modelsLabApiKey}
           defaultValue={defaultSettings.modelsLabApiKey}
           onChange={setModelsLabApiKey}
-          type="password"
+          type={apiKeyType}
         />
 
         <FormInput
-          label="OpenAI API Key"
+          label={<GetItHere href="https://platform.openai.com/api-keys">OpenAI API Key</GetItHere>}
           value={openaiApiKey}
           defaultValue={defaultSettings.openaiApiKey}
           onChange={setOpenaiApiKey}
-          type="password"
+          type={apiKeyType}
         />
 
         <FormInput
@@ -131,31 +158,31 @@ export function SettingsSectionProvider() {
           value={groqApiKey}
           defaultValue={defaultSettings.groqApiKey}
           onChange={setGroqApiKey}
-          type="password"
+          type={apiKeyType}
         />
 
         <FormInput
-          label="Google API Key"
+          label={<GetItHere href="https://aistudio.google.com/app/apikey">Google API Key</GetItHere>}
           value={googleApiKey}
           defaultValue={defaultSettings.googleApiKey}
           onChange={setGoogleApiKey}
-          type="password"
+          type={apiKeyType}
         />
 
         <FormInput
-          label="Anthropic API Key"
+          label={<GetItHere href="https://console.anthropic.com/settings/keys">Anthropic API Key</GetItHere>}
           value={anthropicApiKey}
           defaultValue={defaultSettings.anthropicApiKey}
           onChange={setAnthropicApiKey}
-          type="password"
+          type={apiKeyType}
         />
 
         <FormInput
-          label="Cohere API Key"
+          label={<GetItHere href="https://dashboard.cohere.com/api-keys">Cohere API Key</GetItHere>}
           value={cohereApiKey}
           defaultValue={defaultSettings.cohereApiKey}
           onChange={setCohereApiKey}
-          type="password"
+          type={apiKeyType}
         />
 
         <FormInput
@@ -163,15 +190,15 @@ export function SettingsSectionProvider() {
           value={mistralAiApiKey}
           defaultValue={defaultSettings.mistralAiApiKey}
           onChange={setMistralAiApiKey}
-          type="password"
+          type={apiKeyType}
         />
 
         <FormInput
-          label="StabilityAI API Key"
+          label={<GetItHere href="https://platform.stability.ai/account/keys">StabilityAI API Key</GetItHere>}
           value={stabilityAiApiKey}
           defaultValue={defaultSettings.stabilityAiApiKey}
           onChange={setStabilityAiApiKey}
-          type="password"
+          type={apiKeyType}
         />
 
         <FormInput
@@ -179,7 +206,7 @@ export function SettingsSectionProvider() {
           value={elevenLabsApiKey}
           defaultValue={defaultSettings.elevenLabsApiKey}
           onChange={setElevenLabsApiKey}
-          type="password"
+          type={apiKeyType}
         />
         
         <FormInput
@@ -187,7 +214,7 @@ export function SettingsSectionProvider() {
           value={kitsAiApiKey}
           defaultValue={defaultSettings.kitsAiApiKey}
           onChange={setKitsAiApiKey}
-          type="password"
+          type={apiKeyType}
         />
       </FormSection>
     </div>

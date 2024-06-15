@@ -498,7 +498,7 @@ export const useSettings = create<SettingsStore>()(
       },
     }),
     {
-      name: 'CLAPPER_REVISION_0_SETTINGS_RENDERING'
+      name: 'CLAPPER_REVISION_0_CONTROLLERS_USE_SETTINGS'
     },
   ),
 )

@@ -18,6 +18,7 @@ import { ProviderList } from "../lists/ProviderList"
 import { availableComputeProvidersForAssistant } from "@/components/settings/constants"
 import { ComputeProvider, SettingsCategory } from "@/types"
 import { AssistantModelList } from "../lists/AssistantModelList"
+import { useInitAssistant } from "@/controllers/assistant/useAssistant"
 
 export function TopMenuAssistant() {
   const setShowSettings = useUI(s => s.setShowSettings)
@@ -25,6 +26,10 @@ export function TopMenuAssistant() {
   const setAssistantProvider = useSettings(s => s.setAssistantProvider)
   const assistantModel = useSettings(s => s.assistantModel)
   const setAssistantModel = useSettings(s => s.setAssistantModel)
+
+  // this should only be called on and at only one place in the project!
+  useInitAssistant()
+
   return (
     <MenubarMenu>
       <MenubarTrigger>Assistant</MenubarTrigger>

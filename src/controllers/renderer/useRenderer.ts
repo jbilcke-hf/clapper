@@ -24,7 +24,6 @@ export const useRenderer = create<RendererStore>((set, get) => ({
   // this will be called at 60 FPS - and yes, it is expensive
   // we could probably improve things by using a temporal tree index
   renderLoop: (): BufferedSegments => {
-
     const { computeBufferedSegments, bufferedSegments } = get()
 
 
@@ -68,6 +67,7 @@ export const useRenderer = create<RendererStore>((set, get) => ({
           results.activeSegments.push(segment)
           results.activeVideoSegment = segment
           results.activeSegmentsCacheKey = getSegmentCacheKey(segment, results.activeSegmentsCacheKey)
+          continue
         }
   
         const isActiveAudio =
@@ -81,6 +81,7 @@ export const useRenderer = create<RendererStore>((set, get) => ({
           results.activeSegments.push(segment)
           results.activeAudioSegments.push(segment)
           results.activeSegmentsCacheKey = getSegmentCacheKey(segment, results.activeSegmentsCacheKey)
+          continue
         }
 
         const isActiveStoryboard = segment.category === ClapSegmentCategory.STORYBOARD && segment.assetUrl
@@ -88,8 +89,12 @@ export const useRenderer = create<RendererStore>((set, get) => ({
           results.activeSegments.push(segment)
           results.activeStoryboardSegment = segment
           results.activeSegmentsCacheKey = getSegmentCacheKey(segment, results.activeSegmentsCacheKey)
+          continue
         }
-  
+
+        results.activeSegments.push(segment)
+        results.activeSegmentsCacheKey = getSegmentCacheKey(segment, results.activeSegmentsCacheKey)
+        continue
       }
       
       const inUpcomingShot =
@@ -104,6 +109,7 @@ export const useRenderer = create<RendererStore>((set, get) => ({
           results.upcomingSegments.push(segment)
           results.upcomingVideoSegment = segment
           results.upcomingSegmentsCacheKey = getSegmentCacheKey(segment, results.upcomingSegmentsCacheKey)
+          continue
         }
   
         const isUpcomingAudio =
@@ -117,6 +123,7 @@ export const useRenderer = create<RendererStore>((set, get) => ({
           results.upcomingSegments.push(segment)
           results.upcomingAudioSegments.push(segment)
           results.upcomingSegmentsCacheKey = getSegmentCacheKey(segment, results.upcomingSegmentsCacheKey)
+          continue
         }
 
         const isUpcomingStoryboard = segment.category === ClapSegmentCategory.STORYBOARD && segment.assetUrl
@@ -124,8 +131,11 @@ export const useRenderer = create<RendererStore>((set, get) => ({
           results.upcomingSegments.push(segment)
           results.upcomingStoryboardSegment = segment
           results.upcomingSegmentsCacheKey = getSegmentCacheKey(segment, results.upcomingSegmentsCacheKey)
+          continue
         }
-  
+        results.upcomingSegments.push(segment)
+        results.upcomingSegmentsCacheKey = getSegmentCacheKey(segment, results.upcomingSegmentsCacheKey)
+        continue
       }
         
     }
@@ -135,3 +145,7 @@ export const useRenderer = create<RendererStore>((set, get) => ({
     return results
   },
 }))
+
+if (typeof window !== "undefined") {
+  (window as any).useRenderer = useRenderer
+}

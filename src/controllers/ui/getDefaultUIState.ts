@@ -3,14 +3,16 @@ import { UIState } from "./types"
 
 export function getDefaultUIState(): UIState {
   const state: UIState = {
+    hasBetaAccess: false,
+    showApiKeys: false,
     showSettings: SettingsCategory.NONE,
     showImporter: false,
     showTimeline: true,
-    showExplorer: true,
+    showExplorer: false,
     showVideoPlayer: true,
-    showChat: true,
-    showFPS: true,
-    followCursor: true,
+    showAssistant: false,
+    showFPS: false,
+    followCursor: false,
   }
 
   return state

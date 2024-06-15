@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import {
   ReflexContainer,
   ReflexSplitter,
@@ -22,6 +22,7 @@ import { TopBar } from "@/components/toolbars/top-bar"
 import { Timeline } from "@/components/core/timeline"
 import { useIO } from "@/controllers/io/useIO"
 import { ChatView } from "@/components/assistant/ChatView"
+import { useSearchParams } from "next/navigation"
 
 type DroppableThing = { files: File[] }
 
@@ -29,7 +30,7 @@ function MainContent() {
   const ref = useRef<HTMLDivElement>(null)
   const isEmpty = useTimeline(s => s.isEmpty)
   const showTimeline = useUI((s) => s.showTimeline)
-  const showChat = useUI((s) => s.showChat)
+  const showAssistant = useUI((s) => s.showAssistant)
   
   const openFiles = useIO(s => s.openFiles)
   
@@ -48,6 +49,12 @@ function MainContent() {
   })
 
   connectFileDrop(ref)
+
+  const setHasBetaAccess = useUI(s => s.setHasBetaAccess)
+
+  const searchParams = useSearchParams()
+  const hasBetaAccess = searchParams.get("beta") === "true"
+  useEffect(() => { setHasBetaAccess(hasBetaAccess) }, [hasBetaAccess])
 
   return (
     <div
@@ -92,8 +99,8 @@ function MainContent() {
               </ReflexContainer>
             </ReflexElement>
 
-          {showChat && <ReflexSplitter />}
-          {showChat && <ReflexElement size={300}><ChatView /></ReflexElement>}
+          {showAssistant && <ReflexSplitter />}
+          {showAssistant && <ReflexElement size={300}><ChatView /></ReflexElement>}
 
           </ReflexContainer>
           

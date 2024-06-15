@@ -10,3 +10,8 @@ export const useMetrics = create<MetricsStore>((set, get) => ({
   
   // TODO: add a track metric callback
 }))
+
+
+if (typeof window !== "undefined") {
+  (window as any).useMetrics = useMetrics
+}

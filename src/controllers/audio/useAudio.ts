@@ -102,3 +102,8 @@ export const useAudio = create<AudioStore>((set, get) => ({
     })
   },
 }))
+
+
+if (typeof window !== "undefined") {
+  (window as any).useAudio = useAudio
+}

@@ -3,8 +3,8 @@
 import { ClapSegmentCategory } from "@aitube/clap"
 import { RunnableLike } from "@langchain/core/runnables"
 import { ChatPromptValueInterface } from "@langchain/core/dist/prompt_values"
-import { AIMessageChunk } from "@langchain/core/messages"
-import { ChatPromptTemplate } from "@langchain/core/prompts"
+import { AIMessage, AIMessageChunk, HumanMessage } from "@langchain/core/messages"
+import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts"
 import { StructuredOutputParser } from "@langchain/core/output_parsers"
 import { ChatOpenAI } from "@langchain/openai"
 import { ChatGroq } from "@langchain/groq"
@@ -47,7 +47,9 @@ export async function askAnyAssistant({
   entities = {},
 
   // used to provide more context
-  projectInfo = ""
+  projectInfo = "",
+
+  history = [],
 }: AssistantRequest): Promise<AssistantResponse> {
 
   const provider = settings.assistantProvider
@@ -98,6 +100,7 @@ export async function askAnyAssistant({
   const chatPrompt = ChatPromptTemplate.fromMessages(
     [
       ["system", systemTemplate],
+      new MessagesPlaceholder("chatHistory"),
       ["human", humanTemplate],
     ]
   )
@@ -109,7 +112,7 @@ export async function askAnyAssistant({
     category: segment.category,
   } as SimplifiedSegmentData))
 
- // console.log("INPUT:", JSON.stringify(inputData, null, 2))
+  console.log("INPUT:", JSON.stringify(inputData, null, 2))
 
   const chain = chatPrompt.pipe(coerceable).pipe(parser)
 
@@ -121,7 +124,23 @@ export async function askAnyAssistant({
       fullScene,
       actionLine,
       userPrompt: prompt,
-      inputData,
+      chatHistory: history.map(({
+        eventId,
+        senderId,
+        senderName,
+        roomId,
+        roomName,
+        sentAt,
+        message,
+        isCurrentUser,
+      }) => {
+        if (isCurrentUser) {
+          return new HumanMessage(message)
+        } else {
+          return new AIMessage(message)
+        }
+      }),
+      inputData: JSON.stringify(inputData),
     })
 
     console.log("OUTPUT:", JSON.stringify(result, null, 2))

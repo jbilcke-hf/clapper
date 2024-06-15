@@ -40,7 +40,7 @@ export function SettingsSectionSound() {
           }
           items={availableComputeProvidersForSound.map(provider => ({
             id: provider,
-            label: computeProviderShortNames[soundProvider] || "(missing name)",
+            label: computeProviderShortNames[provider] || "(missing name)",
             disabled: false,
             value: provider,
           }))}

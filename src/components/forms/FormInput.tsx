@@ -1,4 +1,4 @@
-import { ChangeEvent, HTMLInputTypeAttribute, useMemo, useRef } from "react"
+import { ChangeEvent, HTMLInputTypeAttribute, ReactNode, useMemo, useRef } from "react"
 
 import { cn, getValidNumber, isValidNumber } from "@/lib/utils"
 
@@ -20,9 +20,9 @@ export function FormInput<T>({
   type,
   // ...props
  }: {
-  label?: string
+  label?: ReactNode
   className?: string
-  placeholder?: string
+  placeholder?: ReactNode
   value?: T
   minValue?: T
   maxValue?: T
@@ -85,9 +85,7 @@ export function FormInput<T>({
 
   return (
     <FormField
-      label={
-      `${label}:`
-      }
+      label={<>{label}:</>}
       horizontal={horizontal}
        >
       <Input

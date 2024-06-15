@@ -32,6 +32,7 @@ export const availableComputeProvidersForAssistant = [
   ComputeProvider.HUGGINGFACE,
   ComputeProvider.GROQ,
   ComputeProvider.OPENAI,
+  ComputeProvider.GOOGLE,
   ComputeProvider.ANTHROPIC,
   ComputeProvider.FIREWORKSAI,
 ]
@@ -119,11 +120,22 @@ export const availableModelsForAssistant: Partial<Record<ComputeProvider, string
     "Llama3-8b-8192",
   ],
   [ComputeProvider.ANTHROPIC]: [
+    // you can find this list here: https://docs.anthropic.com/en/docs/models-overview
     "claude-3-opus-20240229",
     "claude-3-sonnet-20240229",
     "claude-3-haiku-20240307"
   ], 
   [ComputeProvider.GOOGLE]: [
+    // you can find this list here: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versioning
+    "gemini-1.5-flash-001",
+    "gemini-1.5-pro-001",
+    "gemini-1.0-pro-vision-001",
+    "gemini-1.0-pro-002",
+
+    // The auto-updated version of a Gemini model points to the most recent stable version
+
+
+    // you can find this list here: https://docs.anthropic.com/en/docs/models-overview
     "claude-3-opus@20240229",
     "claude-3-sonnet@20240229",
     "claude-3-haiku@20240307"

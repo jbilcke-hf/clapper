@@ -1,5 +1,6 @@
 "use client"
 
+import { useVoiceToText } from "react-speakup"
 import { create } from "zustand"
 import { ClapOutputType, ClapProject, ClapSegment, ClapSegmentCategory, newSegment, UUID } from "@aitube/clap"
 
@@ -9,6 +10,8 @@ import { DEFAULT_DURATION_IN_MS_PER_STEP, findFreeTrack, TimelineStore, useTimel
 import { useSettings } from "../settings"
 import { AssistantRequest } from "@/types"
 import { askAssistant } from "./askAssistant"
+import { useRenderer } from "../renderer"
+import { useEffect } from "react"
 
 // URL to the speech to text websocket server
 export const STT_API_URL = process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_API_URL || ""
@@ -17,8 +20,8 @@ const enableTextToSpeech = false
 
 export const useAssistant = create<AssistantStore>((set, get) => ({
   ...getDefaultAssistantState(),
-  /*
-  toggleVoice: async (): Promise<boolean> => {
+
+  toggleVoice: (): boolean => {
    
     if (!navigator?.mediaDevices?.getUserMedia || !MediaRecorder.isTypeSupported("audio/webm")) {
       console.error("This environment doesn't support microphone recording")
@@ -34,68 +37,12 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
 
     set({ isVoiceEnabled })
 
-    if (isVoiceEnabled) {
-   
-      const stream = get().stream || (await navigator.mediaDevices.getUserMedia({ audio: true }))
-      set({ stream })
-
-      const recorder = get().recorder || new MediaRecorder(stream, { mimeType: "audio/webm" })
-      set({ recorder })
-
-      if (!get().socket) {
-        //create a websocket connection
-        const socket = new WebSocket(STT_API_URL)
-        set({ socket })
-
-        socket.onopen = () => {
-          console.log({ event: "onopen" });
-          recorder.addEventListener("dataavailable", async (event) => {
-            if (event.data.size > 0 && socket.readyState === 1) {
-              socket.send(event.data)
-            }
-          })
-          recorder.start(1000)
-        }
-      
-        socket.onmessage = (message) => {
-          let transcript = ""
-          try {
-            const received = JSON.parse(message.data)
-            transcript = received.channel.alternatives[0].transcript || ""
-          } catch (err) {
-            console.error(err)
-          }
-          set({
-            transcript,
-          })
-        }
-      
-        socket.onclose = () => {
-          console.log({ event: "onclose" });
-        }
-      
-        socket.onerror = (error) => {
-          console.log({ event: "onerror", error });
-        }
-      }
-    } else {
-      // voice recognition is expensive, so we make sure we removed everything
-      const { socket, recorder, stream } = get()
-
-      // stop existing socket
-      socket?.close()
-      recorder?.stop()
-
-      set({
-        socket: undefined,
-        recorder: undefined,
-      })
-    }
-
-    return true
+    return isVoiceEnabled
   },
-  */
 
+  setVoiceTranscript: (transcript: string) => {
+    set({ transcript })
+  },
   runCommand: (prompt: string) => {
 
     const query = prompt
@@ -179,9 +126,12 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
     }
     
     console.log(`TODO @julian: restore the concept of "addSegment()", "updateSegment()", "active segment" and "cursor position" inside @aitube-timeline`)
-    // const { addSegment, activeSegments, cursorInSteps,  } = useTimeline.getState()
+    const {
+      bufferedSegments: {
+        activeSegments
+      }
+    } = useRenderer.getState()
 
-    const activeSegments: ClapSegment[] = []
     const cursorInSteps = 0
   
     const referenceSegment: ClapSegment | undefined = activeSegments.at(0)
@@ -205,12 +155,21 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
   
     const segments: ClapSegment[] = activeSegments
       .filter(s =>
+        s.category === ClapSegmentCategory.CAMERA ||
         s.category === ClapSegmentCategory.LOCATION ||
         s.category === ClapSegmentCategory.TIME ||
         s.category === ClapSegmentCategory.LIGHTING ||
         s.category === ClapSegmentCategory.ACTION ||
         s.category === ClapSegmentCategory.DIALOGUE ||
-        s.category === ClapSegmentCategory.WEATHER  
+        s.category === ClapSegmentCategory.WEATHER ||
+        s.category === ClapSegmentCategory.ERA ||
+        s.category === ClapSegmentCategory.INTERFACE ||
+        s.category === ClapSegmentCategory.MUSIC ||
+        s.category === ClapSegmentCategory.SOUND ||
+        s.category === ClapSegmentCategory.STORYBOARD ||
+        s.category === ClapSegmentCategory.STYLE ||
+        s.category === ClapSegmentCategory.TRANSITION ||
+        s.category === ClapSegmentCategory.GENERIC
       )
   
     console.log(`TODO @julian: provide both contextual segments and editable ones to the LLM?`)
@@ -223,6 +182,7 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
       actionLine,
       entities,
       projectInfo,
+      history: get().history
     }
   
     const { prompt, categoryName, llmOutput } = await askAssistant(request)
@@ -234,6 +194,8 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
       })
       return
     }
+
+    console.log(`askAssistant response: `, { prompt, categoryName, llmOutput })
   
     let match = segments.find(s => s.category === categoryName) || undefined
     if (!match) {
@@ -271,18 +233,20 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
         ...match,
         prompt,
         label: prompt,
+        categoryName,
       })
   
       console.log(`TODO Julian: update the segment!!`)
-      // addSegment(newSeg)
 
-      /*
-      updateSegment({
-        ...match,
+      // const segments: ClapSegment[] = useTimeline.getState().segments
+      // const segment = segments.find(s => s.id === newSeg.id)
+      Object.assign(match, {
         prompt,
         label: prompt,
       })
-        */
+
+      // tell the timeline that this individual segment should be redrawn
+      timelineState.trackSilentChangeInSegment(match.id)
 
       addEventToHistory({
         senderId: "assistant",
@@ -292,3 +256,30 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
     }
   }
 }))
+
+export function useInitAssistant() {
+  const isVoiceEnabled = useAssistant(s => s.isVoiceEnabled)
+  const toggleVoice = useAssistant(s => s.toggleVoice)
+  const setVoiceTranscript = useAssistant(s => s.setVoiceTranscript)
+  const { startListening, stopListening, transcript } = useVoiceToText({
+    continuous: true
+  })
+
+  useEffect(() => {
+    if (isVoiceEnabled) {
+      console.log(`TODO: startListening`)
+
+      startListening()
+    } else {
+      stopListening()
+    }
+  }, [isVoiceEnabled])
+
+  useEffect(() =>  {
+    setVoiceTranscript(transcript)
+  }, [transcript])
+}
+
+if (typeof window !== "undefined") {
+  (window as any).useAssistant = useAssistant
+}

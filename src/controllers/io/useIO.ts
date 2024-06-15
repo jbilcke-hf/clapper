@@ -502,3 +502,8 @@ export const useIO = create<IOStore>((set, get) => ({
 
   }
 }))
+
+
+if (typeof window !== "undefined") {
+  (window as any).useIO = useIO
+}
