@@ -55,24 +55,8 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       }, waitTimeIfNothingToDoInMs)
     }
 
-    // ------- trivial case: maybe we have nothing to do? ------
-
-    const allStrategiesAreOnDemand =
-      imageRenderingStrategy === RenderingStrategy.ON_DEMAND &&
-      videoRenderingStrategy === RenderingStrategy.ON_DEMAND &&
-      soundRenderingStrategy === RenderingStrategy.ON_DEMAND &&
-      voiceRenderingStrategy === RenderingStrategy.ON_DEMAND &&
-      musicRenderingStrategy
-    
-    // nothing to do
-    if (allStrategiesAreOnDemand) {
-      // console.log(`useResolver.runLoop(): all strategies are on-demand only`)
-      return runLoopAgain()
-    }
-
-    // ---------- end of the very trivial case ----------------
-
-
+    // note: do not create a return condition in case all strategies are "on demand"
+    // otherwise we won't be able to get the status of current tasks
 
     // console.log(`useResolver.runLoop()`)
     const timelineState: TimelineStore = useTimeline.getState()
@@ -99,13 +83,14 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     //
     // -------------------------------------------------------------------------
 
-    const { defaultParallelismQuotas } = get()
+    const { defaultParallelismQuotas, isPaused } = get()
 
-    // note that we to create a copy here, that way we can modify it
-    const parallelismQuotas = {
-      ...defaultParallelismQuotas,
-    }
-    
+    let currentParallelismQuotaForVideo = defaultParallelismQuotas.video
+    let currentParallelismQuotaForImage = defaultParallelismQuotas.image
+    let currentParallelismQuotaForVoice = defaultParallelismQuotas.voice
+    let currentParallelismQuotaForSound = defaultParallelismQuotas.sound
+    let currentParallelismQuotaForMusic = defaultParallelismQuotas.music
+
     // console.log(`useResolver.runLoop() parallelismQuotas = `, parallelismQuotas)
 
     // we do not need ot get currentParallelismQuotas,
@@ -127,10 +112,12 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           // it is thus vital to deduct it from the parallelism quota,
           // to avoir triggering quota limit on the providers side
           if (s.status === ClapSegmentStatus.IN_PROGRESS) {
-            parallelismQuotas.video = Math.max(0, parallelismQuotas.video - 1)
+            currentParallelismQuotaForVideo = Math.max(0, currentParallelismQuotaForVideo - 1)
           }
           continue
         }
+
+        if (isPaused) { continue }
 
         if (videoRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
@@ -150,8 +137,8 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           continue
         }
 
-        if (parallelismQuotas.video > 0) {
-          parallelismQuotas.video = Math.max(0, parallelismQuotas.video - 1)
+        if (currentParallelismQuotaForVideo > 0) {
+          currentParallelismQuotaForVideo = Math.max(0, currentParallelismQuotaForVideo - 1)
           segmentsToRender.push(s)
         }
       } else if (s.category === ClapSegmentCategory.STORYBOARD) {
@@ -165,12 +152,14 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           // it is thus vital to deduct it from the parallelism quota,
           // to avoir triggering quoote limit on the providers side
           if (s.status === ClapSegmentStatus.IN_PROGRESS) {
-            parallelismQuotas.image = Math.max(0, parallelismQuotas.image - 1)
+            currentParallelismQuotaForImage = Math.max(0, currentParallelismQuotaForImage - 1)
           }
           
           continue
         }
         // console.log(`useResolver.runLoop(): found a storyboard segment that has to be generated`)
+        
+        if (isPaused) { continue }
 
         if (imageRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
@@ -192,9 +181,9 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
         // console.log(`useResolver.runLoop(): strategy is good to go`)
 
-        if (parallelismQuotas.image > 0) {
+        if (currentParallelismQuotaForImage > 0) {
           // console.log(`useResolver.runLoop(): quota is good to go`)
-          parallelismQuotas.image = Math.max(0, parallelismQuotas.image - 1)
+          currentParallelismQuotaForImage = Math.max(0, currentParallelismQuotaForImage - 1)
           segmentsToRender.push(s)
         }
       } else if (s.category === ClapSegmentCategory.DIALOGUE) {
@@ -205,11 +194,13 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           // it is thus vital to deduct it from the parallelism quota,
           // to avoir triggering quoote limit on the providers side
           if (s.status === ClapSegmentStatus.IN_PROGRESS) {
-            parallelismQuotas.voice = Math.max(0, parallelismQuotas.voice - 1)
+            currentParallelismQuotaForVoice = Math.max(0, currentParallelismQuotaForVoice - 1)
           }
           
           continue
         }
+
+        if (isPaused) { continue }
 
         if (voiceRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
@@ -229,8 +220,8 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           continue
         }
 
-        if (parallelismQuotas.voice > 0) {
-          parallelismQuotas.voice = Math.max(0, parallelismQuotas.voice - 1)
+        if (currentParallelismQuotaForVoice > 0) {
+          currentParallelismQuotaForVoice = Math.max(0, currentParallelismQuotaForVoice - 1)
           segmentsToRender.push(s)
         }
       } else if (s.category === ClapSegmentCategory.SOUND) {
@@ -241,11 +232,14 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           // it is thus vital to deduct it from the parallelism quota,
           // to avoir triggering quoote limit on the providers side
           if (s.status === ClapSegmentStatus.IN_PROGRESS) {
-            parallelismQuotas.sound = Math.max(0, parallelismQuotas.sound - 1)
+            currentParallelismQuotaForSound = Math.max(0, currentParallelismQuotaForSound - 1)
           }
           
           continue
         }
+
+        if (isPaused) { continue }
+
         if (soundRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
         }
@@ -264,8 +258,8 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           continue
         }
 
-        if (parallelismQuotas.sound > 0) {
-          parallelismQuotas.sound = Math.max(0, parallelismQuotas.sound - 1)
+        if (currentParallelismQuotaForSound > 0) {
+          currentParallelismQuotaForSound = Math.max(0, currentParallelismQuotaForSound - 1)
           segmentsToRender.push(s)
         }
       } else if (s.category === ClapSegmentCategory.MUSIC) {
@@ -276,11 +270,13 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           // it is thus vital to deduct it from the parallelism quota,
           // to avoir triggering quoote limit on the providers side
           if (s.status === ClapSegmentStatus.IN_PROGRESS) {
-            parallelismQuotas.music = Math.max(0, parallelismQuotas.music - 1)
+            currentParallelismQuotaForMusic = Math.max(0, currentParallelismQuotaForMusic - 1)
           }
           
           continue
         }
+
+        if (isPaused) { continue }
 
         if (musicRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
@@ -300,21 +296,13 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           continue
         }
 
-        if (parallelismQuotas.music > 0) {
-          parallelismQuotas.music = Math.max(0, parallelismQuotas.music - 1)
+        if (currentParallelismQuotaForMusic > 0) {
+          currentParallelismQuotaForMusic = Math.max(0, currentParallelismQuotaForMusic - 1)
           segmentsToRender.push(s)
         }
       } // else continue
     }
 
-    if (!segmentsToRender.length) {
-      // nothing to do - this will be the most common case
-      return runLoopAgain()
-    }
-
-    // console.log(`useResolver.runLoop(): firing and forgetting ${segmentsToRender.length} new resolveSegment promises`)
-    // we fire and forget
-    segmentsToRender.forEach(segment => resolveSegment(segment))
 
     // we don't want to do something like this:
     // await Promise.allSettled(segmentsRenderingPromises)
@@ -323,7 +311,54 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     // the idea here is that we don't want to wait for all segments
     // to finish before starting new ones.
 
+    const nbPendingRequestsForVideo = defaultParallelismQuotas.video - currentParallelismQuotaForVideo
+    const nbPendingRequestsForImage = defaultParallelismQuotas.image - currentParallelismQuotaForImage
+    const nbPendingRequestsForVoice = defaultParallelismQuotas.voice - currentParallelismQuotaForVoice
+    const nbPendingRequestsForSound = defaultParallelismQuotas.sound - currentParallelismQuotaForSound
+    const nbPendingRequestsForMusic = defaultParallelismQuotas.music - currentParallelismQuotaForMusic
+
+    const nbRequestsRunningInParallel =
+      nbPendingRequestsForVideo
+      + nbPendingRequestsForImage
+      + nbPendingRequestsForVoice
+      + nbPendingRequestsForSound
+      + nbPendingRequestsForMusic
+    
+    const isBusyResolving = nbRequestsRunningInParallel > 0
+    
+    set({
+      currentParallelismQuotaForVideo,
+      currentParallelismQuotaForImage,
+      currentParallelismQuotaForVoice,
+      currentParallelismQuotaForSound,
+      currentParallelismQuotaForMusic,
+      // just some aliases for convenience
+      nbPendingRequestsForVideo,
+      nbPendingRequestsForImage,
+      nbPendingRequestsForVoice,
+      nbPendingRequestsForSound,
+      nbPendingRequestsForMusic,
+      nbRequestsRunningInParallel,
+      isBusyResolving
+    })
+
+    // console.log(`useResolver.runLoop(): firing and forgetting ${segmentsToRender.length} new resolveSegment promises`)
+    // we fire and forget
+    segmentsToRender.forEach(segment => resolveSegment(segment))
+
     return runLoopAgain()
+  },
+
+  
+  togglePause: (isPaused?: boolean): boolean => {
+    const { isPaused: previouslyPaused } = get()
+    if (typeof isPaused === "boolean") {
+      set({ isPaused })
+      return isPaused
+    } else {
+      set({ isPaused: !previouslyPaused })
+      return  !previouslyPaused
+    }
   },
 
   /**

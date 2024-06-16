@@ -19,8 +19,11 @@ import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { availableComputeProvidersForVoice } from "@/components/settings/constants"
 import { VoiceGenerationModelList } from "../lists/VoiceGenerationModelList"
 import { ComputeProvider, SettingsCategory } from "@/types"
+import { useResolver } from "@/controllers/resolver/useResolver"
+import { IsBusy } from "../IsBusy"
 
 export function TopMenuVoice() {
+  const nbPendingRequestsForVoice = useResolver(s => s.nbPendingRequestsForVoice)
   const setShowSettings = useUI(s => s.setShowSettings)
   const voiceProvider = useSettings(s => s.voiceProvider)
   const setVoiceProvider = useSettings(s => s.setVoiceProvider)
@@ -30,7 +33,7 @@ export function TopMenuVoice() {
   const setVoiceRenderingStrategy = useSettings((s) => s.setVoiceRenderingStrategy)
   return (
     <MenubarMenu>
-      <MenubarTrigger>Voice</MenubarTrigger>
+      <MenubarTrigger><span>Voice</span><IsBusy nbPendingTasks={nbPendingRequestsForVoice} /></MenubarTrigger>
       <MenubarContent>
         <MenubarSub>
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.VOICE) }}>Show advanced settings</MenubarItem>

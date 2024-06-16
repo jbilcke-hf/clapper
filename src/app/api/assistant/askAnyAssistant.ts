@@ -112,7 +112,7 @@ export async function askAnyAssistant({
     category: segment.category,
   } as SimplifiedSegmentData))
 
-  console.log("INPUT:", JSON.stringify(inputData, null, 2))
+  // console.log("INPUT:", JSON.stringify(inputData, null, 2))
 
   const chain = chatPrompt.pipe(coerceable).pipe(parser)
 
@@ -143,7 +143,7 @@ export async function askAnyAssistant({
       inputData: JSON.stringify(inputData),
     })
 
-    console.log("OUTPUT:", JSON.stringify(result, null, 2))
+    // console.log("OUTPUT:", JSON.stringify(result, null, 2))
 
     /*
     this whole code doesn't work well actually..
@@ -175,7 +175,6 @@ export async function askAnyAssistant({
     const errObj = err1 as any
     try {
       const keys = Object.keys(errObj)
-      // console.log("keys:", keys)
       if (errObj.llmOutput) {
         return {
           prompt: "",

@@ -1,30 +1,25 @@
+import { cn } from "@aitube/timeline"
+
 import { Menubar } from "@/components/ui/menubar"
+import { APP_REVISION } from "@/lib/core/constants"
+import { useResolver } from "@/controllers/resolver/useResolver"
 
 import { TopMenuFile } from "./file"
-
 import { TopMenuImage } from "./image"
 import { TopMenuVideo } from "./video"
 import { TopMenuVoice } from "./voice"
 import { TopMenuSound } from "./sound"
 import { TopMenuMusic } from "./music"
 import { TopMenuAssistant } from "./assistant"
-
 import { TopMenuView } from "./view"
-import { cn } from "@aitube/timeline"
-import { APP_REVISION } from "@/lib/core/constants"
-import Image from "next/image"
-import logo from "../../../app/logo-v2.png"
+import { TopMenuLogo } from "./TopMenuLogo"
 
 export function TopMenu() {
+  const isBusyResolving = useResolver(s => s.isBusyResolving)
+
   return (
-    <Menubar className="w-full">
-      {/*
-      it doesn't look great when minified like this
-      <Image src={logo} height={32} alt="Clapper" /> */}
-      <span
-        className="scale-[88%] text-yellow-400 pl-2 text-lg font-bold tracking-[-0.03em] mr-2"
-        ><span>Clapper</span><span className="text-yellow-100">.</span><span
-      className="hidden absolute text-3xs text-red-500/100 tracking-[0.05em] uppercase mt-1.5 -ml-0 -rotate-6  ">ai</span></span>
+    <Menubar className="w-full ml-1">
+      <TopMenuLogo />
       <TopMenuFile />
       <TopMenuImage />
       <TopMenuVideo />

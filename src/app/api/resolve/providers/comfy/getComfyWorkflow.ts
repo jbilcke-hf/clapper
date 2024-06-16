@@ -32,11 +32,6 @@ export function getComfyWorkflow(request: ResolveRequest) {
     }
     output[`${i}`] = node
   })
-
-  console.log("DEBUG:", {
-    nodes,
-    output
-  })
   
   return JSON.stringify(output)
 }

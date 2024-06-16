@@ -54,7 +54,6 @@ export async function performRequest({
   )
 
   if (response.status === 200) {
-    console.log("response.data: ", response.data)
     const buffer = Buffer.from(response.data)
     const rawAssetUrl = `data:image/${payload.output_format};base64,${buffer.toString('base64')}`
     const assetUrl = await decodeOutput(rawAssetUrl)

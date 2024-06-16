@@ -18,12 +18,9 @@ export function VideoClipBuffer({
   const togglePlayVideo = (play: boolean) => {
     const player = ref.current
     if (!player) { return }
-    // console.log(`togglePlayVideo(${play}) (current status = ${player.paused ? "paused" : "playing"})`)
     if (play && player.paused) {
-      // console.log("playing video..")
       player.play()
     } else if (!play && !player.paused) {
-      // console.log("pausing video..")
       player.pause()
     }
   }

@@ -19,9 +19,14 @@ import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { availableComputeProvidersForImages } from "@/components/settings/constants"
 import { ImageGenerationModelList } from "../lists/ImageGenerationModelList"
 import { ImageUpscalingModelList } from "../lists/ImageUpscalingModelList"
+import { IsBusy } from "../IsBusy"
+
 import { ComputeProvider, SettingsCategory } from "@/types"
+import { useRenderer } from "@/controllers/renderer"
+import { useResolver } from "@/controllers/resolver/useResolver"
 
 export function TopMenuImage() {
+  const nbPendingRequestsForImage = useResolver(s => s.nbPendingRequestsForImage)
   const setShowSettings = useUI(s => s.setShowSettings)
   const imageProvider = useSettings(s => s.imageProvider)
   const setImageProvider = useSettings(s => s.setImageProvider)
@@ -33,7 +38,7 @@ export function TopMenuImage() {
   const setImageRenderingStrategy = useSettings((s) => s.setImageRenderingStrategy)
   return (
     <MenubarMenu>
-      <MenubarTrigger>Image</MenubarTrigger>
+      <MenubarTrigger><span>Image</span><IsBusy nbPendingTasks={nbPendingRequestsForImage} /></MenubarTrigger>
       <MenubarContent>
         <MenubarSub>
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.IMAGE) }}>Show advanced settings</MenubarItem>

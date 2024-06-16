@@ -62,7 +62,6 @@ export async function resolveSegment(request: ResolveRequest): Promise<ClapSegme
     }
 
     segment.assetUrl = await decodeOutput(content)
-    // console.log(`segment.assetUrl = ${segment.assetUrl.slice(0, 80)}..`)
     segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)
   } catch (err) {
     console.error(`failed to call Stability.ai: `, err)

@@ -13,7 +13,6 @@ export async function resolveSegment(request: ResolveRequest): Promise<ClapSegme
     throw new Error(`Missing API key for "Hugging Face"`)
   }
   
-  console.log(`key: ${request.settings.huggingFaceApiKey}`)
   const hf: HfInferenceEndpoint = new HfInference(request.settings.huggingFaceApiKey)
 
   if (request.segment.category !== ClapSegmentCategory.STORYBOARD) {

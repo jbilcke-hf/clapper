@@ -20,8 +20,11 @@ import { availableComputeProvidersForVideos } from "@/components/settings/consta
 import { VideoGenerationModelList } from "../lists/VideoGenerationModelList"
 import { VideoUpscalingModelList } from "../lists/VideoUpscalingModelList"
 import { ComputeProvider, SettingsCategory } from "@/types"
+import { useResolver } from "@/controllers/resolver/useResolver"
+import { IsBusy } from "../IsBusy"
 
 export function TopMenuVideo() {
+  const nbPendingRequestsForVideo = useResolver(s => s.nbPendingRequestsForVideo)
   const setShowSettings = useUI(s => s.setShowSettings)
   const videoProvider = useSettings(s => s.videoProvider)
   const setVideoProvider = useSettings(s => s.setVideoProvider)
@@ -33,7 +36,7 @@ export function TopMenuVideo() {
   const setVideoRenderingStrategy = useSettings((s) => s.setVideoRenderingStrategy)
   return (
     <MenubarMenu>
-      <MenubarTrigger>Video</MenubarTrigger>
+      <MenubarTrigger><span>Video</span><IsBusy nbPendingTasks={nbPendingRequestsForVideo} /></MenubarTrigger>
       <MenubarContent>
         <MenubarSub>
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.VIDEO) }}>Show advanced settings</MenubarItem>

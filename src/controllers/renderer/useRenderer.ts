@@ -206,9 +206,7 @@ export const useRenderer = create<RendererStore>((set, get) => ({
       }
         
     }
-  
-    // console.log("useRenderer: computeBufferedSegments() returning:", results)
-  
+
     return results
   },
 

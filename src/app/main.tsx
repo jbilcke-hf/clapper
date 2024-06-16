@@ -39,7 +39,7 @@ function MainContent() {
       NativeTypes.FILE,
     ],
     drop: (item: DroppableThing): void => {
-      console.log("DROP", item)
+      // console.log("DROP", item)
       openFiles(item.files)
     },
     collect: (monitor) => ({

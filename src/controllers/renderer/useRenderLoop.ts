@@ -45,7 +45,6 @@ export function useRenderLoop(): void {
 
     const newTimelineUpdateAtInMs = performance.now()
     const elapsedTimeInMs = newTimelineUpdateAtInMs - lastTimelineUpdateAtInMs
-    // console.log(`TODO: move the timeline cursor according to the elapsed time`)
     setCursorTimestampAtInMs(cursorTimestampAtInMs + elapsedTimeInMs)
     setLastTimelineUpdateAtInMs(newTimelineUpdateAtInMs)
 
