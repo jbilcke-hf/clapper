@@ -37,7 +37,7 @@ export type ContentSizeMetrics = {
 
 
 export type TimelineStoreProjectState = {
-  clap?: ClapProject
+  clap: ClapProject
 
   segments: ClapSegment[]
   segmentsChanged: number
@@ -196,6 +196,24 @@ export type TimelineStoreModifiers = {
   }) => Promise<number>
   setSegmentResolver: (segmentResolver: SegmentResolver) => void
   resolveSegment: (segment: ClapSegment) => Promise<ClapSegment>
+  addSegments: ({
+    segments,
+    startTimeInMs,
+    track,
+  }: {
+    segments?: ClapSegment[]
+    startTimeInMs?: number
+    track?: number
+  }) => Promise<void>
+  addSegment: ({
+    segment,
+    startTimeInMs,
+    track,
+  }: {
+    segment: ClapSegment
+    startTimeInMs?: number
+    track?: number
+}) => Promise<void>
   findFreeTrack: (params: { startTimeInMs?: number; endTimeInMs?: number }) => number 
 }
 

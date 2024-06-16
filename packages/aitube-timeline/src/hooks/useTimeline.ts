@@ -98,6 +98,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     for (const s of segments) {
       
+      // TODO: move this idCollision detector into the state,
+      // so that we can use it later?
       if (idCollisionDetector.has(s.id)) {
         console.log(`collision detected! there is already a segment with id ${s.id}`)
         continue
@@ -159,6 +161,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     const finalVideo = getFinalVideo(clap)
     
     const isEmpty = segments.length === 0
+
+    clap.meta.durationInMs = totalDurationInMs
 
     set({
       clap,
@@ -451,6 +455,105 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     const { segmentResolver } = get()
     if (!segmentResolver) { return segment }
     return segmentResolver(segment)
+  },
+  addSegments: async ({
+    segments = [],
+    startTimeInMs,
+    track
+  }: {
+    segments?: ClapSegment[]
+    startTimeInMs?: number
+    track?: number
+  }): Promise<void> => {
+    if (segments?.length) {
+      const { addSegment } = get()
+      Promise.allSettled(segments.map(segment => addSegment({
+        segment,
+        startTimeInMs,
+        track,
+      })))
+    }
+  },
+  addSegment: async ({
+    segment,
+    startTimeInMs,
+    track: requestedTrack
+  }: {
+    segment: ClapSegment
+    startTimeInMs?: number
+    track?: number
+  }): Promise<void> => {
+    // adding a segment is a bit complicated, lot of stuff might have to be updated
+    const {
+      clap,
+      findFreeTrack,
+      cellWidth,
+      tracks,
+      segments: previousSegments,
+      segmentsChanged: previousSegmentsChanged,
+      totalDurationInMs: previousTotalDurationInMs,
+      defaultSegmentDurationInSteps,
+      defaultPreviewHeight,
+      defaultCellHeight,
+    } = get()
+
+    // note: the requestedTrack might not be empty
+
+    // for now let's do something simple: to always search for an available track
+    const availableTrack = findFreeTrack({ startTimeInMs })
+
+    segment.track = availableTrack
+
+    // add the track if it is missing
+    if (!tracks[segment.track]) {
+      const isPreview =
+        segment.category === ClapSegmentCategory.STORYBOARD ||
+        segment.category === ClapSegmentCategory.VIDEO
+
+      tracks[segment.track] = {
+        id: segment.track,
+        // name: `Track ${s.track}`,
+        name: `${segment.category}`,
+        isPreview,
+        height:
+          isPreview
+          ? defaultPreviewHeight
+          : defaultCellHeight,
+        hue: 0,
+        occupied: true,
+        visible: true,
+      }
+    }
+
+    // we assume that the provided segment is valid, with a unique UUID
+  
+    // then we need to update everything
+
+    const segments = previousSegments.concat(segment)
+
+    const segmentsChanged = previousSegmentsChanged + 1
+
+    const totalDurationInMs =
+      segment.endTimeInMs > previousTotalDurationInMs
+      ? segment.endTimeInMs
+      : previousTotalDurationInMs
+
+    clap.meta.durationInMs = totalDurationInMs
+    clap.segments = segments
+
+    set({
+      clap,
+      segments,
+      segmentsChanged,
+      totalDurationInMs,
+      ...computeContentSizeMetrics({
+        clap,
+        tracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        totalDurationInMs,
+      })
+    })
   },
   findFreeTrack: ({
     startTimeInMs,
