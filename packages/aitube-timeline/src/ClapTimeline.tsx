@@ -66,10 +66,14 @@ export function ClapTimeline({
 
   return (
     <div className={cn(`w-full h-full`, className)}>
-      <AutoSizer style={{ height: "100%" }}>
+      <AutoSizer style={{
+        height: "100%", // <-- mandatory otherwise the timeline won't show up
+        width: "100%" // <-- mandatory otherwise the horizontal scroller won't show up
+        }}>
         {({ height, width }: Size) => (
-      <div className="flex flex-grow flex-row h-full">
-        <div className="flex flex-grow flex-col w-full">
+      <div className="flex flex-grow flex-row w-full h-full">
+        <div className="flex flex-grow flex-col w-full h-full">
+          <HorizontalScroller />
           <Canvas
             ref={ref}
             id="clap-timeline"
@@ -126,12 +130,12 @@ export function ClapTimeline({
               <Timeline width={width} height={height} />
               {showFPS && <Stats className={cn(`!left-auto right-0`)} />}
             </Canvas>
-          <HorizontalScroller />
+
+          </div>
+          {
+          // <VerticalScroller />
+          }
         </div>
-        {
-        // <VerticalScroller />
-        }
-      </div>
         )}
       </AutoSizer>
     </div>

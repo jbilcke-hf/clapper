@@ -10,11 +10,13 @@ export function computeContentSizeMetrics({
   tracks,
   cellWidth,
   defaultSegmentDurationInSteps,
+  totalDurationInMs,
 }: {
   clap?: ClapProject
   tracks: Tracks
   cellWidth: number
   defaultSegmentDurationInSteps: number
+  totalDurationInMs: number
 }): ContentSizeMetrics {
 
   // in the future those might be dynamic / coming from settings
@@ -52,8 +54,11 @@ export function computeContentSizeMetrics({
     nbMaxShots,
     nbMaxTracks,
     nbIdentifiedTracks: newTracks.length,
-    contentWidth: nbMaxShots * cellWidth,
+
+    // node: content width and height are in pixels
+    contentWidth: (totalDurationInMs / DEFAULT_DURATION_IN_MS_PER_STEP) * cellWidth,
     contentHeight,
+
     tracks: newTracks,
     cellWidth,
     defaultCellHeight,

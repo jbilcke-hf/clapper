@@ -27,6 +27,13 @@ export function Timeline({ width, height }: { width: number; height: number }) {
   const contentHeight = useTimeline(s => s.contentHeight)
   const contentWidth = useTimeline(s => s.contentWidth)
 
+  /*
+  console.log(`Issue with size? `, {
+    "width (coming from parent app)": width,
+    "content width": contentWidth,
+    "WebGL context's size.width": size.width,
+  })
+    */
   // console.log(`re-rendering <Timeline>`)
   return (
     <mesh

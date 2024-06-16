@@ -45,7 +45,7 @@ export function Cells() {
       // cellHeight/2 is to also take into account the height of a cell
       // (baseCellHeight / 2) - (baseCellHeight / 2),
       contentHeight / 2,
-       -4
+       -5
        ]}>
       {loadedSegments.map((s) =>
         <Suspense key={s.id} fallback={<></>}><Cell

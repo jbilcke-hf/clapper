@@ -7,6 +7,8 @@ import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { similar, sliceSegments } from "@/utils"
 
 import { useTimeline } from "./useTimeline"
+import { TimelineStore } from "@/types"
+import { leftBarTrackScaleWidth } from "@/constants/themes"
 
 export const useSegmentLoader = ({
   refreshRateInMs,
@@ -19,11 +21,7 @@ export const useSegmentLoader = ({
   }=> {
   // to make it react to screen width change
   // however, this doesn't seem to work well
-  const { size: canvasSize, viewport } = useThree()
-
-  // let's use the whole screen size for reference
-  // this will help us in case of fast canvas resize (eg. resize using the mouse)
-  const size = { width: typeof window !== "undefined" ? window.innerWidth : canvasSize.width }
+  // const { size: canvasSize, viewport } = useThree()
 
   const segments = useTimeline((s) => s.segments)
   const segmentsChanged = useTimeline((s) => s.segmentsChanged)
@@ -50,15 +48,14 @@ export const useSegmentLoader = ({
   // note: only the average height change will be detected
   const cellHeight = getCellHeight()
 
-  // TODO: maybe refactor this, put it inside the Zustand state
-
+  // TODO: I think we don't need to check over the camera.zoom anymore,
+  // since we have set it fixed now
   useEffect(() => {
     useTimeline.setState({ currentZoomLevel: camera.zoom })
   }, [camera])
   
   const stateRef = useRef<{
-    position: THREE.Vector3
-    scale: THREE.Vector3
+    scrollX: number
     initialized: boolean
     beforeTimeWithBufferInMs: number
     afterTimeWithBufferInMs: number
@@ -66,8 +63,7 @@ export const useSegmentLoader = ({
     afterTimeWithoutBufferInMs: number
     timeout: NodeJS.Timeout
   }>({
-    position: new THREE.Vector3(),
-    scale: new THREE.Vector3(),
+    scrollX: 0,
     initialized: false,
     beforeTimeWithBufferInMs: 0,
     afterTimeWithBufferInMs: 0,
@@ -77,13 +73,14 @@ export const useSegmentLoader = ({
   })
 
   const sync = async (forceRerendering?: boolean) => {
-    if (!stateRef.current) { return }
-
     // TODO: replace our usage of stateRef.current
     // by useTimeline.getState()
     const state = stateRef.current
 
-    const cellWidth = useTimeline.getState().cellWidth
+    const timeline: TimelineStore = useTimeline.getState() 
+    const { cellWidth, width, height } = timeline
+
+    if (!state || !camera) { return }
 
     // we can adjust this threshold to only re compute the geometry
     // when a significant shift has been done by the user
@@ -96,40 +93,44 @@ export const useSegmentLoader = ({
     // which is why we are more sensitive here
     const epsilonZoomThreshold = 1
 
-    const cameraDidntPaneALot = similar(state.position, camera.position, epsilonPaneThreshold)
-    const cameraDidntZoomALot = similar(state.scale, camera.scale, epsilonZoomThreshold)
+    // we don't need to check X, Y, Z and zoom anymore here, we can just look at scrollX
+    const cameraDidntPaneALot = Math.abs(state.scrollX - camera.position.x) < epsilonPaneThreshold
+ 
+    if (cameraDidntPaneALot && !forceRerendering) { return }
 
-    if (cameraDidntPaneALot && cameraDidntZoomALot && !forceRerendering) { return }
-
-    state.position.copy(camera.position)
-    state.scale.copy(camera.scale)
+    // we do this AFTER the return condition
+    state.scrollX = camera.position.x
 
     // determine, based on the current zoom level, and screen width,
     // how many horizontal cell columns could be visible at a time
     // 
     // note that is only useful for *horizontal* scrolling
     // this doesn't prevent loading delay caused by zooming out
-    const maxPossibleNumberOfVisibleHorizontalCells = Math.ceil(size.width / cellWidth / camera.zoom)
+    const maxPossibleNumberOfVisibleHorizontalCells =
+      Math.ceil(window.innerWidth / cellWidth)
 
-    const cellWidthInPixelBasedOnZoom = size.width / maxPossibleNumberOfVisibleHorizontalCells
+    // it appears that we have an issue with the calculation here
+    // could be that we don't take everything into account,
+    // like the left margin?
+    
+    // note: currently the camera is not initialized well by default,
+    // due to the left bar track
+    // 
+    // so, be careful: if you fix the camera initialization bug,
+    // then you *might* have to check in here too
+    const posX = camera.position.x + leftBarTrackScaleWidth
 
-    // determine, based on the current camera position,
-    // what is the cell which is in the middle
-
-    const vector = new THREE.Vector3();
-    vector.project(camera);
-
-    // distance between the begining of the timeline grid and the left side of the screen
-    const relativeX = - Math.round((0.5 + vector.x / 2) * (size.width / window.devicePixelRatio))
-    const pixelX = relativeX * 2
-
-    // determine the minimum visible index
-
-    const cellIndex = Math.max(0, pixelX / cellWidthInPixelBasedOnZoom)
-
+    const cellIndex =
+      Math.max(0, posX / cellWidth)
+    /*
+    console.log(`DEBUG:`, {
+      "camera.position.x": camera.position.x,
+      cellIndex,
+    })
+    */
     // we actually don't use the camera.zoom anymore, so..
 
-    const securityMargin =
+    const securityMarginInCellStepCount =
       // this is useful for horizontal  scroll only
       maxPossibleNumberOfVisibleHorizontalCells
       +
@@ -139,14 +140,14 @@ export const useSegmentLoader = ({
       // but if the camera is zoomed-in, then a quick scroll wheel could
       // send us asking for x2, x5 etc.. more cells instantly, so we need
       // to take that into account too.
-      (camera.zoom * 8) // 8 because 4 on left and 4 on right
+      8 // 8 because 4 on left and 4 on right
 
     const { segments } = useTimeline.getState()
       
     // we only keep segments within a given range
     // those are not necessarily visible (there is a security margin)
-    const afterStepsWithBuffer = Math.floor(Math.max(0, cellIndex - securityMargin))
-    const beforeStepsWithBuffer = Math.floor(cellIndex + maxPossibleNumberOfVisibleHorizontalCells + securityMargin)
+    const afterStepsWithBuffer = Math.max(0, cellIndex - securityMarginInCellStepCount)
+    const beforeStepsWithBuffer = Math.max(afterStepsWithBuffer, cellIndex + maxPossibleNumberOfVisibleHorizontalCells + securityMarginInCellStepCount)
 
     const afterTimeWithBufferInMs = afterStepsWithBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
     const beforeTimeWithBufferInMs = beforeStepsWithBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
@@ -164,8 +165,8 @@ export const useSegmentLoader = ({
       setLoadedSegments(loadedSegments)
     }
 
-    const afterStepsWithoutBuffer = Math.floor(Math.max(0, cellIndex))
-    const beforeStepsWithoutBuffer = Math.floor(cellIndex + maxPossibleNumberOfVisibleHorizontalCells)
+    const afterStepsWithoutBuffer = Math.max(0, cellIndex)
+    const beforeStepsWithoutBuffer = Math.max(afterStepsWithoutBuffer, cellIndex + maxPossibleNumberOfVisibleHorizontalCells)
 
     const afterTimeWithoutBufferInMs = afterStepsWithoutBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
     const beforeTimeWithoutBufferInMs = beforeStepsWithoutBuffer * DEFAULT_DURATION_IN_MS_PER_STEP

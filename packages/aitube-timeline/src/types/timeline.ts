@@ -169,6 +169,7 @@ export type TimelineStoreModifiers = {
   setTimelineControls: (timelineControls?: TimelineControlsImpl) => void
   setTopBarTimeScale: (topBarTimeScale?: THREE.Group<THREE.Object3DEventMap>) => void
   setLeftBarTrackScale: (leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>) => void
+  setScrollX: (scrollX: number) => void
   handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number; deltaY: number }) => void
   toggleTrackVisibility: (trackId: number) => void
   setContainerSize: ({ width, height }: { width: number; height: number }) => void
