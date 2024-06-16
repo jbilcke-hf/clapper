@@ -83,7 +83,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     // - we modify the original object in-line to add the visibility setting
     // - there is a priority order: the info that a segment is "visible" (on screen),
     //   is more important, which is why it is done after processing the "loaded" segments (the ones that are buffered, because near the sliding window)
-    const tmp: Record<string, RuntimeSegment> = {}
+  
     for (const s of loadedSegments) { (s as RuntimeSegment).visibility = SegmentVisibility.BUFFERED }
     for (const s of visibleSegments) { (s as RuntimeSegment).visibility = SegmentVisibility.VISIBLE }
 
@@ -125,15 +125,28 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
           // this is important: we found an in-progress task!
           // it is thus vital to deduct it from the parallelism quota,
-          // to avoir triggering quoote limit on the providers side
+          // to avoir triggering quota limit on the providers side
           if (s.status === ClapSegmentStatus.IN_PROGRESS) {
             parallelismQuotas.video = Math.max(0, parallelismQuotas.video - 1)
           }
-
           continue
         }
-        
+
         if (videoRenderingStrategy === RenderingStrategy.ON_DEMAND) {
+          continue
+        }
+             
+        if (
+          s.visibility === SegmentVisibility.HIDDEN
+          && 
+          videoRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
+        ) {
+          continue
+        } else if (
+          s.visibility === SegmentVisibility.BUFFERED
+          && 
+          videoRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
+        ) {
           continue
         }
 
@@ -163,6 +176,20 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           continue
         }
 
+        if (
+          s.visibility === SegmentVisibility.HIDDEN
+          && 
+          imageRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
+        ) {
+          continue
+        } else if (
+          s.visibility === SegmentVisibility.BUFFERED
+          && 
+          imageRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
+        ) {
+          continue
+        }
+
         // console.log(`useResolver.runLoop(): strategy is good to go`)
 
         if (parallelismQuotas.image > 0) {
@@ -187,6 +214,21 @@ export const useResolver = create<ResolverStore>((set, get) => ({
         if (voiceRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
         }
+
+        if (
+          s.visibility === SegmentVisibility.HIDDEN
+          && 
+          voiceRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
+        ) {
+          continue
+        } else if (
+          s.visibility === SegmentVisibility.BUFFERED
+          && 
+          voiceRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
+        ) {
+          continue
+        }
+
         if (parallelismQuotas.voice > 0) {
           parallelismQuotas.voice = Math.max(0, parallelismQuotas.voice - 1)
           segmentsToRender.push(s)
@@ -207,6 +249,21 @@ export const useResolver = create<ResolverStore>((set, get) => ({
         if (soundRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
         }
+
+        if (
+          s.visibility === SegmentVisibility.HIDDEN
+          && 
+          soundRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
+        ) {
+          continue
+        } else if (
+          s.visibility === SegmentVisibility.BUFFERED
+          && 
+          soundRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
+        ) {
+          continue
+        }
+
         if (parallelismQuotas.sound > 0) {
           parallelismQuotas.sound = Math.max(0, parallelismQuotas.sound - 1)
           segmentsToRender.push(s)
@@ -228,6 +285,21 @@ export const useResolver = create<ResolverStore>((set, get) => ({
         if (musicRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
         }
+
+        if (
+          s.visibility === SegmentVisibility.HIDDEN
+          && 
+          musicRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
+        ) {
+          continue
+        } else if (
+          s.visibility === SegmentVisibility.BUFFERED
+          && 
+          musicRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
+        ) {
+          continue
+        }
+
         if (parallelismQuotas.music > 0) {
           parallelismQuotas.music = Math.max(0, parallelismQuotas.music - 1)
           segmentsToRender.push(s)

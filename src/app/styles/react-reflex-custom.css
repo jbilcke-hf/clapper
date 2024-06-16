@@ -24,11 +24,11 @@ with some custom colors and sizes
 
   body .reflex-container.horizontal > .reflex-splitter:hover,
   body .reflex-container.horizontal > .reflex-splitter.active {
-    @apply  h-[3px] bg-stone-400 border-t-stone-400 border-b-stone-800;
+    @apply  h-[3px] bg-stone-400 border-t-stone-400 border-b-stone-400;
   }
 
   body .reflex-container.vertical > .reflex-splitter {
-    @apply w-[3px] bg-stone-600 border-l-stone-400 border-r-stone-600;
+    @apply w-[3px] bg-stone-600 border-l-stone-600 border-r-stone-600;
   }
 
   body .reflex-container.vertical > .reflex-splitter:hover,

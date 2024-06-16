@@ -2,13 +2,13 @@
 
 import { create } from "zustand"
 import { ClapSegment } from "@aitube/clap"
-import { useTimeline } from "@aitube/timeline"
+import { TimelineStore, useTimeline } from "@aitube/timeline"
 
 
 import { useAudio } from "../audio/useAudio"
 import { MonitoringMode, MonitorStore } from "./types"
 import { getDefaultMonitorState } from "./getDefaultMonitorState"
-import { useRenderer } from "../renderer"
+import { RendererStore, useRenderer } from "../renderer"
 
 export const useMonitor = create<MonitorStore>((set, get) => ({
   ...getDefaultMonitorState(),
@@ -107,10 +107,13 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
     }
   },
   jumpAt: (timeInMs: number = 0) => {
-    const { isPlaying, mode, staticVideoRef } = get()
+    const monitor: MonitorStore = get()
+    const renderer: RendererStore = useRenderer.getState()
+    const timeline: TimelineStore = useTimeline.getState()
 
-    const { renderLoop } = useRenderer.getState()
-    const { setCursorTimestampAtInMs } = useTimeline.getState()
+    const { isPlaying, mode, staticVideoRef } = monitor
+    const { renderLoop } = renderer
+    const { setCursorTimestampAtInMs } = timeline
 
     setCursorTimestampAtInMs(timeInMs)
 
@@ -125,9 +128,11 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
       // console.log("resetting static video current time")
       staticVideoRef.currentTime = timeInMs / 1000
     } else if (mode === MonitoringMode.DYNAMIC) {
-      // we force a state update
+      // we force a full state recompute
+      // and we also pass jumpedSomewhere=true to indicate that we
+      // need a buffer transition
       // console.log(`forcing a state update`)
-      renderLoop()
+      renderLoop(true)
     }
   },
 

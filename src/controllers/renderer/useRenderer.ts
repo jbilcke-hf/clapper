@@ -1,7 +1,7 @@
 "use client"
 
 import { create } from "zustand"
-import { ClapOutputType, ClapSegmentCategory } from "@aitube/clap"
+import { ClapOutputType, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 import { TimelineStore, useTimeline } from "@aitube/timeline"
 
 import { RuntimeSegment } from "@/types"
@@ -23,9 +23,16 @@ export const useRenderer = create<RendererStore>((set, get) => ({
 
   // this will be called at 60 FPS - and yes, it is expensive
   // we could probably improve things by using a temporal tree index
-  renderLoop: (): BufferedSegments => {
-    const { computeBufferedSegments, bufferedSegments } = get()
-
+  renderLoop: (jumpedSomewhere?: boolean): BufferedSegments => {
+    const {
+      computeBufferedSegments,
+      bufferedSegments,
+      dataUriBuffer1: previousDataUriBuffer1,
+      dataUriBuffer2: previousDataUriBuffer2,
+      dataUriBuffer1Key: previousDataUriBuffer1Key,
+      dataUriBuffer2Key: previousDataUriBuffer2Key,
+      activeBufferNumber: previousActiveBufferNumber
+    } = get()
 
     // note: although useRequestAnimationFrame is called at 60 FPS,
     // computeBufferedSegments has a throttle since it is expensive
@@ -36,7 +43,67 @@ export const useRenderer = create<RendererStore>((set, get) => ({
     
     if (activeSegmentsChanged || upcomingSegmentsChanged) {
 
-      set({ bufferedSegments: maybeNewBufferedSegments })
+      const maybeNewCurrentSegment =
+        maybeNewBufferedSegments.activeVideoSegment?.assetUrl
+        ? maybeNewBufferedSegments.activeVideoSegment
+        : maybeNewBufferedSegments.activeStoryboardSegment?.assetUrl
+        ? maybeNewBufferedSegments.activeStoryboardSegment
+        : undefined
+
+      // the upcoming asset we want to preload (note: we just want to preload it, not display it just yet)
+      const maybeNewPreloadSegment =
+        maybeNewBufferedSegments.upcomingVideoSegment?.assetUrl
+        ? maybeNewBufferedSegments.upcomingVideoSegment
+        : maybeNewBufferedSegments.upcomingStoryboardSegment?.assetUrl
+        ? maybeNewBufferedSegments.upcomingStoryboardSegment
+        : undefined
+
+
+      // performance optimization:
+      // we only look at the first part since it might be huge
+      // for assets, using a smaller header lookup like 256 or even 512 doesn't seem to be enough
+      const newCurrentSegmentKey = `${maybeNewCurrentSegment?.assetUrl || ""}`.slice(0, 1024)
+      const newPreloadSegmentKey = `${maybeNewPreloadSegment?.assetUrl || ""}`.slice(0, 1024)
+
+      let newDataUriBuffer1 = previousDataUriBuffer1
+      let newDataUriBuffer2 = previousDataUriBuffer2
+      let newDataUriBuffer1Key = `${newDataUriBuffer1?.assetUrl || ""}`.slice(0, 1024)
+      let newDataUriBuffer2Key = `${newDataUriBuffer2?.assetUrl || ""}`.slice(0, 1024)
+
+      if (jumpedSomewhere) {
+        // if we jumped somewhere we need to change the visible buffer
+      
+        if (previousActiveBufferNumber == 2) {
+          // visible buffer is #2
+
+          if (newCurrentSegmentKey !== previousDataUriBuffer1Key) {
+            // we thus write to visible buffer (#1)
+            newDataUriBuffer1 = maybeNewCurrentSegment
+            newDataUriBuffer1Key = `${newDataUriBuffer1?.assetUrl || ""}`.slice(0, 1024)
+          }
+        } else {
+           // visible buffer is #1
+           if (newCurrentSegmentKey !== previousDataUriBuffer2Key) {
+            // we thus write to visible buffer (#2)
+            newDataUriBuffer2 = maybeNewCurrentSegment
+            newDataUriBuffer2Key = `${newDataUriBuffer2?.assetUrl || ""}`.slice(0, 1024)
+          }
+        }
+      } 
+
+      // otherwise we do the predictive stuff as usual
+      set({
+        bufferedSegments: maybeNewBufferedSegments,
+        currentSegment: maybeNewCurrentSegment, 
+        preloadSegment: maybeNewPreloadSegment,
+        currentSegmentKey: newCurrentSegmentKey,
+        preloadSegmentKey: newPreloadSegmentKey,
+        dataUriBuffer1Key: newDataUriBuffer1Key,
+        dataUriBuffer2Key: newDataUriBuffer2Key,
+        dataUriBuffer1: newDataUriBuffer1,
+        dataUriBuffer2: newDataUriBuffer2,
+      })
+      
 
       return maybeNewBufferedSegments
     }
@@ -144,6 +211,17 @@ export const useRenderer = create<RendererStore>((set, get) => ({
   
     return results
   },
+
+
+  setDataUriBuffer1: (dataUriBuffer1?: ClapSegment) => {
+    set({ dataUriBuffer1 })
+  },
+  setDataUriBuffer2: (dataUriBuffer2?: ClapSegment) => {
+    set({ dataUriBuffer2 })
+  },
+  setActiveBufferNumber: (activeBufferNumber: number) => {
+    set({ activeBufferNumber })
+  }
 }))
 
 if (typeof window !== "undefined") {

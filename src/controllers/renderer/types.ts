@@ -20,6 +20,18 @@ export type BufferedSegments = ActiveSegments & UpcomingSegments
 
 export type RendererState = {
   bufferedSegments: BufferedSegments
+
+  // various helpers to manage buffering,
+  // cache, cache invalidation..
+  dataUriBuffer1?: ClapSegment
+  dataUriBuffer2?: ClapSegment
+  activeBufferNumber: number
+  currentSegment?: ClapSegment
+  preloadSegment?: ClapSegment
+  currentSegmentKey: string
+  preloadSegmentKey: string
+  dataUriBuffer1Key: string
+  dataUriBuffer2Key: string
 }
 
 export type RendererControls = {
@@ -37,7 +49,7 @@ export type RendererControls = {
    * 
    * @returns 
    */
-  renderLoop: () => BufferedSegments
+  renderLoop: (jumpedSomewhere?: boolean) => BufferedSegments
 
   /**
    * Cycle through the segments to see which ones are crossing the current cursor,
@@ -45,6 +57,10 @@ export type RendererControls = {
    * @returns 
    */
   computeBufferedSegments: () => BufferedSegments
+
+  setDataUriBuffer1: (dataUriBuffer1?: ClapSegment) => void
+  setDataUriBuffer2: (dataUriBuffer2?: ClapSegment) => void
+  setActiveBufferNumber: (activeBufferNumber: number) => void
 }
 
 export type RendererStore = RendererState & RendererControls
