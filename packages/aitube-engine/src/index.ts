@@ -10,6 +10,7 @@ export {
   getSpeechBackgroundAudioPrompt,
   getSpeechForegroundAudioPrompt,
   getVideoPrompt,
+  segmentCategoryPromptPriority,
 } from './prompts'
 
 export {

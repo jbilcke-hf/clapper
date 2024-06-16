@@ -31,6 +31,7 @@ import {
   deduplicatePrompt,
   renderShotToStoryboard,
   renderShotToVideo,
+  segmentCategoryPromptPriority,
   type VideoRenderer,
   type StoryboardRenderer,
   type VideoFirstFrameExtractor
