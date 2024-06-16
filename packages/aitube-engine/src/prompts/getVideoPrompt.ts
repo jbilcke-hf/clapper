@@ -63,7 +63,7 @@ export function getVideoPrompt(
     const entityId = segment?.entityId || ""
     const entity: ClapEntity | undefined = entitiesIndex[entityId] || undefined
     
-    if (alreadyUsedEntities[entityId]) { return "" }
+    if (entityId && entity && alreadyUsedEntities[entityId]) { return "" }
 
     alreadyUsedEntities[entityId] = true
 
