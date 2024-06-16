@@ -2,13 +2,13 @@ import * as THREE from "three"
 
 import { DEFAULT_NB_TRACKS, pastel, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 import { TimelineStorePreferencesState, TimelineStoreProjectState, TimelineStoreState } from "@/types/timeline"
-import { RenderingStrategy } from "@/types"
 import { NB_MAX_SHOTS } from "@/constants/grid"
+import { newClap } from "@aitube/clap"
 
 // those settings will change between .clap project reloads
 export function getDefaultProjectState(): TimelineStoreProjectState {
   return {
-    clap: undefined,
+    clap: newClap(),
     segments: [],
     segmentsChanged: 0,
     totalDurationInMs: 0,

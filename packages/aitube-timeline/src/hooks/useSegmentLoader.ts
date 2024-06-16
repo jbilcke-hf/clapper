@@ -122,12 +122,7 @@ export const useSegmentLoader = ({
 
     const cellIndex =
       Math.max(0, posX / cellWidth)
-    /*
-    console.log(`DEBUG:`, {
-      "camera.position.x": camera.position.x,
-      cellIndex,
-    })
-    */
+
     // we actually don't use the camera.zoom anymore, so..
 
     const securityMarginInCellStepCount =
