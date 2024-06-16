@@ -20,6 +20,7 @@ export function getVideoPrompt(
 
   // console.log("entitiesIndex:", entitiesIndex)
 
+
   // to construct the video we need to collect all the segments describing it
   // we ignore unrelated categories (music, dialogue) or non-prompt items (eg. an audio sample)
   const tmp = segments
@@ -34,6 +35,7 @@ export function getVideoPrompt(
         category === ClapSegmentCategory.LOCATION ||
         category === ClapSegmentCategory.TIME ||
         category === ClapSegmentCategory.ERA || // <- @deprecated
+        category === ClapSegmentCategory.DIALOGUE ||
         category === ClapSegmentCategory.LIGHTING ||
         category === ClapSegmentCategory.WEATHER ||
         category === ClapSegmentCategory.ACTION ||
@@ -54,28 +56,32 @@ export function getVideoPrompt(
     return priority2 - priority1
   })
 
+  // to prevent re-injecting the same entity multiple times in the same video prompt
+  const alreadyUsedEntities: Record<string, boolean> = {}
+
   let videoPrompt = tmp.map(segment => {
-    const entity: ClapEntity | undefined = entitiesIndex[segment?.entityId || ""] || undefined
+    const entityId = segment?.entityId || ""
+    const entity: ClapEntity | undefined = entitiesIndex[entityId] || undefined
     
+    if (alreadyUsedEntities[entityId]) { return "" }
+
+    alreadyUsedEntities[entityId] = true
+
     if (segment.category === ClapSegmentCategory.DIALOGUE) {
 
       // if we can't find the entity, then we are unable
       // to make any assumption about the gender, age or appearance
       if (!entity) {
         // console.log("ERROR: this is a dialogue, but couldn't find the entity!")
-        return `portrait of a person speaking, blurry background, bokeh`
+        return `portrait of a person speaking, bokeh`
       }
 
-      const characterTrigger = entity?.triggerName || ""
-      const characterLabel = entity?.label || ""
-      const characterDescription = entity?.description || ""
-      const dialogueLine = segment?.prompt || ""
-     
+
       const characterPrompt = getCharacterPrompt(entity)
 
       // in the context of a video, we some something additional:
       // we create a "bokeh" style
-      return `portrait of a person speaking, blurry background, bokeh, ${characterPrompt}`
+      return `portrait of a ${characterPrompt}, bokeh`
       
     } else if (segment.category === ClapSegmentCategory.LOCATION) {
   
@@ -89,11 +95,11 @@ export function getVideoPrompt(
     } else {
       return segment.prompt
     }
-  }).filter(x => x)
+  }).map(x => x.trim()).filter(x => x)
 
   videoPrompt = videoPrompt.concat([
     ...extraPositivePrompt
   ])
 
-  return deduplicatePrompt(videoPrompt.join(", "))
+  return deduplicatePrompt(videoPrompt.join(", ").trim())
 }
