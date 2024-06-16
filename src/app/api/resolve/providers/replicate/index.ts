@@ -28,8 +28,6 @@ export async function resolveSegment(request: ResolveRequest): Promise<ClapSegme
       }
     })
 
-    console.log(`Replicate replied: `, output)
-
     segment.assetUrl = await decodeOutput(output)
     segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)
   } catch (err) {

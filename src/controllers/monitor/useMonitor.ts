@@ -131,7 +131,6 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
       // we force a full state recompute
       // and we also pass jumpedSomewhere=true to indicate that we
       // need a buffer transition
-      // console.log(`forcing a state update`)
       renderLoop(true)
     }
   },

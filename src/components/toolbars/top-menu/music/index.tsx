@@ -19,8 +19,11 @@ import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { availableComputeProvidersForMusic } from "@/components/settings/constants"
 import { ComputeProvider, SettingsCategory } from "@/types"
 import { MusicGenerationModelList } from "../lists/MusicGenerationModelList"
+import { useResolver } from "@/controllers/resolver/useResolver"
+import { IsBusy } from "../IsBusy"
 
 export function TopMenuMusic() {
+  const nbPendingRequestsForMusic = useResolver(s => s.nbPendingRequestsForMusic)
   const setShowSettings = useUI(s => s.setShowSettings)
   const musicProvider = useSettings(s => s.musicProvider)
   const setMusicProvider = useSettings(s => s.setMusicProvider)
@@ -31,7 +34,7 @@ export function TopMenuMusic() {
 
   return (
     <MenubarMenu>
-      <MenubarTrigger>Music</MenubarTrigger>
+      <MenubarTrigger><span>Music</span><IsBusy nbPendingTasks={nbPendingRequestsForMusic} /></MenubarTrigger>
       <MenubarContent>
         <MenubarSub>
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.MUSIC) }}>Show advanced settings</MenubarItem>

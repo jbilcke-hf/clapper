@@ -20,7 +20,6 @@ export function FormSwitch({ label, className, checked, onCheckedChange, horizon
       <Switch
         checked={checked}
         onCheckedChange={(checked) => {
-          console.log("onCheckedChange: " + checked)
           onCheckedChange(!checked)
         }}
       />

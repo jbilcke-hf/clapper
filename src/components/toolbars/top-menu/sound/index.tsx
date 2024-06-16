@@ -19,8 +19,11 @@ import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { availableComputeProvidersForSound } from "@/components/settings/constants"
 import { ComputeProvider, SettingsCategory } from "@/types"
 import { SoundGenerationModelList } from "../lists/SoundGenerationModelList"
+import { useResolver } from "@/controllers/resolver/useResolver"
+import { IsBusy } from "../IsBusy"
 
 export function TopMenuSound() {
+  const nbPendingRequestsForSound = useResolver(s => s.nbPendingRequestsForSound)
   const setShowSettings = useUI(s => s.setShowSettings)
   const soundProvider = useSettings(s => s.soundProvider)
   const setSoundProvider = useSettings(s => s.setSoundProvider)
@@ -30,7 +33,7 @@ export function TopMenuSound() {
   const setSoundRenderingStrategy = useSettings((s) => s.setSoundRenderingStrategy)
   return (
     <MenubarMenu>
-      <MenubarTrigger>Sound</MenubarTrigger>
+      <MenubarTrigger><span>Sound</span><IsBusy nbPendingTasks={nbPendingRequestsForSound} /></MenubarTrigger>
       <MenubarContent>
         <MenubarSub>
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.SOUND) }}>Show advanced settings</MenubarItem>

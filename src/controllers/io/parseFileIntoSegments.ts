@@ -1,53 +1,50 @@
 "use client"
 
-import { ClapOutputType, ClapSegment, ClapSegmentCategory, generateSeed, newSegment, UUID } from "@aitube/clap"
+import { ClapAssetSource, ClapOutputType, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, generateSeed, newSegment, UUID } from "@aitube/clap"
 import { findFreeTrack } from "@aitube/timeline"
 
 import { RuntimeSegment } from "@/types"
 
 import { analyzeAudio } from "../audio/analyzeAudio"
 import { ResourceCategory, ResourceType } from "./types"
+import { blobToBase64DataUri } from "@/lib/utils/blobToBase64DataUri"
 
-export async function parseFileIntoSegments({ file, segments }: {
+export async function parseFileIntoSegments({ file }: {
   /**
    * The file to import
    */
   file: File
-
-
-  /**
-   * all existing segments
-   */
-  segments: ClapSegment[]
 }): Promise<ClapSegment[]> {
-  console.log(`filename: ${file.name}`)
-  console.log(`file size: ${file.size} bytes`)
-  console.log(`file type: ${file.type}`)
+  // console.log(`parseFileIntoSegments(): filename = ${file.name}`)
+  // console.log(`parseFileIntoSegments(): file size = ${file.size} bytes`)
+  // console.log(`parseFileIntoSegments(): file type = ${file.type}`)
 
   const extension = file.name.split(".").pop()?.toLowerCase()
 
   console.log("TODO: open a popup to ask if this is a voice character sample, dialogue, music etc")
   
   let type: ResourceType = "misc"
-  let category: ResourceCategory = "misc"
+  let resourceCategory: ResourceCategory = "misc"
 
   const newSegments: ClapSegment[] = []
 
   switch (file.type) {
     case "image/webp":
       type = "image"
-      category = "control_image"
+      resourceCategory = "control_image"
       break;
 
-    case "audio/mpeg":
+    case "audio/mpeg": // this is the "official" one
+    case "audio/mp3": // this is just an alias
     case "audio/wav":
     case "audio/mp4":
+    case "audio/x-mp4": // should be rare, normally is is audio/mp4
     case "audio/m4a": // shouldn't exist
-    case "audio/x-m4a": // should be rare, normallyt is is audio/mp4
+    case "audio/x-m4a": // should be rare, normally is is audio/mp4
     case "audio/webm":
       // for background track, or as an inspiration track, or a voice etc
       type = "audio"
-      category = "background_music"
+      resourceCategory = "background_music"
 
       // TODO: add caption analysis
       const { durationInMs,durationInSteps, bpm, audioBuffer } = await analyzeAudio(file)
@@ -62,17 +59,35 @@ export async function parseFileIntoSegments({ file, segments }: {
       const endTimeInSteps = durationInSteps
       const endTimeInMs = startTimeInMs + durationInMs
 
-      const clapSegment = newSegment({
+      // ok let's stop for a minute there:
+      // if someone drops a .mp3, and assuming we don't yet have the UI to select the category,
+      // do you think it should be a SOUND, a VOICE or a MUSIC by default? 
+      // I expect people will use AI service providers for sound and voice,
+      // maybe in some case music too, but there are also many people
+      // who will want to use their own track eg. to create a music video
+      const category = ClapSegmentCategory.MUSIC
+
+      const assetUrl = await blobToBase64DataUri(file)
+
+      const newSegmentData: Partial<ClapSegment> = {
         prompt: "audio track",
         startTimeInMs, // start time of the segment
         endTimeInMs, // end time of the segment (startTimeInMs + durationInMs)
-        track: findFreeTrack({ segments, startTimeInMs, endTimeInMs }), // track row index
+        status: ClapSegmentStatus.COMPLETED,
+        // track: findFreeTrack({ segments, startTimeInMs, endTimeInMs }), // track row index
         label: `${file.name} (${Math.round(durationInMs / 1000)}s @ ${Math.round(bpm * 100) / 100} BPM)`, // a short label to name the segment (optional, can be human or LLM-defined)
-        category: ClapSegmentCategory.MUSIC,
-      })
+        category,
+        assetUrl,
+        assetDurationInMs: endTimeInMs,
+        assetSourceType: ClapAssetSource.DATA,
+        assetFileFormat: `${file.type}`,
+      }
+
+      const clapSegment = newSegment(newSegmentData)
 
       const audioSegment: RuntimeSegment = {
         ...clapSegment,
+
         outputType: ClapOutputType.AUDIO,
         outputGain: 1,
         audioBuffer,
@@ -81,13 +96,13 @@ export async function parseFileIntoSegments({ file, segments }: {
       // console.log("newSegment:", audioSegment)
 
       // poof! type disappears.. it's magic
-      newSegments.push(audioSegment as ClapSegment)
+      newSegments.push(audioSegment)
       break;
     
     case "text/plain":
       // for dialogue, prompts..
       type = "text"
-      category = "text_prompt"
+      resourceCategory = "text_prompt"
       break;
 
     default:
@@ -116,6 +131,6 @@ export async function parseFileIntoSegments({ file, segments }: {
 
   // Note: uploading is optional, some file type don't need it (eg. text prompt)
 
-  return [...segments, ...newSegments]
+  return newSegments
 }
 

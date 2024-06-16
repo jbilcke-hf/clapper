@@ -31,7 +31,8 @@ export const useIO = create<IOStore>((set, get) => ({
   },
   openFiles: async (files: File[]) => {
     const { openClapBlob, openScreenplay } = get()
-    const segments: ClapSegment[] = useTimeline.getState().segments
+    const timeline: TimelineStore = useTimeline.getState()
+    const { segments, addSegments } = timeline
 
     if (Array.isArray(files)) {
       console.log("user tried to drop some files:", files)
@@ -66,25 +67,17 @@ export const useIO = create<IOStore>((set, get) => ({
       // screenplay files: -> analyze (if there is existing data, show a modal asking to save or not)
       // mp3 file: -> 
       if (isAudioFile) {
-        const newSegments = await parseFileIntoSegments({
-          file,
-          segments,
+        const newSegments = await parseFileIntoSegments({ file })
+
+        console.log("calling  timeline.addSegments with:", newSegments)
+        await timeline.addSegments({
+          segments: newSegments
         })
+        return
       }
 
       const isVideoFile = fileType.startsWith("video/")
   
-
-      // for the moment let's not care of the coordinates at all
-      /*
-      parseFilesIntoSegments({
-        files,
-        columnIndex,
-        rowIndex,
-        segments,
-        segment
-      })
-      */
     }
   },
   openScreenplay: async (projectName: string, fileName: string, fileContent: string | Blob): Promise<void> => {
