@@ -3,7 +3,9 @@ import * as THREE from "three"
 
 import { useTimeline } from "./useTimeline"
 
-// note: those bug for loop just to render graduations might not be efficient
+// note: those big for-loop just to render graduations are not efficient
+// please open a PR if you have a better idea, thank you
+//
 // maybe either we pre-compute everything and we let the runtime figure out what to render on screen,
 // or we implement our own code to do that.. I don't know
 export const useTimeScaleGraduations = ({

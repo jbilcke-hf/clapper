@@ -100,7 +100,7 @@ export function TextCell({
           // {...divProps} // All HTMLDivElement props are valid
         >
           <div className={cn(
-            `select-none text-xs text-gray-950/80`,
+            `select-none text-xs text-stone-950/80`,
             )}>
             {s.label || ""}
           </div>

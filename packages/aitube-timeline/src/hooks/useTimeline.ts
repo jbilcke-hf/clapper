@@ -62,7 +62,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
  
     // let's trust developers for respecting this
     let totalDurationInMs = Math.max(0, clap.meta.durationInMs || 0)
-  
+
     // TODO: this whole approach is a bit weak,
     // having an heuristic is okay but we should do it:
     // track by track
@@ -177,8 +177,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
+        totalDurationInMs,
       })
     })
+
+    // one more thing: we need to call this,
+    // as this will trigger various stuff in the parent
+    get().jumpAt(0)
   },
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => {
     const {
@@ -187,7 +192,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       clap,
       tracks,
       defaultSegmentDurationInSteps,
-      cellWidth: previousCellWidth
+      cellWidth: previousCellWidth,
+      totalDurationInMs,
     } = get()
     const cellWidth = Math.min(maxHorizontalZoomLevel, Math.max(minHorizontalZoomLevel, newHorizontalZoomLevel))
     
@@ -205,6 +211,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
+        totalDurationInMs,
       })
     })
   },
@@ -312,6 +319,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   setLeftBarTrackScale: (leftBarTrackScale?: THREE.Group<THREE.Object3DEventMap>) => {
     set({ leftBarTrackScale })
   },
+  // used when we move the full-length scroller
+  setScrollX: (scrollX: number) => {
+    set({ scrollX })
+  },
   handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number, deltaY: number }) => {
     const { scrollX, scrollY } = get()
     // TODO: compute the limits here, to avoid doing re-renderings for nothing
@@ -326,6 +337,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       tracks,
       cellWidth,
       defaultSegmentDurationInSteps,
+      totalDurationInMs,
     } = get()
 
     set({
@@ -337,7 +349,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           : t
         )),
         cellWidth,
-        defaultSegmentDurationInSteps
+        defaultSegmentDurationInSteps,
+        totalDurationInMs,
       })
     })
   },

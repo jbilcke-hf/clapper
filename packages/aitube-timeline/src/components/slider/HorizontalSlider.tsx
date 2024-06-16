@@ -10,9 +10,9 @@ const HorizontalSlider = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TimelineSliderBase
     ref={ref}
-    trackClass="h-4 w-full"
-    rangeClass="h-full"
-    thumbClass="h-4 w-4"
+    trackClass="h-4 w-full rounded-none"
+    rangeClass="h-full rounded-none"
+    thumbClass="h-4 w-4 bg-yellow-300"
     className={cn("w-full", className)}
     {...props}
     orientation="horizontal"

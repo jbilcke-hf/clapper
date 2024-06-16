@@ -20,16 +20,16 @@ const TimelineSliderBase = React.forwardRef<
     {...props}
   >
     <SliderPrimitive.Track className={cn(
-      `relative grow overflow-hidden border border-gray-600 rounded bg-gray-100 dark:bg-gray-700/70`,
+      `relative grow overflow-hidden border border-stone-600 rounded bg-stone-100 dark:bg-stone-700/70`,
       trackClass,
     )}>
       <SliderPrimitive.Range className={cn(
-        `absolute bg-gray-900/80 dark:bg-gray-900/80`,
+        `absolute bg-stone-900/80 dark:bg-stone-900/80`,
         rangeClass,
        )} />
     </SliderPrimitive.Track>
     <SliderPrimitive.Thumb className={cn(
-      `block rounded-sm border border-gray-400 bg-gray-500 ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-400 dark:bg-gray-500 shadow-md dark:ring-offset-gray-500 dark:focus-visible:ring-gray-400`,
+      `block rounded-sm border border-stone-400 bg-stone-500 ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-stone-950 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50 dark:border-stone-400 dark:bg-stone-500 shadow-md dark:ring-offset-stone-500 dark:focus-visible:ring-stone-400`,
       thumbClass
      )} />
   </SliderPrimitive.Root>
