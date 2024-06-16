@@ -7,7 +7,7 @@ export function getCharacterPrompt(entity: ClapEntity): string {
     entity.gender !== "object" ? entity.gender : 'person', // woman
     entity.label ? `named ${entity.label}` : '', // Jessica
     entity.appearance ? `${entity.appearance}` : 'speaking', // blond hair
-    entity.description ? `${entity.description}` : '', // blond hair
+    // entity.description ? `${entity.description}` : '', // blond hair
   ].map(i => i.trim()).filter(i => i).join(" ").trim()
 
   return characterPrompt

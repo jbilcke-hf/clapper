@@ -1,10 +1,12 @@
 import { ClapSegmentCategory } from "@aitube/clap"
 
-export const SegmentCategoryPromptPriority: Partial<Record<ClapSegmentCategory, number>> = {
+export const segmentCategoryPromptPriority: Partial<Record<ClapSegmentCategory, number>> = {
   // maybe we should also a priority for the video,
   // if it has a prompt.. no?
-  [ClapSegmentCategory.STORYBOARD]: 11,
-  [ClapSegmentCategory.CAMERA]: 10,
+  [ClapSegmentCategory.VIDEO]: 13,
+  [ClapSegmentCategory.STORYBOARD]: 12,
+  [ClapSegmentCategory.CAMERA]: 11,
+  [ClapSegmentCategory.DIALOGUE]: 10,
   [ClapSegmentCategory.CHARACTER]: 9,
   [ClapSegmentCategory.LOCATION]: 8,
   [ClapSegmentCategory.ACTION]: 7,

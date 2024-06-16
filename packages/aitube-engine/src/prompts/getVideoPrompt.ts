@@ -3,7 +3,7 @@ import { ClapEntity, ClapOutputType, ClapSegment, ClapSegmentCategory } from "@a
 import { deduplicatePrompt } from "@/utils/deduplicatePrompt"
 import { getCharacterPrompt } from "@/prompts/getCharacterPrompt"
 
-import { SegmentCategoryPromptPriority } from "./priorities"
+import { segmentCategoryPromptPriority } from "./priorities"
 
 /**
  * Construct a video prompt from a list of active segments
@@ -50,8 +50,8 @@ export function getVideoPrompt(
 
   // this step is *SUPER* important, it determines the order of the prompt!
   tmp.sort((segment1, segment2) => {
-    const priority1 = SegmentCategoryPromptPriority[segment1.category || SegmentCategoryPromptPriority.generic] || 0
-    const priority2 = SegmentCategoryPromptPriority[segment2.category || SegmentCategoryPromptPriority.generic] || 0
+    const priority1 = segmentCategoryPromptPriority[segment1.category || segmentCategoryPromptPriority.generic] || 0
+    const priority2 = segmentCategoryPromptPriority[segment2.category || segmentCategoryPromptPriority.generic] || 0
     
     return priority2 - priority1
   })
@@ -73,7 +73,7 @@ export function getVideoPrompt(
       // to make any assumption about the gender, age or appearance
       if (!entity) {
         // console.log("ERROR: this is a dialogue, but couldn't find the entity!")
-        return `portrait of a person speaking, bokeh`
+        return `photo portrait of a person speaking, bokeh`
       }
 
 
@@ -81,7 +81,7 @@ export function getVideoPrompt(
 
       // in the context of a video, we some something additional:
       // we create a "bokeh" style
-      return `portrait of a ${characterPrompt}, bokeh`
+      return `photo portrait of a ${characterPrompt}, bokeh`
       
     } else if (segment.category === ClapSegmentCategory.LOCATION) {
   
