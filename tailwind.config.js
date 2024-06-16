@@ -5,7 +5,8 @@ module.exports = {
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}'
+    './src/**/*.{ts,tsx}',
+    './node_modules/@aitube/timeline/dist/**/*.{js,ts,tsx}'
 	],
   theme: {
     container: {

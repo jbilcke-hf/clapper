@@ -28,13 +28,22 @@ export const computeProviderShortNames = {
   [ComputeProvider.RUNWAYML]: "RunwayML (no video API)",
 }
 
+// for developer sanity purposes, we only support LangChain for now.
+// if you wish to add or enable a new provider, please provide a working
+// implementation of the LangChain module (even if it's in alpha eg. a GitHub NPM link, that's okay)
 export const availableComputeProvidersForAssistant = [
-  ComputeProvider.HUGGINGFACE,
+  // disabled since this LangChain bridge is not available through NPM yet
+  // ComputeProvider.HUGGINGFACE,
+
   ComputeProvider.GROQ,
   ComputeProvider.OPENAI,
   ComputeProvider.GOOGLE,
+  ComputeProvider.COHERE,
   ComputeProvider.ANTHROPIC,
-  ComputeProvider.FIREWORKSAI,
+  ComputeProvider.MISTRALAI,
+
+  // disabled since this LangChain bridge is not available through NPM yet
+  // ComputeProvider.FIREWORKSAI,
 ]
 
 export const availableComputeProvidersForImages = [
@@ -119,6 +128,15 @@ export const availableModelsForAssistant: Partial<Record<ComputeProvider, string
     "Llama3-70b-8192",
     "Llama3-8b-8192",
   ],
+  [ComputeProvider.COHERE]: [
+    "command",
+    "command-r",
+    "command-r-plus", // the latest one I think
+    "command-light",
+    "command-nightly",
+    "command-light-nightly",
+    "c4-aya-23"
+  ],
   [ComputeProvider.ANTHROPIC]: [
     // you can find this list here: https://docs.anthropic.com/en/docs/models-overview
     "claude-3-opus-20240229",
@@ -141,8 +159,11 @@ export const availableModelsForAssistant: Partial<Record<ComputeProvider, string
     "claude-3-haiku@20240307"
   ],
   [ComputeProvider.MISTRALAI]: [
-    "mistral-small-latest",
-    "open-mistral-7b"
+    "open-mistral-7b",
+    "open-mixtral-8x7b",
+    "open-mixtral-8x22b",
+    "mistral-medium",
+    "mistral-large-2402"
   ],
   [ComputeProvider.HUGGINGFACE]: [
     "HuggingFaceH4/zephyr-7b-beta",

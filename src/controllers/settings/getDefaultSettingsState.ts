@@ -99,7 +99,7 @@ export function getDefaultSettingsState(): SettingsState {
     stabilityAiModelForMusic: "",
   
     fireworksAiModelForAssistant: "",
-    fireworksAiModelForImage: "",
+    fireworksAiModelForImage: "stability/sd3",
     fireworksAiModelForVideo: "",
     fireworksAiModelForVoice: "",
     fireworksAiModelForSound: "",
@@ -117,14 +117,14 @@ export function getDefaultSettingsState(): SettingsState {
     modelsLabModelForSound: "",
     modelsLabModelForMusic: "",
 
-    openaiModelForAssistant: "gpt-4-turbo",
+    openaiModelForAssistant: "gpt-4o",
     openaiModelForImage: "dall-e-3",
     openaiModelForVideo: "sora",
     openaiModelForVoice: "v1",
 
     groqModelForAssistant: "mixtral-8x7b-32768",
   
-    googleModelForAssistant: "gemini",
+    googleModelForAssistant: "gemini-1.5-pro-001",
     googleModelForImage: "imagen",
     googleModelForVideo: "veo",
     googleModelForVoice: "v1",
@@ -141,8 +141,8 @@ export function getDefaultSettingsState(): SettingsState {
     elevenLabsModelForSound: "v1",
 
     kitsAiModelForVoice: "",
-    cohereModelForAssistant: "",
-    mistralAiModelForAssistant: ""
+    cohereModelForAssistant: "command-r-plus",
+    mistralAiModelForAssistant: "open-mixtral-8x22b"
   }
   return state
 }
