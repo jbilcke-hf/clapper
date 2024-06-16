@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Convert a script to a clap file",
   "scripts": {
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap --external=@aitube/colors && bun run build:declaration",
@@ -20,8 +20,8 @@
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.0.26",
-    "@aitube/colors": "0.0.5"
+    "@aitube/clap": "0.0.27",
+    "@aitube/colors": "0.0.7"
   },
   "repository": {
     "type": "git",
