@@ -34,7 +34,7 @@ Please note however that the tool is at an early stage of development, for the m
 
 You can propose bounties attached to issues (eg `"add support for Adobe Premiere Pro export"`, `"finish .fbx integration"`) and open-source community members will be able to submit pull requests to solve them.
 
-There are various platforms to do this, I propose to try Boss as it has low fees: ![Boss Bounty Badge](https://img.shields.io/endpoint.svg?url=https://api.boss.dev/badge/enabled/jbilcke-hf/clapper)
+There are various platforms to do this, I propose to try Boss as it has low fees: [boss.dev](https://www.boss.dev/doc/#create-bounties)
 
 
 ## For developers
