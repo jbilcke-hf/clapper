@@ -42,6 +42,7 @@ export {
   debounceSync,
   findFreeTrack,
   formatTimestamp,
+  getAudioBuffer,
   getDefaultState,
   getFinalVideo,
   getWebGLCharWidth,
@@ -50,6 +51,7 @@ export {
   clampWebGLTextNaive,
   hslToHex,
   parseRenderingStrategy,
+  readFileAsArrayBuffer,
   removeFinalVideos,
   similar,
   sleep,
@@ -60,6 +62,9 @@ export {
 export {
   Track,
   Tracks,
+  SegmentVisibility,
+  BrowserOnlySegmentData,
+  RuntimeSegment,
   ContentSizeMetrics,
   RenderedCell,
   TimelineStore,
@@ -71,7 +76,6 @@ export {
   RenderingStrategy,
  type SegmentResolver,
 } from "./types"
-
 
 export { ClapTimeline } from "./ClapTimeline"
 

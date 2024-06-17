@@ -19,6 +19,35 @@ export type Track = {
 
 export type Tracks = Track[]
 
+
+export enum SegmentVisibility {
+  // the segment is visible, and the user explicitly requested to render it before the others
+  DEMANDED = "DEMANDED",
+
+  // TODO: add some implicit intermediary priority options
+  // such as SELECTED, HOVERED..
+
+  // the segment (or at least a portion of it) is currently visible in the sliding window
+  VISIBLE = "VISIBLE",
+
+  // the segment is hidden, but not too far from the sliding window
+  BUFFERED = "BUFFERED",
+
+  // fully hidden, far from the sliding window
+  HIDDEN = "HIDDEN"
+}
+
+// some data can only exist inside a browser session (eg. AudioBuffer)
+// or at least data that only make sense on client side
+// we could put things like a mouse hover or selected state in here
+export type BrowserOnlySegmentData = {
+  audioBuffer?: AudioBuffer
+
+  visibility?: SegmentVisibility
+}
+
+export type RuntimeSegment = ClapSegment & BrowserOnlySegmentData
+
 export type ContentSizeMetrics = {
   nbMaxShots: number
   nbMaxTracks: number

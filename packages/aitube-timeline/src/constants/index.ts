@@ -8,6 +8,10 @@ export {
 } from "./grid"
 
 export {
+  segmentVisibilityPriority
+} from "./priorities"
+
+export {
   baseClapSegmentCategoryHues,
   pastel,
   DEFAULT_THEMES
