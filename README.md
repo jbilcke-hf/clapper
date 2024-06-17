@@ -12,29 +12,48 @@ header: mini
 short_description: 🎬 Clapper
 ---
 
-## Introduction
+# Introduction
 
-🎬 Clapper is a work-in-progress video editor made for the AI age
+🎬 Clapper is an open-source AI story visualization tool.
 
-## Instructions for developers
+Clapper can interpret a screenplay and render it to storyboards, videos, voice, sound and music.
 
-During development we can use a path like this to quickly test:
+Please note however that the tool is at an early stage of development, for the moment it is not supposed to be really used by "normal" people (some features don't work, there are no tutorials etc).
 
-```
- "@aitube/timeline": "file:/Users/jbilcke/Projects/Typescript_Libraries/aitube-timeline",
-```
+# Badges
 
-Your local copy of the aitube-timelien will have to be built using:
+![Boss Bounty Badge](https://img.shields.io/endpoint.svg?url=https://api.boss.dev/badge/enabled/jbilcke-hf/clapper)
+
+# Contributing
+
+## For users or corporations
+
+### Sponsor specific features
+
+You can propose bounties attached to issues (eg `"add support for Adobe Premiere Pro export"`, `"finish .fbx integration"`) and open-source community members will be able to submit pull requests to solve them.
+
+There are various platforms to do this, I propose to try Boss as it has low fees: ![Boss Bounty Badge](https://img.shields.io/endpoint.svg?url=https://api.boss.dev/badge/enabled/jbilcke-hf/clapper)
+
+
+## For developers
+
+### Licence
+
+Clapper is under a GPL v3 licence.
+
+### Installation
 
 ```bash
-bun run build:dev
+npm i
+npm run dev
 ```
 
-to build with the jsxDEV enabled.
+### Code conventions
 
-If you don't, you will see errors and warnings such as
+I haven't setup Prettier or a Linter yet.
 
-```
-app-index.js:33 Warning: Each child in a list should have a unique "key" prop.
-```
+### Testing
+
+There are no automated tests yet, @jbilcke-hf will act as the "QA engineer".
+
 
