@@ -24,6 +24,7 @@ export {
   baseClapSegmentCategoryHues,
   pastel,
   DEFAULT_THEMES,
+  segmentVisibilityPriority
 } from "./constants"
 
 export {
