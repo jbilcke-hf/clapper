@@ -243,7 +243,9 @@ export type TimelineStoreModifiers = {
     startTimeInMs?: number
     track?: number
 }) => Promise<void>
-  findFreeTrack: (params: { startTimeInMs?: number; endTimeInMs?: number }) => number 
+  findFreeTrack: (params: { startTimeInMs?: number; endTimeInMs?: number }) => number
+
+  fitSegmentToAssetDuration: (segment: ClapSegment, durationInMs?: number) => Promise<void>
 }
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers
