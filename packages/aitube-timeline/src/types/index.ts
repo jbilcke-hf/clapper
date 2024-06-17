@@ -6,6 +6,9 @@ export {
 export {
   Track,
   Tracks,
+  SegmentVisibility,
+  BrowserOnlySegmentData,
+  RuntimeSegment,
   ContentSizeMetrics,
   TimelineStore,
   TimelineStoreState,

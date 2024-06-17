@@ -1,8 +1,8 @@
 import { create } from "zustand"
 import * as THREE from "three"
-import { ClapEntity, ClapProject, ClapSegment, ClapSegmentCategory, newClap, serializeClap } from "@aitube/clap"
+import { ClapOutputType, ClapProject, ClapSegment, ClapSegmentCategory, newClap, serializeClap } from "@aitube/clap"
 
-import { TimelineStore, Tracks } from "@/types/timeline"
+import { RuntimeSegment, TimelineStore, Tracks } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { removeFinalVideos } from "@/utils/removeFinalVideos"
@@ -14,6 +14,7 @@ import { getFinalVideo } from "@/utils/getFinalVideo"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 import { findFreeTrack } from "@/utils/findFreeTrack"
+import { getAudioBuffer } from "@/utils"
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -141,6 +142,17 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           */
         }
         
+      }
+
+      if (s.outputType === ClapOutputType.AUDIO) {
+        const rs = s as RuntimeSegment
+        if (rs.outputType === ClapOutputType.AUDIO) {
+          try {
+            rs.audioBuffer = await getAudioBuffer(rs.assetUrl)
+          } catch (err) {
+            console.error(`failed to load the audio file: ${err}`)
+          }
+        }
       }
     }
 
