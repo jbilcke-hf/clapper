@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import * as THREE from "three"
-import { ClapOutputType, ClapProject, ClapSegment, ClapSegmentCategory, newClap, serializeClap } from "@aitube/clap"
+import { ClapOutputType, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, isValidNumber, newClap, serializeClap } from "@aitube/clap"
 
 import { RuntimeSegment, TimelineStore, Tracks } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
@@ -464,9 +464,31 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     set({ segmentResolver })
   },
   resolveSegment: async (segment: ClapSegment): Promise<ClapSegment> => {
-    const { segmentResolver } = get()
+    const { segmentResolver, fitSegmentToAssetDuration } = get()
     if (!segmentResolver) { return segment }
-    return segmentResolver(segment)
+    
+    segment = await segmentResolver(segment)
+
+    // after a segment has ben resolved, it is possible that the size
+    // of its asset changed (eg. a dialogue line longer than the segment's length)
+    //
+    // there are multiple ways to solve this, one approach could be to 
+    // just add some more B-roll (more shots)
+    //
+    // or we can also extend it, which is the current simple solution
+    //
+    // for the other categories, such as MUSIC or SOUND,
+    // we assume it is okay if they are too short or too long,
+    // and that we can crop them etc
+    //
+    // note that video clips are also concerned: we want them to perfectly fit
+    if (segment.category === ClapSegmentCategory.DIALOGUE) {
+      await fitSegmentToAssetDuration(segment)
+    } else if (segment.category === ClapSegmentCategory.VIDEO) {
+      await fitSegmentToAssetDuration(segment)
+    }
+
+    return segment
   },
   addSegments: async ({
     segments = [],
@@ -577,4 +599,89 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     const { segments } = get()
     return findFreeTrack({ segments, startTimeInMs, endTimeInMs })
   },
+
+  fitSegmentToAssetDuration: async (segment: ClapSegment, requestedDurationInMs?: number): Promise<void> => {
+    
+    const durationInMs: number =
+      typeof requestedDurationInMs === "number" && isFinite(requestedDurationInMs) && !isNaN(requestedDurationInMs)
+      ? requestedDurationInMs
+      : segment.assetDurationInMs
+
+    // trivial case: nothing to do!
+    const segmentDurationInMs = segment.endTimeInMs - segment.startTimeInMs
+    if (
+      durationInMs === 0
+      ||
+      segmentDurationInMs === durationInMs
+    ) {
+      return
+    }
+
+
+    // let's set some limits eg. at least 1 sec, I think this is reasonable
+    const minimumLengthInSteps = 2
+    const minimumLengthInMs = minimumLengthInSteps * DEFAULT_DURATION_IN_MS_PER_STEP
+
+    // positive if new duration is longer,
+    // negative if shorter
+    const timeDifferenceInMs = durationInMs - segmentDurationInMs
+
+    // setup some limits
+    const newSegmentDurationInMs = Math.max(
+      minimumLengthInMs,
+      segmentDurationInMs + timeDifferenceInMs
+    )
+
+    // ok, well, there is nothing to change actually
+    if (segmentDurationInMs === newSegmentDurationInMs) { return }
+
+    const {
+      clap,
+      tracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      segments,
+      segmentsChanged,
+      totalDurationInMs: previousTotalDurationInMs
+    } = get()
+
+    // positive if new duration is longer,
+    // negative if shorter
+    const newTimeDifferenceInMs = newSegmentDurationInMs - segmentDurationInMs
+
+    const endTimeInMs = segment.endTimeInMs
+    // const newEndTimeInMs = endTimeInMs + newTimeDifferenceInMs
+
+    let totalDurationInMs = previousTotalDurationInMs
+
+    // we shift everything that's impacted
+    // overlapping segments will be stretched
+    // (those should be marked as "TO_GENERATE")
+    for (const s of segments) {
+      if (endTimeInMs <= s.startTimeInMs) {
+        s.startTimeInMs += newTimeDifferenceInMs
+      }
+      if (endTimeInMs <= s.endTimeInMs) {
+        s.endTimeInMs += newTimeDifferenceInMs
+      }
+
+      // also need to update the total duration
+      if (s.endTimeInMs > totalDurationInMs) {
+        totalDurationInMs = s.endTimeInMs
+      }
+    }
+    console.log(`TODO Julian: stretched segments (overlapping segments) should be re-generated`)
+
+    set({
+      segments,
+      segmentsChanged: segmentsChanged + 1,
+      ...computeContentSizeMetrics({
+        clap,
+        tracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        totalDurationInMs,
+      })
+    })
+  }
 }))
