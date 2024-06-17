@@ -12,6 +12,8 @@ header: mini
 short_description: 🎬 Clapper
 ---
 
+![Clapper 20240617|600](documentation/screenshots/20240617.jpg)
+
 # Introduction
 
 🎬 Clapper is an open-source AI story visualization tool.
