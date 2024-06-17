@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@aitube/clap": "0.0.27",
-    "@aitube/engine": "0.0.21",
+    "@aitube/engine": "0.0.24",
     "@aitube/timeline": "0.0.26",
     "@fal-ai/serverless-client": "^0.10.3",
     "@huggingface/hub": "^0.15.1",

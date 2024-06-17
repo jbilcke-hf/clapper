@@ -35,10 +35,10 @@ export function getDefaultSettingsState(): SettingsState {
 
     censorNotForAllAudiencesContent: false,
 
-    imagePromptPrefix: "movie screencap, photo",
+    imagePromptPrefix: "screencap",
     imagePromptSuffix: "high quality, beautiful, amazing, intricate details",
     imageNegativePrompt: "black banding, ugly, imperfect, cropped, low resolution",
-    videoPromptPrefix: "movie screencap, photo",
+    videoPromptPrefix: "screencap",
     videoPromptSuffix: "high quality, beautiful, amazing, intricate details",
     videoNegativePrompt: "black banding, ugly, imperfect, cropped, low resolution",
 
