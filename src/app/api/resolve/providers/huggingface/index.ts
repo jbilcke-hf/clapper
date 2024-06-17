@@ -2,8 +2,6 @@ import { HfInference, HfInferenceEndpoint } from "@huggingface/inference"
 
 import { ResolveRequest } from "@/types"
 import { ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
-import { getVideoPrompt } from "@aitube/engine"
-import { blobToBase64DataUri } from "@/lib/utils/blobToBase64DataUri"
 import { getResolveRequestPrompts } from "@/lib/utils/getResolveRequestPrompts"
 import { decodeOutput } from "@/lib/utils/decodeOutput"
 

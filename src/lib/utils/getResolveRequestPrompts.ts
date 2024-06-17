@@ -45,6 +45,21 @@ export function getResolveRequestPrompts({
     : ""
   ].map(x => x.trim()).filter(x => x).join(", ")
 
+  /*
+  console.log(`getResolveRequestPrompts:`, {
+    segments: segments.map(s => ({
+      ...s,
+      assetUrl: "<HIDDEN>"
+    })),
+    videoPrompt,
+    positivePrompt,
+    negativePrompt,
+    // entity: entities['6c1e99b5-02af-47fc-8e6a-0a5bcb9ee8b1'],
+  })
+  throw new Error("uh uh")
+  */
+
+ 
   return {
     positivePrompt,
     negativePrompt

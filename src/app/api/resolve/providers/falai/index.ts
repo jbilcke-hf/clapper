@@ -2,7 +2,6 @@ import * as fal from '@fal-ai/serverless-client'
 
 import { FalAiImageSize, ResolveRequest } from "@/types"
 import { ClapMediaOrientation, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
-import { getVideoPrompt } from "@aitube/engine"
 import { decodeOutput } from '@/lib/utils/decodeOutput'
 import { FalAiAudioResponse, FalAiImageResponse, FalAiSpeechResponse, FalAiVideoResponse } from './types'
 import { getResolveRequestPrompts } from '@/lib/utils/getResolveRequestPrompts'

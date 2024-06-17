@@ -1,8 +1,6 @@
-import Replicate from 'replicate'
 
 import { ResolveRequest } from "@/types"
 import { ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
-import { getVideoPrompt } from "@aitube/engine"
 
 export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
   if (!request.settings.comfyIcuApiKey) {
@@ -14,10 +12,6 @@ export async function resolveSegment(request: ResolveRequest): Promise<ClapSegme
   
   const segment: ClapSegment = { ...request.segment }
 
-  const visualPrompt = getVideoPrompt(
-    request.segments,
-    request.entities
-  )
 
   try {
 
