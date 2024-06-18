@@ -36,7 +36,7 @@ You can propose bounties attached to issues (eg `"add support for Adobe Premiere
 
 There are various platforms to do this, I propose to try Boss as it has low fees: [boss.dev](https://www.boss.dev/doc/#create-bounties)
 
-Please use good judgment if you take on a bounty. Post a message in the GitHub issuek, communicate on our Discord that you are going to take it etc.
+Please use good judgment if you take on a bounty. Post a message in the GitHub thread, communicate on [Discord](https://discord.com/invite/AEruz9B92B) that you are going to take it to avoid double efforts etc.
 
 ## For developers
 
