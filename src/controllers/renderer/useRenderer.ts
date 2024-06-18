@@ -2,9 +2,7 @@
 
 import { create } from "zustand"
 import { ClapOutputType, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
-import { TimelineStore, useTimeline } from "@aitube/timeline"
-
-import { RuntimeSegment } from "@/types"
+import { TimelineStore, useTimeline, RuntimeSegment } from "@aitube/timeline"
 
 import { BufferedSegments, RendererStore } from "./types"
 import { getDefaultRendererState } from "./getDefaultRendererState"

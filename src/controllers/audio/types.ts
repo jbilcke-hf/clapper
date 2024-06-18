@@ -1,4 +1,4 @@
-import { RuntimeSegment } from "@/types"
+import { RuntimeSegment } from "@aitube/timeline"
 
 export type AudioAnalysis = {
   audioBuffer: AudioBuffer

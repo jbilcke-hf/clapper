@@ -39,6 +39,9 @@ export enum ComputeProvider {
   LUMALABS = "LUMALABS",
   KUAISHOU = "KUAISHOU",
   RUNWAYML = "RUNWAYML",
+  HEDRA = "HEDRA",
+  LEONARDOAI = "LEONARDOAI",
+  EVERARTAI = "EVERARTAI",
 }
 
 export enum ComfyIcuAccelerator {
@@ -48,6 +51,39 @@ export enum ComfyIcuAccelerator {
   A100_40GB = "A100_40GB",
   A100_80GB = "A100_80GB",
   H100 = "H100"
+}
+
+export type ResolveRequestPrompts = {
+  image: {
+    // the positive prompt - elements we want in the scene
+    positive: string
+
+    // the positive prompt - elements we don't want in the scene
+    negative: string
+
+
+    // the "identification picture" of the character, if available      
+    identity: string
+
+    // TODO: add LoRAs etc.. for location consistency
+  }
+  video: {
+    // input image to use for the video generation
+    image: string
+
+    // input voice sample to use for the video generation
+    voice: string
+  }
+  voice: {
+    // the "identification voiceprint" of the character, if available      
+    identity: string
+
+    // the positive prompt - elements we want in the voice
+    positive: string
+
+    // the positive prompt - elements we don't want in the voice
+    negative: string
+  }
 }
 
 export type ResolveRequest = {
@@ -67,6 +103,8 @@ export type ResolveRequest = {
   mainCharacterEntity?: ClapEntity
 
   meta: ClapMeta
+
+  prompts: ResolveRequestPrompts
 }
 
 export type AssistantRequest = {
@@ -160,49 +198,3 @@ export interface ImageSegment {
     label: string;
     score: number;
 }
-
-export enum SegmentVisibility {
-  // the segment is visible, and the user explicitly requested to render it before the others
-  DEMANDED = "DEMANDED",
-
-  // TODO: add some implicit intermediary priority options
-  // such as SELECTED, HOVERED..
-
-  // the segment (or at least a portion of it) is currently visible in the sliding window
-  VISIBLE = "VISIBLE",
-
-  // the segment is hidden, but not too far from the sliding window
-  BUFFERED = "BUFFERED",
-
-  // fully hidden, far from the sliding window
-  HIDDEN = "HIDDEN"
-}
-
-// used for sort
-export const SegmentVisibilityPriority: Record<SegmentVisibility, number> = {
-    // the segment is visible, and the user explicitly requested to render it before the others
-  [SegmentVisibility.DEMANDED]: 3,
-
-  // TODO: add some implicit intermediary priority options
-  // such as SELECTED, HOVERED..
-
-  // the segment (or at least a portion of it) is currently visible in the sliding window
-  [SegmentVisibility.VISIBLE]: 2,
-
-  // the segment is hidden, but not too far from the sliding window
-  [SegmentVisibility.BUFFERED]: 1,
-
-  // fully hidden, far from the sliding window
-  [SegmentVisibility.HIDDEN]: 0
-}
-
-// some data can only exist inside a browser session (eg. AudioBuffer)
-// or at least data that only make sense on client side
-// we could put things like a mouse hover or selected state in here
-export type BrowserOnlySegmentData = {
-  audioBuffer?: AudioBuffer
-
-  visibility?: SegmentVisibility
-}
-
-export type RuntimeSegment = ClapSegment & BrowserOnlySegmentData

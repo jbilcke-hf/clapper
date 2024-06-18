@@ -1,9 +1,8 @@
 import Replicate from 'replicate'
 
+import { ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+
 import { ResolveRequest } from "@/types"
-import { ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
-import { getResolveRequestPrompts } from '@/lib/utils/getResolveRequestPrompts'
-import { decodeOutput } from '@/lib/utils/decodeOutput'
 
 export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
   if (!request.settings.replicateApiKey) {
@@ -15,26 +14,51 @@ export async function resolveSegment(request: ResolveRequest): Promise<ClapSegme
     throw new Error(`Clapper doesn't support ${request.segment.category} generation for provider "Replicate". Please open a pull request with (working code) to solve this!`)
   }
   
-  const segment: ClapSegment = { ...request.segment }
+  const segment = request.segment
 
-  const prompts = getResolveRequestPrompts(request)
-
-  try {
-
-    const output = await replicate.run(
-      request.settings.replicateModelForImage as any, {
-      input: {
-        prompt: prompts.positivePrompt
+  // this mapping isn't great, we should use something auto-adapting
+  // like we are doing for Hugging Face (match the fields etc)
+  if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
+    let params: object = {}
+    if (request.settings.replicateModelForImage === "fofr/pulid-lightning") {
+      params = {
+        prompt: request.prompts.image.positive,
+        face_image: request.prompts.image.identity,
       }
-    })
-
-    segment.assetUrl = await decodeOutput(output)
-    segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)
-  } catch (err) {
-    console.error(`failed to call Replicate: `, err)
-    segment.assetUrl = ''
-    segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)
-    segment.status = ClapSegmentStatus.TO_GENERATE
+    } else if (request.settings.replicateModelForImage === "zsxkib/pulid") {
+      params = {
+        prompt: request.prompts.image.positive,
+        main_face_image: request.prompts.image.identity,
+      }
+    } else {
+      params = {
+        prompt: request.prompts.image.positive,
+      }
+    }
+    const response = await replicate.run(
+      request.settings.replicateModelForImage as any,
+      { input: params }
+    ) as any
+    segment.assetUrl = `${response.output || ""}`
+  } else if (request.segment.category === ClapSegmentCategory.DIALOGUE) {
+    const response = await replicate.run(
+      request.settings.replicateModelForVoice as any, {
+      input: {
+        text: request.prompts.voice.positive,
+        audio: request.prompts.voice.identity,
+      }
+    }) as any
+    segment.assetUrl = `${response.output || ""}`
+  } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
+    const response = await replicate.run(
+      request.settings.replicateModelForVideo as any, {
+      input: {
+        image: request.prompts.video.image,
+      }
+    }) as any
+    segment.assetUrl = `${response.output || ""}`
+  } else {
+    throw new Error(`Clapper doesn't support ${request.segment.category} generation for provider "Replicate". Please open a pull request with (working code) to solve this!`)
   }
 
   return segment

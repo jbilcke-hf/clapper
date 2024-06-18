@@ -1,13 +1,12 @@
 "use client"
 
-import { ClapAssetSource, ClapOutputType, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, generateSeed, newSegment, UUID } from "@aitube/clap"
-import { findFreeTrack } from "@aitube/timeline"
+import { ClapAssetSource, ClapOutputType, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, newSegment, UUID } from "@aitube/clap"
+import { RuntimeSegment } from "@aitube/timeline"
 
-import { RuntimeSegment } from "@/types"
+import { blobToBase64DataUri } from "@/lib/utils/blobToBase64DataUri"
 
 import { analyzeAudio } from "../audio/analyzeAudio"
 import { ResourceCategory, ResourceType } from "./types"
-import { blobToBase64DataUri } from "@/lib/utils/blobToBase64DataUri"
 
 export async function parseFileIntoSegments({ file }: {
   /**

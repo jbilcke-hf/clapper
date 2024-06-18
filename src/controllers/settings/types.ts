@@ -81,7 +81,7 @@ export type SettingsState = {
   gradioApiUrlForAssistant: string
   gradioApiUrlForImage: string
   gradioApiUrlForVideo: string
-  gradioApiUrlForSpeech: string
+  gradioApiUrlForVoice: string
   gradioApiUrlForSound: string
   gradioApiUrlForMusic: string
 
@@ -210,7 +210,7 @@ export type SettingsControls = {
   setGradioApiUrlForAssistant: (gradioApiUrlForAssistant?: string) => void
   setGradioApiUrlForImage: (gradioApiUrlForImage?: string) => void
   setGradioApiUrlForVideo: (gradioApiUrlForVideo?: string) => void
-  setGradioApiUrlForSpeech: (gradioApiUrlForSpeech?: string) => void
+  setGradioApiUrlForVoice: (gradioApiUrlForVoice?: string) => void
   setGradioApiUrlForSound: (gradioApiUrlForSound?: string) => void
   setGradioApiUrlForMusic: (gradioApiUrlForMusic?: string) => void
 

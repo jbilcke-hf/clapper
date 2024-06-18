@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server"
-import { ClapSegmentCategory } from "@aitube/clap"
+import { ClapOutputType, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
 
 import { resolveSegment as resolveSegmentUsingHuggingFace } from "./providers/huggingface"
 import { resolveSegment as resolveSegmentUsingComfyReplicate } from "./providers/comfy-replicate"
@@ -10,6 +10,9 @@ import { resolveSegment as resolveSegmentUsingModelsLab } from "./providers/mode
 import { resolveSegment as resolveSegmentUsingStabilityAi } from "./providers/stabilityai"
 
 import { ComputeProvider, ResolveRequest } from "@/types"
+import { decodeOutput } from "@/lib/utils/decodeOutput"
+import { getTypeAndExtension } from "@/lib/utils/getTypeAndExtension"
+import { getMediaInfo } from "@/lib/ffmpeg/getMediaInfo"
 
 export async function POST(req: NextRequest) {
   // do we really need to secure it?
@@ -53,8 +56,53 @@ export async function POST(req: NextRequest) {
     : null
 
   if (!resolveSegment) { throw new Error(`Provider ${provider} is not supported yet`)}
- 
-  const segment = await resolveSegment(request)
+
+  let segment = request.segment
+
+  try {
+    segment = await resolveSegment(request)
+
+    // we clean-up and parse the output from all the resolvers:
+    // this will download files hosted on CDNs, convert WAV files to MP3 etc
+
+    segment.assetUrl = await decodeOutput(segment.assetUrl)
+    
+    segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)
+    
+    segment.status = ClapSegmentStatus.COMPLETED
+
+    const { assetFileFormat, outputType } = getTypeAndExtension(segment.assetUrl)
+    
+    segment.assetFileFormat = assetFileFormat
+    segment.outputType = outputType
+    
+    if (segment.outputType === ClapOutputType.AUDIO
+      ||
+      segment.outputType === ClapOutputType.VIDEO
+    ) {
+      const { durationInMs, hasAudio } = await getMediaInfo(segment.assetUrl)
+      segment.assetDurationInMs = durationInMs
+
+      // hasAudio doesn't work properly I think, with small samples
+      segment.outputGain = hasAudio ? 1.0 : 0.0
+
+      /*
+      console.log(`DEBUG:`, {
+        durationInMs,
+        hasAudio,
+        "segment.assetDurationInMs":  segment.assetDurationInMs,
+        "segment.outputGain": segment.outputGain,
+      })
+        */
+    }
+  } catch (err) {
+    console.error(`failed to generate a segment: ${err}`)
+    segment.assetUrl = ''
+    segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)
+    segment.assetDurationInMs = 0
+    segment.outputGain = 0
+    segment.status = ClapSegmentStatus.TO_GENERATE
+  }
 
   return NextResponse.json(segment)
 }

@@ -1,13 +1,15 @@
-import { listSpaces, Credentials, whoAmI, SpaceEntry } from "@huggingface/hub"
-import { GradioSpace } from "./types"
+import { listSpaces, Credentials, whoAmI, SpaceSdk } from "@huggingface/hub"
+import {  HFSpace } from "./types"
 
-export async function getMyGradioSpaces({
-  huggingFaceApiKey
+export async function getSpaces({
+  apiKey,
+  sdk = "gradio"
 }: {
-  huggingFaceApiKey: string
-}): Promise<GradioSpace[]> {
+  apiKey: string
+  sdk?: SpaceSdk
+}): Promise<HFSpace[]> {
 
-  const accessToken = huggingFaceApiKey || ""
+  const accessToken = apiKey || ""
 
   if (!accessToken) {
     throw new Error(`cannot list spaces without a Hugging Face access token`)
@@ -26,9 +28,7 @@ export async function getMyGradioSpaces({
     throw new Error(`cannot list spaces: ${err}`)
   }
 
-
-  let maxNbSpaces = 10
-  let gradioSpaces: GradioSpace[] = []
+  let results: HFSpace[] = []
 
   for await (const space of listSpaces({
     search: {
@@ -42,14 +42,10 @@ export async function getMyGradioSpaces({
     ],
     credentials
   })) {
-    if (
-      space.sdk !== "gradio"
-    ) { continue }
 
-    console.log("MySpace:", gradioSpaces)
-
-    gradioSpaces.push(space)
+    if (sdk && space.sdk != sdk) { continue }
+    results.push(space)
   }
 
-  return gradioSpaces
+  return results
 }

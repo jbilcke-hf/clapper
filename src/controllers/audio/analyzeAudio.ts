@@ -1,6 +1,5 @@
-import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@aitube/timeline"
+import { DEFAULT_DURATION_IN_MS_PER_STEP, getAudioBuffer } from "@aitube/timeline"
 
-import { getAudioBuffer } from "./getAudioBuffer"
 import { AudioAnalysis } from "./types"
 import { detectBPM } from "./detectBPM"
 

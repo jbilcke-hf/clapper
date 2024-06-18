@@ -16,6 +16,7 @@ export function hasNoPublicAPI(model: string) {
     model === ComputeProvider.KUAISHOU ||
     model === ComputeProvider.RUNWAYML ||
     model === ComputeProvider.LUMALABS ||
+    model === ComputeProvider.HEDRA ||
     model === ComputeProvider.UDIO
   ) {
     return true

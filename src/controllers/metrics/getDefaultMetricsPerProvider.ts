@@ -80,6 +80,15 @@ export function getDefaultMetricsPerProvider(): MetricsPerProvider {
     [ComputeProvider.RUNWAYML]: {
       ...getDefaultComputeProviderMetrics(),
     },
+    [ComputeProvider.HEDRA]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
+    [ComputeProvider.LEONARDOAI]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
+    [ComputeProvider.EVERARTAI]: {
+      ...getDefaultComputeProviderMetrics(),
+    },
   }
   return metricsPerProvider
 }

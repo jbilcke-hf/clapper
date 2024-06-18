@@ -1,16 +1,16 @@
 "use client"
 
 import { create } from "zustand"
-import { ClapEntity, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, ClapSegmentStatus, filterSegments } from "@aitube/clap"
-import { RenderingStrategy, TimelineStore, useTimeline } from "@aitube/timeline"
+import { ClapEntity, ClapOutputType, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, ClapSegmentStatus, filterSegments } from "@aitube/clap"
+import { RenderingStrategy, TimelineStore, useTimeline, getAudioBuffer, RuntimeSegment, SegmentVisibility, segmentVisibilityPriority } from "@aitube/timeline"
+import { getVideoPrompt } from "@aitube/engine"
 
-import { ResolveRequest, RuntimeSegment, SegmentVisibility, SegmentVisibilityPriority } from "@/types"
+import { ResolveRequest, ResolveRequestPrompts } from "@/types"
 
 import { getDefaultResolverState } from "./getDefaultResolverState"
 import { useSettings } from "../settings"
 import { DEFAULT_WAIT_TIME_IF_NOTHING_TO_DO_IN_MS } from "./constants"
 import { ResolverStore } from "./types"
-
 
 export const useResolver = create<ResolverStore>((set, get) => ({
   ...getDefaultResolverState(),
@@ -75,8 +75,8 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     // segments visible on screen are show first,
     // then those nearby, then the hidden ones
     const segments: RuntimeSegment[] = ([...allSegments] as RuntimeSegment[]).sort((segment1, segment2) => {
-      const priority1 = (SegmentVisibilityPriority as any)[segment1.visibility || SegmentVisibility.HIDDEN] || 0
-      const priority2 = (SegmentVisibilityPriority as any)[segment2.visibility || SegmentVisibility.HIDDEN] || 0
+      const priority1 = (segmentVisibilityPriority as any)[segment1.visibility || SegmentVisibility.HIDDEN] || 0
+      const priority2 = (segmentVisibilityPriority as any)[segment2.visibility || SegmentVisibility.HIDDEN] || 0
       
       return priority2 - priority1
     })
@@ -385,7 +385,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       // throw new Error(`please call setSegmentRender(...) first`)
     }
 
-    const shotSegments: ClapSegment[] = filterSegments(
+    const segments: ClapSegment[] = filterSegments(
       ClapSegmentFilteringMode.ANY,
       segment,
       allSegments
@@ -397,34 +397,78 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     }
   
     segment.status = ClapSegmentStatus.IN_PROGRESS
-    
-    try {
-      const entities = clap.entityIndex || {}
-    
-      const speakingCharactersIds = shotSegments.map(s =>
-        s.category === ClapSegmentCategory.DIALOGUE ? s.entityId : null
-      ).filter(id => id) as string[]
-    
-      const generalCharactersIds = shotSegments.map(s =>
-        s.category === ClapSegmentCategory.CHARACTER ? s.entityId : null
-      ).filter(id => id) as string[]
-    
-      const mainCharacterId: string | undefined = speakingCharactersIds.at(0) || generalCharactersIds.at(0) || undefined
-    
-      const mainCharacterEntity: ClapEntity | undefined = mainCharacterId ? (entities[mainCharacterId] || undefined) : undefined
 
-      const request: ResolveRequest = {
-        settings,
-        segment,
-        segments: shotSegments,
-        entities,
-        speakingCharactersIds,
-        generalCharactersIds,
-        mainCharacterId,
-        mainCharacterEntity,
-        meta: clap.meta,
+    const entities = clap.entityIndex || {}
+  
+    const speakingCharactersIds = segments.map(s =>
+      s.category === ClapSegmentCategory.DIALOGUE ? s.entityId : null
+    ).filter(id => id) as string[]
+  
+    const generalCharactersIds = segments.map(s =>
+      s.category === ClapSegmentCategory.CHARACTER ? s.entityId : null
+    ).filter(id => id) as string[]
+  
+    const mainCharacterId: string | undefined = speakingCharactersIds.at(0) || generalCharactersIds.at(0) || undefined
+  
+    const mainCharacterEntity: ClapEntity | undefined = mainCharacterId ? (entities[mainCharacterId] || undefined) : undefined
+
+    const storyboard = segments.find(s => s.category === ClapSegmentCategory.STORYBOARD)
+    
+    const dialogue = segments.find(s => s.category === ClapSegmentCategory.DIALOGUE)
+
+    const imagePrompt = getVideoPrompt(
+      segments,
+      entities
+    )
+  
+    const positiveImagePrompt = [
+      settings.imagePromptPrefix,
+      imagePrompt,
+      settings.imagePromptSuffix,
+    ].map(x => x.trim()).filter(x => x).join(", ")
+  
+    const negativeImagePrompt =  [
+      settings.imageNegativePrompt
+    ].map(x => x.trim()).filter(x => x).join(", ")
+
+    // note: not all AI models will support those parameters.
+    // in 2024, even the "best" proprietary video models like Sora, Veo, Kling, Gen-3, Dream Machine etc.. 
+    // don't support voice input for lip syncing, for instance.
+    const prompts: ResolveRequestPrompts = {
+      image: {
+        // the "identification picture" of the character, if available
+        identity: `${mainCharacterEntity?.imageId || ""}`,
+        positive: positiveImagePrompt,
+        negative: negativeImagePrompt
+      },
+      video: {
+        // image to animate
+        image: `${storyboard?.assetUrl || ""}`,
+
+        // dialogue line to lip-sync
+        voice: `${dialogue?.assetUrl || ""}`,
+      },
+      voice: {
+        identity: `${mainCharacterEntity?.audioId || ""}`,
+        positive: "",
+        negative: ""
       }
+    }
+  
+    const request: ResolveRequest = {
+      settings,
+      segment,
+      segments,
+      entities,
+      speakingCharactersIds,
+      generalCharactersIds,
+      mainCharacterId,
+      mainCharacterEntity,
+      meta: clap.meta,
+      prompts,
+    }
 
+    try {
       const res = await fetch("/api/resolve", {
         method: "POST",
         headers: {
@@ -437,26 +481,39 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       const newSegmentData = (await res.json()) as ClapSegment
       // console.log(`useResolver.resolveSegment(): newSegmentData`, newSegmentData)
 
-      const {
-        id,
-        assetUrl,
-        assetDurationInMs,
-        assetFileFormat,
-        assetSourceType,
-        status
-      } = newSegmentData
-
       // note: this modifies the old object in-place
-      const newSegment = Object.assign(segment, {
-        id,
-        assetUrl,
-        assetDurationInMs,
-        assetFileFormat,
-        assetSourceType,
-        status
-      })
+      // it is super important as this helps preserving the reference
+      const newSegment = Object.assign(segment, newSegmentData) as RuntimeSegment
+
+      if (newSegment.outputType === ClapOutputType.AUDIO) {
+        try {
+          newSegment.audioBuffer = await getAudioBuffer(newSegment.assetUrl)
+        } catch (err) {
+          console.error(`failed to load the audio file: ${err}`)
+        }
+      }
+
+      // after a segment has ben resolved, it is possible that the size
+      // of its asset changed (eg. a dialogue line longer than the segment's length)
+      //
+      // there are multiple ways to solve this, one approach could be to 
+      // just add some more B-roll (more shots)
+      //
+      // or we can also extend it, which is the current simple solution
+      //
+      // for the other categories, such as MUSIC or SOUND,
+      // we assume it is okay if they are too short or too long,
+      // and that we can crop them etc
+      //
+      // note that video clips are also concerned: we want them to perfectly fit
+      if (newSegment.category === ClapSegmentCategory.DIALOGUE) {
+        await timeline.fitSegmentToAssetDuration(newSegment)
+      } else if (newSegment.category === ClapSegmentCategory.VIDEO) {
+        await timeline.fitSegmentToAssetDuration(newSegment)
+      }
 
       newSegment.status = ClapSegmentStatus.COMPLETED
+
       trackSilentChangeInSegment(newSegment.id)
       return newSegment
     } catch (err) {
