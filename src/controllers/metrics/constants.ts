@@ -66,6 +66,12 @@ export const estimatedMetrics: Record<ComputeProvider, Record<string, ProviderMe
     // TODO list the most popular models
   },
   [ComputeProvider.FALAI]: {
+    "fal-ai/metavoice-v1": {
+      estimationType: ProviderMetricsEstimationType.MANUAL_MEASUREMENTS,
+      averageCostPerComputeTimeInSec: 0.0006666666666666666,
+      averageDurationInSec: 15,
+      averageCostPerGeneration: 0.01,
+    },
     "fal-ai/fast-sdxl": {
       estimationType: ProviderMetricsEstimationType.MANUAL_MEASUREMENTS,
       averageCostPerComputeTimeInSec: 0.001105904404873477,
@@ -117,6 +123,15 @@ export const estimatedMetrics: Record<ComputeProvider, Record<string, ProviderMe
     // TODO list the most popular models
   },
   [ComputeProvider.RUNWAYML]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.HEDRA]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.LEONARDOAI]: {
+    // TODO list the most popular models
+  },
+  [ComputeProvider.EVERARTAI]: {
     // TODO list the most popular models
   },
 }

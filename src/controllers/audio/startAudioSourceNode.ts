@@ -1,6 +1,5 @@
 import { UUID } from "@aitube/clap"
-
-import { RuntimeSegment } from "@/types"
+import { RuntimeSegment } from "@aitube/timeline"
 
 import { CurrentlyPlayingAudioSource } from "./types"
 

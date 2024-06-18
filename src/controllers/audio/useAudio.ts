@@ -1,9 +1,7 @@
 "use client"
 
 import { create } from "zustand"
-import { TimelineStore, useTimeline } from "@aitube/timeline"
-
-import { RuntimeSegment } from "@/types"
+import { TimelineStore, useTimeline, RuntimeSegment } from "@aitube/timeline"
 
 import { AudioStore } from "./types"
 import { getDefaultAudioState } from "./getDefaultAudioState"

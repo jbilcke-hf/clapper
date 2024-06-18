@@ -245,8 +245,8 @@ export const useSettings = create<SettingsStore>()(
       setGradioApiUrlForVideo: (gradioApiUrlForVideo?: string) => {
         set({ gradioApiUrlForVideo: getValidString(gradioApiUrlForVideo, getDefaultSettingsState().gradioApiUrlForVideo) })
       },
-      setGradioApiUrlForSpeech: (gradioApiUrlForSpeech?: string) => {
-        set({ gradioApiUrlForSpeech: getValidString(gradioApiUrlForSpeech, getDefaultSettingsState().gradioApiUrlForSpeech) })
+      setGradioApiUrlForVoice: (gradioApiUrlForVoice?: string) => {
+        set({ gradioApiUrlForVoice: getValidString(gradioApiUrlForVoice, getDefaultSettingsState().gradioApiUrlForVoice) })
       },
       setGradioApiUrlForSound: (gradioApiUrlForSound?: string) => {
         set({ gradioApiUrlForSound: getValidString(gradioApiUrlForSound, getDefaultSettingsState().gradioApiUrlForSound) })
@@ -449,7 +449,7 @@ export const useSettings = create<SettingsStore>()(
           gradioApiUrlForAssistant: state.gradioApiUrlForAssistant || defaultSettings.gradioApiUrlForAssistant,
           gradioApiUrlForImage: state.gradioApiUrlForImage || defaultSettings.gradioApiUrlForImage,
           gradioApiUrlForVideo: state.gradioApiUrlForVideo || defaultSettings.gradioApiUrlForVideo,
-          gradioApiUrlForSpeech: state.gradioApiUrlForSpeech || defaultSettings.gradioApiUrlForSpeech,
+          gradioApiUrlForVoice: state.gradioApiUrlForVoice || defaultSettings.gradioApiUrlForVoice,
           gradioApiUrlForSound: state.gradioApiUrlForSound || defaultSettings.gradioApiUrlForSound,
           gradioApiUrlForMusic: state.gradioApiUrlForMusic || defaultSettings.gradioApiUrlForMusic,
           replicateModelForImage: state.replicateModelForImage || defaultSettings.replicateModelForImage,

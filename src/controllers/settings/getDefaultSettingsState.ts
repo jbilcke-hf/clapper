@@ -68,19 +68,28 @@ export function getDefaultSettingsState(): SettingsState {
     comfyWorkflowForSound: "{}",
     comfyWorkflowForMusic: "{}",
   
-    // "HuggingFaceH4/zephyr-7b-beta"
-    // "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    huggingFaceModelForAssistant: "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    huggingFaceModelForImage: "sd-community/sdxl-flash",
-    huggingFaceModelForVideo: "",
+    // now how we prefix everything with "models"
+    // that's because it will be possible at some point to also
+    // call a space eg. spaces/openai/sora (this one is just a silly example, of course)
+    // "models/HuggingFaceH4/zephyr-7b-beta"
+    // "models/mistralai/Mixtral-8x7B-Instruct-v0.1",
+    huggingFaceModelForAssistant: "models/mistralai/Mixtral-8x7B-Instruct-v0.1",
+    huggingFaceModelForImage: "models/sd-community/sdxl-flash",
+
+    // huggingFaceModelForVideo: "spaces/multimodalart/hallo",
+    huggingFaceModelForVideo: "spaces/hpcai-tech/open-sora",
+
     huggingFaceModelForVoice: "",
     huggingFaceModelForSound: "",
     huggingFaceModelForMusic: "",
   
+    // those are not designed for Hugging Face specifically,
+    // but to be compatible with any Gradio API URL that the
+    // user would set manually (eg. running on localhost)
     gradioApiUrlForAssistant: "",
     gradioApiUrlForImage: "",
     gradioApiUrlForVideo: "",
-    gradioApiUrlForSpeech: "",
+    gradioApiUrlForVoice: "",
     gradioApiUrlForSound: "",
     gradioApiUrlForMusic: "",
 

@@ -20,12 +20,15 @@ export const computeProviderShortNames = {
   [ComputeProvider.OPENAI]: "OpenAI",
   [ComputeProvider.REPLICATE]: "Replicate",
   [ComputeProvider.STABILITYAI]: "StabilityAI",
-  [ComputeProvider.MIDJOURNEY]: "Midjourney (no image API)",
+  [ComputeProvider.MIDJOURNEY]: "Midjourney (no API)",
   [ComputeProvider.SUNO]: "Suno (no music API)",
   [ComputeProvider.UDIO]: "Udio (no music API)",
-  [ComputeProvider.LUMALABS]: "LumaLabs (no video API)",
-  [ComputeProvider.KUAISHOU]: "KuaiShou (no video API)",
-  [ComputeProvider.RUNWAYML]: "RunwayML (no video API)",
+  [ComputeProvider.LUMALABS]: "Luma: Dream Machine (no API)",
+  [ComputeProvider.KUAISHOU]: "KuaiShou: Kling (no API)",
+  [ComputeProvider.RUNWAYML]: "RunwayML: GEN-3 (no API)",
+  [ComputeProvider.HEDRA]: "Hedra: Character-1 (no API)",
+  [ComputeProvider.LEONARDOAI]: "Leonardo.ai (no API)",
+  [ComputeProvider.EVERARTAI]: "Everart.ai (no API)",
 }
 
 // for developer sanity purposes, we only support LangChain for now.
@@ -56,6 +59,7 @@ export const availableComputeProvidersForImages = [
   ComputeProvider.FALAI,
   ComputeProvider.MODELSLAB,
   ComputeProvider.MIDJOURNEY,
+  ComputeProvider.EVERARTAI,
 ]
 
 export const availableComputeProvidersForVideos = [
@@ -71,6 +75,8 @@ export const availableComputeProvidersForVideos = [
   ComputeProvider.GOOGLE,
   ComputeProvider.LUMALABS,
   ComputeProvider.KUAISHOU,
+  ComputeProvider.HEDRA,
+  ComputeProvider.LEONARDOAI,
 ]
 
 export const availableComputeProvidersForMusic = [
@@ -208,7 +214,10 @@ export const availableModelsForImageGeneration: Partial<Record<ComputeProvider, 
   ],
   [ComputeProvider.MIDJOURNEY]: [
     "(No public API)",
-  ]
+  ],
+  [ComputeProvider.EVERARTAI]: [
+    "(No public API)",
+  ],
 }
 
 // should we call this upscaling or post-processing?
@@ -229,6 +238,16 @@ export const availableModelsForVideoGeneration: Partial<Record<ComputeProvider, 
   [ComputeProvider.STABILITYAI]: [
     "image-to-video",
   ],
+  [ComputeProvider.HUGGINGFACE]: [
+    "spaces/hpcai-tech/open-sora",
+    "spaces/multimodalart/hallo" // supports audio input
+  ],
+  [ComputeProvider.REPLICATE]: [
+    // note: we need a model that accepts cinematic ratios
+    // "camenduru/open-sora"
+
+    "anotherjesse/zeroscope-v2-xl",
+  ],
   [ComputeProvider.OPENAI]: [
     "Sora is unavailable (no public API)",
   ],
@@ -243,7 +262,13 @@ export const availableModelsForVideoGeneration: Partial<Record<ComputeProvider, 
   ],
   [ComputeProvider.KUAISHOU]: [
     "Kling is unavailable (no public API)",
-  ]
+  ],
+  [ComputeProvider.HEDRA]: [
+    "Hedra is unavailable (no public API)",
+  ],
+  [ComputeProvider.LEONARDOAI]: [
+    "Leonardo.ai is unavailable (no public API)",
+  ],
 }
 
 export const availableModelsForVideoUpscaling: Partial<Record<ComputeProvider, string[]>> = {
@@ -252,18 +277,50 @@ export const availableModelsForVideoUpscaling: Partial<Record<ComputeProvider, s
 }
 
 export const availableModelsForSoundGeneration: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.HUGGINGFACE]: [
+    "cvssp/audioldm2",
+    "cvssp/audioldm2-large",
+    "cvssp/audioldm"
+  ],
   [ComputeProvider.FALAI]: [
     "fal-ai/stable-audio"
+  ],
+  [ComputeProvider.ELEVENLABS]: [
+    "v1/sound-generation"
+  ],
+  [ComputeProvider.REPLICATE]: [
+    "declare-lab/tango",
+    "suno-ai/bark",
+    "sepal/audiogen"
   ]
 }
 
 export const availableModelsForVoiceGeneration: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.HUGGINGFACE]: [
+    "coqui/XTTS-v2",
+    "myshell-ai/OpenVoiceV2",
+    "myshell-ai/OpenVoice",
+    "WhisperSpeech/WhisperSpeech",
+    "metavoiceio/metavoice-1B-v0.1",
+    "parler-tts/parler_tts_mini_v0.1",
+    "parler-tts/parler-tts-mini-expresso"
+  ],
   [ComputeProvider.FALAI]: [
     "fal-ai/metavoice-v1"
+  ],
+  [ComputeProvider.REPLICATE]: [
+    "chenxwh/openvoice"
+  ],
+  [ComputeProvider.ELEVENLABS]: [
+    "v1/text-to-speech"
   ]
 }
 
 export const availableModelsForMusicGeneration: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.HUGGINGFACE]: [
+    "cvssp/audioldm2-music",
+    "facebook/musicgen-large",
+  ],
   [ComputeProvider.FALAI]: [
     "fal-ai/stable-audio"
   ],
