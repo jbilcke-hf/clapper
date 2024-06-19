@@ -23,13 +23,37 @@ export const useSettings = create<SettingsStore>()(
         const { videoProvider: defaultAssistantProvider } = getDefaultSettingsState()
         set({assistantProvider: parseComputeProvider(assistantProvider, defaultAssistantProvider) })
       },
+      setImageProvider: (imageProvider?: ComputeProvider) => {
+        const { imageProvider: defaultImageProvider } = getDefaultSettingsState()
+        set({ imageProvider: parseComputeProvider(imageProvider, defaultImageProvider) })
+      },
+      setImageDepthProvider: (imageDepthProvider?: ComputeProvider) => {
+        const { imageDepthProvider: defaultImageDepthProvider } = getDefaultSettingsState()
+        set({ imageDepthProvider: parseComputeProvider(imageDepthProvider, defaultImageDepthProvider) })
+      },
+      setImageSegmentationProvider: (imageSegmentationProvider?: ComputeProvider) => {
+        const { imageSegmentationProvider: defaultImageSegmentationProvider } = getDefaultSettingsState()
+        set({ imageSegmentationProvider: parseComputeProvider(imageSegmentationProvider, defaultImageSegmentationProvider) })
+      },
+      setImageUpscalingProvider: (imageUpscalingProvider?: ComputeProvider) => {
+        const { imageUpscalingProvider: defaultImageUpscalingProvider } = getDefaultSettingsState()
+        set({ imageUpscalingProvider: parseComputeProvider(imageUpscalingProvider, defaultImageUpscalingProvider) })
+      },
       setVideoProvider: (videoProvider?: ComputeProvider) => {
         const { videoProvider: defaultVideoProvider } = getDefaultSettingsState()
         set({ videoProvider: parseComputeProvider(videoProvider, defaultVideoProvider) })
       },
-      setImageProvider: (imageProvider?: ComputeProvider) => {
-        const { imageProvider: defaultImageProvider } = getDefaultSettingsState()
-        set({ imageProvider: parseComputeProvider(imageProvider, defaultImageProvider) })
+      setVideoDepthProvider: (videoDepthProvider?: ComputeProvider) => {
+        const { videoDepthProvider: defaultVideoDepthProvider } = getDefaultSettingsState()
+        set({ videoDepthProvider: parseComputeProvider(videoDepthProvider, defaultVideoDepthProvider) })
+      },
+      setVideoSegmentationProvider: (videoSegmentationProvider?: ComputeProvider) => {
+        const { videoSegmentationProvider: defaultVideoSegmentationProvider } = getDefaultSettingsState()
+        set({ videoSegmentationProvider: parseComputeProvider(videoSegmentationProvider, defaultVideoSegmentationProvider) })
+      },
+      setVideoUpscalingProvider: (videoUpscalingProvider?: ComputeProvider) => {
+        const { videoUpscalingProvider: defaultVideoUpscalingProvider } = getDefaultSettingsState()
+        set({ videoUpscalingProvider: parseComputeProvider(videoUpscalingProvider, defaultVideoUpscalingProvider) })
       },
       setVoiceProvider: (voiceProvider?: ComputeProvider) => {
         const { voiceProvider: defaultSpeechProvider } = getDefaultSettingsState()
@@ -140,6 +164,14 @@ export const useSettings = create<SettingsStore>()(
         const { imageUpscalingModel: defaultImageUpscalingModel } = getDefaultSettingsState()
         set({ imageUpscalingModel: getValidString(imageUpscalingModel, defaultImageUpscalingModel) })
       },
+      setImageDepthModel: (imageDepthModel?: string) => {
+        const { imageDepthModel: defaultImageDepthModel } = getDefaultSettingsState()
+        set({ imageDepthModel: getValidString(imageDepthModel, defaultImageDepthModel) })
+      },
+      setImageSegmentationModel: (imageSegmentationModel?: string) => {
+        const { imageSegmentationModel: defaultImageSegmentationModel } = getDefaultSettingsState()
+        set({ imageSegmentationModel: getValidString(imageSegmentationModel, defaultImageSegmentationModel) })
+      },
       setVideoGenerationModel: (videoGenerationModel?: string) => {
         const { videoGenerationModel: defaultVideoGenerationModel } = getDefaultSettingsState()
         set({ videoGenerationModel: getValidString(videoGenerationModel, defaultVideoGenerationModel) })
@@ -147,6 +179,14 @@ export const useSettings = create<SettingsStore>()(
       setVideoUpscalingModel: (videoUpscalingModel?: string) => {
         const { videoUpscalingModel: defaultVideoUpscalingModel} = getDefaultSettingsState()
         set({ videoUpscalingModel: getValidString(videoUpscalingModel, defaultVideoUpscalingModel) })
+      },
+      setVideoDepthModel: (videoDepthModel?: string) => {
+        const { videoDepthModel: defaultVideoDepthModel } = getDefaultSettingsState()
+        set({ videoDepthModel: getValidString(videoDepthModel, defaultVideoDepthModel) })
+      },
+      setVideoSegmentationModel: (videoSegmentationModel?: string) => {
+        const { videoSegmentationModel: defaultVideoSegmentationModel } = getDefaultSettingsState()
+        set({ videoSegmentationModel: getValidString(videoSegmentationModel, defaultVideoSegmentationModel) })
       },
       setSoundGenerationModel: (soundGenerationModel?: string) => {
         const { soundGenerationModel: defaultSoundGenerationModel } = getDefaultSettingsState()
@@ -161,12 +201,36 @@ export const useSettings = create<SettingsStore>()(
         set({ musicGenerationModel: getValidString(musicGenerationModel, defaultVoiceGenerationModel) })
       },
       setImageRenderingStrategy: (imageRenderingStrategy?: RenderingStrategy) => {
-        const { imageRenderingStrategy: defaulImageRenderingStrategy } = getDefaultSettingsState()
-        set({ imageRenderingStrategy: parseRenderingStrategy(imageRenderingStrategy, defaulImageRenderingStrategy) })
+        const { imageRenderingStrategy: defaultImageRenderingStrategy } = getDefaultSettingsState()
+        set({ imageRenderingStrategy: parseRenderingStrategy(imageRenderingStrategy, defaultImageRenderingStrategy) })
+      },
+      setImageDepthRenderingStrategy: (imageDepthRenderingStrategy?: RenderingStrategy) => {
+        const { imageDepthRenderingStrategy: defaultImageDepthRenderingStrategy } = getDefaultSettingsState()
+        set({ imageDepthRenderingStrategy: parseRenderingStrategy(imageDepthRenderingStrategy, defaultImageDepthRenderingStrategy) })
+      },
+      setImageSegmentationRenderingStrategy: (imageSegmentationRenderingStrategy?: RenderingStrategy) => {
+        const { imageSegmentationRenderingStrategy: defaultImageSegmentationRenderingStrategy } = getDefaultSettingsState()
+        set({ imageSegmentationRenderingStrategy: parseRenderingStrategy(imageSegmentationRenderingStrategy, defaultImageSegmentationRenderingStrategy) })
+      },
+      setImageUpscalingRenderingStrategy: (imageUpscalingRenderingStrategy?: RenderingStrategy) => {
+        const { imageUpscalingRenderingStrategy: defaultImageUpscalingRenderingStrategy } = getDefaultSettingsState()
+        set({ imageUpscalingRenderingStrategy: parseRenderingStrategy(imageUpscalingRenderingStrategy, defaultImageUpscalingRenderingStrategy) })
       },
       setVideoRenderingStrategy: (videoRenderingStrategy?: RenderingStrategy) => {
         const { videoRenderingStrategy: defaultVideoRenderingStrategy } = getDefaultSettingsState()
         set({ videoRenderingStrategy: parseRenderingStrategy(videoRenderingStrategy, defaultVideoRenderingStrategy) })
+      },
+      setVideoDepthRenderingStrategy: (videoDepthRenderingStrategy?: RenderingStrategy) => {
+        const { videoDepthRenderingStrategy: defaultVideoDepthRenderingStrategy } = getDefaultSettingsState()
+        set({ imageDepthRenderingStrategy: parseRenderingStrategy(videoDepthRenderingStrategy, defaultVideoDepthRenderingStrategy) })
+      },
+      setVideoSegmentationRenderingStrategy: (videoSegmentationRenderingStrategy?: RenderingStrategy) => {
+        const { videoSegmentationRenderingStrategy: defaultVideoSegmentationRenderingStrategy } = getDefaultSettingsState()
+        set({ videoSegmentationRenderingStrategy: parseRenderingStrategy(videoSegmentationRenderingStrategy, defaultVideoSegmentationRenderingStrategy) })
+      },
+      setVideoUpscalingRenderingStrategy: (videoUpscalingRenderingStrategy?: RenderingStrategy) => {
+        const { videoUpscalingRenderingStrategy: defaultVideoUpscalingRenderingStrategy } = getDefaultSettingsState()
+        set({ videoUpscalingRenderingStrategy: parseRenderingStrategy(videoUpscalingRenderingStrategy, defaultVideoUpscalingRenderingStrategy) })
       },
       setVoiceRenderingStrategy: (voiceRenderingStrategy?: RenderingStrategy) => {
         const { voiceRenderingStrategy: defaultSpeechRenderingStrategy } = getDefaultSettingsState()
@@ -224,8 +288,26 @@ export const useSettings = create<SettingsStore>()(
       setHuggingFaceModelForImage: (huggingFaceModelForImage?: string) => {
         set({ huggingFaceModelForImage: getValidString(huggingFaceModelForImage, getDefaultSettingsState().huggingFaceModelForImage) })
       },
+      setHuggingFaceModelForImageDepth: (huggingFaceModelForImageDepth?: string) => {
+        set({ huggingFaceModelForImageDepth: getValidString(huggingFaceModelForImageDepth, getDefaultSettingsState().huggingFaceModelForImageDepth) })
+      },
+      setHuggingFaceModelForImageSegmentation: (huggingFaceModelForImageSegmentation?: string) => {
+        set({ huggingFaceModelForImageSegmentation: getValidString(huggingFaceModelForImageSegmentation, getDefaultSettingsState().huggingFaceModelForImageSegmentation) })
+      },
+      setHuggingFaceModelForImageUpscaling: (huggingFaceModelForImageUpscaling?: string) => {
+        set({ huggingFaceModelForImageUpscaling: getValidString(huggingFaceModelForImageUpscaling, getDefaultSettingsState().huggingFaceModelForImageUpscaling) })
+      },
       setHuggingFaceModelForVideo: (huggingFaceModelForVideo?: string) => {
         set({ huggingFaceModelForVideo: getValidString(huggingFaceModelForVideo, getDefaultSettingsState().huggingFaceModelForVideo) })
+      },
+      setHuggingFaceModelForVideoDepth: (huggingFaceModelForVideoDepth?: string) => {
+        set({ huggingFaceModelForVideoDepth: getValidString(huggingFaceModelForVideoDepth, getDefaultSettingsState().huggingFaceModelForVideoDepth) })
+      },
+      setHuggingFaceModelForVideoSegmentation: (huggingFaceModelForVideoSegmentation?: string) => {
+        set({ huggingFaceModelForVideoSegmentation: getValidString(huggingFaceModelForVideoSegmentation, getDefaultSettingsState().huggingFaceModelForVideoSegmentation) })
+      },
+      setHuggingFaceModelForVideoUpscaling: (huggingFaceModelForVideoUpscaling?: string) => {
+        set({ huggingFaceModelForVideoUpscaling: getValidString(huggingFaceModelForVideoUpscaling, getDefaultSettingsState().huggingFaceModelForVideoUpscaling) })
       },
       setHuggingFaceModelForVoice: (huggingFaceModelForVoice?: string) => {
         set({ huggingFaceModelForVoice: getValidString(huggingFaceModelForVoice, getDefaultSettingsState().huggingFaceModelForVoice) })
@@ -257,8 +339,26 @@ export const useSettings = create<SettingsStore>()(
       setReplicateModelForImage: (replicateModelForImage?: string) => {
         set({ replicateModelForImage: getValidString(replicateModelForImage, getDefaultSettingsState().replicateModelForImage) })
       },
+      setReplicateModelForImageDepth: (replicateModelForImageDepth?: string) => {
+        set({ replicateModelForImageDepth: getValidString(replicateModelForImageDepth, getDefaultSettingsState().replicateModelForImageDepth) })
+      },
+      setReplicateModelForImageSegmentation: (replicateModelForImageSegmentation?: string) => {
+        set({ replicateModelForImageSegmentation: getValidString(replicateModelForImageSegmentation, getDefaultSettingsState().replicateModelForImageSegmentation) })
+      },
+      setReplicateModelForImageUpscaling: (replicateModelForImageUpscaling?: string) => {
+        set({ replicateModelForImageUpscaling: getValidString(replicateModelForImageUpscaling, getDefaultSettingsState().replicateModelForImageUpscaling) })
+      },
       setReplicateModelForVideo: (replicateModelForVideo?: string) => {
         set({ replicateModelForVideo: getValidString(replicateModelForVideo, getDefaultSettingsState().replicateModelForVideo) })
+      },
+      setReplicateModelForVideoDepth: (replicateModelForVideoDepth?: string) => {
+        set({ replicateModelForVideoDepth: getValidString(replicateModelForVideoDepth, getDefaultSettingsState().replicateModelForVideoDepth) })
+      },
+      setReplicateModelForVideoSegmentation: (replicateModelForVideoSegmentation?: string) => {
+        set({ replicateModelForVideoSegmentation: getValidString(replicateModelForVideoSegmentation, getDefaultSettingsState().replicateModelForVideoSegmentation) })
+      },
+      setReplicateModelForVideoUpscaling: (replicateModelForVideoUpscaling?: string) => {
+        set({ replicateModelForVideoUpscaling: getValidString(replicateModelForVideoUpscaling, getDefaultSettingsState().replicateModelForVideoUpscaling) })
       },
       setReplicateModelForVoice: (replicateModelForVoice?: string) => {
         set({ replicateModelForVoice: getValidString(replicateModelForVoice, getDefaultSettingsState().replicateModelForVoice) })
@@ -304,6 +404,15 @@ export const useSettings = create<SettingsStore>()(
       },
       setFalAiModelForImage: (falAiModelForImage?: string) => {
         set({ falAiModelForImage: getValidString(falAiModelForImage, getDefaultSettingsState().falAiModelForImage) })
+      },
+      setFalAiModelForImageDepth: (falAiModelForImageDepth?: string) => {
+        set({ falAiModelForImageDepth: getValidString(falAiModelForImageDepth, getDefaultSettingsState().falAiModelForImageDepth) })
+      },
+      setFalAiModelForImageSegmentation: (falAiModelForImageSegmentation?: string) => {
+        set({ falAiModelForImageSegmentation: getValidString(falAiModelForImageSegmentation, getDefaultSettingsState().falAiModelForImageSegmentation) })
+      },
+      setFalAiModelForImageUpscaling: (falAiModelForImageUpscaling?: string) => {
+        set({ falAiModelForImageUpscaling: getValidString(falAiModelForImageUpscaling, getDefaultSettingsState().falAiModelForImageUpscaling) })
       },
       setFalAiModelForVideo: (falAiModelForVideo?: string) => {
         set({ falAiModelForVideo: getValidString(falAiModelForVideo, getDefaultSettingsState().falAiModelForVideo) })
@@ -388,7 +497,13 @@ export const useSettings = create<SettingsStore>()(
           // eg. an empty model string.. basically we want to allow empty config that still works!
           assistantProvider: state.assistantProvider || defaultSettings.assistantProvider,
           imageProvider: state.imageProvider || defaultSettings.imageProvider,
+          imageUpscalingProvider: state.imageUpscalingProvider || defaultSettings.imageUpscalingProvider,
+          imageDepthProvider: state.imageDepthProvider || defaultSettings.imageDepthProvider,
+          imageSegmentationProvider: state.imageSegmentationProvider || defaultSettings.imageSegmentationProvider,
           videoProvider: state.videoProvider || defaultSettings.videoProvider,
+          videoUpscalingProvider: state.videoUpscalingProvider || defaultSettings.videoUpscalingProvider,
+          videoDepthProvider: state.videoDepthProvider || defaultSettings.videoDepthProvider,
+          videoSegmentationProvider: state.videoSegmentationProvider || defaultSettings.videoSegmentationProvider,
           soundProvider: state.soundProvider || defaultSettings.soundProvider,
           voiceProvider: state.voiceProvider || defaultSettings.voiceProvider,
           musicProvider: state.musicProvider || defaultSettings.musicProvider,
@@ -419,17 +534,32 @@ export const useSettings = create<SettingsStore>()(
                     
           assistantModel: state.assistantModel || defaultSettings.assistantModel,
           assistantTurboModel: state.assistantTurboModel || defaultSettings.assistantTurboModel,
+          
           imageGenerationModel: state.imageGenerationModel || defaultSettings.imageGenerationModel,
           imageGenerationTurboModel: state.imageGenerationTurboModel || defaultSettings.imageGenerationTurboModel,
           imageUpscalingModel: state.imageUpscalingModel || defaultSettings.imageUpscalingModel,
+          imageDepthModel: state.imageDepthModel || defaultSettings.imageDepthModel,
+          imageSegmentationModel: state.imageSegmentationModel || defaultSettings.imageSegmentationModel,
+
           videoGenerationModel: state.videoGenerationModel || defaultSettings.videoGenerationModel,
+          videoDepthModel: state.videoDepthModel || defaultSettings.videoDepthModel,
+          videoSegmentationModel: state.videoSegmentationModel || defaultSettings.videoSegmentationModel,
           videoUpscalingModel: state.videoUpscalingModel || defaultSettings.videoUpscalingModel,
+
           soundGenerationModel: state.soundGenerationModel || defaultSettings.soundGenerationModel,
           voiceGenerationModel: state.voiceGenerationModel || defaultSettings.voiceGenerationModel,
           musicGenerationModel: state.musicGenerationModel || defaultSettings.musicGenerationModel,
                     
           imageRenderingStrategy: state.imageRenderingStrategy || defaultSettings.imageRenderingStrategy,
+          imageDepthRenderingStrategy: state.imageDepthRenderingStrategy || defaultSettings.imageDepthRenderingStrategy,
+          imageSegmentationRenderingStrategy: state.imageSegmentationRenderingStrategy || defaultSettings.imageSegmentationRenderingStrategy,
+          imageUpscalingRenderingStrategy: state.imageUpscalingRenderingStrategy || defaultSettings.imageUpscalingRenderingStrategy,
+          
           videoRenderingStrategy: state.videoRenderingStrategy || defaultSettings.videoRenderingStrategy,
+          videoDepthRenderingStrategy: state.videoDepthRenderingStrategy || defaultSettings.videoDepthRenderingStrategy,
+          videoSegmentationRenderingStrategy: state.videoSegmentationRenderingStrategy || defaultSettings.videoSegmentationRenderingStrategy,
+          videoUpscalingRenderingStrategy: state.videoUpscalingRenderingStrategy || defaultSettings.videoUpscalingRenderingStrategy,
+          
           voiceRenderingStrategy: state.voiceRenderingStrategy || defaultSettings.voiceRenderingStrategy,
           soundRenderingStrategy: state.soundRenderingStrategy || defaultSettings.soundRenderingStrategy,
           musicRenderingStrategy: state.musicRenderingStrategy || defaultSettings.musicRenderingStrategy,
@@ -442,7 +572,13 @@ export const useSettings = create<SettingsStore>()(
           comfyWorkflowForMusic: state.comfyWorkflowForMusic || defaultSettings.comfyWorkflowForMusic,
           huggingFaceModelForAssistant: state.huggingFaceModelForAssistant || defaultSettings.huggingFaceModelForAssistant,
           huggingFaceModelForImage: state.huggingFaceModelForImage || defaultSettings.huggingFaceModelForImage,
+          huggingFaceModelForImageDepth: state.huggingFaceModelForImageDepth || defaultSettings.huggingFaceModelForImageDepth,
+          huggingFaceModelForImageSegmentation: state.huggingFaceModelForImageSegmentation || defaultSettings.huggingFaceModelForImageSegmentation,
+          huggingFaceModelForImageUpscaling: state.huggingFaceModelForImageUpscaling || defaultSettings.huggingFaceModelForImageUpscaling,
           huggingFaceModelForVideo: state.huggingFaceModelForVideo || defaultSettings.huggingFaceModelForVideo,
+          huggingFaceModelForVideoDepth: state.huggingFaceModelForVideoDepth || defaultSettings.huggingFaceModelForVideoDepth,
+          huggingFaceModelForVideoSegmentation: state.huggingFaceModelForVideoSegmentation || defaultSettings.huggingFaceModelForVideoSegmentation,
+          huggingFaceModelForVideoUpscaling: state.huggingFaceModelForVideoUpscaling || defaultSettings.huggingFaceModelForVideoUpscaling,
           huggingFaceModelForVoice: state.huggingFaceModelForVoice || defaultSettings.huggingFaceModelForVoice,
           huggingFaceModelForSound: state.huggingFaceModelForSound || defaultSettings.huggingFaceModelForSound,
           huggingFaceModelForMusic: state.huggingFaceModelForMusic || defaultSettings.huggingFaceModelForMusic,
@@ -453,7 +589,13 @@ export const useSettings = create<SettingsStore>()(
           gradioApiUrlForSound: state.gradioApiUrlForSound || defaultSettings.gradioApiUrlForSound,
           gradioApiUrlForMusic: state.gradioApiUrlForMusic || defaultSettings.gradioApiUrlForMusic,
           replicateModelForImage: state.replicateModelForImage || defaultSettings.replicateModelForImage,
+          replicateModelForImageDepth: state.replicateModelForImageDepth || defaultSettings.replicateModelForImageDepth,
+          replicateModelForImageSegmentation: state.replicateModelForImageSegmentation || defaultSettings.replicateModelForImageSegmentation,
+          replicateModelForImageUpscaling: state.replicateModelForImageUpscaling || defaultSettings.replicateModelForImageUpscaling,
           replicateModelForVideo: state.replicateModelForVideo || defaultSettings.replicateModelForVideo,
+          replicateModelForVideoDepth: state.replicateModelForVideoDepth || defaultSettings.replicateModelForVideoDepth,
+          replicateModelForVideoSegmentation: state.replicateModelForVideoSegmentation || defaultSettings.replicateModelForVideoSegmentation,
+          replicateModelForVideoUpscaling: state.replicateModelForVideoUpscaling || defaultSettings.replicateModelForVideoUpscaling,
           replicateModelForVoice: state.replicateModelForVoice || defaultSettings.replicateModelForVoice,
           replicateModelForSound: state.replicateModelForSound || defaultSettings.replicateModelForSound,
           replicateModelForMusic: state.replicateModelForMusic || defaultSettings.replicateModelForMusic,
@@ -469,6 +611,9 @@ export const useSettings = create<SettingsStore>()(
           fireworksAiModelForSound: state.fireworksAiModelForSound || defaultSettings.fireworksAiModelForSound,
           fireworksAiModelForMusic: state.fireworksAiModelForMusic || defaultSettings.fireworksAiModelForMusic,
           falAiModelForImage: state.falAiModelForImage || defaultSettings.falAiModelForImage,
+          falAiModelForImageDepth: state.falAiModelForImageDepth || defaultSettings.falAiModelForImageDepth,
+          falAiModelForImageUpscaling: state.falAiModelForImageUpscaling || defaultSettings.falAiModelForImageUpscaling,
+          falAiModelForImageSegmentation: state.falAiModelForImageSegmentation || defaultSettings.falAiModelForImageSegmentation,
           falAiModelForVideo: state.falAiModelForVideo || defaultSettings.falAiModelForVideo,
           falAiModelForVoice: state.falAiModelForVoice || defaultSettings.falAiModelForVoice,
           falAiModelForSound: state.falAiModelForSound || defaultSettings.falAiModelForSound,

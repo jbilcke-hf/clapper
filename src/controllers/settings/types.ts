@@ -23,8 +23,14 @@ export type SettingsState = {
 
   // ------------- CATEGORY PROVIDERS ---------------
   assistantProvider: ComputeProvider
-  videoProvider: ComputeProvider
   imageProvider: ComputeProvider
+  imageDepthProvider: ComputeProvider
+  imageSegmentationProvider: ComputeProvider
+  imageUpscalingProvider: ComputeProvider
+  videoProvider: ComputeProvider
+  videoDepthProvider: ComputeProvider
+  videoSegmentationProvider: ComputeProvider
+  videoUpscalingProvider: ComputeProvider
   voiceProvider: ComputeProvider
   soundProvider: ComputeProvider
   musicProvider: ComputeProvider
@@ -41,20 +47,31 @@ export type SettingsState = {
   videoPromptPrefix: string
   videoPromptSuffix: string
   videoNegativePrompt: string
-                      
+  
+
   assistantModel: string
   assistantTurboModel: string
   imageGenerationModel: string
   imageGenerationTurboModel: string
   imageUpscalingModel: string
+  imageDepthModel: string
+  imageSegmentationModel: string
   videoGenerationModel: string
   videoUpscalingModel: string
+  videoDepthModel: string
+  videoSegmentationModel: string
   soundGenerationModel: string
   voiceGenerationModel: string
   musicGenerationModel: string
 
   imageRenderingStrategy: RenderingStrategy
+  imageUpscalingRenderingStrategy: RenderingStrategy
+  imageDepthRenderingStrategy: RenderingStrategy
+  imageSegmentationRenderingStrategy: RenderingStrategy
   videoRenderingStrategy: RenderingStrategy
+  videoUpscalingRenderingStrategy: RenderingStrategy
+  videoDepthRenderingStrategy: RenderingStrategy
+  videoSegmentationRenderingStrategy: RenderingStrategy
   voiceRenderingStrategy: RenderingStrategy
   soundRenderingStrategy: RenderingStrategy
   musicRenderingStrategy: RenderingStrategy
@@ -73,7 +90,13 @@ export type SettingsState = {
 
   huggingFaceModelForAssistant: string
   huggingFaceModelForImage: string
+  huggingFaceModelForImageDepth: string
+  huggingFaceModelForImageSegmentation: string
+  huggingFaceModelForImageUpscaling: string
   huggingFaceModelForVideo: string
+  huggingFaceModelForVideoDepth: string
+  huggingFaceModelForVideoSegmentation: string
+  huggingFaceModelForVideoUpscaling: string
   huggingFaceModelForVoice: string
   huggingFaceModelForSound: string
   huggingFaceModelForMusic: string
@@ -86,7 +109,13 @@ export type SettingsState = {
   gradioApiUrlForMusic: string
 
   replicateModelForImage: string
+  replicateModelForImageDepth: string
+  replicateModelForImageSegmentation: string
+  replicateModelForImageUpscaling: string
   replicateModelForVideo: string
+  replicateModelForVideoDepth: string
+  replicateModelForVideoSegmentation: string
+  replicateModelForVideoUpscaling: string
   replicateModelForVoice: string
   replicateModelForSound: string
   replicateModelForMusic: string
@@ -105,6 +134,9 @@ export type SettingsState = {
   fireworksAiModelForMusic: string
 
   falAiModelForImage: string
+  falAiModelForImageDepth: string
+  falAiModelForImageSegmentation: string
+  falAiModelForImageUpscaling: string
   falAiModelForVideo: string
   falAiModelForVoice: string
   falAiModelForSound: string
@@ -161,11 +193,18 @@ export type SettingsControls = {
   setStabilityAiApiKey: (stabilityAiApiKey?: string) => void
 
   setAssistantProvider: (assistantProvider?: ComputeProvider) => void
-  setVideoProvider: (videoProvider?: ComputeProvider) => void
   setImageProvider: (imageProvider?: ComputeProvider) => void
+  setImageDepthProvider: (imageDepthProvider?: ComputeProvider) => void
+  setImageSegmentationProvider: (imageSegmentationProvider?: ComputeProvider) => void
+  setImageUpscalingProvider: (imageUpscalingProvider?: ComputeProvider) => void
+  setVideoProvider: (videoProvider?: ComputeProvider) => void
+  setVideoDepthProvider: (videoDepthProvider?: ComputeProvider) => void
+  setVideoSegmentationProvider: (videoSegmentationProvider?: ComputeProvider) => void
+  setVideoUpscalingProvider: (videoUpscalingProvider?: ComputeProvider) => void
   setVoiceProvider: (voiceProvider?: ComputeProvider) => void
   setSoundProvider: (soundProvider?: ComputeProvider) => void
   setMusicProvider: (musicProvider?: ComputeProvider) => void
+
 
   setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => void
   setImagePromptPrefix: (imagePromptPrefix?: string) => void
@@ -180,16 +219,28 @@ export type SettingsControls = {
   setImageGenerationModel: (imageGenerationModel?: string) => void
   setImageGenerationTurboModel: (imageGenerationTurboModel?: string) => void
   setImageUpscalingModel: (imageUpscalingModel?: string) => void
+  setImageDepthModel: (imageDepthModel?: string) => void
+  setImageSegmentationModel: (imageSegmentationModel?: string) => void
   setVideoGenerationModel: (videoGenerationModel?: string) => void
+  setVideoDepthModel: (videoDepthModel?: string) => void
+  setVideoSegmentationModel: (videoSegmentationModel?: string) => void
   setVideoUpscalingModel: (videoUpscalingModel?: string) => void
   setSoundGenerationModel: (soundGenerationModel?: string) => void
   setVoiceGenerationModel: (voiceGenerationModel?: string) => void
   setMusicGenerationModel: (musicGenerationModel?: string) => void
+  
   setImageRenderingStrategy: (imageRenderingStrategy?: RenderingStrategy) => void
+  setImageUpscalingRenderingStrategy: (imageUpscalingRenderingStrategy?: RenderingStrategy) => void
+  setImageDepthRenderingStrategy: (imageDepthRenderingStrategy?: RenderingStrategy) => void
+  setImageSegmentationRenderingStrategy: (imageSegmentationRenderingStrategy?: RenderingStrategy) => void
   setVideoRenderingStrategy: (videoRenderingStrategy?: RenderingStrategy) => void
+  setVideoDepthRenderingStrategy: (videoDepthRenderingStrategy?: RenderingStrategy) => void
+  setVideoSegmentationRenderingStrategy: (videoSegmentationRenderingStrategy?: RenderingStrategy) => void
+  setVideoUpscalingRenderingStrategy: (videoUpscalingRenderingStrategy?: RenderingStrategy) => void
   setVoiceRenderingStrategy: (voiceRenderingStrategy?: RenderingStrategy) => void
   setSoundRenderingStrategy: (soundRenderingStrategy?: RenderingStrategy) => void
   setMusicRenderingStrategy: (musicRenderingStrategy?: RenderingStrategy) => void
+
 
   setMaxImagesToGenerateInParallel: (maxImagesToGenerateInParallel?: number) => void
   setMaxVideosToGenerateInParallel: (maxVideosToGenerateInParallel?: number) => void
@@ -202,7 +253,13 @@ export type SettingsControls = {
 
   setHuggingFaceModelForAssistant: (huggingFaceModelForAssistant?: string) => void
   setHuggingFaceModelForImage: (huggingFaceModelForImage?: string) => void
+  setHuggingFaceModelForImageDepth: (huggingFaceModelForImageDepth?: string) => void
+  setHuggingFaceModelForImageSegmentation: (huggingFaceModelForImageSegmentation?: string) => void
+  setHuggingFaceModelForImageUpscaling: (huggingFaceModelForImageUpscaling?: string) => void
   setHuggingFaceModelForVideo: (huggingFaceModelForVideo?: string) => void
+  setHuggingFaceModelForVideoDepth: (huggingFaceModelForVideoDepth?: string) => void
+  setHuggingFaceModelForVideoSegmentation: (huggingFaceModelForVideoSegmentation?: string) => void
+  setHuggingFaceModelForVideoUpscaling: (huggingFaceModelForVideoUpscaling?: string) => void
   setHuggingFaceModelForVoice: (huggingFaceModelForVoice?: string) => void
   setHuggingFaceModelForSound: (huggingFaceModelForSound?: string) => void
   setHuggingFaceModelForMusic: (huggingFaceModelForMusic?: string) => void
@@ -215,7 +272,13 @@ export type SettingsControls = {
   setGradioApiUrlForMusic: (gradioApiUrlForMusic?: string) => void
 
   setReplicateModelForImage: (replicateModelForImage?: string) => void
+  setReplicateModelForImageDepth: (replicateModelForImageDepth?: string) => void
+  setReplicateModelForImageSegmentation: (replicateModelForImageSegmentation?: string) => void
+  setReplicateModelForImageUpscaling: (replicateModelForImageUpscaling?: string) => void
   setReplicateModelForVideo: (replicateModelForVideo?: string) => void
+  setReplicateModelForVideoDepth: (replicateModelForVideoDepth?: string) => void
+  setReplicateModelForVideoSegmentation: (replicateModelForVideoSegmentation?: string) => void
+  setReplicateModelForVideoUpscaling: (replicateModelForVideoUpscaling?: string) => void
   setReplicateModelForVoice: (replicateModelForVoice?: string) => void
   setReplicateModelForSound: (replicateModelForSound?: string) => void
   setReplicateModelForMusic: (replicateModelForMusic?: string) => void
@@ -234,6 +297,9 @@ export type SettingsControls = {
   setFireworksAiModelForMusic: (fireworksAiModelForMusic?: string) => void
 
   setFalAiModelForImage: (falAiModelForImage?: string) => void
+  setFalAiModelForImageDepth: (falAiModelForImageDepth?: string) => void
+  setFalAiModelForImageSegmentation: (falAiModelForImageSegmentation?: string) => void
+  setFalAiModelForImageUpscaling: (falAiModelForImageUpscaling?: string) => void
   setFalAiModelForVideo: (falAiModelForVideo?: string) => void
   setFalAiModelForVoice: (falAiModelForVoice?: string) => void
   setFalAiModelForSound: (falAiModelForSound?: string) => void
