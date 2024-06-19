@@ -31,7 +31,7 @@ export function RenderingStrategyList({
     <MenubarSub>
       <MenubarSubTrigger>
         {/* todo display either autorender or manual render */}
-        <Tag size="lg" color={TagColor.NEUTRAL}>auto render</Tag>
+        <Tag size="lg" color={TagColor.NEUTRAL}>auto&nbsp;rendering</Tag>
         {(strategyLabels as any)[current || ""] || "None"}
       </MenubarSubTrigger>
       <MenubarSubContent>

@@ -14,26 +14,22 @@ import {
 import { useSettings } from "@/controllers/settings"
 import { useUI } from "@/controllers/ui"
 
-import { ProviderList } from "../lists/ProviderList"
 import { RenderingStrategyList } from "../lists/RenderingStrategyList"
-import { availableComputeProvidersForVideos } from "@/components/settings/constants"
 import { VideoGenerationModelList } from "../lists/VideoGenerationModelList"
 import { VideoUpscalingModelList } from "../lists/VideoUpscalingModelList"
-import { ComputeProvider, SettingsCategory } from "@/types"
+import { SettingsCategory } from "@/types"
 import { useResolver } from "@/controllers/resolver/useResolver"
 import { IsBusy } from "../IsBusy"
+import { VideoDepthModelList } from "../lists/VideoDepthModelList"
+import { VideoSegmentationModelList } from "../lists/VideoSegmentationModelList"
 
 export function TopMenuVideo() {
   const nbPendingRequestsForVideo = useResolver(s => s.nbPendingRequestsForVideo)
   const setShowSettings = useUI(s => s.setShowSettings)
-  const videoProvider = useSettings(s => s.videoProvider)
-  const setVideoProvider = useSettings(s => s.setVideoProvider)
-  const videoGenerationModel = useSettings(s => s.videoGenerationModel)
-  const setVideoGenerationModel = useSettings(s => s.setVideoGenerationModel)
-  const videoUpscalingModel = useSettings(s => s.videoUpscalingModel)
-  const setVideoUpscalingModel = useSettings(s => s.setVideoUpscalingModel)
+
   const videoRenderingStrategy = useSettings((s) => s.videoRenderingStrategy)
   const setVideoRenderingStrategy = useSettings((s) => s.setVideoRenderingStrategy)
+ 
   return (
     <MenubarMenu>
       <MenubarTrigger><span>Video</span><IsBusy nbPendingTasks={nbPendingRequestsForVideo} /></MenubarTrigger>
@@ -41,14 +37,10 @@ export function TopMenuVideo() {
         <MenubarSub>
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.VIDEO) }}>Show advanced settings</MenubarItem>
           <MenubarSeparator />
-          <VideoGenerationModelList provider={videoProvider} current={videoGenerationModel} setter={setVideoGenerationModel} />
-          <VideoUpscalingModelList provider={videoProvider} current={videoUpscalingModel} setter={setVideoUpscalingModel} />
-          <ProviderList providers={availableComputeProvidersForVideos} current={videoProvider} setter={(newProvider: ComputeProvider) => {
-            if (videoProvider === newProvider) { return }
-            setVideoProvider(newProvider)
-            setVideoGenerationModel(undefined)
-            setVideoUpscalingModel(undefined)
-           }} />
+          <VideoGenerationModelList />
+          <VideoUpscalingModelList />
+          <VideoDepthModelList />
+          <VideoSegmentationModelList />
           <RenderingStrategyList current={videoRenderingStrategy} setter={setVideoRenderingStrategy} />
           <MenubarSeparator />
           <MenubarItem
