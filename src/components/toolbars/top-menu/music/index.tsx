@@ -14,10 +14,8 @@ import {
 import { useSettings } from "@/controllers/settings"
 import { useUI } from "@/controllers/ui"
 
-import { ProviderList } from "../lists/ProviderList"
 import { RenderingStrategyList } from "../lists/RenderingStrategyList"
-import { availableComputeProvidersForMusic } from "@/components/settings/constants"
-import { ComputeProvider, SettingsCategory } from "@/types"
+import { SettingsCategory } from "@/types"
 import { MusicGenerationModelList } from "../lists/MusicGenerationModelList"
 import { useResolver } from "@/controllers/resolver/useResolver"
 import { IsBusy } from "../IsBusy"
@@ -25,10 +23,6 @@ import { IsBusy } from "../IsBusy"
 export function TopMenuMusic() {
   const nbPendingRequestsForMusic = useResolver(s => s.nbPendingRequestsForMusic)
   const setShowSettings = useUI(s => s.setShowSettings)
-  const musicProvider = useSettings(s => s.musicProvider)
-  const setMusicProvider = useSettings(s => s.setMusicProvider)
-  const musicGenerationModel = useSettings(s => s.musicGenerationModel)
-  const setMusicGenerationModel = useSettings(s => s.setMusicGenerationModel)
   const musicRenderingStrategy = useSettings((s) => s.musicRenderingStrategy)
   const setMusicRenderingStrategy = useSettings((s) => s.setMusicRenderingStrategy)
 
@@ -39,12 +33,7 @@ export function TopMenuMusic() {
         <MenubarSub>
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.MUSIC) }}>Show advanced settings</MenubarItem>
           <MenubarSeparator />
-          <MusicGenerationModelList provider={musicProvider} current={musicGenerationModel} setter={setMusicGenerationModel} />
-          <ProviderList providers={availableComputeProvidersForMusic} current={musicProvider} setter={(newProvider: ComputeProvider) => {
-            if (musicProvider === newProvider) { return }
-            setMusicProvider(newProvider)
-            setMusicGenerationModel(undefined)
-          }} />
+          <MusicGenerationModelList />
           <RenderingStrategyList current={musicRenderingStrategy} setter={setMusicRenderingStrategy} />
           <MenubarSeparator />
           <MenubarItem

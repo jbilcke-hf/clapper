@@ -14,10 +14,8 @@ import {
 import { useSettings } from "@/controllers/settings"
 import { useUI } from "@/controllers/ui"
 
-import { ProviderList } from "../lists/ProviderList"
 import { RenderingStrategyList } from "../lists/RenderingStrategyList"
-import { availableComputeProvidersForSound } from "@/components/settings/constants"
-import { ComputeProvider, SettingsCategory } from "@/types"
+import { SettingsCategory } from "@/types"
 import { SoundGenerationModelList } from "../lists/SoundGenerationModelList"
 import { useResolver } from "@/controllers/resolver/useResolver"
 import { IsBusy } from "../IsBusy"
@@ -25,10 +23,6 @@ import { IsBusy } from "../IsBusy"
 export function TopMenuSound() {
   const nbPendingRequestsForSound = useResolver(s => s.nbPendingRequestsForSound)
   const setShowSettings = useUI(s => s.setShowSettings)
-  const soundProvider = useSettings(s => s.soundProvider)
-  const setSoundProvider = useSettings(s => s.setSoundProvider)
-  const soundGenerationModel = useSettings(s => s.soundGenerationModel)
-  const setSoundGenerationModel = useSettings(s => s.setSoundGenerationModel)
   const soundRenderingStrategy = useSettings((s) => s.soundRenderingStrategy)
   const setSoundRenderingStrategy = useSettings((s) => s.setSoundRenderingStrategy)
   return (
@@ -38,12 +32,7 @@ export function TopMenuSound() {
         <MenubarSub>
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.SOUND) }}>Show advanced settings</MenubarItem>
           <MenubarSeparator />
-          <SoundGenerationModelList provider={soundProvider} current={soundGenerationModel} setter={setSoundGenerationModel} />
-          <ProviderList providers={availableComputeProvidersForSound} current={soundProvider} setter={(newProvider: ComputeProvider) => {
-            if (soundProvider === newProvider) { return }
-            setSoundProvider(newProvider)
-            setSoundGenerationModel(undefined)
-          }} />
+          <SoundGenerationModelList />
           <RenderingStrategyList current={soundRenderingStrategy} setter={setSoundRenderingStrategy} />
           <MenubarSeparator />
           <MenubarItem

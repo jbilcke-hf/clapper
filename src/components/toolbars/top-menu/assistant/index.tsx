@@ -11,21 +11,13 @@ import {
   MenubarSubTrigger,
   MenubarTrigger
 } from "@/components/ui/menubar"
-import { useSettings } from "@/controllers/settings"
 import { useUI } from "@/controllers/ui"
-
-import { ProviderList } from "../lists/ProviderList"
-import { availableComputeProvidersForAssistant } from "@/components/settings/constants"
-import { ComputeProvider, SettingsCategory } from "@/types"
+import { SettingsCategory } from "@/types"
 import { AssistantModelList } from "../lists/AssistantModelList"
 import { useInitAssistant } from "@/controllers/assistant/useAssistant"
 
 export function TopMenuAssistant() {
   const setShowSettings = useUI(s => s.setShowSettings)
-  const assistantProvider = useSettings(s => s.assistantProvider)
-  const setAssistantProvider = useSettings(s => s.setAssistantProvider)
-  const assistantModel = useSettings(s => s.assistantModel)
-  const setAssistantModel = useSettings(s => s.setAssistantModel)
 
   // this should only be called on and at only one place in the project!
   useInitAssistant()
@@ -37,12 +29,7 @@ export function TopMenuAssistant() {
         <MenubarSub>
           <MenubarItem onClick={() => { setShowSettings(SettingsCategory.ASSISTANT) }}>Show advanced settings</MenubarItem>
           <MenubarSeparator />
-          <AssistantModelList provider={assistantProvider} current={assistantModel} setter={setAssistantModel} />
-          <ProviderList providers={availableComputeProvidersForAssistant} current={assistantProvider} setter={(newProvider: ComputeProvider) => {
-            if (assistantProvider === newProvider) { return }
-            setAssistantProvider(newProvider)
-            setAssistantModel(undefined)
-          }} />
+          <AssistantModelList />
           <MenubarSeparator />
           <MenubarItem
              disabled

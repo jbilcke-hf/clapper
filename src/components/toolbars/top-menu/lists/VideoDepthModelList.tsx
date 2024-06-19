@@ -10,7 +10,7 @@ import {
 import { TagColor } from "@/components/tags/types"
 import { Tag } from "@/components/tags/Tag"
 import { ComputeProvider } from "@/types"
-import { availableModelsForVoiceGeneration } from "@/components/settings/constants"
+import { availableModelsForVideoDepth } from "@/components/settings/constants"
 import { useSettings } from "@/controllers/settings"
 import { ComputeProviderName } from "@/components/core/providers/ComputeProviderName"
 import { ComputeProviderLogo } from "@/components/core/providers/ComputeProviderLogo"
@@ -19,20 +19,20 @@ import { cn } from "@/lib/utils"
 import { hasNoPublicAPI } from "./hasNoPublicAPI"
 import { formatProvider } from "./formatProvider"
 
-export function VoiceGenerationModelList() {
+export function VideoDepthModelList() {
 
-  const provider = useSettings(s => s.voiceProvider)
-  const setProvider = useSettings(s => s.setVoiceProvider)
-  const model = useSettings(s => s.voiceGenerationModel)
-  const setModel = useSettings(s => s.setVoiceGenerationModel)
+  const provider = useSettings(s => s.videoDepthProvider)
+  const setProvider = useSettings(s => s.setVideoDepthProvider)
+  const model = useSettings(s => s.videoDepthModel)
+  const setModel = useSettings(s => s.setVideoDepthModel)
 
-  const availableProviders = Object.keys(availableModelsForVoiceGeneration) as ComputeProvider[]
+  const availableProviders = Object.keys(availableModelsForVideoDepth) as ComputeProvider[]
   if (!availableProviders) { return null }
 
   return (
     <MenubarSub>
       <MenubarSubTrigger>
-        <Tag size="lg" color={TagColor.ORANGE}>generate&nbsp;voice</Tag>
+      <Tag size="lg" color={TagColor.SLATE}>depth&nbsp;mapper</Tag>
         <div className={cn(`flex flex-row space-x-2 items-center`)}>
           <ComputeProviderLogo
             provider={(provider && model) ? provider : undefined}
@@ -49,7 +49,7 @@ export function VoiceGenerationModelList() {
             <ComputeProviderName>{p}</ComputeProviderName>
           </MenubarSubTrigger>
           <MenubarSubContent>
-            {(availableModelsForVoiceGeneration[p] || []).map(m => (
+            {(availableModelsForVideoDepth[p] || []).map(m => (
               <MenubarCheckboxItem
                 key={m}
                 checked={provider === p && model === m}

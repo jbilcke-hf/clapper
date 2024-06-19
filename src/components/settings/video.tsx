@@ -9,9 +9,6 @@ import { availableComputeProvidersForVideos, computeProviderShortNames } from ".
 export function SettingsSectionVideo() {
   const defaultSettings = getDefaultSettingsState()
 
-  const videoProvider = useSettings(s => s.videoProvider)
-  const setVideoProvider = useSettings(s => s.setVideoProvider)
-
   const huggingFaceModelForVideo = useSettings(s => s.huggingFaceModelForVideo)
   const setHuggingFaceModelForVideo = useSettings(s => s.setHuggingFaceModelForVideo)
 
@@ -33,6 +30,26 @@ export function SettingsSectionVideo() {
 
   const videoNegativePrompt = useSettings(s => s.videoNegativePrompt)
   const setVideoNegativePrompt = useSettings(s => s.setVideoNegativePrompt)
+
+  const videoProvider = useSettings(s => s.videoProvider)
+  const setVideoProvider = useSettings(s => s.setVideoProvider)
+  const videoGenerationModel = useSettings(s => s.videoGenerationModel)
+  const setVideoGenerationModel = useSettings(s => s.setVideoGenerationModel)
+  
+  const videoUpscalingProvider = useSettings(s => s.videoUpscalingProvider)
+  const setVideoUpscalingProvider = useSettings(s => s.setVideoUpscalingProvider)
+  const videoUpscalingModel = useSettings(s => s.videoUpscalingModel)
+  const setVideoUpscalingModel = useSettings(s => s.setVideoUpscalingModel)
+
+  const videoDepthProvider = useSettings(s => s.videoDepthProvider)
+  const setVideoDepthProvider = useSettings(s => s.setVideoDepthProvider)
+  const videoDepthModel = useSettings(s => s.videoDepthModel)
+  const setVideoDepthModel = useSettings(s => s.setVideoDepthModel)
+
+  const videoSegmentationProvider = useSettings(s => s.videoSegmentationProvider)
+  const setVideoSegmentationProvider = useSettings(s => s.setVideoSegmentationProvider)
+  const videoSegmentationModel = useSettings(s => s.videoSegmentationModel)
+  const setVideoSegmentationModel = useSettings(s => s.setVideoSegmentationModel)
 
   const videoRenderingStrategy = useSettings(s => s.videoRenderingStrategy)
   const setVideoRenderingStrategy = useSettings(s => s.setVideoRenderingStrategy)

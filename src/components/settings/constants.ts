@@ -220,7 +220,6 @@ export const availableModelsForImageGeneration: Partial<Record<ComputeProvider, 
   ],
 }
 
-// should we call this upscaling or post-processing?
 export const availableModelsForImageUpscaling: Partial<Record<ComputeProvider, string[]>> = {
   [ComputeProvider.FALAI]: [
     "fal-ai/ccsr",
@@ -228,6 +227,37 @@ export const availableModelsForImageUpscaling: Partial<Record<ComputeProvider, s
   [ComputeProvider.STABILITYAI]: [
     "stable-image/upscale/conservative",
     "stable-image/upscale/creative"
+  ],
+}
+
+export const availableModelsForImageDepth: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.FALAI]: [
+    "fal-ai/imageutils/marigold-depth",
+    "fal-ai/imageutils/depth",
+  ],
+  [ComputeProvider.HUGGINGFACE]: [
+    "depth-anything/Depth-Anything-V2-Large",
+    "depth-anything/Depth-Anything-V2-Base",
+    "depth-anything/Depth-Anything-V2-Small",
+  ],
+  [ComputeProvider.REPLICATE]: [
+    "cjwbw/depth-anything",
+    "adirik/marigold"
+  ],
+}
+
+export const availableModelsForImageSegmentation: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.FALAI]: [
+    "fal-ai/imageutils/sam",
+    "fal-ai/tiny-sam"
+  ],
+  [ComputeProvider.HUGGINGFACE]: [
+    "ybelkada/segment-anything"
+  ],
+  [ComputeProvider.REPLICATE]: [
+    "yyjim/segment-anything-everything",
+    "cjwbw/semantic-segment-anything",
+    "pablodawson/segment-anything-automatic"
   ],
 }
 
@@ -272,7 +302,22 @@ export const availableModelsForVideoGeneration: Partial<Record<ComputeProvider, 
 }
 
 export const availableModelsForVideoUpscaling: Partial<Record<ComputeProvider, string[]>> = {
-  [ComputeProvider.FALAI]: [
+  [ComputeProvider.REPLICATE]: [
+    "lucataco/real-esrgan-video",
+    "pbarker/gfpgan-video"
+  ]
+}
+
+export const availableModelsForVideoDepth: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.REPLICATE]: [
+    "lucataco/depth-anything-video"
+  ]
+}
+
+
+export const availableModelsForVideoSegmentation: Partial<Record<ComputeProvider, string[]>> = {
+  [ComputeProvider.REPLICATE]: [
+    "cjwbw/cutie"
   ]
 }
 
