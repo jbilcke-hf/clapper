@@ -64,13 +64,18 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // let's trust developers for respecting this
     let totalDurationInMs = Math.max(0, clap.meta.durationInMs || 0)
 
-    // TODO: this whole approach is a bit weak,
-    // having an heuristic is okay but we should do it:
-    // track by track
-    // for each track, count length occurrences to keep the most recurring one
-    // do something for images/videos that don't have the right ratio,
-    // eg. add black banding
+    const lineToDialogue: Record<number, ClapSegment> = {}
+
     for (const s of segments) {
+
+      if (s.category === ClapSegmentCategory.DIALOGUE || s.category === ClapSegmentCategory.ACTION) {
+        const scene = clap.scenes.find(({ id }) => id === s.sceneId)
+        if (scene) {
+          for (let lineNumber = scene.startAtLine; lineNumber < scene.endAtLine; lineNumber++) {
+            lineToDialogue[lineNumber] = s
+          }
+        }
+      }
 
       if (s.category === ClapSegmentCategory.CAMERA) {
         const durationInSteps = (
@@ -176,6 +181,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     clap.meta.durationInMs = totalDurationInMs
 
+    clap.meta.screenplay = clap.scenes.reduce((acc, { sequenceFullText }) => `${acc}\n${sequenceFullText}`, '')
+
     set({
       clap,
       segments,
@@ -183,6 +190,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       visibleSegments: [],
       segmentsChanged: 1,
       totalDurationInMs,
+      lineToDialogue,
 
       isEmpty,
       isLoading: false,

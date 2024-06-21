@@ -74,6 +74,7 @@ export type TimelineStoreProjectState = {
   loadedSegments: ClapSegment[]
   visibleSegments: ClapSegment[]
   nbIdentifiedTracks: number
+  lineToDialogue: Record<number, ClapSegment>
 
   isEmpty: boolean
   isLoading: boolean

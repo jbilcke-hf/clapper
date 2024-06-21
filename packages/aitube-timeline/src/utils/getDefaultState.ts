@@ -14,6 +14,7 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     totalDurationInMs: 0,
     loadedSegments: [],
     visibleSegments: [],
+    lineToDialogue: {},
 
     isEmpty: true,
     isLoading: false,
