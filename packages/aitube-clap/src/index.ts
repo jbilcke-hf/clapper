@@ -20,6 +20,8 @@ export {
   ClapSegmentCategory,
   ClapSegmentFilteringMode,
   ClapSegmentStatus,
+  ClapTrack,
+  ClapTracks,
   ClapVoice,
   ClapCompletionMode
 } from './types'
