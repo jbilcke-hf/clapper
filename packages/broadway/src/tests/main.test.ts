@@ -35,7 +35,7 @@ describe("main demo", async () => {
   // because this was too much platform-specific (file system caching, so for Node only)
   30000)
 
-
+  /*
   test("julianDemo", async () => {
     const inputScriptFilePath = `/Users/jbilcke/Documents/Clapper/scripts/The Office (US Pilot).txt`
     const outputScriptFilePath = `/Users/jbilcke/Documents/Clapper/claps/The Office (US Pilot).clap`
@@ -46,4 +46,5 @@ describe("main demo", async () => {
     await Bun.write(outputScriptFilePath, blob)
   },
   30000)
+  */
 })
