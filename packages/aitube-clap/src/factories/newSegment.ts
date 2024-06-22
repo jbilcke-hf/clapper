@@ -30,6 +30,8 @@ export function newSegment(maybeSegment?: Partial<ClapSegment>) {
     category: parseSegmentCategory(maybeSegment?.category),
     entityId: typeof maybeSegment?.entityId === "string" ? maybeSegment.entityId : "",
     sceneId: typeof maybeSegment?.sceneId === "string" ? maybeSegment.sceneId : "",
+    startTimeInLines: isValidNumber(maybeSegment?.startTimeInLines) ? (maybeSegment?.startTimeInLines || 0) : 0,
+    endTimeInLines: isValidNumber(maybeSegment?.endTimeInLines) ? (maybeSegment?.endTimeInLines || 0) : 0,
     prompt: typeof maybeSegment?.prompt === "string" ? maybeSegment.prompt : "",
     label: typeof maybeSegment?.label === "string" ? maybeSegment.label : "",
     outputType: parseOutputType(maybeSegment?.outputType, ClapOutputType.TEXT),

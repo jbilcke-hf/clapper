@@ -287,6 +287,8 @@ export type ClapSegment = {
   category: ClapSegmentCategory
   entityId: string
   sceneId: string
+  startTimeInLines: number
+  endTimeInLines: number
   prompt: string
   label: string
   outputType: ClapOutputType
