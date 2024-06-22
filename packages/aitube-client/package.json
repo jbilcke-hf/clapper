@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "description": "Official API client for AiTube.at",
   "scripts": {
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap && bun run build:declaration",
@@ -16,10 +16,10 @@
     "bun-types": "latest",
     "prettier": "^3.3.2",
     "rimraf": "^5.0.7",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.2"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.0.27"
+    "@aitube/clap": "0.0.29"
   },
   "repository": {
     "type": "git",
