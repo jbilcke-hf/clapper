@@ -1,4 +1,4 @@
-import { ClapEntity, ClapOutputType, ClapSegment, ClapSegmentCategory, newEntity, UUID } from "@aitube/clap"
+import { ClapEntity, ClapOutputType, ClapScene, ClapSegment, ClapSegmentCategory, newEntity, UUID } from "@aitube/clap"
 
 import { Screenplay, TemporaryAssetData } from "@/types"
 import { pick } from "@/utils"
@@ -31,6 +31,9 @@ export async function analyzeScreenplay(
   segments: ClapSegment[]
   entitiesByScreenplayLabel: Record<string, ClapEntity>
   entitiesById: Record<string, ClapEntity>
+  finalPlainText: string
+  totalDurationInMs: number
+  scenes: ClapScene[]
 }> {
   /**
    * List of all segments identified inside the screenplay
@@ -71,6 +74,7 @@ export async function analyzeScreenplay(
 
   const extraPositivePrompt = movieGenreLabel ? [movieGenreLabel]: []
 
+
   /*
   console.log("movie:", {
     movieEras,
@@ -102,7 +106,21 @@ export async function analyzeScreenplay(
 
   const sizeOfProgressChunk = Math.floor(screenplay.sequences.length / 3)
 
+  let finalPlainText = ""
+  let nbTotalLinesInFinalPlainText = 0
+  let totalDurationInMs = 0
+
   for (const sequence of screenplay.sequences) {
+
+    // we prepend any missing text
+    const nbMissingLines = sequence.startAtLine - nbTotalLinesInFinalPlainText
+    for (let i = 0; i < nbMissingLines; i++) {
+      finalPlainText += "\n"
+      nbTotalLinesInFinalPlainText += 1
+    }
+
+    finalPlainText += sequence.fullText
+    nbTotalLinesInFinalPlainText += sequence.fullText.split("\n").length
 
     if ((++nbProcessedSequences % sizeOfProgressChunk) === 0) {
       await onProgress?.(progress += 20, `Analyzing sequences (${nbProcessedSequences}/${screenplay.sequences.length} completed)`)
@@ -155,7 +173,7 @@ export async function analyzeScreenplay(
         content: uppercaseAssetName, // url to the resource, or content string
         occurrences:  1 + existingOccurrences,
         sequences: existingAssetSequences.concat(
-          existingAssetSequences.find(s => s.fullText === sequence.fullText)
+          existingAssetSequences.find(s => s.id === sequence.id)
             ? []
             : sequence // only add the sequence if it's not already there
           ),
@@ -221,10 +239,19 @@ export async function analyzeScreenplay(
 
             const transitionSegment: ClapSegment = {
               ...createSegment({    
+
+                // full fade to black
                 startTimeInSteps,
-                durationInSteps,
+
+                // alternatively, we can also create cross-over transitions, like this:
+                // startTimeInSteps: Math.round(startTimeInSteps - (durationInSteps / 2)),
                 
-  
+                durationInSteps,
+
+                startTimeInLines: event.startAtLine,
+                endTimeInLines: event.endAtLine,
+                sceneId: scene.id,
+                
                 // we automatically eliminate empty prompt arrays,
                 // so we must put something in here
                 prompt: [transition],
@@ -232,17 +259,16 @@ export async function analyzeScreenplay(
                 categoryName: ClapSegmentCategory.TRANSITION,
                 outputType: ClapOutputType.TEXT,
               }),
-              track: 7,
 
-              // one more thing, but which is pretty critical:
-              // we link each segment to their parent screenplay scene
-              // note that this is optional, as we can have segments that
-               // are transitionnary between scene (or we might not have a "scene" at all, or no screenplay)
-              sceneId: scene.id,
+              // watch-out: this 7 is a bit arbitrary, we should instead
+              // assign it to another track eg. the camera one
+              // or track 0 maybe
+              track: 7,
             }
 
             segments.push(transitionSegment)
 
+            // only relevant in case of a fade to black
             startTimeInSteps += durationInSteps // 2 steps
 
             // a transition isn't really a scene shot, so we just ignore the rest
@@ -294,7 +320,9 @@ export async function analyzeScreenplay(
           
           segmentCandidates.push(createSegment({    
             startTimeInSteps,
-
+            startTimeInLines: event.startAtLine,
+            endTimeInLines: event.endAtLine,
+            sceneId: scene.id,
             // we automatically eliminate empty prompt arrays,
             // so we must put something in here
             prompt: ["movie"],
@@ -305,6 +333,9 @@ export async function analyzeScreenplay(
       
           segmentCandidates.push(createSegment({    
             startTimeInSteps,
+            startTimeInLines: event.startAtLine,
+            endTimeInLines: event.endAtLine,
+            sceneId: scene.id,
             prompt: [
               // "photo"
               "movie still", // so it isn't empty
@@ -315,6 +346,9 @@ export async function analyzeScreenplay(
 
           segmentCandidates.push(createSegment({    
             startTimeInSteps,
+            startTimeInLines: event.startAtLine,
+            endTimeInLines: event.endAtLine,
+            sceneId: scene.id,
             prompt: [
               ...sequenceGenre.prompts.style,
               "cinematic photo",
@@ -336,6 +370,9 @@ export async function analyzeScreenplay(
           if (currentLocationName) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
+              startTimeInLines: event.startAtLine,
+              endTimeInLines: event.endAtLine,
+              sceneId: scene.id,
               prompt: [currentLocationName],
               categoryName: ClapSegmentCategory.LOCATION,
             }))
@@ -367,6 +404,9 @@ export async function analyzeScreenplay(
           if (locationTypeAsPrompt) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
+              startTimeInLines: event.startAtLine,
+              endTimeInLines: event.endAtLine,
+              sceneId: scene.id,
               prompt: [locationTypeAsPrompt],
               categoryName: ClapSegmentCategory.LOCATION,
             }))
@@ -390,6 +430,9 @@ export async function analyzeScreenplay(
           if (currentTime || currentLighting) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
+              startTimeInLines: event.startAtLine,
+              endTimeInLines: event.endAtLine,
+              sceneId: scene.id,
               prompt: [
                 currentTime,
                 currentLighting,
@@ -405,6 +448,9 @@ export async function analyzeScreenplay(
           if (currentWeather) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
+              startTimeInLines: event.startAtLine,
+              endTimeInLines: event.endAtLine,
+              sceneId: scene.id,
               prompt: [
                 currentWeather,
                 ...sequenceGenre.prompts.weather,
@@ -455,6 +501,9 @@ export async function analyzeScreenplay(
           if (currentShotType) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
+              startTimeInLines: event.startAtLine,
+              endTimeInLines: event.endAtLine,
+              sceneId: scene.id,
               prompt: [
                 currentShotType,
                 ...sequenceGenre.prompts.camera,
@@ -483,7 +532,7 @@ export async function analyzeScreenplay(
               content: characterName, // url to the resource, or content string
               occurrences: 1 + existingOccurrences,
               sequences: existingAssetSequences.concat(
-                existingAssetSequences.find(s => s.fullText === sequence.fullText)
+                existingAssetSequences.find(s => s.id === sequence.id)
                   ? []
                   : sequence // only add the sequence if it's not already there
                 ),
@@ -511,6 +560,9 @@ export async function analyzeScreenplay(
                 age,
                 gender,
                 region: "american",
+                
+                // TODO put things like "blond hair, wearing a suit" etc
+                // appearance: "",
               })
               // console.log("newEnt:", newMod)
               entitiesByScreenplayLabel[characterName] = entitiesById[newEnt.id] = newEnt
@@ -538,6 +590,9 @@ export async function analyzeScreenplay(
           if (event.behavior) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
+              startTimeInLines: event.startAtLine,
+              endTimeInLines: event.endAtLine,
+              sceneId: scene.id,
               prompt: [event.behavior],
               label: `${currentSliceEntities[0]?.label}: ${event.behavior}`,
               categoryName: ClapSegmentCategory.ACTION,
@@ -555,6 +610,9 @@ export async function analyzeScreenplay(
             // console.log("found a dialogue! currentSliceEntities:", currentSliceEntities)
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
+              startTimeInLines: event.startAtLine,
+              endTimeInLines: event.endAtLine,
+              sceneId: scene.id,
               prompt: [dialogueLine],
 
               // it is easier to understand in the UI when we can see the speaker's name
@@ -571,6 +629,9 @@ export async function analyzeScreenplay(
           if (currentAction && !isVoiceOver(currentAction)) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
+              startTimeInLines: event.startAtLine,
+              endTimeInLines: event.endAtLine,
+              sceneId: scene.id,
               prompt: [currentAction],
               label:
                 event.character
@@ -588,6 +649,9 @@ export async function analyzeScreenplay(
           // as it is more encompassing
           segmentCandidates.push(createSegment({    
             startTimeInSteps,
+            startTimeInLines: event.startAtLine,
+            endTimeInLines: event.endAtLine,
+            sceneId: scene.id,
             prompt: [
               // note: here we use the *GENRE* parser, and on the FULL MOVIE
               //...sequenceGenre.prompts.era,
@@ -619,6 +683,9 @@ export async function analyzeScreenplay(
           if (currentSound) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
+              startTimeInLines: event.startAtLine,
+              endTimeInLines: event.endAtLine,
+              sceneId: scene.id,
               prompt: [
                 currentSound,
                 // note: here we use the *GENRE* parser, and on the FULL MOVIE
@@ -636,6 +703,9 @@ export async function analyzeScreenplay(
           if (currentMusic) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
+              startTimeInLines: event.startAtLine,
+              endTimeInLines: event.endAtLine,
+              sceneId: scene.id,
               prompt: [
                 currentMusic,
                 // note: here we use the *GENRE* parser, and on the FULL MOVIE
@@ -658,23 +728,11 @@ export async function analyzeScreenplay(
               track: track++
             }
 
-            // one more thing, but which is pretty critical:
-            // we link each segment to their parent screenplay scene
-            // note that this is optional, as we can have segments that
-            // are transitionnary between scene (or we might not have a "scene" at all, or no screenplay)
-            segmentToSave.sceneId = scene.id
-            // segmentToSave.sceneId = scene.id
-            
-            segments.push(segmentToSave)
-            /*
-            segmentsByStartTime[segmentToSave.startTimeInSteps] = (segmentsByStartTime[segmentToSave.startTimeInSteps] || []).concat(
-              segmentToSave
-            )
+            if (segmentToSave.endTimeInMs > totalDurationInMs) {
+              totalDurationInMs = segmentToSave.endTimeInMs
+            }
 
-            segmentsByEndTime[segmentToSave.endTimeInSteps] = (segmentsByEndTime[segmentToSave.endTimeInSteps] || []).concat(
-              segmentToSave
-            )
-            */
+            segments.push(segmentToSave)
           }
 
           startTimeInSteps += DEFAULT_COLUMNS_PER_SLICE
@@ -743,11 +801,20 @@ export async function analyzeScreenplay(
   // }
 
 
+  let scenes: ClapScene[] = []
+
+  for (const sequence of screenplay.sequences) {
+    scenes = scenes.concat(sequence.scenes)
+  }
+
   return {
     movieGenreLabel,
     extraPositivePrompt,
     segments,
     entitiesByScreenplayLabel,
-    entitiesById
+    entitiesById,
+    finalPlainText,
+    totalDurationInMs,
+    scenes
   }
 }

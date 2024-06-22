@@ -8,6 +8,9 @@ import { generateSeed, parseOutputType, ClapOutputType, ClapSegmentCategory, Cla
 
 export function createSegment({
   startTimeInSteps,
+  startTimeInLines,
+  endTimeInLines,
+  sceneId,
   prompt = [],
   label = "",
   durationInSteps = 4,
@@ -16,9 +19,11 @@ export function createSegment({
   categoryName = ClapSegmentCategory.GENERIC,
   entityId = "",
   seed,
-  renderedScene,
 }: {
   startTimeInSteps: number
+  startTimeInLines: number
+  endTimeInLines: number
+  sceneId: string
   prompt?: string[]
   label?: string
   durationInSteps?: number
@@ -27,21 +32,8 @@ export function createSegment({
   categoryName?: ClapSegmentCategory
   entityId?: string
   seed?: number
-  renderedScene?: RenderedScene
 }): ClapSegment {
 
-  if (!renderedScene) {
-    renderedScene = {
-      renderId: "",
-      status: "to_generate",
-      assetUrl: "",
-      durationInMs: 0,
-      alt: "",
-      error: "",
-      maskUrl: "",
-      segments: [],
-    }
-  }
   // steps: 1|2|3|4
   // duration: 4
   // so if we begin at 1, the end step is 4
@@ -87,11 +79,9 @@ export function createSegment({
 
     startTimeInMs,
     endTimeInMs,
-    // durationInMs,
-
-    // startTimeInSteps,
-    // endTimeInSteps,
-    // durationInSteps,
+    startTimeInLines,
+    endTimeInLines,
+    sceneId,
 
     prompt: promptString,
     track, // track row index
