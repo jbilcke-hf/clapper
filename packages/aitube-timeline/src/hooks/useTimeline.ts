@@ -44,7 +44,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // console.log(`useTimeline: setting the clap to`, clap)
 
     // we remove the big/long video
-    const segments = removeFinalVideos(clap)
+    const segments = removeFinalVideos(clap) as RuntimeSegment[]
 
     const {
       defaultCellHeight,
@@ -61,22 +61,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     let defaultSegmentDurationInSteps = get().defaultSegmentDurationInSteps
  
-    // let's trust developers for respecting this
-    let totalDurationInMs = Math.max(0, clap.meta.durationInMs || 0)
-
-    const lineToDialogue: Record<number, ClapSegment> = {}
-
+  
     for (const s of segments) {
-
-      if (s.category === ClapSegmentCategory.DIALOGUE || s.category === ClapSegmentCategory.ACTION) {
-        const scene = clap.scenes.find(({ id }) => id === s.sceneId)
-        if (scene) {
-          for (let lineNumber = scene.startAtLine; lineNumber < scene.endAtLine; lineNumber++) {
-            lineToDialogue[lineNumber] = s
-          }
-        }
-      }
-
       if (s.category === ClapSegmentCategory.CAMERA) {
         const durationInSteps = (
           (s.endTimeInMs - s.startTimeInMs) / DEFAULT_DURATION_IN_MS_PER_STEP
@@ -102,6 +88,12 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       defaultSegmentLengthInPixels / defaultMediaRatio
     )
 
+    // let's trust developers for respecting this
+    // otherwise we could use the following big for loop to do this
+    let totalDurationInMs = Math.max(0, clap.meta.durationInMs || 0)
+
+    const lineToDialogue: Record<number, ClapSegment> = {}
+
     for (const s of segments) {
       
       // TODO: move this idCollision detector into the state,
@@ -110,6 +102,20 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         console.log(`collision detected! there is already a segment with id ${s.id}`)
         continue
       }
+
+      if (s.category === ClapSegmentCategory.DIALOGUE || s.category === ClapSegmentCategory.ACTION) {
+        const scene = clap.scenes.find(({ id }) => id === s.sceneId)
+        if (scene) {
+
+          // we attach the scene to the segment
+          s.scene = scene
+
+          for (let lineNumber = scene.startAtLine; lineNumber < scene.endAtLine; lineNumber++) {
+            lineToDialogue[lineNumber] = s
+          }
+        }
+      }
+
       idCollisionDetector.add(s.id)
 
       if (!tracks[s.track]) {

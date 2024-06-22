@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { ClapProject, ClapSegment } from "@aitube/clap"
+import { ClapProject, ClapScene, ClapSegment } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -40,7 +40,10 @@ export enum SegmentVisibility {
 // some data can only exist inside a browser session (eg. AudioBuffer)
 // or at least data that only make sense on client side
 // we could put things like a mouse hover or selected state in here
+// or simply large, recursive elements (like the scene)
 export type BrowserOnlySegmentData = {
+  scene?: ClapScene
+
   audioBuffer?: AudioBuffer
 
   visibility?: SegmentVisibility
