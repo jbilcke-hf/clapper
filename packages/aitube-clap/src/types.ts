@@ -356,6 +356,18 @@ export type ClapEntity = {
   appearance: ClapEntityAppearance
 }
 
+export type ClapTrack = {
+  id: number
+  name: string
+  isPreview: boolean
+  height: number
+  hue: number
+  occupied: boolean
+  visible: boolean
+}
+
+export type ClapTracks = ClapTrack[]
+
 export type ClapProject = {
   meta: ClapMeta
   entities: ClapEntity[]
