@@ -36,14 +36,9 @@ describe("main demo", async () => {
   30000)
 
 
-  /*
   test("julianDemo", async () => {
-    const inputScriptFilePath = `/Users/jbilcke/Documents/scripts/Raiders of the Lost Ark.txt`
-    const outputScriptFilePath = `/Users/jbilcke/Documents/clap_playground/Raiders of the Lost Ark.clap`
-
-    // const inputScriptFilePath = `/Users/jbilcke/Documents/scripts/1917.txt`
-    // const outputScriptFilePath = `/Users/jbilcke/Documents/clap_playground/1917.clap`
-
+    const inputScriptFilePath = `/Users/jbilcke/Documents/Clapper/scripts/The Office (US Pilot).txt`
+    const outputScriptFilePath = `/Users/jbilcke/Documents/Clapper/claps/The Office (US Pilot).clap`
 
     const script = await readPlainText(inputScriptFilePath)
     const clap: ClapProject = await parseScriptToClap(script)
@@ -51,5 +46,4 @@ describe("main demo", async () => {
     await Bun.write(outputScriptFilePath, blob)
   },
   30000)
-  */
 })

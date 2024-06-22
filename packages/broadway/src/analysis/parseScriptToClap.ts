@@ -31,7 +31,15 @@ export async function parseScriptToClap(
 
   await onProgressUpdate({ value: 20 })
 
-  const { movieGenreLabel, extraPositivePrompt, segments, entitiesById, entitiesByScreenplayLabel } = await analyzeScreenplay(
+  const {
+    movieGenreLabel,
+    extraPositivePrompt,
+    segments,
+    entitiesById,
+    finalPlainText,
+    totalDurationInMs,
+    scenes
+  } = await analyzeScreenplay(
   screenplay,
   async (progress, message) => {
     // progress is a value between 0 and 100
@@ -47,18 +55,7 @@ export async function parseScriptToClap(
   
   await onProgressUpdate({ value: 60 })
 
-  let durationInMs = 0
-  segments.forEach(s => {
-    if (s.endTimeInMs > durationInMs) {
-      durationInMs = s.endTimeInMs
-    }
-  })
 
-  let scenes: Scene[] = []
-  screenplay.sequences.forEach(sequence => {
-    scenes = [...scenes, ...sequence.scenes]
-  })
-    
   // TODO: return a ClapProject instead
   const clap = newClap({
     meta: {
@@ -66,20 +63,28 @@ export async function parseScriptToClap(
       title: "Untitled",
       description: `${movieGenreLabel}`,
       synopsis: "",
-      licence: "All rights reserved by the IP holder",
+      licence: "This OpenClap file is just a conversion from the original screenplay and doesn't claim any copyright or intellectual property. All rights reserved to the original intellectual property and copyright holders. Using OpenClap isn't piracy.",
     
       orientation: ClapMediaOrientation.LANDSCAPE,
-      durationInMs: segments.filter(s => s.endTimeInMs),
+      durationInMs: totalDurationInMs,
     
       width: 1024,
       height: 576,
-      defaultVideoModel: "",
+      defaultVideoModel: "", // <-- we should deprecate this no?
       extraPositivePrompt: extraPositivePrompt,
-      screenplay,
+      screenplay: finalPlainText,
       isLoop: false,
       isInteractive: false,
     },
-    scenes,
+    scenes: scenes.map(scene => ({
+      ...scene,
+      // let's deprecate this field, this was a bad idea
+      // (too much redundancy)
+      sequenceFullText: "",
+
+      // let's also deprecate this
+      events: [],
+    })),
     entities: Object.values(entitiesById),
     segments,
   })
