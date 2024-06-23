@@ -24,8 +24,12 @@ export async function getScreenplayFromText(fullText: string): Promise<Screenpla
   let textBuffer = ''
   let lineNumberBuffer = 0
 
+  let reconstructedFullText = ""
+
   lines.forEach((line, lineNumber) => {
     line = line.replaceAll("\r", "")// .trim()
+
+    reconstructedFullText += `${line}\n`
 
     // if (lineNumber < 25) { return }
     // use this if you need to debug something
@@ -101,7 +105,7 @@ export async function getScreenplayFromText(fullText: string): Promise<Screenpla
   }
 
   return {
-    fullText,
+    fullText: reconstructedFullText,
     sequences,
   }
 }

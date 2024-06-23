@@ -21,6 +21,7 @@ import { parseCharacterName } from "./parseCharacterName"
 import { analyzeName } from "./analyzeName"
 import { parseDialogueLine } from "./parseDialogueLine"
 import { isVoiceOver } from "./isVoiceOver"
+import { findSubtext } from "./findSubtext"
 
 export async function analyzeScreenplay(
   screenplay: Screenplay,
@@ -106,21 +107,9 @@ export async function analyzeScreenplay(
 
   const sizeOfProgressChunk = Math.floor(screenplay.sequences.length / 3)
 
-  let finalPlainText = ""
-  let nbTotalLinesInFinalPlainText = 0
   let totalDurationInMs = 0
 
   for (const sequence of screenplay.sequences) {
-
-    // we prepend any missing text
-    const nbMissingLines = sequence.startAtLine - nbTotalLinesInFinalPlainText
-    for (let i = 0; i < nbMissingLines; i++) {
-      finalPlainText += "\n"
-      nbTotalLinesInFinalPlainText += 1
-    }
-
-    finalPlainText += sequence.fullText
-    nbTotalLinesInFinalPlainText += sequence.fullText.split("\n").length
 
     if ((++nbProcessedSequences % sizeOfProgressChunk) === 0) {
       await onProgress?.(progress += 20, `Analyzing sequences (${nbProcessedSequences}/${screenplay.sequences.length} completed)`)
@@ -198,7 +187,6 @@ export async function analyzeScreenplay(
 
     for (const scene of sequence.scenes) {
 
-      
       const sceneCharacters: Record<string, boolean> = {}
 
       for (const event of scene.events) {
@@ -208,17 +196,12 @@ export async function analyzeScreenplay(
       }
 
       for (const event of scene.events) {
-
+        let startTimeInLines = event.startAtLine
+        let endTimeInLines = event.endAtLine
+        // console.log(`---- event [${startTimeInLines}:${endTimeInLines}] = "${event.description}" ---`)
+  
         try {
           const segmentCandidates: ClapSegment[] = []
-  
-          /*
-          // console.log("\n------------ EVENT -------------\n")
-          // console.log({
-            description: event?.description,
-            character: event?.character
-          })
-          */
 
           // the "action prompt" is very interesting for us, because we can look into it
           // to extract infor about weather, sounds etc
@@ -370,8 +353,8 @@ export async function analyzeScreenplay(
           if (currentLocationName) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
-              startTimeInLines: event.startAtLine,
-              endTimeInLines: event.endAtLine,
+              startTimeInLines,
+              endTimeInLines,
               sceneId: scene.id,
               prompt: [currentLocationName],
               categoryName: ClapSegmentCategory.LOCATION,
@@ -404,8 +387,8 @@ export async function analyzeScreenplay(
           if (locationTypeAsPrompt) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
-              startTimeInLines: event.startAtLine,
-              endTimeInLines: event.endAtLine,
+              startTimeInLines,
+              endTimeInLines,
               sceneId: scene.id,
               prompt: [locationTypeAsPrompt],
               categoryName: ClapSegmentCategory.LOCATION,
@@ -430,8 +413,8 @@ export async function analyzeScreenplay(
           if (currentTime || currentLighting) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
-              startTimeInLines: event.startAtLine,
-              endTimeInLines: event.endAtLine,
+              startTimeInLines,
+              endTimeInLines,
               sceneId: scene.id,
               prompt: [
                 currentTime,
@@ -448,8 +431,8 @@ export async function analyzeScreenplay(
           if (currentWeather) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
-              startTimeInLines: event.startAtLine,
-              endTimeInLines: event.endAtLine,
+              startTimeInLines,
+              endTimeInLines,
               sceneId: scene.id,
               prompt: [
                 currentWeather,
@@ -501,8 +484,8 @@ export async function analyzeScreenplay(
           if (currentShotType) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
-              startTimeInLines: event.startAtLine,
-              endTimeInLines: event.endAtLine,
+              startTimeInLines,
+              endTimeInLines,
               sceneId: scene.id,
               prompt: [
                 currentShotType,
@@ -590,8 +573,8 @@ export async function analyzeScreenplay(
           if (event.behavior) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
-              startTimeInLines: event.startAtLine,
-              endTimeInLines: event.endAtLine,
+              startTimeInLines,
+              endTimeInLines,
               sceneId: scene.id,
               prompt: [event.behavior],
               label: `${currentSliceEntities[0]?.label}: ${event.behavior}`,
@@ -603,15 +586,14 @@ export async function analyzeScreenplay(
             }))
           }
 
-
           const dialogueLine = parseDialogueLine(event.description)
             
           if (event.type === ClapSegmentCategory.DIALOGUE && dialogueLine) {
             // console.log("found a dialogue! currentSliceEntities:", currentSliceEntities)
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
-              startTimeInLines: event.startAtLine,
-              endTimeInLines: event.endAtLine,
+              startTimeInLines,
+              endTimeInLines,
               sceneId: scene.id,
               prompt: [dialogueLine],
 
@@ -629,8 +611,8 @@ export async function analyzeScreenplay(
           if (currentAction && !isVoiceOver(currentAction)) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
-              startTimeInLines: event.startAtLine,
-              endTimeInLines: event.endAtLine,
+              startTimeInLines,
+              endTimeInLines,
               sceneId: scene.id,
               prompt: [currentAction],
               label:
@@ -683,8 +665,8 @@ export async function analyzeScreenplay(
           if (currentSound) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
-              startTimeInLines: event.startAtLine,
-              endTimeInLines: event.endAtLine,
+              startTimeInLines,
+              endTimeInLines,
               sceneId: scene.id,
               prompt: [
                 currentSound,
@@ -703,8 +685,8 @@ export async function analyzeScreenplay(
           if (currentMusic) {
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
-              startTimeInLines: event.startAtLine,
-              endTimeInLines: event.endAtLine,
+              startTimeInLines,
+              endTimeInLines,
               sceneId: scene.id,
               prompt: [
                 currentMusic,
@@ -806,6 +788,49 @@ export async function analyzeScreenplay(
   for (const sequence of screenplay.sequences) {
     scenes = scenes.concat(sequence.scenes)
   }
+
+  let finalPlainTextLines = screenplay.fullText.split("\n")
+
+  // let lastRow = 0
+
+  for (const segment of segments) {
+    let needle = ""
+    if (segment.category === ClapSegmentCategory.DIALOGUE
+       || segment.category === ClapSegmentCategory.ACTION
+    ) {
+      needle = segment.prompt
+    }
+    if (!needle) { continue }
+
+    let searchZoneLines = finalPlainTextLines.slice(
+      segment.startTimeInLines,
+      segment.endTimeInLines
+    )
+
+    let haystack = searchZoneLines.join("\n")
+
+    
+    // console.log(`searching for: "${needle}"\ninside: "${haystack}"`)
+
+    try {
+      const found = findSubtext(needle, haystack)
+      // console.log(`found:`, found)
+
+      if (typeof found?.startAtRow === "number") {
+        // this improves the quality of results a bit,
+        // but sometimes the findSubtext function doesn't find anything
+        segment.startTimeInLines += 1 + (found.startAtRow || 0)
+        segment.endTimeInLines += 1 + (found.endAtRow || 0)
+      }
+
+    } catch (err) {
+      // console.log(`not found`)
+    }
+
+  }
+
+  // const finalPlainText = finalPlainTextLines.join("\n")
+  const finalPlainText = screenplay.fullText
 
   return {
     movieGenreLabel,

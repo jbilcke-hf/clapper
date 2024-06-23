@@ -1,14 +1,12 @@
 import { test, expect, describe } from "bun:test"
+
 import { ClapProject, serializeClap } from "@aitube/clap"
 import { readPlainText } from "@aitube/io"
 
 import { parseScriptToClap } from ".."
 
-// hack for Bun
-require("./bun-shims.js")
-
 describe("main demo", async () => {
-
+  
   test("parseScriptToClap", async () => {
     const scriptName = "Afterglow v10 X Rewrite Bryan E. Harris 2023"
     const inputScriptFilePath = `./samples/scripts/${scriptName}.txt`
@@ -47,4 +45,5 @@ describe("main demo", async () => {
   },
   30000)
   */
+
 })

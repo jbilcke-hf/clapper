@@ -4,52 +4,43 @@ import { normalizeName } from "./normalizeName"
 
 export type AgeNameGenderStats = [ClapEntityGender, number, number]
 
-const CACHE_KEY = "AGE_AND_GENDER_DATASET"
+export type NameToStats = Record<string, AgeNameGenderStats[]>
 
 export const state: {
   isReady: boolean
-  
-  // unfortunately we cannot use this kind of caching for now,
-  // as this is Node-only, and break when used in the browser
-  // import Cache, { FileSystemCache } from "file-system-cache"
-  //cache?: FileSystemCache
 
-  nameToStats: Record<string, AgeNameGenderStats[]>
+  nameToStats: NameToStats
 } = {
   isReady: false,
-  // cache: undefined,
   nameToStats: {},
 }
 
-const DEFAULT_DOWNLOAD_URL = "https://huggingface.co/datasets/jbilcke-hf/detection-of-age-and-gender/resolve/main/baby-names-us-year-of-birth-full.csv?download=true"
+const dirName = 'detection-of-age-and-gender'
+const fileName = 'baby-names-us-year-of-birth-full.csv'
+const storageFilePath = `${dirName}/${fileName}`
+
+const DEFAULT_DOWNLOAD_URL = `https://huggingface.co/datasets/jbilcke-hf/${dirName}/resolve/main/${fileName}?download=true`
 
 // note: this takes about 140 Mb of memory
-export async function loadAgeGenderNameStats(url = DEFAULT_DOWNLOAD_URL) {
-  let nameToStats = {} as Record<string, AgeNameGenderStats[]>
+// we store the dataset inside a big JSON in the IndexedDB
+export async function loadAgeGenderNameStats(url = DEFAULT_DOWNLOAD_URL) : Promise<Record<string, AgeNameGenderStats[]>> {
 
-  // unfortunately we cannot use this kind of caching for now,
-  // as this is Node-only, and break when used in the browser
-  // import Cache, { FileSystemCache } from "file-system-cache"
-  // if (typeof window === "undefined") {
-  //   if (!state.cache) {
-  //     state.cache = Cache({
-  //       basePath: ".age_and_gender_dataset_cache", // await getRandomDirectory()
-  //       ttl: 30 * 24 * 60  // (optional) A time-to-live (in secs) on how long an item remains cached.
-  //     });
-  //   }
-  // 
-  // 
-  //   try {
-  //     const rawString = await state.cache.get(CACHE_KEY)
-  //     nameToStats = JSON.parse(rawString) as Record<string, AgeNameGenderStats[]>
-  //     if (Object.keys(nameToStats).length === 0) {
-  //       throw new Error(`failed to load the dataset`)
-  //     }
-  //     return nameToStats
-  //   } catch (err) {
-  //     nameToStats = {}
-  //   }
-  // }
+
+  if (typeof window !== "undefined") {
+    try {
+      const fs = await require("indexeddb-fs")
+      const rawCacheContent = await fs.readFile(storageFilePath) as string
+      const cacheObject = JSON.parse(rawCacheContent) as NameToStats
+      if (Object.keys(cacheObject).length === 0) {
+        throw new Error(`cache is empty`)
+      }
+      return cacheObject
+    } catch (err) {
+      console.log(`couldn't load the cache, we will try to re-generate it`)
+    }
+  }
+
+  let nameToStats = {} as NameToStats
 
   console.log(`downloading age and gender detection dataset from Hugging Face (jbilcke-hf/detection-of-age-and-gender)`)
   
@@ -75,15 +66,21 @@ export async function loadAgeGenderNameStats(url = DEFAULT_DOWNLOAD_URL) {
     nameToStats[key].sort((a, b) => b[1] - a[1])
   })
 
-  // unfortunately we cannot use this kind of caching for now,
-  // as this is Node-only, and break when used in the browser
-  // import Cache, { FileSystemCache } from "file-system-cache"
-  // if (typeof window === "undefined" && state.cache) {
-  //   try {
-  //     await state.cache.set(CACHE_KEY, JSON.stringify(nameToStats))
-  //   } catch (err) {
-  //     console.error(`failed to cache the dataset: ${err}`)
-  //   }
-  // }
+  if (typeof window !== "undefined") {
+
+    console.log(`trying to save the dataset to the browser's IndexedDB for faster reload`)
+
+    try {
+      const fs = await require("indexeddb-fs")
+      if (!await fs.isDirectory(dirName)) {
+        await fs.createDirectory(dirName)
+      }
+
+      await fs.writeFile(storageFilePath, JSON.stringify(nameToStats))
+    } catch (err) {
+      console.error(`failed to store the cache (${err})`)
+    }
+  }
+
   return nameToStats
 }
