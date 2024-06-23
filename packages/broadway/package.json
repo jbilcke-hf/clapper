@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Convert a script to a clap file",
   "scripts": {
     "test": "bun test --preload ./src/tests/setup.js",
