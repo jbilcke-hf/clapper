@@ -12,6 +12,7 @@ export function SettingsSectionSound() {
   const soundProvider = useSettings(s => s.soundProvider)
   const setSoundProvider = useSettings(s => s.setSoundProvider)
 
+  /*
   const huggingFaceModelForSound = useSettings(s => s.huggingFaceModelForSound)
   const setHuggingFaceModelForSound = useSettings(s => s.setHuggingFaceModelForSound)
 
@@ -23,7 +24,7 @@ export function SettingsSectionSound() {
 
   const modelsLabModelForSound = useSettings(s => s.modelsLabModelForSound)
   const setModelsLabModelForSound = useSettings(s => s.setModelsLabModelForSound)
-
+  */
   const comfyWorkflowForSound = useSettings(s => s.comfyWorkflowForSound)
   const setComfyWorkflowForSound = useSettings(s => s.setComfyWorkflowForSound)
 
@@ -55,6 +56,7 @@ export function SettingsSectionSound() {
           onChange={setComfyWorkflowForSound}
         />
         : // "proprietary" parameters
+        null /*
           <>
             {soundProvider === ComputeProvider.HUGGINGFACE && <FormInput
               label="HF Model ID (must be compatible with the Inference API)"
@@ -80,7 +82,8 @@ export function SettingsSectionSound() {
               defaultValue={defaultSettings.modelsLabModelForSound}
               onChange={setModelsLabModelForSound}
             />}
-          </>}
+          </>
+          */}
       </FormSection>
     </div>
   )

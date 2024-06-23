@@ -1,13 +1,15 @@
 import { NextResponse, NextRequest } from "next/server"
 import { ClapOutputType, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
 
-import { resolveSegment as resolveSegmentUsingHuggingFace } from "./providers/huggingface"
-import { resolveSegment as resolveSegmentUsingComfyReplicate } from "./providers/comfy-replicate"
-import { resolveSegment as resolveSegmentUsingReplicate } from "./providers/replicate"
-import { resolveSegment as resolveSegmentUsingComfyComfyIcu } from "./providers/comfy-comfyicu"
-import { resolveSegment as resolveSegmentUsingFalAi } from "./providers/falai"
-import { resolveSegment as resolveSegmentUsingModelsLab } from "./providers/modelslab"
-import { resolveSegment as resolveSegmentUsingStabilityAi } from "./providers/stabilityai"
+import {
+  resolveSegmentUsingHuggingFace,
+  resolveSegmentUsingComfyReplicate,
+  resolveSegmentUsingReplicate,
+  resolveSegmentUsingComfyComfyIcu,
+  resolveSegmentUsingFalAi,
+  resolveSegmentUsingModelsLab,
+  resolveSegmentUsingStabilityAi
+} from "./providers"
 
 import { ComputeProvider, ResolveRequest } from "@/types"
 import { decodeOutput } from "@/lib/utils/decodeOutput"
@@ -21,7 +23,7 @@ export async function POST(req: NextRequest) {
   // console.log(`TODO Julian: secure the endpoint`)
   // await throwIfInvalidToken(req.headers.get("Authorization"))
   const request = (await req.json()) as ResolveRequest
-  
+
   const provider =
     request.segment.category === ClapSegmentCategory.STORYBOARD
     ? request.settings.imageProvider

@@ -8,8 +8,8 @@ export async function generateVideo(request: ResolveRequest): Promise<string> {
     throw new Error(`StabilityAI.generateVideo: cannot generate without a valid stabilityAiApiKey`)
   }
 
-  if (!request.settings.stabilityAiModelForVideo) {
-    throw new Error(`StabilityAI.generateVideo: cannot generate without a valid stabilityAiModelForVideo`)
+  if (!request.settings.videoGenerationModel) {
+    throw new Error(`StabilityAI.generateVideo: cannot generate without a valid videoGenerationModel`)
   }
 
 

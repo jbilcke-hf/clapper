@@ -24,7 +24,7 @@ export async function resolveSegment(request: ResolveRequest): Promise<ClapSegme
   }  if (request.segment.category === ClapSegmentCategory.VIDEO) {
     segment.assetUrl = await generateVideo(request)
   } else {
-    throw new Error(`Clapper doesn't support ${request.segment.category} generation for provider "Hugging Face" with model (or space) "${request.settings.huggingFaceModelForVideo}". Please open a pull request with (working code) to solve this!`)
+    throw new Error(`Clapper doesn't support ${request.segment.category} generation for provider "Hugging Face" with model (or space) "${request.settings.videoGenerationModel}". Please open a pull request with (working code) to solve this!`)
   }
   return segment
 }

@@ -48,6 +48,7 @@ export async function callGradioApi<T>({
   }
   */
 
+
   const gradioApiInfo = await getGradioApiInfo({
     url: ownerAndId,
     apiKey
@@ -61,17 +62,20 @@ export async function callGradioApi<T>({
   })
   
   // console.log(`gradioEndpointInputs: `, gradioEndpointInputs)
-  
+
   const app = await Client.connect(ownerAndId, {
     hf_token: apiKey as any
   })
   // console.log(`app: `, app)
   
+  console.log(`calling Gradio API ${ownerAndId}:${gradioEndpointInputs.endpoint}`)
   const output = await app.predict(
     gradioEndpointInputs.endpoint,
-    gradioEndpointInputs.inputs
+    gradioEndpointInputs.inputMap
   )
-  console.log(`output: `, output)
-  
-  return output.data as unknown as T
+  // console.log(`output: `, output)
+ 
+  const data1 = (Array.isArray( output.data) ?  output.data[0] : "") || ""
+
+  return data1 as unknown as T
 }

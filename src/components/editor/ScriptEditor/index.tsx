@@ -1,6 +1,10 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import MonacoEditor from "monaco-editor"
 import Editor from "@monaco-editor/react"
+import { DEFAULT_DURATION_IN_MS_PER_STEP, TimelineStore, useTimeline } from "@aitube/timeline"
+
+import { useEditor } from "@/controllers/editor/useEditor"
+import { useRenderer } from "@/controllers/renderer"
 
 const beforeMount = ({ editor }: { editor: typeof MonacoEditor.editor }) => {
   // Define a custom theme with the provided color palette
@@ -11,15 +15,15 @@ const beforeMount = ({ editor }: { editor: typeof MonacoEditor.editor }) => {
      // You can define token-specific styles here if needed
    ],
    colors: {
-     'editor.background': '#111827', // Editor background color (given)
-     'editorCursor.foreground': '#e5e7eb', // Cursor color
-     'editor.lineHighlightBackground': '#374151', // Highlighted line color
-     'editorLineNumber.foreground': '#6b7280', // Line Numbers color
-     'editor.selectionBackground': '#2c333c', // Selection color
-     'editor.foreground': '#d1d5db', // Main text color
-     'editorIndentGuide.background': '#4b5563', // Indent guides color
-     'editorIndentGuide.activeBackground': '#6b7280', // Active indent guides color
-     'editorWhitespace.foreground': '#3b4049', // Whitespace symbols color
+     'editor.background': '#292524', // Editor background color (given)
+     'editorCursor.foreground': '#f5f5f4', // Cursor color
+     'editor.lineHighlightBackground': '#44403c', // Highlighted line color
+     'editorLineNumber.foreground': '#78716c', // Line Numbers color
+     'editor.selectionBackground': '#44403c', // Selection color
+     'editor.foreground': '#d6d3d1', // Main text color
+     'editorIndentGuide.background': '#78716c', // Indent guides color
+     'editorIndentGuide.activeBackground': '#a8a29e', // Active indent guides color
+     'editorWhitespace.foreground': '#a8a29e', // Whitespace symbols color
      // Add more color overrides if needed here
    },
  })
@@ -29,14 +33,57 @@ const beforeMount = ({ editor }: { editor: typeof MonacoEditor.editor }) => {
 }
 
 export function ScriptEditor() {
-  const [editor, setEditor] = useState<MonacoEditor.editor.IStandaloneCodeEditor>()
-  const script = useApp(state => state.script)
-  const rewriteCurrentScript = useApp(state => state.rewriteCurrentScript)
+  const editor = useEditor(s => s.editor)
+  const setEditor = useEditor(s => s.setEditor)
+  const draft = useEditor(s => s.draft)
+  const setDraft = useEditor(s => s.setDraft)
+  const loadDraftFromClap = useEditor(s => s.loadDraftFromClap)
+  const onDidScrollChange = useEditor(s => s.onDidScrollChange)
+  const jumpCursorOnLineClick = useEditor(s => s.jumpCursorOnLineClick)
+  
+  // this is an expensive function, we should only call it on blur or on click on a "save button maybe"
+  const publishDraftToTimeline = useEditor(s => s.publishDraftToTimeline)
+
+  const clap = useTimeline((s: TimelineStore) => s.clap)
+  const cursorTimestampAtInMs = useTimeline(s => s.cursorTimestampAtInMs)
+  const totalDurationInMs = useTimeline(s => s.totalDurationInMs)
+  const scrollX = useTimeline(s => s.scrollX)
+  const contentWidth = useTimeline(s => s.contentWidth)
+  
+  useEffect(() => { loadDraftFromClap(clap) }, [clap])
+
+  const scrollTop = useEditor(s => s.scrollTop)
+  const scrollLeft = useEditor(s => s.scrollLeft)
+  const scrollWidth = useEditor(s => s.scrollWidth)
+  const scrollHeight = useEditor(s => s.scrollHeight)
+
+  /*
+  const script = useTimeline(state => state.script)
+
   const isPlaying = useApp(state => state.isPlaying)
   const setCursorAt = useApp((state) => state.setCursorAt)
   const [scriptContent, setScriptContent] = useState("")
+  */
+
+  const currentSegment = useRenderer(s => s.currentSegment)
   
-  const activeSegments = useApp(state => state.activeSegments)
+  const activeStartTimeInLines = currentSegment?.startTimeInLines
+
+  useEffect(() => {
+    console.log("activeStartTimeInLines:", activeStartTimeInLines)
+
+  }, [activeStartTimeInLines])
+
+  useEffect(() => {
+    console.log("scrollX:", scrollX)
+
+  }, [scrollX])
+
+  /*
+  const activeSceneLineNumber = (activeScene?.startAtLine || 0)
+  */
+
+/*
   const stepsToPreviews = useApp(state => state.stepsToPreviews)
 
   const screenplayScroll = useInterface(state => state.screenplayScroll)
@@ -48,6 +95,8 @@ export function ScriptEditor() {
 
   // console.log("linesToPreview:", linesToPreviews)
 
+  */
+ /*
   useEffect(() => {
     if (editor && leftmostVisibleScene) {
       // console.log("ScriptEditor: timelineScrollLeftInStep changed to scene " + leftmostVisibleScene.line)
@@ -58,29 +107,10 @@ export function ScriptEditor() {
       editor.revealLineInCenter(lineNumber)
     }
   }, [editor, leftmostVisibleScene])
+  */
 
 
-  const activeScene = activeSegments
-    .find(s => s.category === "video")?.scene
-
-  const activeSceneLineNumber = (activeScene?.startAtLine || 0)
-
-  useEffect(() => {
-    const fn = async () => {
-    // support both text and Blob
-      let content = ""
-      if (typeof script.content !== "string") {
-        content = await script.content.text()
-      } else {
-        content = script.content
-      }
-      editor?.setValue(content)
-      setScriptContent(content)
-    }
-    fn()
-
-  }, [editor, script.content])
-
+  /*
   useEffect(() => {
     if (editor && activeSceneLineNumber) {
       // console.log("useEffect:", activeSceneLineNumber)
@@ -107,7 +137,7 @@ export function ScriptEditor() {
       }
     }
   }, [editor, activeSceneLineNumber])
-
+  */
   const onMount = (editor: MonacoEditor.editor.IStandaloneCodeEditor) => {
     const model = editor.getModel()
     if (!model) { return }
@@ -115,39 +145,14 @@ export function ScriptEditor() {
     setEditor(editor)
 
     editor.onMouseDown((e) => {
-      const currentPosition = editor.getPosition()
-
-      const line = currentPosition?.lineNumber
-      if (typeof line !== "number") { return }
-
-      // so... due to how monaco callbacks work, we cannot use the hook context
-      // to get the linesToPreview.. but that's okay!
-      const linesToPreviews = useApp.getState().linesToPreviews
-    
-      const startTimeInSteps = linesToPreviews[line]?.startTimeInSteps
-      if (typeof startTimeInSteps !== "number") { return }
-
-      setCursorAt(startTimeInSteps * DEFAULT_DURATION_IN_MS_PER_STEP)
+      jumpCursorOnLineClick(editor.getPosition()?.lineNumber)
     })
 
     editor.onDidScrollChange(({ scrollTop, scrollLeft, scrollWidth, scrollHeight }: MonacoEditor.IScrollEvent) => {
-      /*if (scrollHeight !== screenplayScroll.scrollHeight &&
-        scrollLeft !== screenplayScroll.scrollLeft &&
-        scrollTop !== screenplayScroll.scrollTop &&
-        scrollWidth !== screenplayScroll.scrollWidth) {
-          */
-        // console.log(`ScriptEditor:onDidScrollChange(${JSON.stringify({ scrollTop, scrollLeft, scrollWidth, scrollHeight }, null, 2)})`) 
-        setScreenplayScroll({
-          shouldRerender: false,
-          scrollTop,
-          scrollLeft,
-          scrollWidth,
-          scrollHeight
-        })
-      //}
-
-      // TODO we need to grab the leftmost segment
-      // now the problem is that this might be a bit costly to do
+      onDidScrollChange(
+        { scrollTop, scrollLeft, scrollWidth, scrollHeight },
+        true // <- set to true to ignore the change and avoid an infinite loop
+      )
     })
 
     // as an optimization we can use this later, for surgical edits,
@@ -162,14 +167,7 @@ export function ScriptEditor() {
   }
 
   const onChange = (plainText?: string) => {
-    if (!plainText) { return }
-
-    if (plainText === scriptContent) { return }
-
-    console.log("generic onChange:")
-    // this function is currently *very* expensive
-    // the only optimization right now is that we debounce it
-    rewriteCurrentScript(plainText)
+   // setDraft(plainText || "")
   }
 
   return (
@@ -177,13 +175,13 @@ export function ScriptEditor() {
       <Editor
         height="100%"
         defaultLanguage="plaintext"
-        defaultValue={scriptContent}
+        defaultValue={draft}
         beforeMount={beforeMount}
         onMount={onMount}
         onChange={onChange}
         theme="customTheme"
         options={{
-          fontSize: 14
+          fontSize: 12
         }}
       />
     </div>

@@ -9,6 +9,7 @@ import { availableComputeProvidersForVideos, computeProviderShortNames } from ".
 export function SettingsSectionVideo() {
   const defaultSettings = getDefaultSettingsState()
 
+  /*
   const huggingFaceModelForVideo = useSettings(s => s.huggingFaceModelForVideo)
   const setHuggingFaceModelForVideo = useSettings(s => s.setHuggingFaceModelForVideo)
 
@@ -20,7 +21,7 @@ export function SettingsSectionVideo() {
 
   const modelsLabModelForVideo = useSettings(s => s.modelsLabModelForVideo)
   const setModelsLabModelForVideo = useSettings(s => s.setModelsLabModelForVideo)
-
+  */
 
   const videoPromptPrefix = useSettings(s => s.videoPromptPrefix)
   const setVideoPromptPrefix = useSettings(s => s.setVideoPromptPrefix)
@@ -118,7 +119,7 @@ export function SettingsSectionVideo() {
           onChange={setComfyWorkflowForVideo}
         />
         : // "proprietary" parameters
-          <>
+          null /* <>
             {videoProvider === ComputeProvider.HUGGINGFACE && <FormInput
               label="HF Model ID (must be compatible with the Inference API)"
               value={huggingFaceModelForVideo}
@@ -143,7 +144,8 @@ export function SettingsSectionVideo() {
               defaultValue={defaultSettings.modelsLabModelForVideo}
               onChange={setModelsLabModelForVideo}
             />}
-          </>}
+          </>
+          */}
 
       </FormSection>
     </div>

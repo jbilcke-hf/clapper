@@ -12,6 +12,8 @@ export function SettingsSectionImage() {
   const imageProvider = useSettings(s => s.imageProvider)
   const setImageProvider = useSettings(s => s.setImageProvider)
 
+  /*
+  to deprecate I think - or replace by defaultHuggingFaceModelForXXXX
   const huggingFaceModelForImage = useSettings(s => s.huggingFaceModelForImage)
   const setHuggingFaceModelForImage = useSettings(s => s.setHuggingFaceModelForImage)
 
@@ -23,6 +25,7 @@ export function SettingsSectionImage() {
 
   const modelsLabModelForImage = useSettings(s => s.modelsLabModelForImage)
   const setModelsLabModelForImage = useSettings(s => s.setModelsLabModelForImage)
+  */
 
   const imagePromptPrefix = useSettings(s => s.imagePromptPrefix)
   const setImagePromptPrefix = useSettings(s => s.setImagePromptPrefix)
@@ -100,6 +103,7 @@ export function SettingsSectionImage() {
 
          </>
         : // "proprietary" parameters
+          null/*
           <>
             {imageProvider === ComputeProvider.HUGGINGFACE && <FormInput
               label="HF Model ID (must be compatible with the Inference API)"
@@ -125,7 +129,9 @@ export function SettingsSectionImage() {
               defaultValue={defaultSettings.modelsLabModelForImage}
               onChange={setModelsLabModelForImage}
             />}
-          </>}
+          </>
+          */
+          }
 
       </FormSection>
     </div>

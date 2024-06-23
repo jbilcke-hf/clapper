@@ -22,6 +22,7 @@ import { TopBar } from "@/components/toolbars/top-bar"
 import { Timeline } from "@/components/core/timeline"
 import { useIO } from "@/controllers/io/useIO"
 import { ChatView } from "@/components/assistant/ChatView"
+import { ScriptEditor } from "@/components/editor/ScriptEditor"
 import { useSearchParams } from "next/navigation"
 
 type DroppableThing = { files: File[] }
@@ -86,7 +87,23 @@ function MainContent() {
                 <ReflexElement
                   minSize={showTimeline ? 100 : 1}
                   >
-                  <Monitor />
+                  <ReflexContainer orientation="vertical">
+
+       
+                    <ReflexElement
+                      size={showTimeline ? 400 : 1}
+                      minSize={showTimeline ? 100 : 1}
+                      maxSize={showTimeline ? 1600 : 1}
+                      >
+                      <ScriptEditor />
+                    </ReflexElement>
+                    <ReflexSplitter />
+                    <ReflexElement
+                      minSize={showTimeline ? 100 : 1}
+                      >
+                      <Monitor />
+                    </ReflexElement>
+                  </ReflexContainer>
                 </ReflexElement>
                 <ReflexSplitter />
                 <ReflexElement

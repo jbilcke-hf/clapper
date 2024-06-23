@@ -40,10 +40,22 @@ export function startAudioSourceNode({
    * So make sure it uses fresh data when it is finally executed
    */
   onEnded: (sourceId: string) => void
-}): CurrentlyPlayingAudioSource {
+}): CurrentlyPlayingAudioSource | undefined {
   if (!segment.audioBuffer) {
-    throw new Error(`Cannot playAudioBuffer on non-audio segments`)
+    // throw new Error(`startAudioSourceNode: cannot play a non-audio segment`)
+    // console.error(`startAudioSourceNode: cannot play a non-audio segment`)
+    return
   }
+
+  // well, we can't play the segment if the playback cursor is out of its range
+  if (cursorTimestampAtInMs < segment.startTimeInMs || segment.endTimeInMs < cursorTimestampAtInMs) {
+    // onsole.error(`startAudioSourceNode: cannot play a segment which is nto crossing the current cursor`)
+    return
+  }
+
+  const startTimeInMs = Math.max(0, cursorTimestampAtInMs - segment.startTimeInMs)
+
+  // console.log(`startAudioSourceNode: ${startTimeInMs}ms`)
 
   // const audioContext = new AudioContext() // initialize AudioContext
 
@@ -58,10 +70,10 @@ export function startAudioSourceNode({
 
   const gainNode: GainNode = audioContext.createGain()
 
-  if (isFinite(segment.outputGain)) {
+  if (!isNaN(segment.outputGain) && isFinite(segment.outputGain)) {
     gainNode.gain.value = segment.outputGain
   } else {
-    console.log(`segment.outputGain isn't finite for some reason? (got value ${segment.outputGain})`)
+    // console.error(`segment.outputGain isn't finite for some reason? (got value ${segment.outputGain})`)
     gainNode.gain.value = 1.0
   }
 
@@ -71,11 +83,8 @@ export function startAudioSourceNode({
   // connect the gain node to the destination
   gainNode.connect(audioContext.destination)
 
-  // make sure we play the segment at a specific time
-  const startTimeInMs = cursorTimestampAtInMs - segment.startTimeInMs
-
   // convert milliseconds to seconds by dividing by 1000
-  source.start(audioContext.currentTime, startTimeInMs >= 1000 ? (startTimeInMs / 1000) : 0)
+  source.start(audioContext.currentTime, startTimeInMs / 1000)
 
   const currentlyPlaying: CurrentlyPlayingAudioSource = {
     sourceId: UUID(),

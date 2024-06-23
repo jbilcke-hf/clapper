@@ -12,6 +12,7 @@ export function SettingsSectionVoice() {
   const voiceProvider = useSettings(s => s.voiceProvider)
   const setVoiceProvider = useSettings(s => s.setVoiceProvider)
 
+  /*
   const huggingFaceModelForVoice = useSettings(s => s.huggingFaceModelForVoice)
   const setHuggingFaceModelForVoice = useSettings(s => s.setHuggingFaceModelForVoice)
 
@@ -23,6 +24,7 @@ export function SettingsSectionVoice() {
 
   const modelsLabModelForVoice = useSettings(s => s.modelsLabModelForVoice)
   const setModelsLabModelForVoice = useSettings(s => s.setModelsLabModelForVoice)
+  */
 
   const comfyWorkflowForVoice = useSettings(s => s.comfyWorkflowForVoice)
   const setComfyWorkflowForVoice = useSettings(s => s.setComfyWorkflowForVoice)
@@ -55,7 +57,7 @@ export function SettingsSectionVoice() {
           onChange={setComfyWorkflowForVoice}
         />
         : // "proprietary" parameters
-          <>
+          null /* <>
             {voiceProvider === ComputeProvider.HUGGINGFACE && <FormInput
               label="HF Model ID (must be compatible with the Inference API)"
               value={huggingFaceModelForVoice}
@@ -80,7 +82,8 @@ export function SettingsSectionVoice() {
               defaultValue={defaultSettings.modelsLabModelForVoice}
               onChange={setModelsLabModelForVoice}
             />}
-          </>}
+          </>
+          */}
       </FormSection>
     </div>
   )

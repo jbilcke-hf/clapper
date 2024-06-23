@@ -12,6 +12,7 @@ export function SettingsSectionMusic() {
   const musicProvider = useSettings(s => s.musicProvider)
   const setMusicProvider = useSettings(s => s.setMusicProvider)
 
+  /*
   const huggingFaceModelForMusic = useSettings(s => s.huggingFaceModelForMusic)
   const setHuggingFaceModelForMusic = useSettings(s => s.setHuggingFaceModelForMusic)
 
@@ -23,6 +24,7 @@ export function SettingsSectionMusic() {
 
   const modelsLabModelForMusic = useSettings(s => s.modelsLabModelForMusic)
   const setModelsLabModelForMusic = useSettings(s => s.setModelsLabModelForMusic)
+  */
 
   const comfyWorkflowForMusic = useSettings(s => s.comfyWorkflowForMusic)
   const setComfyWorkflowForMusic = useSettings(s => s.setComfyWorkflowForMusic)
@@ -55,6 +57,7 @@ export function SettingsSectionMusic() {
           onChange={setComfyWorkflowForMusic}
         />
         : // "proprietary" parameters
+        null /*
           <>
             {musicProvider === ComputeProvider.HUGGINGFACE && <FormInput
               label="HF Model ID (must be compatible with the Inference API)"
@@ -80,7 +83,8 @@ export function SettingsSectionMusic() {
               defaultValue={defaultSettings.modelsLabModelForMusic}
               onChange={setModelsLabModelForMusic}
             />}
-          </>}
+          </>
+          */}
       </FormSection>
     </div>
   )
