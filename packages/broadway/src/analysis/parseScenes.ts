@@ -261,7 +261,7 @@ export function parseScenes(screenplaySequence: ScreenplaySequence): Scene[] {
         }
       } else if (endOfAction && currentEvent?.type === "action") {
 
-        const action = currentEvent.description
+        const action = currentEvent.description.trim()
           ? `${currentEvent.description.trim()} ${line.replace(")", "")}`
           : line.replace(")", "")
 
@@ -297,7 +297,7 @@ export function parseScenes(screenplaySequence: ScreenplaySequence): Scene[] {
         } else {
           // current event type has not changed, we are just extending it
           currentEvent.description =
-            currentEvent.description
+            currentEvent.description.trim()
             ? `${currentEvent.description.trim()} ${line}`
             : `${line}`
 

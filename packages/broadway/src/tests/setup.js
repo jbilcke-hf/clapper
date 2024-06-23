@@ -1,5 +1,12 @@
 // @bun
 
+
+// --------- disable IndexedDB ------------
+global.indexedDB = false
+globalThis.indexedDB = false
+
+// -------- mock other things -------------
+
 // see https://github.com/oven-sh/bun/issues/1723
 
 /*! MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> */
