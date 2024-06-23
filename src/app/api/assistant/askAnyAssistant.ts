@@ -2,7 +2,7 @@
 
 import { ClapSegmentCategory } from "@aitube/clap"
 import { RunnableLike } from "@langchain/core/runnables"
-import { ChatPromptValueInterface } from "@langchain/core/dist/prompt_values"
+import { ChatPromptValueInterface } from "@langchain/core/prompt_values"
 import { AIMessage, AIMessageChunk, HumanMessage } from "@langchain/core/messages"
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts"
 import { StructuredOutputParser } from "@langchain/core/output_parsers"
@@ -60,37 +60,37 @@ export async function askAnyAssistant({
     provider === ComputeProvider.GROQ
     ? new ChatGroq({
       apiKey: settings.groqApiKey,
-      modelName: settings.groqModelForAssistant,
+      modelName: settings.assistantModel,
       // temperature: 0.7,
     })
     : provider === ComputeProvider.OPENAI
     ? new ChatOpenAI({
         openAIApiKey: settings.openaiApiKey,
-        modelName: settings.openaiModelForAssistant,
+        modelName: settings.assistantModel,
        // temperature: 0.7,
       })
     : provider === ComputeProvider.ANTHROPIC
     ? new ChatAnthropic({
       anthropicApiKey: settings.anthropicApiKey,
-      modelName: settings.anthropicModelForAssistant,
+      modelName: settings.assistantModel,
       // temperature: 0.7,
     })
     : provider === ComputeProvider.COHERE
     ? new ChatCohere({
       apiKey: settings.cohereApiKey,
-      model: settings.cohereModelForAssistant,
+      model: settings.assistantModel,
       // temperature: 0.7,
     })
     : provider === ComputeProvider.MISTRALAI
     ? new ChatMistralAI({
       apiKey: settings.mistralAiApiKey,
-      modelName: settings.mistralAiModelForAssistant,
+      modelName: settings.assistantModel,
       // temperature: 0.7,
     })
     : provider === ComputeProvider.GOOGLE
     ? new ChatVertexAI({
       apiKey: settings.googleApiKey,
-      modelName: settings.googleModelForAssistant,
+      modelName: settings.assistantModel,
       // temperature: 0.7,
     })
     : undefined

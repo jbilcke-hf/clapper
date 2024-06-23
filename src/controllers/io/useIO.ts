@@ -2,6 +2,7 @@
 
 import { ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType, newSegment, parseClap, serializeClap } from "@aitube/clap"
 import { TimelineStore, useTimeline } from "@aitube/timeline"
+import { parseScriptToClap } from "@aitube/broadway"
 import { create } from "zustand"
 import { mltToXml } from "mlt-xml"
 
@@ -98,20 +99,25 @@ export const useIO = create<IOStore>((set, get) => ({
       message: "Analyzing screenplay..",
       value: 10
     })
-    try {
-        const res = await fetch("https://jbilcke-hf-broadway-api.hf.space", {
-          method: "POST",
-          headers: { 'Content-Type': 'text/plain' },
-          body: plainText,
-        })
-      const blob = await res.blob()
-        task.setProgress({
-          message: "Loading scenes..",
-          value: 50
-        })
-      // TODO: parseClap should feature a progress callback
-      const clap = await parseClap(blob)
 
+    try {
+      // this is the old way, based on a call to a separate API hosted on HF
+      // obviously this wasn't very practical and easy to scale, so I'm dropping it
+      //
+      // const res = await fetch("https://jbilcke-hf-broadway-api.hf.space", {
+      //   method: "POST",
+      //   headers: { 'Content-Type': 'text/plain' },
+      //   body: plainText,
+      // })
+      // const blob = await res.blob()
+      // task.setProgress({
+      //   message: "Loading scenes..",
+      //   value: 50
+      // })
+      // const clap = await parseClap(blob)
+
+      // new way: we analyze the screenplay on browser side
+      const clap = await parseScriptToClap(plainText)
       clap.meta.title = `${projectName || ""}`
 
       task.setProgress({
@@ -430,7 +436,7 @@ export const useIO = create<IOStore>((set, get) => ({
   saveKdenline: async () => {
     const { saveAnyFile } = get()
     const clap: ClapProject = useTimeline.getState().clap
-    // const tracks: Tracks = useTimeline.getState().tracks
+    // const tracks: ClapTracks = useTimeline.getState().tracks
 
     throw new Error(`cannot run in a browser, unfortunately`)
 

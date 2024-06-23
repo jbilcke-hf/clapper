@@ -17,6 +17,10 @@ module.exports = {
       },
     },
     extend: {
+      aspectRatio: {
+        '1024/576': '1024 / 576',
+      },
+    
       fontFamily: {
         salsa: ['var(--font-salsa)'],
         clock: ["var(--font-clock)"],

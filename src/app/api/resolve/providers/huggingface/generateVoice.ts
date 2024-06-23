@@ -4,8 +4,8 @@ import { ResolveRequest } from "@/types"
 
 export async function generateVoice(request: ResolveRequest): Promise<string> {
   
-  if (!request.settings.huggingFaceModelForVoice) {
-    throw new Error(`HuggingFace.generateVoice: cannot generate without a valid huggingFaceModelForVoice`)
+  if (!request.settings.voiceGenerationModel) {
+    throw new Error(`HuggingFace.generateVoice: cannot generate without a valid voiceGenerationModel`)
   }
 
   if (!request.prompts.voice.positive) {
@@ -19,7 +19,7 @@ export async function generateVoice(request: ResolveRequest): Promise<string> {
   const hf: HfInferenceEndpoint = new HfInference(request.settings.huggingFaceApiKey)
   
   const blob: Blob = await hf.textToSpeech({
-    model: request.settings.huggingFaceModelForVoice,
+    model: request.settings.voiceGenerationModel,
     inputs: request.prompts.voice.positive,
   })
 

@@ -5,8 +5,8 @@ import { ResolveRequest } from "@/types"
 
 export async function generateImage(request: ResolveRequest): Promise<string> {
   
-  if (!request.settings.huggingFaceModelForImage) {
-    throw new Error(`HuggingFace.generateImage: cannot generate without a valid huggingFaceModelForImage`)
+  if (!request.settings.imageGenerationModel) {
+    throw new Error(`HuggingFace.generateImage: cannot generate without a valid imageGenerationModel`)
   }
 
   if (!request.prompts.image.positive) {
@@ -20,7 +20,7 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
   const hf: HfInferenceEndpoint = new HfInference(request.settings.huggingFaceApiKey)
   
   const blob: Blob = await hf.textToImage({
-    model: request.settings.huggingFaceModelForImage,
+    model: request.settings.imageGenerationModel,
     inputs: request.prompts.image.positive,
     parameters: {
       height: request.meta.height,

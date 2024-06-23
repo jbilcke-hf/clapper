@@ -44,6 +44,7 @@ export async function getSpaces({
   })) {
 
     if (sdk && space.sdk != sdk) { continue }
+
     results.push(space)
   }
 

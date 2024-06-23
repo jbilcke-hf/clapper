@@ -3,9 +3,10 @@
 import { create } from "zustand"
 import { TimelineStore, useTimeline, RuntimeSegment } from "@aitube/timeline"
 
-import { AudioStore } from "./types"
+import { AudioStore, CurrentlyPlayingAudioSource } from "./types"
 import { getDefaultAudioState } from "./getDefaultAudioState"
 import { startAudioSourceNode } from "./startAudioSourceNode"
+import { useRenderer } from "../renderer"
 
 export const useAudio = create<AudioStore>((set, get) => ({
   ...getDefaultAudioState(),
@@ -14,7 +15,7 @@ export const useAudio = create<AudioStore>((set, get) => ({
     // console.log("useAudio: play()")
     const { isPlaying, currentlyPlaying } = get()
     if (isPlaying) { return }
-    currentlyPlaying.forEach(p => { p.sourceNode.start() })
+    currentlyPlaying.forEach(p => p.sourceNode.start())
   },
   stop: () => {
     // console.log("useAudio: stop()")
@@ -59,7 +60,7 @@ export const useAudio = create<AudioStore>((set, get) => ({
    * @returns 
    */
   syncAudioToCurrentCursorPosition: (activeAudioSegments: RuntimeSegment[]) => {
-    // console.log("useAudio: syncAudioToCurrentCursorPosition()")
+
     const { audioContext, currentlyPlaying } = get()
 
     const timelineStore: TimelineStore = useTimeline.getState()
@@ -89,7 +90,7 @@ export const useAudio = create<AudioStore>((set, get) => ({
           })
         }
       })
-    )
+    ).filter(s => s) as CurrentlyPlayingAudioSource[]
 
     set({
       currentlyPlaying: [

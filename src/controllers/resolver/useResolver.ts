@@ -507,7 +507,18 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       //
       // note that video clips are also concerned: we want them to perfectly fit
       if (newSegment.category === ClapSegmentCategory.DIALOGUE) {
-        await timeline.fitSegmentToAssetDuration(newSegment)
+        // by default fitSegmentToAssetDuration() will fit the segment to the asset duration without any gap,
+        // which can be weird to hear.. so let's add a little delay
+
+        // that is assuming that our dialogue lines have been properly cut,
+        // 
+        await timeline.fitSegmentToAssetDuration(
+          newSegment,
+          typeof newSegment.assetDurationInMs === "number"
+          // this delay is arbitrary, could be another value (200, 500, 1200..)
+          ? newSegment.assetDurationInMs + 700
+          : 2000
+        )
       } else if (newSegment.category === ClapSegmentCategory.VIDEO) {
         await timeline.fitSegmentToAssetDuration(newSegment)
       }

@@ -270,7 +270,7 @@ export const availableModelsForVideoGeneration: Partial<Record<ComputeProvider, 
   ],
   [ComputeProvider.HUGGINGFACE]: [
     "spaces/hpcai-tech/open-sora",
-    "spaces/multimodalart/hallo" // supports audio input
+    "spaces/jbilcke-hf/hallo-api" // supports audio input
   ],
   [ComputeProvider.REPLICATE]: [
     // note: we need a model that accepts cinematic ratios

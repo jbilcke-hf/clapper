@@ -2,6 +2,7 @@ import { GradioApiInfo, SupportedFields } from "../types"
 import { identifyField } from "./identifyField"
 import { getDefaultFields } from "./getDefaultFields"
 import { findMainGradioEndpoint } from "./findMainGradioEndpoint"
+import { base64DataUriToBlob } from "@/lib/utils/base64DataUriToBlob"
 
 /**
  * This function try to adapt arbitrary inputs to strict gradio inputs
@@ -17,7 +18,8 @@ export function adaptAnyInputsToGradioInputs({
   gradioApiInfo: GradioApiInfo
 }): {
   endpoint: string
-  inputs: Array<string | number | boolean | undefined | null>
+  inputArray: Array<string | number | boolean | Blob | undefined | null>
+  inputMap: Record<string, string | number | boolean | Blob | undefined | null>
  } {
 
   const mainGradioEndpoint = findMainGradioEndpoint({ gradioApiInfo })
@@ -34,9 +36,12 @@ export function adaptAnyInputsToGradioInputs({
     inputFields[key] = inputField
     allInputFields = {...allInputFields, ...inputField}
   }
+  console.log(`input fields passed by the parent calling function:`, inputFields)
 
   // the gradio input array
-  const gradioInputs: any[] = []
+  // apparently the new JS client also supports dictionaries, yay!
+  let inputArray: Array<string | number | boolean | Blob | undefined | null> = []
+  let inputMap: Record<string, string | number | boolean | Blob | undefined | null> = {}
 
   for (const parameter of mainGradioEndpoint.endpoint.parameters) {
     let gradioInputValue: any = undefined
@@ -55,11 +60,32 @@ export function adaptAnyInputsToGradioInputs({
     if (fields.hasInputGuidance) { gradioInputValue = allInputFields.inputGuidance }
     if (fields.hasInputSeed) { gradioInputValue = allInputFields.inputSeed }
 
-    gradioInputs.push(gradioInputValue)
+    //console.log("parameter:", parameter)
+    const valueSeemsToBeABase64Uri = typeof gradioInputValue === "string" && gradioInputValue.startsWith("data:")
+    const fieldSeemsToBeTextBased =
+      parameter.type === "string"
+      || parameter.component === "Textbox"
+      // || parameter.parameter_name.includes("base64")
+
+    // the magic doesn't end here: we need to convert base64 inputs to buffers,
+    // unless gradio expects it to be a text
+    if (valueSeemsToBeABase64Uri && !fieldSeemsToBeTextBased) {
+      gradioInputValue = base64DataUriToBlob(gradioInputValue)
+    }
+    // old, low-level way
+    inputArray.push(gradioInputValue)
+
+    // new, high-level way
+    inputMap[parameter.parameter_name] = gradioInputValue
   }
+
+  console.log(`inputArray:`, inputArray.map(x => typeof x === "string" ? x.slice(0, 255) : x))
+  
+  console.log(`await client.predict("${ mainGradioEndpoint.name}", `, inputMap);
 
   return {
     endpoint: mainGradioEndpoint.name,
-    inputs: gradioInputs
+    inputArray,
+    inputMap,
   }
 }

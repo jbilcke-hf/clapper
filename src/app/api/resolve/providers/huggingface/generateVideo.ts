@@ -3,8 +3,8 @@ import { callGradioApi } from "@/lib/hf/callGradioApi"
 
 export async function generateVideo(request: ResolveRequest): Promise<string> {
   
-  if (!request.settings.huggingFaceModelForVideo) {
-    throw new Error(`HuggingFace.generateVideo: cannot generate without a valid huggingFaceModelForVideo`)
+  if (!request.settings.videoGenerationModel) {
+    throw new Error(`HuggingFace.generateVideo: cannot generate without a valid videoGenerationModel`)
   }
 
   if (!request.prompts.video.image) {
@@ -16,13 +16,11 @@ export async function generateVideo(request: ResolveRequest): Promise<string> {
   }
 
   // TODO pass a type to the template function
-  const output = await callGradioApi({
-    url: request.settings.huggingFaceModelForVideo,
+  const assetUrl = await callGradioApi<string>({
+    url: request.settings.videoGenerationModel,
     inputs: request.prompts.video,
     apiKey: request.settings.huggingFaceApiKey
   })
 
-  console.log(`output from the Gradio API:`, output)
-
-  throw new Error(`please finish me`)
+  return assetUrl
 }

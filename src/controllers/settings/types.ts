@@ -88,6 +88,16 @@ export type SettingsState = {
 
   // ---------- MODELS FOR EACH PROVIDER --------------
 
+
+  gradioApiUrlForAssistant: string
+  gradioApiUrlForImage: string
+  gradioApiUrlForVideo: string
+  gradioApiUrlForVoice: string
+  gradioApiUrlForSound: string
+  gradioApiUrlForMusic: string
+
+  /*
+  should we deprecate this? or rename to "default<something>"?
   huggingFaceModelForAssistant: string
   huggingFaceModelForImage: string
   huggingFaceModelForImageDepth: string
@@ -100,13 +110,6 @@ export type SettingsState = {
   huggingFaceModelForVoice: string
   huggingFaceModelForSound: string
   huggingFaceModelForMusic: string
-
-  gradioApiUrlForAssistant: string
-  gradioApiUrlForImage: string
-  gradioApiUrlForVideo: string
-  gradioApiUrlForVoice: string
-  gradioApiUrlForSound: string
-  gradioApiUrlForMusic: string
 
   replicateModelForImage: string
   replicateModelForImageDepth: string
@@ -171,6 +174,7 @@ export type SettingsState = {
   cohereModelForAssistant: string
 
   mistralAiModelForAssistant: string
+  */
 }
 
 export type SettingsControls = {
@@ -251,6 +255,15 @@ export type SettingsControls = {
   setComfyWorkflowForSound: (comfyWorkflowForSound?: string) => void
   setComfyWorkflowForMusic: (comfyWorkflowForMusic?: string) => void
 
+  setGradioApiUrlForAssistant: (gradioApiUrlForAssistant?: string) => void
+  setGradioApiUrlForImage: (gradioApiUrlForImage?: string) => void
+  setGradioApiUrlForVideo: (gradioApiUrlForVideo?: string) => void
+  setGradioApiUrlForVoice: (gradioApiUrlForVoice?: string) => void
+  setGradioApiUrlForSound: (gradioApiUrlForSound?: string) => void
+  setGradioApiUrlForMusic: (gradioApiUrlForMusic?: string) => void
+
+  /*
+  should we deprecate this? or rename to "default<something>"?
   setHuggingFaceModelForAssistant: (huggingFaceModelForAssistant?: string) => void
   setHuggingFaceModelForImage: (huggingFaceModelForImage?: string) => void
   setHuggingFaceModelForImageDepth: (huggingFaceModelForImageDepth?: string) => void
@@ -263,13 +276,6 @@ export type SettingsControls = {
   setHuggingFaceModelForVoice: (huggingFaceModelForVoice?: string) => void
   setHuggingFaceModelForSound: (huggingFaceModelForSound?: string) => void
   setHuggingFaceModelForMusic: (huggingFaceModelForMusic?: string) => void
-
-  setGradioApiUrlForAssistant: (gradioApiUrlForAssistant?: string) => void
-  setGradioApiUrlForImage: (gradioApiUrlForImage?: string) => void
-  setGradioApiUrlForVideo: (gradioApiUrlForVideo?: string) => void
-  setGradioApiUrlForVoice: (gradioApiUrlForVoice?: string) => void
-  setGradioApiUrlForSound: (gradioApiUrlForSound?: string) => void
-  setGradioApiUrlForMusic: (gradioApiUrlForMusic?: string) => void
 
   setReplicateModelForImage: (replicateModelForImage?: string) => void
   setReplicateModelForImageDepth: (replicateModelForImageDepth?: string) => void
@@ -333,7 +339,7 @@ export type SettingsControls = {
   setMistralAiModelForAssistant: (mistralAiModelForAssistant?: string) => void
   
   setKitsAiModelForVoice: (kitsAiModelForVoice?: string) => void
-  
+  */
   getSettings: () => SettingsState
 }
 

@@ -1,9 +1,17 @@
 import { SupportedFields } from "../types"
 
 export function identifyField(key: string, value?: any, index?: number): Partial<SupportedFields> {
-  const normalizedKey = key.toLowerCase().trim()
+  const normalizedKey =
+    key
+      .toLowerCase()
+      .replaceAll("_uri", "")
+      .replaceAll("_url", "")
+      .replaceAll("_b64", "")
+      .replaceAll("_base64", "")
+      .trim()
+  console.log(`normalizedKey: ${normalizedKey}`)
+  
   switch (normalizedKey) {
-
     case "width":
       let strWidth = ""
       let numWidth = 0

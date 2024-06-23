@@ -8,7 +8,7 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
     throw new Error(`StabilityAI.generateImage: cannot generate without a valid stabilityAiApiKey`)
   }
 
-  if (!request.settings.stabilityAiModelForImage) {
+  if (!request.settings.imageGenerationModel) {
     throw new Error(`StabilityAI.generateImage: cannot generate without a valid stabilityAiModelForImage`)
   }
 
@@ -39,7 +39,7 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
   body.set("negative_prompt", `${request.prompts.image.negative || ""}`)
   body.set("aspect_ratio", `${aspectRatio || ""}`)
 
-  const response = await fetch(`https://api.stability.ai/v2beta/${request.settings.stabilityAiModelForImage}`, {
+  const response = await fetch(`https://api.stability.ai/v2beta/${request.settings.imageGenerationModel}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${request.settings.stabilityAiApiKey}`,

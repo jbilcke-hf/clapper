@@ -75,7 +75,9 @@ export const DynamicPlayer = ({
   ])
 
   return (
-    <div className={cn(`@container flex flex-col items-center flex-grow w-full`, className)}>
+    <div className={cn(`
+    @container flex flex-col items-center flex-grow w-full
+    `, className)}>
       <DynamicBuffer
         segment={dataUriBuffer1}
         isPlaying={isPlaying}

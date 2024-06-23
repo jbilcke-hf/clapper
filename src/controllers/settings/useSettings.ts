@@ -281,7 +281,26 @@ export const useSettings = create<SettingsStore>()(
       setComfyWorkflowForMusic: (comfyWorkflowForMusic?: string) => {
         set({ comfyWorkflowForMusic: getValidComfyWorkflowTemplate(comfyWorkflowForMusic, getDefaultSettingsState().comfyWorkflowForMusic) })
       },
-
+      setGradioApiUrlForAssistant: (gradioApiUrlForAssistant?: string) => {
+        set({ gradioApiUrlForAssistant: getValidString(gradioApiUrlForAssistant, getDefaultSettingsState().gradioApiUrlForAssistant) })
+      },
+      setGradioApiUrlForImage: (gradioApiUrlForImage?: string) => {
+        set({ gradioApiUrlForImage: getValidString(gradioApiUrlForImage, getDefaultSettingsState().gradioApiUrlForImage) })
+      },
+      setGradioApiUrlForVideo: (gradioApiUrlForVideo?: string) => {
+        set({ gradioApiUrlForVideo: getValidString(gradioApiUrlForVideo, getDefaultSettingsState().gradioApiUrlForVideo) })
+      },
+      setGradioApiUrlForVoice: (gradioApiUrlForVoice?: string) => {
+        set({ gradioApiUrlForVoice: getValidString(gradioApiUrlForVoice, getDefaultSettingsState().gradioApiUrlForVoice) })
+      },
+      setGradioApiUrlForSound: (gradioApiUrlForSound?: string) => {
+        set({ gradioApiUrlForSound: getValidString(gradioApiUrlForSound, getDefaultSettingsState().gradioApiUrlForSound) })
+      },
+      setGradioApiUrlForMusic: (gradioApiUrlForMusic?: string) => {
+        set({ gradioApiUrlForMusic: getValidString(gradioApiUrlForMusic, getDefaultSettingsState().gradioApiUrlForMusic) })
+      },
+      /*
+      should we deprecate this? or rename to "default<something>"?
       setHuggingFaceModelForAssistant: (huggingFaceModelForAssistant?: string) => {
         set({ huggingFaceModelForAssistant: getValidString(huggingFaceModelForAssistant, getDefaultSettingsState().huggingFaceModelForAssistant) })
       },
@@ -317,24 +336,6 @@ export const useSettings = create<SettingsStore>()(
       },
       setHuggingFaceModelForMusic: (huggingFaceModelForMusic?: string) => {
         set({ huggingFaceModelForMusic: getValidString(huggingFaceModelForMusic, getDefaultSettingsState().huggingFaceModelForMusic) })
-      },
-      setGradioApiUrlForAssistant: (gradioApiUrlForAssistant?: string) => {
-        set({ gradioApiUrlForAssistant: getValidString(gradioApiUrlForAssistant, getDefaultSettingsState().gradioApiUrlForAssistant) })
-      },
-      setGradioApiUrlForImage: (gradioApiUrlForImage?: string) => {
-        set({ gradioApiUrlForImage: getValidString(gradioApiUrlForImage, getDefaultSettingsState().gradioApiUrlForImage) })
-      },
-      setGradioApiUrlForVideo: (gradioApiUrlForVideo?: string) => {
-        set({ gradioApiUrlForVideo: getValidString(gradioApiUrlForVideo, getDefaultSettingsState().gradioApiUrlForVideo) })
-      },
-      setGradioApiUrlForVoice: (gradioApiUrlForVoice?: string) => {
-        set({ gradioApiUrlForVoice: getValidString(gradioApiUrlForVoice, getDefaultSettingsState().gradioApiUrlForVoice) })
-      },
-      setGradioApiUrlForSound: (gradioApiUrlForSound?: string) => {
-        set({ gradioApiUrlForSound: getValidString(gradioApiUrlForSound, getDefaultSettingsState().gradioApiUrlForSound) })
-      },
-      setGradioApiUrlForMusic: (gradioApiUrlForMusic?: string) => {
-        set({ gradioApiUrlForMusic: getValidString(gradioApiUrlForMusic, getDefaultSettingsState().gradioApiUrlForMusic) })
       },
       setReplicateModelForImage: (replicateModelForImage?: string) => {
         set({ replicateModelForImage: getValidString(replicateModelForImage, getDefaultSettingsState().replicateModelForImage) })
@@ -489,6 +490,7 @@ export const useSettings = create<SettingsStore>()(
       setKitsAiModelForVoice: (kitsAiModelForVoice?: string) => {
         set({ kitsAiModelForVoice: getValidString(kitsAiModelForVoice, getDefaultSettingsState().kitsAiModelForVoice) })
       },
+      */
       getSettings: (): SettingsState => {
         const state = get()
         const defaultSettings = getDefaultSettingsState()
@@ -570,6 +572,15 @@ export const useSettings = create<SettingsStore>()(
           comfyWorkflowForVoice: state.comfyWorkflowForVoice || defaultSettings.comfyWorkflowForVoice,
           comfyWorkflowForSound: state.comfyWorkflowForSound || defaultSettings.comfyWorkflowForSound,
           comfyWorkflowForMusic: state.comfyWorkflowForMusic || defaultSettings.comfyWorkflowForMusic,
+          gradioApiUrlForAssistant: state.gradioApiUrlForAssistant || defaultSettings.gradioApiUrlForAssistant,
+          gradioApiUrlForImage: state.gradioApiUrlForImage || defaultSettings.gradioApiUrlForImage,
+          gradioApiUrlForVideo: state.gradioApiUrlForVideo || defaultSettings.gradioApiUrlForVideo,
+          gradioApiUrlForVoice: state.gradioApiUrlForVoice || defaultSettings.gradioApiUrlForVoice,
+          gradioApiUrlForSound: state.gradioApiUrlForSound || defaultSettings.gradioApiUrlForSound,
+          gradioApiUrlForMusic: state.gradioApiUrlForMusic || defaultSettings.gradioApiUrlForMusic,
+          
+          /*
+          should we deprecate this? or rename to "default<something>"?
           huggingFaceModelForAssistant: state.huggingFaceModelForAssistant || defaultSettings.huggingFaceModelForAssistant,
           huggingFaceModelForImage: state.huggingFaceModelForImage || defaultSettings.huggingFaceModelForImage,
           huggingFaceModelForImageDepth: state.huggingFaceModelForImageDepth || defaultSettings.huggingFaceModelForImageDepth,
@@ -582,12 +593,6 @@ export const useSettings = create<SettingsStore>()(
           huggingFaceModelForVoice: state.huggingFaceModelForVoice || defaultSettings.huggingFaceModelForVoice,
           huggingFaceModelForSound: state.huggingFaceModelForSound || defaultSettings.huggingFaceModelForSound,
           huggingFaceModelForMusic: state.huggingFaceModelForMusic || defaultSettings.huggingFaceModelForMusic,
-          gradioApiUrlForAssistant: state.gradioApiUrlForAssistant || defaultSettings.gradioApiUrlForAssistant,
-          gradioApiUrlForImage: state.gradioApiUrlForImage || defaultSettings.gradioApiUrlForImage,
-          gradioApiUrlForVideo: state.gradioApiUrlForVideo || defaultSettings.gradioApiUrlForVideo,
-          gradioApiUrlForVoice: state.gradioApiUrlForVoice || defaultSettings.gradioApiUrlForVoice,
-          gradioApiUrlForSound: state.gradioApiUrlForSound || defaultSettings.gradioApiUrlForSound,
-          gradioApiUrlForMusic: state.gradioApiUrlForMusic || defaultSettings.gradioApiUrlForMusic,
           replicateModelForImage: state.replicateModelForImage || defaultSettings.replicateModelForImage,
           replicateModelForImageDepth: state.replicateModelForImageDepth || defaultSettings.replicateModelForImageDepth,
           replicateModelForImageSegmentation: state.replicateModelForImageSegmentation || defaultSettings.replicateModelForImageSegmentation,
@@ -639,6 +644,7 @@ export const useSettings = create<SettingsStore>()(
           cohereModelForAssistant: state.cohereModelForAssistant || defaultSettings.cohereModelForAssistant,
           mistralAiModelForAssistant: state.mistralAiModelForAssistant || defaultSettings.mistralAiModelForAssistant,
           kitsAiModelForVoice: state.kitsAiModelForVoice || defaultSettings.kitsAiModelForVoice,
+          */
         }
       },
     }),
@@ -647,3 +653,7 @@ export const useSettings = create<SettingsStore>()(
     },
   ),
 )
+
+if (typeof window !== "undefined") {
+  (window as any).useSettings = useSettings
+}

@@ -84,27 +84,6 @@ export function getDefaultSettingsState(): SettingsState {
     comfyWorkflowForSound: "{}",
     comfyWorkflowForMusic: "{}",
   
-    // now how we prefix everything with "models"
-    // that's because it will be possible at some point to also
-    // call a space eg. spaces/openai/sora (this one is just a silly example, of course)
-    // "models/HuggingFaceH4/zephyr-7b-beta"
-    // "models/mistralai/Mixtral-8x7B-Instruct-v0.1",
-    huggingFaceModelForAssistant: "models/mistralai/Mixtral-8x7B-Instruct-v0.1",
-    huggingFaceModelForImage: "models/sd-community/sdxl-flash",
-    huggingFaceModelForImageDepth: "",
-    huggingFaceModelForImageSegmentation: "",
-    huggingFaceModelForImageUpscaling: "",
-
-    // huggingFaceModelForVideo: "spaces/multimodalart/hallo",
-    huggingFaceModelForVideo: "spaces/hpcai-tech/open-sora",
-    huggingFaceModelForVideoDepth: "",
-    huggingFaceModelForVideoSegmentation: "",
-    huggingFaceModelForVideoUpscaling: "",
-
-    huggingFaceModelForVoice: "",
-    huggingFaceModelForSound: "",
-    huggingFaceModelForMusic: "",
-  
     // those are not designed for Hugging Face specifically,
     // but to be compatible with any Gradio API URL that the
     // user would set manually (eg. running on localhost)
@@ -115,6 +94,30 @@ export function getDefaultSettingsState(): SettingsState {
     gradioApiUrlForSound: "",
     gradioApiUrlForMusic: "",
 
+    /******** should we deprecated all of those? or convert to defaults? ******
+     * 
+    // now how we prefix everything with "models"
+    // that's because it will be possible at some point to also
+    // call a space eg. spaces/openai/sora (this one is just a silly example, of course)
+    // "models/HuggingFaceH4/zephyr-7b-beta"
+    // "models/mistralai/Mixtral-8x7B-Instruct-v0.1",
+
+    huggingFaceModelForAssistant: "models/mistralai/Mixtral-8x7B-Instruct-v0.1",
+    huggingFaceModelForImage: "models/sd-community/sdxl-flash",
+    huggingFaceModelForImageDepth: "",
+    huggingFaceModelForImageSegmentation: "",
+    huggingFaceModelForImageUpscaling: "",
+
+    // huggingFaceModelForVideo: "spaces/jbilcke-hf/hallo-api",
+    huggingFaceModelForVideo: "spaces/hpcai-tech/open-sora",
+    huggingFaceModelForVideoDepth: "",
+    huggingFaceModelForVideoSegmentation: "",
+    huggingFaceModelForVideoUpscaling: "",
+
+    huggingFaceModelForVoice: "",
+    huggingFaceModelForSound: "",
+    huggingFaceModelForMusic: "",
+  
     replicateModelForImage: "chenxwh/sdxl-flash:001bb81139b01780380407b4106ac681df46108e002eafbeb9ccb2d8faca42e1",
     replicateModelForImageDepth: "",
     replicateModelForImageSegmentation: "",
@@ -184,6 +187,8 @@ export function getDefaultSettingsState(): SettingsState {
     kitsAiModelForVoice: "",
     cohereModelForAssistant: "command-r-plus",
     mistralAiModelForAssistant: "open-mixtral-8x22b"
+
+    */
   }
   return state
 }
