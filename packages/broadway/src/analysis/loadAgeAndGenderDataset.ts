@@ -19,7 +19,7 @@ const dirName = 'detection-of-age-and-gender'
 const fileName = 'baby-names-us-year-of-birth-full.csv'
 const storageFilePath = `${dirName}/${fileName}`
 
-const DEFAULT_DOWNLOAD_URL = `https://huggingface.co/datasets/jbilcke-hf/${dirName}/resolve/main/${fileName}?download=true`
+const DEFAULT_DOWNLOAD_URL = `https://clapper.app/datasets/${fileName}`
 
 // note: this takes about 140 Mb of memory
 // we store the dataset inside a big JSON in the IndexedDB
@@ -28,7 +28,7 @@ export async function loadAgeGenderNameStats(url = DEFAULT_DOWNLOAD_URL) : Promi
 
   if (typeof window !== "undefined") {
     try {
-      const fs = await require("indexeddb-fs")
+      const { default: fs } = await import("indexeddb-fs")
       const rawCacheContent = await fs.readFile(storageFilePath) as string
       const cacheObject = JSON.parse(rawCacheContent) as NameToStats
       if (Object.keys(cacheObject).length === 0) {
@@ -42,36 +42,43 @@ export async function loadAgeGenderNameStats(url = DEFAULT_DOWNLOAD_URL) : Promi
 
   let nameToStats = {} as NameToStats
 
+
   console.log(`downloading age and gender detection dataset from Hugging Face (jbilcke-hf/detection-of-age-and-gender)`)
-  
-  const res = await fetch(url)
-  const rawData = await res.text()
+  try {
 
-  rawData.split("\n").forEach(line => {
-    const [yearOfBirth, name, gender, numberOfBirths] = line.trim().split(",")
-    
-    const key = normalizeName(name)
+    const res = await fetch(url)
+    const rawData = await res.text()
 
-    if (!key) { return }
+    rawData.split("\n").forEach(line => {
+      const [yearOfBirth, name, gender, numberOfBirths] = line.trim().split(",")
+      
+      const key = normalizeName(name)
 
-    if (!nameToStats[key]) {
-      nameToStats[key] = []
-    }
-    nameToStats[key].push([
-      gender === "F" ? "female" : "male",
-      Number(numberOfBirths),
-      Number(yearOfBirth),
-    ])
+      if (!key) { return }
 
-    nameToStats[key].sort((a, b) => b[1] - a[1])
-  })
+      if (!nameToStats[key]) {
+        nameToStats[key] = []
+      }
+      nameToStats[key].push([
+        gender === "F" ? "female" : "male",
+        Number(numberOfBirths),
+        Number(yearOfBirth),
+      ])
+
+      nameToStats[key].sort((a, b) => b[1] - a[1])
+    })
+  } catch (err) {
+    console.error(`failed to fetch the dataset (${err})`)
+
+    return nameToStats
+  }
 
   if (typeof window !== "undefined") {
 
     console.log(`trying to save the dataset to the browser's IndexedDB for faster reload`)
 
     try {
-      const fs = await require("indexeddb-fs")
+      const { default: fs } = await import("indexeddb-fs")
       if (!await fs.isDirectory(dirName)) {
         await fs.createDirectory(dirName)
       }
