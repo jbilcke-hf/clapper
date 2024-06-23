@@ -1,24 +1,11 @@
 import * as THREE from "three"
-import { ClapProject, ClapScene, ClapSegment } from "@aitube/clap"
+import { ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { RenderingStrategy, SegmentResolver } from "./rendering"
-
-export type Track = {
-  id: number
-  name: string
-  isPreview: boolean
-  height: number
-  hue: number
-  occupied: boolean
-  visible: boolean
-}
-
-export type Tracks = Track[]
-
 
 export enum SegmentVisibility {
   // the segment is visible, and the user explicitly requested to render it before the others
@@ -42,7 +29,13 @@ export enum SegmentVisibility {
 // we could put things like a mouse hover or selected state in here
 // or simply large, recursive elements (like the scene)
 export type BrowserOnlySegmentData = {
+
+  // used to give more context to the LLM, so it can have the full text of the scene
   scene?: ClapScene
+
+  // use for convenience, for easily match the script editor with segments
+  startAtLine?: number
+  endAtLine?: number
 
   audioBuffer?: AudioBuffer
 
@@ -57,7 +50,7 @@ export type ContentSizeMetrics = {
   nbIdentifiedTracks: number
   contentWidth: number
   contentHeight: number
-  tracks: Tracks
+  tracks: ClapTracks
   cellWidth: number
   defaultCellHeight: number
   defaultSegmentDurationInSteps: number
@@ -77,7 +70,7 @@ export type TimelineStoreProjectState = {
   loadedSegments: ClapSegment[]
   visibleSegments: ClapSegment[]
   nbIdentifiedTracks: number
-  lineToDialogue: Record<number, ClapSegment>
+  lineNumberToMentionedSegments: Record<number, ClapSegment[]>
 
   isEmpty: boolean
   isLoading: boolean
@@ -87,7 +80,7 @@ export type TimelineStoreProjectState = {
   nbMaxTracks: number
   contentWidth: number
   contentHeight: number
-  tracks: Tracks
+  tracks: ClapTracks
   cellWidth: number
   defaultCellHeight: number
   defaultSegmentDurationInSteps: number

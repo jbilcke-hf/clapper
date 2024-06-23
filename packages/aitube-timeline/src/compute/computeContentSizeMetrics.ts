@@ -1,6 +1,6 @@
-import { ClapProject } from "@aitube/clap"
+import { ClapProject, ClapTracks } from "@aitube/clap"
 
-import { ContentSizeMetrics, Tracks } from "@/types/timeline"
+import { ContentSizeMetrics } from "@/types/timeline"
 
 import { computeCellHeight } from "./computeCellHeight"
 import { DEFAULT_COLUMNS_PER_SLICE, DEFAULT_DURATION_IN_MS_PER_STEP, DEFAULT_NB_TRACKS, NB_MAX_SHOTS, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants/grid"
@@ -13,7 +13,7 @@ export function computeContentSizeMetrics({
   totalDurationInMs,
 }: {
   clap?: ClapProject
-  tracks: Tracks
+  tracks: ClapTracks
   cellWidth: number
   defaultSegmentDurationInSteps: number
   totalDurationInMs: number
@@ -38,7 +38,7 @@ export function computeContentSizeMetrics({
   )
   
   let contentHeight = 0
-  const newTracks: Tracks = tracks.map(track => {
+  const newTracks: ClapTracks = tracks.map(track => {
     contentHeight += computeCellHeight({
       trackNumber: track.id,
       tracks,

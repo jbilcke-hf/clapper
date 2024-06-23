@@ -14,5 +14,6 @@ export {
 export {
   baseClapSegmentCategoryHues,
   pastel,
-  DEFAULT_THEMES
+  DEFAULT_THEMES,
+  leftBarTrackScaleWidth
 } from "./themes"

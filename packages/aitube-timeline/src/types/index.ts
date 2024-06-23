@@ -4,8 +4,6 @@ export {
 } from "./grid"
 
 export {
-  Track,
-  Tracks,
   SegmentVisibility,
   BrowserOnlySegmentData,
   RuntimeSegment,
