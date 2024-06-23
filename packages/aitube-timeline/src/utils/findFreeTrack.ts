@@ -1,5 +1,6 @@
-import { DEFAULT_NB_TRACKS } from "@/constants"
 import { ClapSegment, isValidNumber } from "@aitube/clap"
+
+import { DEFAULT_NB_TRACKS } from "@/constants"
 
 // search in an array of segment for the first available track, within a given range
 export function findFreeTrack({

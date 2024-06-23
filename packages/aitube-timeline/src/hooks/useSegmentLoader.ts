@@ -126,7 +126,8 @@ export const useSegmentLoader = ({
     // we actually don't use the camera.zoom anymore, so..
 
     const securityMarginInCellStepCount =
-      // this is useful for horizontal  scroll only
+      // note: I've try to multiply this thing, but this didn't really solve
+      // the blank grid flash issue
       maxPossibleNumberOfVisibleHorizontalCells
       +
       // if the camera is already zoomed-out a lot, it means we only need

@@ -1,6 +1,5 @@
 import { ClapSegmentColorScheme } from "@/types"
-import { Track } from "@/types/timeline"
-import { ClapSegment } from "@aitube/clap"
+import { ClapSegment, ClapTrack } from "@aitube/clap"
 
 export type SpecializedCellProps = {
   segment: ClapSegment
@@ -14,5 +13,5 @@ export type SpecializedCellProps = {
   widthInPx: number
   widthInPxAfterZoom: number
   isResizing: boolean
-  track: Track
+  track: ClapTrack
 }

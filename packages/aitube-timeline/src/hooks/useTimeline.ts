@@ -1,8 +1,8 @@
 import { create } from "zustand"
 import * as THREE from "three"
-import { ClapOutputType, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, isValidNumber, newClap, serializeClap } from "@aitube/clap"
+import { ClapOutputType, ClapProject, ClapSceneEvent, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, isValidNumber, newClap, serializeClap, ClapTrack, ClapTracks } from "@aitube/clap"
 
-import { RuntimeSegment, TimelineStore, Tracks } from "@/types/timeline"
+import { RuntimeSegment, TimelineStore } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { removeFinalVideos } from "@/utils/removeFinalVideos"
@@ -41,8 +41,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     set({ isLoading: true })
 
-    // console.log(`useTimeline: setting the clap to`, clap)
-
     // we remove the big/long video
     const segments = removeFinalVideos(clap) as RuntimeSegment[]
 
@@ -57,7 +55,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     let idCollisionDetector = new Set<string>()
 
-    let tracks: Tracks = []
+    let tracks: ClapTracks = []
 
     let defaultSegmentDurationInSteps = get().defaultSegmentDurationInSteps
  
@@ -88,45 +86,41 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       defaultSegmentLengthInPixels / defaultMediaRatio
     )
 
-    // let's trust developers for respecting this
-    // otherwise we could use the following big for loop to do this
-    let totalDurationInMs = Math.max(0, clap.meta.durationInMs || 0)
+    const lineNumberToMentionedSegments: Record<number, ClapSegment[]> = {}
 
-    const lineToDialogue: Record<number, ClapSegment> = {}
-
-    for (const s of segments) {
+    for (const segment of segments) {
       
       // TODO: move this idCollision detector into the state,
       // so that we can use it later?
-      if (idCollisionDetector.has(s.id)) {
-        console.log(`collision detected! there is already a segment with id ${s.id}`)
+      if (idCollisionDetector.has(segment.id)) {
+        console.log(`collision detected! there is already a segment with id ${segment.id}`)
         continue
       }
 
-      if (s.category === ClapSegmentCategory.DIALOGUE || s.category === ClapSegmentCategory.ACTION) {
-        const scene = clap.scenes.find(({ id }) => id === s.sceneId)
-        if (scene) {
-
-          // we attach the scene to the segment
-          s.scene = scene
-
-          for (let lineNumber = scene.startAtLine; lineNumber < scene.endAtLine; lineNumber++) {
-            lineToDialogue[lineNumber] = s
+      const isSegmentDirectlyMentionedInTheScript = segment.category === ClapSegmentCategory.DIALOGUE || segment.category === ClapSegmentCategory.ACTION
+      
+      if (isSegmentDirectlyMentionedInTheScript) {
+        for (let i = segment.startTimeInLines; i <= segment.endTimeInLines; i++) {
+          // we only add the segment if it is not already in the map
+          let existingArray: ClapSegment[] = lineNumberToMentionedSegments[i] || []
+          if (!existingArray.find(s => s.id === segment.id)) {
+            existingArray.push(segment)
           }
+          lineNumberToMentionedSegments[i] = existingArray
         }
       }
 
-      idCollisionDetector.add(s.id)
+      idCollisionDetector.add(segment.id)
 
-      if (!tracks[s.track]) {
+      if (!tracks[segment.track]) {
         const isPreview =
-          s.category === ClapSegmentCategory.STORYBOARD ||
-          s.category === ClapSegmentCategory.VIDEO
+        segment.category === ClapSegmentCategory.STORYBOARD ||
+          segment.category === ClapSegmentCategory.VIDEO
 
-        tracks[s.track] = {
-          id: s.track,
+        tracks[segment.track] = {
+          id: segment.track,
           // name: `Track ${s.track}`,
-          name: `${s.category}`,
+          name: `${segment.category}`,
           isPreview,
           height:
             isPreview
@@ -138,10 +132,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         }
       } else {
         
-        const track = tracks[s.track]
-        const categories = track.name.split(",").map(x => x.trim())
-        if (!categories.includes(s.category)) {
-          tracks[s.track].name = "(misc)"
+        const track = tracks[segment.track]
+        const categories: string[] = track.name.split(",").map((x: string) => x.trim())
+        if (!categories.includes(segment.category)) {
+          tracks[segment.track].name = "(misc)"
 
           /*
           if (categories.length < 2) {
@@ -155,8 +149,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         
       }
 
-      if (s.outputType === ClapOutputType.AUDIO) {
-        const rs = s as RuntimeSegment
+      if (segment.outputType === ClapOutputType.AUDIO) {
+        const rs = segment as RuntimeSegment
         if (rs.outputType === ClapOutputType.AUDIO) {
           try {
             rs.audioBuffer = await getAudioBuffer(rs.assetUrl)
@@ -167,6 +161,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       }
     }
 
+
+   // ---------- REPAIR THE TRACKS ---------------
     for (let id = 0; id < tracks.length; id++) {
       if (!tracks[id]) {
         tracks[id] = {
@@ -183,11 +179,23 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     const finalVideo = getFinalVideo(clap)
     
+    let totalDurationInMs = clap.meta.durationInMs
+    let totalNumberOfLines = clap.meta.screenplay.split('\n').length
+
+    console.log("totalNumberOfLines = " + totalNumberOfLines)
+
     const isEmpty = segments.length === 0
 
-    clap.meta.durationInMs = totalDurationInMs
-
-    clap.meta.screenplay = clap.scenes.reduce((acc, { sequenceFullText }) => `${acc}\n${sequenceFullText}`, '')
+    // ---------- REPAIR THE LINE-2-SEGMENT DICTIONARY ---------------
+    let previousValue: ClapSegment[] = []
+    // we aren't finished yet: the lineNumberToMentionedSegments will be missing some entries
+    for (let i = 1; i <= totalNumberOfLines; i++) {
+      if (!Array.isArray(lineNumberToMentionedSegments[i])) {
+        lineNumberToMentionedSegments[i] = previousValue
+      } else {
+        previousValue = lineNumberToMentionedSegments[i]
+      }
+    }
 
     set({
       clap,
@@ -196,7 +204,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       visibleSegments: [],
       segmentsChanged: 1,
       totalDurationInMs,
-      lineToDialogue,
+      lineNumberToMentionedSegments,
 
       isEmpty,
       isLoading: false,

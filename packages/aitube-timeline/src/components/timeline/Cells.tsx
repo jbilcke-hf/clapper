@@ -15,7 +15,7 @@ export function Cells() {
   //
   // another solution can also consist in rendering more hidden cells,
   // to avoid having to re-compute
-  const refreshRateInMs = 500
+  const refreshRateInMs = 100
 
   const contentHeight = useTimeline(s => s.contentHeight)
 

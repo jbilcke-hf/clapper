@@ -1,4 +1,4 @@
-import { Tracks } from "@/types/timeline"
+import { ClapTracks } from "@aitube/clap"
 
 export function computeCellHeight({
   tracks,
@@ -6,7 +6,7 @@ export function computeCellHeight({
   defaultCellHeight,
   defaultPreviewHeight
 }: {
-  tracks: Tracks
+  tracks: ClapTracks
   trackNumber: number
   defaultCellHeight: number
   defaultPreviewHeight: number

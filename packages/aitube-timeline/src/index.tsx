@@ -24,7 +24,8 @@ export {
   baseClapSegmentCategoryHues,
   pastel,
   DEFAULT_THEMES,
-  segmentVisibilityPriority
+  segmentVisibilityPriority,
+  leftBarTrackScaleWidth
 } from "./constants"
 
 export {
@@ -61,8 +62,6 @@ export {
 } from "./utils"
 
 export {
-  Track,
-  Tracks,
   SegmentVisibility,
   BrowserOnlySegmentData,
   RuntimeSegment,
