@@ -7,10 +7,10 @@ import { Separator } from "../Separator"
 
 export function Counter({
   valueInMs,
-  color = "text-gray-300",
+  color
 }: {
   valueInMs: number
-  color?: string
+  color: string
 }) {
 
   const { hours, minutes, seconds, milliseconds } = splitElapsedTime(valueInMs)
@@ -37,14 +37,13 @@ export function Counter({
           // so we want to avoid that 
           `select-none`
         )}>
-        <span className={color}>{
+        <span style={{ color }}>{
           zeroPad(hours || 0)
-        }</span><Separator className={color} /><span className={color}>{
+        }</span><Separator color={color} /><span  style={{ color }}>{
           zeroPad(minutes || 0)
-        }</span><Separator className={color} /><span className={color}>{
+        }</span><Separator color={color} /><span  style={{ color }}>{
           zeroPad(seconds || 0)
-        }</span><Separator className={color} /><span className={cn(
-          color,
+        }</span><Separator color={color} /><span className={cn(
 
           // to add some flair we reduce the opacity of the last milliseconds,
           // since this element is less important (it moves too fast to be really meaningful)
@@ -52,7 +51,8 @@ export function Counter({
 
           // the milliseconds are also reduced of 1 degree in size
           `text-lg @md:text-xl @lg:text-xl @xl:text-2xl @2xl:text-3xl`
-          )}>{
+          )}
+          style={{ color }}>{
           zeroPad(Math.min(999, milliseconds || 0)).slice(0, 2)
         }</span>
       </div>

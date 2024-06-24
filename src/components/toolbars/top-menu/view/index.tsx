@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/menubar"
 import { useFullscreenStatus } from "@/lib/hooks"
 import { useUI } from "@/controllers/ui"
+import { ThemeList } from "../lists/ThemeList"
 
 export function TopMenuView() {
   const [isFullscreen, setFullscreen, ref] = useFullscreenStatus()
@@ -34,6 +35,9 @@ export function TopMenuView() {
 
   const showVideoPlayer = useUI((s) => s.showVideoPlayer)
   const setShowVideoPlayer = useUI((s) => s.setShowVideoPlayer)
+
+  const followCursor = useUI((s) => s.followCursor)
+  const setFollowCursor = useUI((s) => s.setFollowCursor)
 
   const hasBetaAccess = useUI(s => s.hasBetaAccess)
 
@@ -80,17 +84,25 @@ export function TopMenuView() {
           }}
           >Show asset explorer</MenubarCheckboxItem>
       */}
-        {hasBetaAccess &&
+      <MenubarCheckboxItem
+        checked={showAssistant}
+        onClick={(e) => {
+          setShowAssistant(!showAssistant)
+          e.stopPropagation()
+          e.preventDefault()
+          return false
+        }}
+        >Show assistant</MenubarCheckboxItem>
+
         <MenubarCheckboxItem
-          checked={showAssistant}
+          checked={followCursor}
           onClick={(e) => {
-            setShowAssistant(!showAssistant)
+            setFollowCursor(!followCursor)
             e.stopPropagation()
             e.preventDefault()
             return false
           }}
-          >Show assistant</MenubarCheckboxItem>
-        }
+          >Follow cursor during playback</MenubarCheckboxItem>
         {/*
         <MenubarCheckboxItem
           checked={showVideoPlayer}
@@ -102,6 +114,7 @@ export function TopMenuView() {
           }}
           >Show video player</MenubarCheckboxItem>
           */}
+        <ThemeList />
       </MenubarContent>
     </MenubarMenu>
   )

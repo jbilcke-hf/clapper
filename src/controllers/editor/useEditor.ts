@@ -7,10 +7,13 @@ import { EditorStore, ScrollData } from "./types"
 import { getDefaultEditorState } from "./getDefaultEditorState"
 import { ClapProject, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 import { TimelineStore, useTimeline, leftBarTrackScaleWidth } from "@aitube/timeline"
+import { Monaco } from "@monaco-editor/react"
 
 export const useEditor = create<EditorStore>((set, get) => ({
   ...getDefaultEditorState(),
+  setMonaco: (monaco?: Monaco) => { set({ monaco}) },
   setEditor: (editor?: MonacoEditor.editor.IStandaloneCodeEditor) => { set({ editor }) },
+  setMouseIsInside: (mouseIsInside: boolean) => { set({ mouseIsInside }) },
   loadDraftFromClap: (clap: ClapProject) => {
     const { setDraft } = get()
 
@@ -36,13 +39,13 @@ export const useEditor = create<EditorStore>((set, get) => ({
     scrollLeft,
     scrollTop,
     scrollWidth
-  }: ScrollData, ignoreChange = false) => {
+  }: ScrollData) => {
     const { 
       scrollHeight: previousScrollHeight,
       scrollLeft: previousScrollLeft,
       scrollTop: previousScrollTop,
       scrollWidth: previousScrollWidth,
-      scrollChanges
+      mouseIsInside
     } = get()
 
     // skip if nothing changed
@@ -60,29 +63,36 @@ export const useEditor = create<EditorStore>((set, get) => ({
       scrollLeft,
       scrollTop,
       scrollWidth,
-
-      // optionally mark the state as stale
-      scrollChanges: scrollChanges + (ignoreChange ? 0 : 1),
     })
 
-    const timeline: TimelineStore = useTimeline.getState()
-    if (!timeline.timelineCamera || !timeline.timelineControls) { return }
+    // if the scroll event happened while we where inside the editor,
+    // then we need to dispatch the it
+    if (mouseIsInside) {
 
-    const { editor } = get()
-  
-    const scrollRatio = scrollTop / scrollHeight
-    const scrollX = leftBarTrackScaleWidth + scrollRatio * timeline.contentWidth
-    console.log({
-      scrollHeight,
-      scrollLeft,
-      scrollTop,
-      scrollWidth,
-      scrollRatio,
-      scrollX
-    })
-    useTimeline.setState({ scrollX })
-    timeline.timelineCamera.position.setX(scrollX)
-    timeline.timelineControls.target.setX(scrollX)
+      const timeline: TimelineStore = useTimeline.getState()
+      if (!timeline.timelineCamera || !timeline.timelineControls) { return }
+
+      const { editor } = get()
+    
+      const scrollRatio = scrollTop / scrollHeight
+      const scrollX = Math.round(leftBarTrackScaleWidth + scrollRatio * timeline.contentWidth)
+      
+      /*console.log({
+        scrollHeight,
+        scrollLeft,
+        scrollTop,
+        scrollWidth,
+        scrollRatio,
+        scrollX
+      })
+       */
+
+      if (useTimeline.getState().scrolX !== scrollX) {
+        useTimeline.setState({ scrollX })
+        timeline.timelineCamera.position.setX(scrollX)
+        timeline.timelineControls.target.setX(scrollX)
+      }
+    }
   },
   jumpCursorOnLineClick: (line?: number) => {
     if (typeof line !== "number") { return }

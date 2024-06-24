@@ -4,6 +4,7 @@ import { UIState } from "./types"
 export function getDefaultUIState(): UIState {
   const state: UIState = {
     hasBetaAccess: false,
+    themeName: "backstage",
     showApiKeys: false,
     showSettings: SettingsCategory.NONE,
     showImporter: false,
@@ -13,6 +14,7 @@ export function getDefaultUIState(): UIState {
     showAssistant: false,
     showFPS: false,
     followCursor: false,
+    editorFontSize: 12,
   }
 
   return state

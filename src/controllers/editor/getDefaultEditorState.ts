@@ -2,11 +2,12 @@ import { EditorState } from "./types"
 
 export function getDefaultEditorState(): EditorState {
   const state: EditorState = {
+    monaco: undefined,
     editor: undefined,
+    mouseIsInside: false,
     draft: "",
     lineNumberToMentionedSegments: {},
 
-    scrollChanges: 0,
     scrollHeight: 0,
     scrollLeft: 0,
     scrollTop: 0,

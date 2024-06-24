@@ -1,38 +1,18 @@
 import React, { useEffect, useState } from "react"
 import MonacoEditor from "monaco-editor"
-import Editor from "@monaco-editor/react"
-import { DEFAULT_DURATION_IN_MS_PER_STEP, TimelineStore, useTimeline } from "@aitube/timeline"
+import Editor, { Monaco } from "@monaco-editor/react"
+import { DEFAULT_DURATION_IN_MS_PER_STEP, leftBarTrackScaleWidth, TimelineStore, useTimeline } from "@aitube/timeline"
 
 import { useEditor } from "@/controllers/editor/useEditor"
 import { useRenderer } from "@/controllers/renderer"
+import { useUI } from "@/controllers/ui"
+import { useTheme } from "@/controllers/ui/useTheme"
+import { themes } from "@/controllers/ui/theme"
 
-const beforeMount = ({ editor }: { editor: typeof MonacoEditor.editor }) => {
-  // Define a custom theme with the provided color palette
-  editor.defineTheme('customTheme', {
-   base: 'vs-dark', // Base theme (you can change to vs for a lighter theme if preferred)
-   inherit: true, // Inherit the default rules
-   rules: [
-     // You can define token-specific styles here if needed
-   ],
-   colors: {
-     'editor.background': '#292524', // Editor background color (given)
-     'editorCursor.foreground': '#f5f5f4', // Cursor color
-     'editor.lineHighlightBackground': '#44403c', // Highlighted line color
-     'editorLineNumber.foreground': '#78716c', // Line Numbers color
-     'editor.selectionBackground': '#44403c', // Selection color
-     'editor.foreground': '#d6d3d1', // Main text color
-     'editorIndentGuide.background': '#78716c', // Indent guides color
-     'editorIndentGuide.activeBackground': '#a8a29e', // Active indent guides color
-     'editorWhitespace.foreground': '#a8a29e', // Whitespace symbols color
-     // Add more color overrides if needed here
-   },
- })
-
- // Apply the custom theme immediately after defining it
- editor.setTheme('customTheme')
-}
+import "./styles.css"
 
 export function ScriptEditor() {
+
   const editor = useEditor(s => s.editor)
   const setEditor = useEditor(s => s.setEditor)
   const draft = useEditor(s => s.draft)
@@ -45,99 +25,46 @@ export function ScriptEditor() {
   const publishDraftToTimeline = useEditor(s => s.publishDraftToTimeline)
 
   const clap = useTimeline((s: TimelineStore) => s.clap)
-  const cursorTimestampAtInMs = useTimeline(s => s.cursorTimestampAtInMs)
-  const totalDurationInMs = useTimeline(s => s.totalDurationInMs)
-  const scrollX = useTimeline(s => s.scrollX)
-  const contentWidth = useTimeline(s => s.contentWidth)
-  
+
   useEffect(() => { loadDraftFromClap(clap) }, [clap])
 
-  const scrollTop = useEditor(s => s.scrollTop)
-  const scrollLeft = useEditor(s => s.scrollLeft)
-  const scrollWidth = useEditor(s => s.scrollWidth)
   const scrollHeight = useEditor(s => s.scrollHeight)
 
-  /*
-  const script = useTimeline(state => state.script)
-
-  const isPlaying = useApp(state => state.isPlaying)
-  const setCursorAt = useApp((state) => state.setCursorAt)
-  const [scriptContent, setScriptContent] = useState("")
-  */
-
-  const currentSegment = useRenderer(s => s.currentSegment)
-  
-  const activeStartTimeInLines = currentSegment?.startTimeInLines
+  const scrollX = useTimeline(s => s.scrollX)
+  const contentWidth = useTimeline(s => s.contentWidth)
+  const horizontalTimelineRatio = Math.round(
+    (((scrollX - leftBarTrackScaleWidth) / contentWidth) * scrollHeight)
+    - 31
+  )
 
   useEffect(() => {
-    console.log("activeStartTimeInLines:", activeStartTimeInLines)
+    if (!editor) { return }
+    // let's do something basic for now: we disable the
+    // timeline-to-editor scroll sync when the user is
+    // hovering the editor
+    if (useEditor.getState().mouseIsInside) { return }
 
-  }, [activeStartTimeInLines])
-
-  useEffect(() => {
-    console.log("scrollX:", scrollX)
-
-  }, [scrollX])
-
-  /*
-  const activeSceneLineNumber = (activeScene?.startAtLine || 0)
-  */
-
-/*
-  const stepsToPreviews = useApp(state => state.stepsToPreviews)
-
-  const screenplayScroll = useInterface(state => state.screenplayScroll)
-  const setScreenplayScroll = useInterface(state => state.setScreenplayScroll)
-
-  const timelineScroll = useInterface(state => state.timelineScroll)
-
-  const leftmostVisibleScene = stepsToPreviews[timelineScroll.scrollLeftInSteps]?.scene
-
-  // console.log("linesToPreview:", linesToPreviews)
-
-  */
- /*
-  useEffect(() => {
-    if (editor && leftmostVisibleScene) {
-      // console.log("ScriptEditor: timelineScrollLeftInStep changed to scene " + leftmostVisibleScene.line)
-
-      // in Monaco editor the line index doesn't start at 0 but 1
-      // however, it appears that we are already good, and the 1 is just here as a backup
-      const lineNumber = (leftmostVisibleScene.startAtLine) || 1
-      editor.revealLineInCenter(lineNumber)
+     if (horizontalTimelineRatio !== editor.getScrollTop()) {
+      editor.setScrollPosition({ scrollTop: horizontalTimelineRatio })
     }
-  }, [editor, leftmostVisibleScene])
-  */
+    // various things we can do here!
+    // move the scroll:
+    // editor.setScrollPosition({ scrollTop: horizontalTimelineRatio })
+    
+    // Scroll to a specific line:
+    // editor.revealLine(15);
 
+    // Scroll to a specific line so it ends in the center of the editor:
+    // editor.revealLineInCenter(15);
 
-  /*
-  useEffect(() => {
-    if (editor && activeSceneLineNumber) {
-      // console.log("useEffect:", activeSceneLineNumber)
+    // Move current active line:
+    // editor.setPosition({column: 1, lineNumber: 3});
 
-      // in Monaco editor the line index doesn't start at 0 but 1
-      // however, it appears that we are already good, and the 1 is just here as a backup
-      const lineNumber = activeSceneLineNumber || 1
-      const column = 1
+    // => I think we should restore the "follow cursor during playback"
+    // feature, because this is doable.
 
-      // editor.revealRangeInCenter
+  }, [editor, horizontalTimelineRatio])
 
-      // IMPORTANT: we only alter the position if we are currently NOT focused
-      // that way we don't annoy the user while they are clicking/typing
-      if (!editor.hasTextFocus()) {
-
-        // scroll to a specific line
-        // this will be used whenever the horizontal timeline scrolls to somewhere
-        // (to avoid infinite loops, we should do this only if the timeline scroll event
-        // is originating from the timeline and not the screenplay reader)
-        editor.revealLineInCenter(lineNumber)
-
-        // console.log(`editor.setPosition({ lineNumber: ${lineNumber}, column: ${column} })`)
-        editor.setPosition({ lineNumber, column })
-      }
-    }
-  }, [editor, activeSceneLineNumber])
-  */
   const onMount = (editor: MonacoEditor.editor.IStandaloneCodeEditor) => {
     const model = editor.getModel()
     if (!model) { return }
@@ -149,10 +76,7 @@ export function ScriptEditor() {
     })
 
     editor.onDidScrollChange(({ scrollTop, scrollLeft, scrollWidth, scrollHeight }: MonacoEditor.IScrollEvent) => {
-      onDidScrollChange(
-        { scrollTop, scrollLeft, scrollWidth, scrollHeight },
-        true // <- set to true to ignore the change and avoid an infinite loop
-      )
+      onDidScrollChange({ scrollTop, scrollLeft, scrollWidth, scrollHeight })
     })
 
     // as an optimization we can use this later, for surgical edits,
@@ -170,18 +94,59 @@ export function ScriptEditor() {
    // setDraft(plainText || "")
   }
 
+  const setMonaco = useEditor(s => s.setMonaco)
+  const setMouseIsInside = useEditor(s => s.setMouseIsInside)
+  const themeName = useUI(s => s.themeName)
+  const editorFontSize = useUI(s => s.editorFontSize)
+
+  const beforeMount = (monaco: Monaco) => {
+    setMonaco(monaco)
+
+    // create our themes
+    for (const theme of Object.values(themes)) {
+      // console.log("loading editor theme:", theme)
+      // Define a custom theme with the provided color palette
+      monaco.editor.defineTheme(theme.id, {
+       base: 'vs-dark', // Base theme (you can change to vs for a lighter theme if preferred)
+       inherit: true, // Inherit the default rules
+       rules: [
+         // You can define token-specific styles here if needed
+       ],
+       colors: {
+         'editor.background': theme.editorBgColor || theme.defaultBgColor || '#000000', // Editor background color (given)
+         'editorCursor.foreground': '#f5f5f4', // Cursor color
+         'editor.lineHighlightBackground': '#44403c', // Highlighted line color
+         'editorLineNumber.foreground': '#78716c', // Line Numbers color
+         'editor.selectionBackground': '#44403c', // Selection color
+         'editor.foreground': '#d6d3d1', // Main text color
+         'editorIndentGuide.background': '#78716c', // Indent guides color
+         'editorIndentGuide.activeBackground': '#a8a29e', // Active indent guides color
+         'editorWhitespace.foreground': '#a8a29e', // Whitespace symbols color
+         // Add more color overrides if needed here
+       },
+     })
+    }
+  
+    // Apply the custom theme immediately after defining it
+    monaco.editor.setTheme(themes.backstage.id)
+  }
+
   return (
-    <div className="h-full">
+    <div
+      className="h-full"
+      onMouseEnter={() => setMouseIsInside(true)}
+     onMouseLeave={() => setMouseIsInside(false)}
+    >
       <Editor
         height="100%"
         defaultLanguage="plaintext"
         defaultValue={draft}
         beforeMount={beforeMount}
+        theme={themeName}
         onMount={onMount}
         onChange={onChange}
-        theme="customTheme"
         options={{
-          fontSize: 12
+          fontSize: editorFontSize
         }}
       />
     </div>

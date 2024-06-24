@@ -9,8 +9,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 
 import { ActivitySpinner } from "../ActivitySpinner"
 import { cn } from "@aitube/timeline"
+import { useTheme } from "@/controllers/ui/useTheme"
 
 export function TopMenuLogo() {
+  const theme = useTheme()
   const isPaused = useResolver(s => s.isPaused)
   const togglePause = useResolver(s => s.togglePause)
   const isBusyResolving = useResolver(s => s.isBusyResolving)
@@ -31,6 +33,8 @@ export function TopMenuLogo() {
   // otherwise users get confused, thinking it didn't work
   // and they might click multiple times
   const isDisabled = isBusyResolving && isPaused
+
+  const color = theme.logoColor || theme.defaultPrimaryColor || ""
 
   return (
     <Tooltip>
@@ -53,27 +57,28 @@ export function TopMenuLogo() {
              ">
               <ActivitySpinner
                 isBusy={isBusyResolving}
-                className="absolute opacity-100 group-hover:opacity-0 w-4 h-4 text-yellow-400"
+                className="absolute opacity-100 group-hover:opacity-0 w-4 h-4"
+                color={ color }
               />
               {isPaused
 
               // imho using the original "logo" (sort of) is a bit more elegant than a simple play button
-              // ? <PiPlayFill className="absolute opacity-0 group-hover:opacity-100 text-yellow-400" />
-              ? <BiSolidMoviePlay className="absolute opacity-0 group-hover:opacity-100 text-yellow-400" />
+              // ? <PiPlayFill className="absolute opacity-0 group-hover:opacity-100" style={{ color }} />
+              ? <BiSolidMoviePlay className="absolute opacity-0 group-hover:opacity-100" style={{ color }} />
 
-              : <PiPauseFill className="absolute opacity-0 group-hover:opacity-100 text-yellow-400" />
+              : <PiPauseFill className="absolute opacity-0 group-hover:opacity-100" style={{ color }} />
 
               }
             </div>
           : <BiSolidMoviePlay
-              className=" text-yellow-400"
+              style={{ color }}
             />}
           <span className="
           pr-2
           scale-[88%]
-          text-yellow-400
           text-lg font-bold tracking-[-0.03em]
-          ">Clapper</span>
+          "
+          style={{ color }}>Clapper</span>
         </div>
       </TooltipTrigger>
       <TooltipContent>
