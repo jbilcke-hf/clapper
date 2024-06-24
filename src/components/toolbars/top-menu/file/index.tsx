@@ -29,6 +29,7 @@ export function TopMenuFile() {
   const openClapUrl = useIO(s => s.openClapUrl)
   const saveClap = useIO(s => s.saveClap)
   const saveVideoFile = useIO(s => s.saveVideoFile)
+  const saveZipFile = useIO(s => s.saveZipFile)
   const saveKdenline = useIO(s => s.saveKdenline)
 
   useEffect(() => {
@@ -72,6 +73,13 @@ export function TopMenuFile() {
           saveVideoFile()
         }}>
           Export project to MP4
+        </MenubarItem>
+        <MenubarSeparator />
+        <MenubarItem
+        onClick={() => {
+          saveZipFile()
+        }}>
+          Export project to .zip
         </MenubarItem>
         <MenubarSeparator />
         {/*

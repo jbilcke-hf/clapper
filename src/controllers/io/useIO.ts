@@ -1,10 +1,11 @@
 "use client"
 
-import { ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType, newSegment, parseClap, serializeClap } from "@aitube/clap"
+import { ClapAssetSource, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType, newSegment, parseClap, serializeClap } from "@aitube/clap"
 import { TimelineStore, useTimeline } from "@aitube/timeline"
 import { parseScriptToClap } from "@aitube/broadway"
 import { create } from "zustand"
 import { mltToXml } from "mlt-xml"
+import * as fflate from 'fflate'
 
 import { getDefaultIOState } from "./getDefaultIOState"
 import { IOStore } from "./types"
@@ -15,6 +16,7 @@ import { useTasks } from "@/components/tasks/useTasks"
 import { Task, TaskCategory, TaskVisibility } from "@/components/tasks/types"
 import { parseFileName } from "./parseFileName"
 import { useRenderer } from "../renderer"
+import { base64DataUriToUint8Array } from "@/lib/utils/base64DataUriToUint8Array"
 // import { Entry, Project } from "@/lib/kdenlive"
 // import { formatDuration } from "@/lib/utils/formatDuration"
 
@@ -326,6 +328,75 @@ export const useIO = create<IOStore>((set, get) => ({
     
     saveAnyFile(videoBlob, "my_project.mp4")
 
+  },
+
+  saveZipFile: async () => {
+    const { saveAnyFile } = get()
+    console.log(`exporting project to ZIP..`)
+
+    const task = useTasks.getState().add({
+      category: TaskCategory.EXPORT,
+      visibility: TaskVisibility.BLOCKER,
+      initialMessage:  `Exporting project to ZIP..`,
+      successMessage: `Successfully exported the project!`,
+      value: 0,
+    })
+
+    const clap: ClapProject = useTimeline.getState().clap
+
+    const segments: ClapSegment[] = useTimeline.getState().segments
+
+    let files: fflate.AsyncZippable = {}
+
+    files['screenplay.txt'] = fflate.strToU8(clap.meta.screenplay)
+    
+    files['meta.json'] = fflate.strToU8(JSON.stringify(clap.meta, null, 2))
+
+
+    segments.forEach((segment, i) => {
+      const directory = `${segment.category}`.toLowerCase()
+      const prefix = `shot_${String(i).padStart(4, '0')}_`
+      let mimetype = `${segment.assetFileFormat || "unknown/unknown"}`
+      if (mimetype === "audio/mpeg") {
+        mimetype = "audio/mp3"
+      }
+      const format = `${mimetype.split("/").pop() || "unknown"}`.toLowerCase()
+      const filePath = `${directory}/${prefix}${segment.id}.${format}`
+      let assetUrl = segment.assetUrl || ""
+      let assetSourceType = segment.assetSourceType || ClapAssetSource.EMPTY
+
+      // we extract the base64 files
+      if (segment.assetUrl.startsWith("data:")) {
+        files[filePath] = [
+          // we don't compress assets since normally they already use
+          // some form of compression (PNG, JPEG, MP3, MP4 etc..)
+          base64DataUriToUint8Array(segment.assetUrl),
+          { level: 0 }
+        ]
+        assetUrl = filePath
+        assetSourceType = ClapAssetSource.PATH
+      }
+
+      // segment metadata
+      files[`segments/${prefix}${segment.id}.json`] = fflate.strToU8(JSON.stringify({
+        ...segment,
+        assetUrl,
+        assetSourceType
+      }, null, 2))
+    })
+
+
+    fflate.zip(files, {
+      // options
+    },
+    (error, zipFile) => {
+      task.setProgress({
+        message: "Saving to file..",
+        value: 90
+      })
+      saveAnyFile(new Blob([zipFile]), "my_project.zip")
+      task.success()
+    })
   },
 
   openMLT: async (file: File) => {
