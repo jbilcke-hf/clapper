@@ -10,11 +10,12 @@ import { useTheme } from "@/controllers/ui/useTheme"
 import { themes } from "@/controllers/ui/theme"
 
 import "./styles.css"
+import { ClapSegmentCategory } from "@aitube/clap"
 
 export function ScriptEditor() {
 
-  const editor = useEditor(s => s.editor)
-  const setEditor = useEditor(s => s.setEditor)
+  const standaloneCodeEditor = useEditor(s => s.standaloneCodeEditor)
+  const setStandaloneCodeEditor = useEditor(s => s.setStandaloneCodeEditor)
   const draft = useEditor(s => s.draft)
   const setDraft = useEditor(s => s.setDraft)
   const loadDraftFromClap = useEditor(s => s.loadDraftFromClap)
@@ -38,14 +39,14 @@ export function ScriptEditor() {
   )
 
   useEffect(() => {
-    if (!editor) { return }
+    if (!standaloneCodeEditor) { return }
     // let's do something basic for now: we disable the
     // timeline-to-editor scroll sync when the user is
     // hovering the editor
     if (useEditor.getState().mouseIsInside) { return }
 
-     if (horizontalTimelineRatio !== editor.getScrollTop()) {
-      editor.setScrollPosition({ scrollTop: horizontalTimelineRatio })
+     if (horizontalTimelineRatio !== standaloneCodeEditor.getScrollTop()) {
+      standaloneCodeEditor.setScrollPosition({ scrollTop: horizontalTimelineRatio })
     }
     // various things we can do here!
     // move the scroll:
@@ -63,27 +64,29 @@ export function ScriptEditor() {
     // => I think we should restore the "follow cursor during playback"
     // feature, because this is doable.
 
-  }, [editor, horizontalTimelineRatio])
+  }, [standaloneCodeEditor, horizontalTimelineRatio])
 
-  const onMount = (editor: MonacoEditor.editor.IStandaloneCodeEditor) => {
-    const model = editor.getModel()
-    if (!model) { return }
+  const onMount = (codeEditor: MonacoEditor.editor.IStandaloneCodeEditor) => {
+    const { textModel } = useEditor.getState()
+    if (!textModel) { return }
 
-    setEditor(editor)
+    codeEditor.setModel(textModel)
+    
+    setStandaloneCodeEditor(codeEditor)
 
-    editor.onMouseDown((e) => {
-      jumpCursorOnLineClick(editor.getPosition()?.lineNumber)
+    codeEditor.onMouseDown((e) => {
+      jumpCursorOnLineClick(codeEditor.getPosition()?.lineNumber)
     })
 
-    editor.onDidScrollChange(({ scrollTop, scrollLeft, scrollWidth, scrollHeight }: MonacoEditor.IScrollEvent) => {
+    codeEditor.onDidScrollChange(({ scrollTop, scrollLeft, scrollWidth, scrollHeight }: MonacoEditor.IScrollEvent) => {
       onDidScrollChange({ scrollTop, scrollLeft, scrollWidth, scrollHeight })
     })
 
     // as an optimization we can use this later, for surgical edits,
     // to perform real time updates of the timeline
 
-    model.onDidChangeContent((modelContentChangedEvent: MonacoEditor.editor.IModelContentChangedEvent) => {
-      // console.log("onDidChangeContent:")
+    textModel.onDidChangeContent((modelContentChangedEvent: MonacoEditor.editor.IModelContentChangedEvent) => {
+      console.log("onDidChangeContent:")
       for (const change of modelContentChangedEvent.changes) {
         // console.log(" - change:", change)
       }
@@ -95,6 +98,7 @@ export function ScriptEditor() {
   }
 
   const setMonaco = useEditor(s => s.setMonaco)
+  const setTextModel = useEditor(s => s.setTextModel)
   const setMouseIsInside = useEditor(s => s.setMouseIsInside)
   const themeName = useUI(s => s.themeName)
   const editorFontSize = useUI(s => s.editorFontSize)
@@ -128,19 +132,23 @@ export function ScriptEditor() {
     }
   
     // Apply the custom theme immediately after defining it
-    monaco.editor.setTheme(themes.backstage.id)
+    monaco.editor.setTheme(themes.backstage.id)  
+
+    const textModel: MonacoEditor.editor.ITextModel = monaco.editor.createModel(
+      draft,
+      "plaintext"
+    )
+    setTextModel(textModel)
   }
 
   return (
     <div
       className="h-full"
       onMouseEnter={() => setMouseIsInside(true)}
-     onMouseLeave={() => setMouseIsInside(false)}
+      onMouseLeave={() => setMouseIsInside(false)}
     >
       <Editor
         height="100%"
-        defaultLanguage="plaintext"
-        defaultValue={draft}
         beforeMount={beforeMount}
         theme={themeName}
         onMount={onMount}
