@@ -27,8 +27,10 @@ export const useUI = create<UIStore>()(
         useEditor.getState().monaco?.editor?.setTheme?.(theme.id)
 
         // update the timeline's theme
-        const style = document.getElementById("clap-timeline")?.style
-        if (style) { style.filter = theme.timelineFilter }
+        // this is an interesting "fast trial" mode to test color hues,
+        // but obviously we cannot use that in production
+        // const style = document.getElementById("clap-timeline")?.style
+        // if (style) { style.filter = theme.timelineFilter }
       },
       getTheme: () => {
         return themes[get().themeName] || themes.backstage
