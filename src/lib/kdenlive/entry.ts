@@ -1,5 +1,3 @@
-"use server"
-
 import { Producer } from "./producer"
 
 export class Entry {
