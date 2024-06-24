@@ -4,7 +4,7 @@ import { ClapAssetSource, ClapProject, ClapSegment, ClapSegmentCategory, ClapSeg
 import { TimelineStore, useTimeline } from "@aitube/timeline"
 import { parseScriptToClap } from "@aitube/broadway"
 import { create } from "zustand"
-import { mltToXml } from "mlt-xml"
+import { mltToXml, Multitrack, Playlist, Producer, Track, Tractor } from "mlt-xml"
 import * as fflate from 'fflate'
 
 import { getDefaultIOState } from "./getDefaultIOState"
@@ -17,8 +17,9 @@ import { Task, TaskCategory, TaskVisibility } from "@/components/tasks/types"
 import { parseFileName } from "./parseFileName"
 import { useRenderer } from "../renderer"
 import { base64DataUriToUint8Array } from "@/lib/utils/base64DataUriToUint8Array"
-// import { Entry, Project } from "@/lib/kdenlive"
-// import { formatDuration } from "@/lib/utils/formatDuration"
+
+import { formatDuration } from "@/lib/utils/formatDuration"
+import { ExportableSegment, formatSegmentForExport } from "@/lib/utils/formatSegmentForExport"
 
 
 export const useIO = create<IOStore>((set, get) => ({
@@ -331,7 +332,7 @@ export const useIO = create<IOStore>((set, get) => ({
   },
 
   saveZipFile: async () => {
-    const { saveAnyFile } = get()
+    const { saveAnyFile, generateMLT } = get()
     console.log(`exporting project to ZIP..`)
 
     const task = useTasks.getState().add({
@@ -342,31 +343,31 @@ export const useIO = create<IOStore>((set, get) => ({
       value: 0,
     })
 
-    const clap: ClapProject = useTimeline.getState().clap
-
-    const segments: ClapSegment[] = useTimeline.getState().segments
+    const timeline: TimelineStore = useTimeline.getState()
+    const { clap } = timeline
+    const segments: ExportableSegment[] = clap.segments
+      .map((segment, i) => formatSegmentForExport(segment, i))
+      .filter(({ isExportableToFile }) => isExportableToFile)
 
     let files: fflate.AsyncZippable = {}
 
     files['screenplay.txt'] = fflate.strToU8(clap.meta.screenplay)
     
     files['meta.json'] = fflate.strToU8(JSON.stringify(clap.meta, null, 2))
+    
+    const shotcutMltXml = await generateMLT()
+    files['shotcut_project.mlt'] = fflate.strToU8(shotcutMltXml)
 
-
-    segments.forEach((segment, i) => {
-      const directory = `${segment.category}`.toLowerCase()
-      const prefix = `shot_${String(i).padStart(4, '0')}_`
-      let mimetype = `${segment.assetFileFormat || "unknown/unknown"}`
-      if (mimetype === "audio/mpeg") {
-        mimetype = "audio/mp3"
-      }
-      const format = `${mimetype.split("/").pop() || "unknown"}`.toLowerCase()
-      const filePath = `${directory}/${prefix}${segment.id}.${format}`
-      let assetUrl = segment.assetUrl || ""
-      let assetSourceType = segment.assetSourceType || ClapAssetSource.EMPTY
-
+    segments.forEach(({
+      segment,
+      prefix,
+      filePath,
+      assetUrl,
+      assetSourceType,
+      isExportableToFile
+    }) => {
       // we extract the base64 files
-      if (segment.assetUrl.startsWith("data:")) {
+      if (isExportableToFile) {
         files[filePath] = [
           // we don't compress assets since normally they already use
           // some form of compression (PNG, JPEG, MP3, MP4 etc..)
@@ -403,101 +404,117 @@ export const useIO = create<IOStore>((set, get) => ({
 
   },
   saveMLT: async () => {
-    const { clap } = useTimeline.getState()
-    
-    const xml = mltToXml({
-      title: 'watermarkOnVideo',
-      elements: [
-        {
-          name: 'producer',
-          attributes: {
-            id: 'video',
-            in: '0',
-            out: '1000',
-            resource: 'clip.mpeg',
-          },
-        },
-        {
-          name: 'producer',
-          attributes: {
-            id: 'watermark',
-            in: '0',
-            out: '1000',
-            resource: 'watermark.png',
-            mlt_service: 'qimage',
-            length: '1000',
-          },
-        },
-        {
-          name: 'tractor',
-          attributes: {
-            id: 'tractor0',
-          },
-          elements: [
-            {
-              name: 'multitrack',
-              attributes: {
-                id: 'multitrack0',
-              },
-              elements: [
-                {
-                  name: 'playlist',
-                  attributes: {
-                    id: 'video_track',
-                    in: '0',
-                    out: '1000',
-                  },
-                  elements: [
-                    {
-                      name: 'entry',
-                      attributes: {
-                        producer: 'video',
-                        in: '0',
-                        out: '1000',
-                      },
-                    },
-                  ],
-                },
-                {
-                  name: 'playlist',
-                  attributes: {
-                    id: 'watermark_track',
-                    in: '0',
-                    out: '1000',
-                  },
-                  elements: [
-                    {
-                      name: 'entry',
-                      attributes: {
-                        producer: 'watermark',
-                        in: '0',
-                        out: '1000',
-                      },
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              name: 'transition',
-              attributes: {
-                id: 'transition0',
-                a_track: 0,
-                b_track: 1,
-                geometry: '85%/5%:10%x10%',
-                factory: 'loader',
-                progressive: 1,
-                mlt_service: 'composite',
-                fill: 1,
-                sliced_composite: 1,
-              },
-            },
-          ],
-        },
-      ],
-    })
+  },
+  generateMLT: async (): Promise<string> => {
 
-    console.log(`MLT output: `, xml)
+    const timeline: TimelineStore = useTimeline.getState()
+    const { clap } = timeline
+    const segments: ExportableSegment[] = clap.segments
+      .map((segment, i) => formatSegmentForExport(segment, i))
+      .filter(({ isExportableToFile }) => isExportableToFile)
+
+    // want to see some colors? install es6-string-html in your VSCode
+    return /* HTML*/ `<?xml version="1.0" standalone="no"?>
+<mlt LC_NUMERIC="C" version="7.24.0" title="Shotcut version 24.04.28" producer="main_bin">
+  <profile
+    description="1024:576"
+    width="1024"
+    height="576"
+    progressive="0"
+    sample_aspect_num="1"
+    sample_aspect_den="1"
+    display_aspect_num="16"
+    display_aspect_den="9"
+    frame_rate_num="25"
+    frame_rate_den="1"
+    colorspace="709"
+  />
+  <playlist id="main_bin">
+    <property name="xml_retain">1</property>
+  </playlist>
+  <producer id="black" in="00:00:00.000" out="${formatDuration(clap.meta.durationInMs)}">
+    <property name="length">${formatDuration(clap.meta.durationInMs)}</property>
+    <property name="eof">pause</property>
+    <property name="resource">0</property>
+    <property name="aspect_ratio">1</property>
+    <property name="mlt_service">color</property>
+    <property name="mlt_image_format">rgba</property>
+    <property name="set.test_audio">0</property>
+  </producer>
+  <playlist id="background">
+    <entry producer="black" in="00:00:00.000" out="${formatDuration(clap.meta.durationInMs)}" />
+  </playlist>
+  ${segments.map(({ segment, fileName, filePath, isExportableToFile }, i) => /* HTML*/ `
+  <producer
+    id="producer${i}"
+    in="${formatDuration(0)}"
+    out="${formatDuration(clap.meta.durationInMs)}">
+    <property name="length">${formatDuration(clap.meta.durationInMs)}</property>
+    <property name="eof">pause</property>
+    <property name="resource">${filePath}</property>
+    <property name="ttl">1</property>
+    <property name="aspect_ratio">1</property>
+    <property name="meta.media.progressive">1</property>
+    <property name="seekable">1</property>
+    <property name="format">1</property>
+    <property name="meta.media.width">${clap.meta.width}</property>
+    <property name="meta.media.height">${clap.meta.height}</property>
+    <property name="mlt_service">qimage</property>
+    <property name="creation_time">${
+      segment.createdAt || new Date().toISOString()
+    }</property>
+    <property name="shotcut:skipConvert">1</property>
+    ${
+      // uh, okay.. do we really need this?..
+      // <property name="shotcut:hash">b22b329e4916bda3ada2ed544c9ba2b9</property>
+      ''
+    }
+    <property name="shotcut:caption">${fileName}</property>
+    ${''
+      // not sure what  <property name="xml">was here</property
+      // is supposed to be
+    }
+    <property name="xml">was here</property>
+  </producer>
+  `).join('')}
+  <playlist id="playlist0">
+    <property name="shotcut:video">1</property>
+    <property name="shotcut:name">V1</property>
+    ${segments.map(({ segment, fileName, filePath, isExportableToFile }, i) => /* HTML*/ `
+    <entry
+      producer="producer${i}"
+      in="${formatDuration(0)}"
+      out="${formatDuration(segment.assetDurationInMs)}"
+    />
+`).join('')}
+  </playlist>
+  <tractor
+    id="tractor0"
+    title="Shotcut version 24.04.28"
+    in="00:00:00.000"
+    out="${formatDuration(clap.meta.durationInMs)}">
+    <property name="shotcut">1</property>
+    <property name="shotcut:projectAudioChannels">2</property>
+    <property name="shotcut:projectFolder">1</property>
+    <track producer="background"/>
+    <track producer="playlist0"/>
+    <transition id="transition0">
+      <property name="a_track">0</property>
+      <property name="b_track">1</property>
+      <property name="mlt_service">mix</property>
+      <property name="always_active">1</property>
+      <property name="sum">1</property>
+    </transition>
+    <transition id="transition1">
+      <property name="a_track">0</property>
+      <property name="b_track">1</property>
+      <property name="version">0.1</property>
+      <property name="mlt_service">frei0r.cairoblend</property>
+      <property name="threads">0</property>
+      <property name="disable">1</property>
+    </transition>
+  </tractor>
+</mlt>`
   },
 
   openKdenline: async (file: File) => {
@@ -512,7 +529,6 @@ export const useIO = create<IOStore>((set, get) => ({
     throw new Error(`cannot run in a browser, unfortunately`)
 
     /*
-
     // hum.. we should add FPS to the ClapProject metadata
     const fps = 30 // clap.meta
 

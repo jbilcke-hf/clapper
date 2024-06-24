@@ -1,4 +1,6 @@
-// import { $ } from "zx"
+"use server"
+
+import { $ } from "zx"
 
 import { makeIDGen } from "./makeIDGen"
 
@@ -10,20 +12,17 @@ export abstract class Producer {
     this.index = producerIndexGen.next().value;
   }
 
-  async toXML(fps: number): Promise<string> {
-    // this won't work in a browser environment, so..
-    /*
+  async getNativeMltXml(fps: number): Promise<string> {
     const xml = (
       await $`melt ${
         this.path
       } -consumer xml ${`frame_rate_num=${fps}`} | htmlq producer`
     ).stdout;
-    */
-   const xml =  /* HTML */ `<producer
-   id="${this.id}"
- >
- </producer>`;
-    return xml;
+    return xml.replace("producer0", this.id);
+  }
+
+  async toXML(fps: number): Promise<string> {
+    return await this.getNativeMltXml(fps);
   }
 
   get id() {

@@ -1,5 +1,3 @@
-"use server"
-
 import { Entry } from "./entry"
 import { AudioPlaylist, Playlist, VideoPlaylist } from "./playlist"
 import { makeIDGen } from "./makeIDGen"

@@ -90,6 +90,7 @@ export function TopMenuFile() {
         </MenubarItem>
         <MenubarSeparator />
         */}
+        {/*
         <MenubarItem
         disabled
         onClick={() => {
@@ -119,6 +120,7 @@ export function TopMenuFile() {
         }}>
           Export .fdx (not implemented)
         </MenubarItem>
+        */}
       </MenubarContent>
     </MenubarMenu>
     <Loader isLoading={isLoading} />

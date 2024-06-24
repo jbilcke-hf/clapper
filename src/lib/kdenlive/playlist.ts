@@ -1,5 +1,3 @@
-"use server"
-
 import { Entry } from "./entry"
 import { makeIDGen } from "./makeIDGen"
 
