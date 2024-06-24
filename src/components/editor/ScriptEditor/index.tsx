@@ -114,11 +114,11 @@ export function ScriptEditor() {
        ],
        colors: {
          'editor.background': theme.editorBgColor || theme.defaultBgColor || '#000000', // Editor background color (given)
-         'editorCursor.foreground': '#f5f5f4', // Cursor color
+         'editorCursor.foreground': theme.editorCursorColor || theme.defaultPrimaryColor || "", // Cursor color
          'editor.lineHighlightBackground': '#44403c', // Highlighted line color
          'editorLineNumber.foreground': '#78716c', // Line Numbers color
          'editor.selectionBackground': '#44403c', // Selection color
-         'editor.foreground': '#d6d3d1', // Main text color
+         'editor.foreground': theme.editorTextColor || theme.defaultTextColor || "", // Main text color
          'editorIndentGuide.background': '#78716c', // Indent guides color
          'editorIndentGuide.activeBackground': '#a8a29e', // Active indent guides color
          'editorWhitespace.foreground': '#a8a29e', // Whitespace symbols color

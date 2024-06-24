@@ -19,6 +19,7 @@ export type UIState = {
 export type UIControls = {
   setHasBetaAccess: (hasBetaAccess: boolean) => void
   setThemeName: (themeName: UIThemeName) => void
+  applyThemeToComponents: () => void
   getTheme: () => UITheme
   setShowApiKeys: (showApiKeys: boolean) => void
   setShowSettings: (showSettings: SettingsCategory) => void

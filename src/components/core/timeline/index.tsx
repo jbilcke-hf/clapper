@@ -4,7 +4,7 @@ import { ClapTimeline, useTimeline, SegmentResolver } from "@aitube/timeline"
 import { cn } from "@/lib/utils"
 import { useMonitor } from "@/controllers/monitor/useMonitor"
 import { useResolver } from "@/controllers/resolver/useResolver"
-
+import { useUI } from "@/controllers/ui"
 
 export function Timeline() {
   const isReady = useTimeline(s => s.isReady)
@@ -29,6 +29,10 @@ export function Timeline() {
     setJumpAt(jumpAt)
     setIsPlaying(checkIfPlaying)
     setTogglePlayback(togglePlayback)
+
+    // not sure if that's the best place, but once the timeline is loaded
+    // we need to apply theme to it
+    useUI.getState().applyThemeToComponents()
     startLoop()
   }, [isReady])
   
