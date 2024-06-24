@@ -18,7 +18,17 @@ export const useUI = create<UIStore>()(
       },
       setThemeName: (themeName: UIThemeName) => {
         set({ themeName })
-        useEditor.getState().monaco?.editor?.setTheme?.(themeName)
+        get().applyThemeToComponents()
+      },
+      applyThemeToComponents: () => {
+        const theme = get().getTheme()
+
+        // update the editor's theme
+        useEditor.getState().monaco?.editor?.setTheme?.(theme.id)
+
+        // update the timeline's theme
+        const style = document.getElementById("clap-timeline")?.style
+        if (style) { style.filter = theme.timelineFilter }
       },
       getTheme: () => {
         return themes[get().themeName] || themes.backstage
