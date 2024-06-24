@@ -42,6 +42,7 @@ export type IOControls = {
   openClapBlob: (projectName: string, fileName: string, blob: Blob) => Promise<void>
   saveClap: () => Promise<void>
   saveVideoFile: () => Promise<void>
+  saveZipFile: () => Promise<void>
 
   openMLT: (file: File) => Promise<void>
   saveMLT: () => Promise<void>
