@@ -6,14 +6,23 @@ import { useFullscreenStatus } from "@/lib/hooks"
 
 import { UniversalPlayer } from "./UniversalPlayer"
 import { PlayerControls } from "./PlayerControls"
+import { useUI } from "@/controllers/ui"
+import { useTheme } from "@/controllers/ui/useTheme"
 
 export function Monitor() {
   const [isFullscreen, setFullscreen, ref] = useFullscreenStatus()
+  const theme = useTheme()
 
   return (
     <div
       ref={ref as any}
-      className="flex flex-col w-full h-full overflow-hidden items-center justify-between px-2">
+      className={cn(`
+      flex flex-col w-full h-full
+      overflow-hidden items-center justify-between
+      px-2
+      transition-colors
+    `)}
+    style={{ background: theme?.monitorBgColor || theme?.defaultBgColor || "" }}>
       <UniversalPlayer />
       <PlayerControls />
       <div className="z-20 absolute right-0 top-8">

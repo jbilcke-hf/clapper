@@ -17,12 +17,14 @@ import { cn } from "@/lib/utils"
 import { Counter } from "../Counter"
 import { IconSwitch } from "../icons/icon-switch"
 import { useMonitor } from "@/controllers/monitor/useMonitor"
+import { useTheme } from "@/controllers/ui/useTheme"
 
 export function PlayerControls({
   className
 }: {
   className?: string
 }) {
+  const theme = useTheme()
   const isPlaying = useMonitor((s) => s.isPlaying)
   const togglePlayback = useMonitor((s) => s.togglePlayback)
   const jumpAt = useMonitor((s) => s.jumpAt)
@@ -41,11 +43,7 @@ export function PlayerControls({
       className
     )}>
       <Counter valueInMs={cursorTimestampAtInMs}
-        // text-green-400 is nice too, but text-violet-400 just pops more
-        // color="text-violet-400"
-
-        // actually.. in yellow it looks more in line with our Clapper branding
-        color="text-yellow-400"
+        color={theme.monitorSecondaryTextColor || theme.defaultTextColor || ""}
       />
       <div className={cn(
         `flex flex-row items-center justify-between`,
@@ -78,7 +76,10 @@ export function PlayerControls({
           thickOnHover
         />
       </div>
-      <Counter valueInMs={totalDurationInMs} />
+      <Counter
+        valueInMs={totalDurationInMs}
+        color={theme.monitorPrimaryTextColor || theme.defaultPrimaryColor || ""}
+      />
     </div>
   )
 }
