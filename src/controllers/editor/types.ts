@@ -12,8 +12,10 @@ export type ScrollData = {
 export type EditorState = {
   monaco?: Monaco
 
+  textModel?: MonacoEditor.editor.ITextModel
+
   // reference to the React component
-  editor?: MonacoEditor.editor.IStandaloneCodeEditor
+  standaloneCodeEditor?: MonacoEditor.editor.IStandaloneCodeEditor
 
   // used to know if the user is actually inside the editor or not
   mouseIsInside: boolean
@@ -36,13 +38,16 @@ export type EditorState = {
 
 export type EditorControls = {
   setMonaco: (monaco?: Monaco) => void
-  setEditor: (editor?: MonacoEditor.editor.IStandaloneCodeEditor) => void
+  setTextModel: (textModel?: MonacoEditor.editor.ITextModel) => void
+  setStandaloneCodeEditor: (standaloneCodeEditor?: MonacoEditor.editor.IStandaloneCodeEditor) => void
   setMouseIsInside: (mouseIsInside: boolean) => void
   loadDraftFromClap: (clap: ClapProject) => void
   setDraft: (draft: string) => void
   publishDraftToTimeline: () => Promise<void>
   onDidScrollChange: (scrollData: ScrollData) => void
   jumpCursorOnLineClick: (line?: number) => void
+  highlightElements: () => void
+  applyClassNameToKeywords: (className?: string, keywords?: string[], caseSensitive?: boolean) => void
 }
 
 export type EditorStore = EditorState & EditorControls

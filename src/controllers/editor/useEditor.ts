@@ -11,8 +11,9 @@ import { Monaco } from "@monaco-editor/react"
 
 export const useEditor = create<EditorStore>((set, get) => ({
   ...getDefaultEditorState(),
-  setMonaco: (monaco?: Monaco) => { set({ monaco}) },
-  setEditor: (editor?: MonacoEditor.editor.IStandaloneCodeEditor) => { set({ editor }) },
+  setMonaco: (monaco?: Monaco) => { set({ monaco }) },
+  setTextModel: (textModel?: MonacoEditor.editor.ITextModel) => { set({ textModel }) },
+  setStandaloneCodeEditor: (standaloneCodeEditor?: MonacoEditor.editor.IStandaloneCodeEditor) => { set({ standaloneCodeEditor }) },
   setMouseIsInside: (mouseIsInside: boolean) => { set({ mouseIsInside }) },
   loadDraftFromClap: (clap: ClapProject) => {
     const { setDraft } = get()
@@ -20,13 +21,17 @@ export const useEditor = create<EditorStore>((set, get) => ({
     setDraft(clap.meta.screenplay)
   },
   setDraft: (draft: string) => {
-    const { draft: previousDraft } = get()
+    const { draft: previousDraft, highlightElements, textModel } = get()
     if (draft === previousDraft) { return }
     set({ draft })
 
-    const { editor } = get()
-    if (!editor) { return }
-    editor?.setValue(draft)
+    
+    if (!textModel) { return }
+    // we need to update the model
+    textModel?.setValue(draft)
+
+    // and highlight the text again
+    highlightElements()
   },
   publishDraftToTimeline: async (): Promise<void> => {
     const { draft } = get()
@@ -72,7 +77,7 @@ export const useEditor = create<EditorStore>((set, get) => ({
       const timeline: TimelineStore = useTimeline.getState()
       if (!timeline.timelineCamera || !timeline.timelineControls) { return }
 
-      const { editor } = get()
+      const { standaloneCodeEditor } = get()
     
       const scrollRatio = scrollTop / scrollHeight
       const scrollX = Math.round(leftBarTrackScaleWidth + scrollRatio * timeline.contentWidth)
@@ -112,6 +117,92 @@ export const useEditor = create<EditorStore>((set, get) => ({
     timeline.setCursorTimestampAtInMs(startTimeInMs)
   },
 
+  highlightElements: () => {
+    const timeline: TimelineStore = useTimeline.getState()
+    const { clap } = timeline
+    
+    const { textModel, standaloneCodeEditor, applyClassNameToKeywords } = get()
+    if (!textModel || !standaloneCodeEditor || !clap) { return }
+
+    const characters = clap.entities.filter(entity => entity.category === ClapSegmentCategory.CHARACTER).map(entity => entity.triggerName)
+
+    // any character
+    applyClassNameToKeywords(
+      "entity entity-character",
+      characters
+    )
+
+    // UPPERCASE CHARACTER
+    applyClassNameToKeywords(
+      "entity entity-character entity-highlight",
+      characters,
+      true
+    )
+
+    const locations = clap.entities.filter(entity => entity.category === ClapSegmentCategory.LOCATION).map(entity => entity.triggerName)
+    // any location 
+    applyClassNameToKeywords(
+      "entity entity-location",
+      locations
+    )
+
+    // UPPERCASE LOCATION
+    applyClassNameToKeywords(
+      "entity entity-location entity-highlight",
+      locations,
+      true
+    )
+  },
+  applyClassNameToKeywords: (className: string = "", keywords: string[] = [], caseSensitive = false) => {
+    const timeline: TimelineStore = useTimeline.getState()
+    const { clap } = timeline
+    
+    const { textModel, standaloneCodeEditor } = get()
+    if (!textModel || !standaloneCodeEditor || !clap) { return }
+
+    keywords.forEach((entityTriggerName: string): void => {
+      const matches: MonacoEditor.editor.FindMatch[] = textModel.findMatches(
+        // searchString — The string used to search. If it is a regular expression, set isRegex to true.
+        // searchString: string,
+        entityTriggerName,
+        
+        // @param searchOnlyEditableRange — Limit the searching to only search inside the editable range of the model.
+        // searchOnlyEditableRange: boolean,
+        false,
+
+        // / @param isRegex — Used to indicate that searchString is a regular expression.
+        // isRegex: boolean,
+        false,
+    
+        // @param matchCase — Force the matching to match lower/upper case exactly.
+        // matchCase: boolean,
+        caseSensitive,
+
+        // @param wordSeparators — Force the matching to match entire words only. Pass null otherwise.
+        // wordSeparators: string | null,
+        null,
+
+        // @param captureMatches — The result will contain the captured groups.
+        // captureMatches: boolean,
+        false,
+
+        // limitResultCount — Limit the number of results
+        // limitResultCount?: number
+      )
+
+      matches.forEach((match: MonacoEditor.editor.FindMatch): void => {
+        standaloneCodeEditor.createDecorationsCollection([
+          {
+            range: match.range,
+            options: {
+              isWholeLine: false,
+              inlineClassName: className
+            }
+          },
+        ])
+      })
+    })
+  }
 }))
 
 

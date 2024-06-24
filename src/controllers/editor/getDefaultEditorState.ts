@@ -3,7 +3,8 @@ import { EditorState } from "./types"
 export function getDefaultEditorState(): EditorState {
   const state: EditorState = {
     monaco: undefined,
-    editor: undefined,
+    textModel: undefined,
+    standaloneCodeEditor: undefined,
     mouseIsInside: false,
     draft: "",
     lineNumberToMentionedSegments: {},
