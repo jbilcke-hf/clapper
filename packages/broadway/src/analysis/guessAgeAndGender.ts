@@ -51,9 +51,15 @@ export async function guessAgeAndGender(name: string, referenceYear?: number): P
       ? "male"
       : "female"
 
+    let yearOfBirth = match[2]
+    if (typeof yearOfBirth !== "number" || !isFinite(yearOfBirth) || isNaN(yearOfBirth)) {
+      yearOfBirth = 2006
+    }
+    const age = Math.max(18, refYear - yearOfBirth)
+  
     return {
       yearOfBirth: match[2],
-      age: refYear - match[2],
+      age,
       gender: topGender,
     }
   }
