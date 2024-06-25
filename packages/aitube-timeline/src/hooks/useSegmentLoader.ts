@@ -148,7 +148,10 @@ export const useSegmentLoader = ({
     const afterTimeWithBufferInMs = afterStepsWithBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
     const beforeTimeWithBufferInMs = beforeStepsWithBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
 
-    if (state.afterTimeWithBufferInMs !== afterTimeWithBufferInMs || state.beforeTimeWithBufferInMs !== beforeTimeWithBufferInMs || forceRerendering) {
+    if (
+      state.afterTimeWithBufferInMs !== afterTimeWithBufferInMs
+      || state.beforeTimeWithBufferInMs !== beforeTimeWithBufferInMs
+      || forceRerendering) {
       state.afterTimeWithBufferInMs = afterTimeWithBufferInMs
       state.beforeTimeWithBufferInMs = beforeTimeWithBufferInMs
 
@@ -167,7 +170,10 @@ export const useSegmentLoader = ({
     const afterTimeWithoutBufferInMs = afterStepsWithoutBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
     const beforeTimeWithoutBufferInMs = beforeStepsWithoutBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
   
-    if (state.afterTimeWithoutBufferInMs !== afterTimeWithoutBufferInMs || state.beforeTimeWithoutBufferInMs !== beforeTimeWithoutBufferInMs || forceRerendering) {
+    if (
+      state.afterTimeWithoutBufferInMs !== afterTimeWithoutBufferInMs
+      || state.beforeTimeWithoutBufferInMs !== beforeTimeWithoutBufferInMs
+      || forceRerendering) {
       state.afterTimeWithoutBufferInMs = afterTimeWithoutBufferInMs
       state.beforeTimeWithoutBufferInMs = beforeTimeWithoutBufferInMs
   
@@ -209,7 +215,7 @@ export const useSegmentLoader = ({
 
   // force a re-render when cell width or height change
   useEffect(() => {
-    // console.log("forcing a sync(true)")
+    console.log("forcing a sync(true)")
     const fn = async () => { try { await sync(true) } catch (err) {} }
     fn()
   }, [cellHeight, cellWidth, segmentsChanged])
