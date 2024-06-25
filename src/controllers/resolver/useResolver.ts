@@ -520,7 +520,8 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           : 2000
         )
       } else if (newSegment.category === ClapSegmentCategory.VIDEO) {
-        await timeline.fitSegmentToAssetDuration(newSegment)
+        // TODO @Julian finish this
+        // await timeline.fitSegmentToAssetDuration(newSegment)
       }
 
       newSegment.status = ClapSegmentStatus.COMPLETED

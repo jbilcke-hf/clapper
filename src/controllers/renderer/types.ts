@@ -61,6 +61,8 @@ export type RendererControls = {
   setDataUriBuffer1: (dataUriBuffer1?: ClapSegment) => void
   setDataUriBuffer2: (dataUriBuffer2?: ClapSegment) => void
   setActiveBufferNumber: (activeBufferNumber: number) => void
+
+  syncVideoToCurrentCursorPosition: () => void
 }
 
 export type RendererStore = RendererState & RendererControls

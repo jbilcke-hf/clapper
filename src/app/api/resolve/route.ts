@@ -85,6 +85,7 @@ export async function POST(req: NextRequest) {
       const { durationInMs, hasAudio } = await getMediaInfo(segment.assetUrl)
       segment.assetDurationInMs = durationInMs
 
+      
       // hasAudio doesn't work properly I think, with small samples
       segment.outputGain = hasAudio ? 1.0 : 0.0
 
