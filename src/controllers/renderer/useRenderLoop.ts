@@ -42,7 +42,8 @@ export function useRenderLoop(): void {
     // (well we also need to update the visuals, but it is done in <DynamicPlayer />
     audio.syncAudioToCurrentCursorPosition(activeAudioSegments)
 
-
+    renderer.syncVideoToCurrentCursorPosition()
+    
     const newTimelineUpdateAtInMs = performance.now()
     const elapsedTimeInMs = newTimelineUpdateAtInMs - lastTimelineUpdateAtInMs
     setCursorTimestampAtInMs(cursorTimestampAtInMs + elapsedTimeInMs)

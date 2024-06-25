@@ -1,6 +1,6 @@
 {
   "name": "@aitube/clapper",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "🎬 Clapper",
   "scripts": {
@@ -10,10 +10,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aitube/broadway": "0.0.19",
+    "@aitube/broadway": "0.0.20",
     "@aitube/clap": "0.0.29",
     "@aitube/engine": "0.0.25",
-    "@aitube/timeline": "0.0.32",
+    "@aitube/timeline": "0.0.33",
     "@fal-ai/serverless-client": "^0.11.0",
     "@gradio/client": "^1.1.1",
     "@huggingface/hub": "^0.15.1",

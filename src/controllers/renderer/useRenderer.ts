@@ -217,6 +217,12 @@ export const useRenderer = create<RendererStore>((set, get) => ({
   },
   setActiveBufferNumber: (activeBufferNumber: number) => {
     set({ activeBufferNumber })
+  },
+
+  syncVideoToCurrentCursorPosition: () => {
+    const timeline: TimelineStore = useTimeline.getState()
+    // @TODO julian: make sure we play the video at the correct time
+    // console.log(`syncing Video..`)
   }
 }))
 
