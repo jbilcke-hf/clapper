@@ -409,22 +409,43 @@ export const useIO = create<IOStore>((set, get) => ({
 
     const timeline: TimelineStore = useTimeline.getState()
     const { clap } = timeline
+    
     const segments: ExportableSegment[] = clap.segments
       .map((segment, i) => formatSegmentForExport(segment, i))
       .filter(({ isExportableToFile }) => isExportableToFile)
+    
+      const videos: ExportableSegment[] = segments
+        .filter(({ segment }) => segment.category === ClapSegmentCategory.VIDEO)
+    
+      const storyboards: ExportableSegment[] = segments
+        .filter(({ segment }) => segment.category === ClapSegmentCategory.STORYBOARD)
+
+      const dialogues: ExportableSegment[] = segments
+        .filter(({ segment }) => segment.category === ClapSegmentCategory.DIALOGUE)
+
+      const sounds: ExportableSegment[] = segments
+        .filter(({ segment }) => segment.category === ClapSegmentCategory.SOUND)
+
+      const music: ExportableSegment[] = segments
+        .filter(({ segment }) => segment.category === ClapSegmentCategory.MUSIC)
 
     // want to see some colors? install es6-string-html in your VSCode
     return /* HTML*/ `<?xml version="1.0" standalone="no"?>
-<mlt LC_NUMERIC="C" version="7.24.0" title="Shotcut version 24.04.28" producer="main_bin">
+<mlt LC_NUMERIC="C" version="7.24.0" title="${clap.meta.title}" producer="main_bin">
   <profile
-    description="1024:576"
-    width="1024"
-    height="576"
+    description="${clap.meta.width}:${clap.meta.height}"
+    width="${clap.meta.width}"
+    height="${clap.meta.height}"
     progressive="0"
     sample_aspect_num="1"
     sample_aspect_den="1"
     display_aspect_num="16"
     display_aspect_den="9"
+
+    ${
+      ''
+      // a good reminder we should add a feature to keep track of the FPS in Clapper
+    }
     frame_rate_num="25"
     frame_rate_den="1"
     colorspace="709"
@@ -444,9 +465,9 @@ export const useIO = create<IOStore>((set, get) => ({
   <playlist id="background">
     <entry producer="black" in="00:00:00.000" out="${formatDuration(clap.meta.durationInMs)}" />
   </playlist>
-  ${segments.map(({ segment, fileName, filePath, isExportableToFile }, i) => /* HTML*/ `
+  ${segments.map(({ segment, shortId, fileName, filePath, index }) => /* HTML*/ `
   <producer
-    id="producer${i}"
+    id="${shortId}"
     in="${formatDuration(0)}"
     out="${formatDuration(clap.meta.durationInMs)}">
     <property name="length">${formatDuration(clap.meta.durationInMs)}</property>
@@ -479,14 +500,99 @@ export const useIO = create<IOStore>((set, get) => ({
   `).join('')}
   <playlist id="playlist0">
     <property name="shotcut:video">1</property>
-    <property name="shotcut:name">V1</property>
-    ${segments.map(({ segment, fileName, filePath, isExportableToFile }, i) => /* HTML*/ `
+    <property name="shotcut:name">Video clips</property>
+    ${videos.map(({ segment, shortId }) => /* HTML*/ `
     <entry
-      producer="producer${i}"
+      producer="${shortId}"
       in="${formatDuration(0)}"
       out="${formatDuration(segment.assetDurationInMs)}"
     />
 `).join('')}
+  </playlist>
+  <playlist id="playlist1">
+    <property name="shotcut:video">1</property>
+    <property name="shotcut:name">Storyboards</property>
+    ${storyboards.map(({ segment, shortId }) => /* HTML*/ `
+    <entry
+      producer="${shortId}"
+      in="${formatDuration(0)}"
+      out="${formatDuration(segment.assetDurationInMs)}"
+    />
+`).join('')}
+  </playlist>
+  ${[
+    ...dialogues,
+    ...sounds,
+    ...music
+  ].map(({ segment, filePath, fileName, shortId }) => /* HTML*/ `
+  <chain id="${shortId}" out="${formatDuration(clap.meta.durationInMs)}">
+    <property name="length">${formatDuration(clap.meta.durationInMs)}</property>
+    <property name="eof">pause</property>
+    <property name="resource">${filePath}</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="meta.media.nb_streams">1</property>
+    <property name="meta.media.0.stream.type">audio</property>
+    ${
+      ''
+    /*
+    I don't think we absolutely need to provide those as this is just meta
+
+    <property name="meta.media.0.codec.sample_fmt">fltp</property>
+    <property name="meta.media.0.codec.sample_rate">44100</property>
+    <property name="meta.media.0.codec.channels">2</property>
+    <property name="meta.media.0.codec.layout">stereo</property>
+    <property name="meta.media.0.codec.name">mp3float</property>
+    <property name="meta.media.0.codec.long_name">MP3 (MPEG audio layer 3)</property>
+    <property name="meta.media.0.codec.bit_rate">150551</property>
+    <property name="meta.attr.0.stream.encoder.markup">Lavc60.3.</property>
+    <property name="meta.attr.encoder.markup">Lavf60.3.100</property>
+    */
+    }
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="creation_time">${segment.createdAt}</property>
+    <property name="astream">0</property>
+    <property name="shotcut:skipConvert">1</property>
+    ${
+      ''
+      // yeah well, let's skip this one as well
+      // <property name="shotcut:hash">ee26f27a566e64d5ed116f433012e3d6</property>
+    }
+    <property name="shotcut:caption">${fileName}</property>
+  </chain>`)}
+  <playlist id="playlist2">
+    <property name="shotcut:audio">1</property>
+    <property name="shotcut:name">Dialogues & speech</property>
+    ${dialogues.map(({ segment, shortId }) => /* HTML*/ `
+    <entry
+      producer="${shortId}"
+      in="${segment.startTimeInMs}"
+      out="${segment.endTimeInMs}"
+    />
+    `)}
+  </playlist>
+  <playlist id="playlist3">
+    <property name="shotcut:audio">1</property>
+    <property name="shotcut:name">Sound effects</property>
+    ${sounds.map(({ segment, shortId }) => /* HTML*/ `
+    <entry
+      producer="${shortId}"
+      in="${segment.startTimeInMs}"
+      out="${segment.endTimeInMs}"
+    />
+    `)}
+  </playlist>
+  <playlist id="playlist4">
+    <property name="shotcut:audio">1</property>
+    <property name="shotcut:name">Music</property>
+    ${music.map(({ segment, shortId }) => /* HTML*/ `
+    <entry
+      producer="${shortId}"
+      in="${segment.startTimeInMs}"
+      out="${segment.endTimeInMs}"
+    />
+    `)}
   </playlist>
   <tractor
     id="tractor0"
@@ -496,8 +602,13 @@ export const useIO = create<IOStore>((set, get) => ({
     <property name="shotcut">1</property>
     <property name="shotcut:projectAudioChannels">2</property>
     <property name="shotcut:projectFolder">1</property>
+    <property name="shotcut:skipConvert">0</property>
     <track producer="background"/>
     <track producer="playlist0"/>
+    <track producer="playlist1"/>
+    <track producer="playlist2" hide="video" />
+    <track producer="playlist3" hide="video" />
+    <track producer="playlist4" hide="video" />
     <transition id="transition0">
       <property name="a_track">0</property>
       <property name="b_track">1</property>
@@ -513,6 +624,35 @@ export const useIO = create<IOStore>((set, get) => ({
       <property name="threads">0</property>
       <property name="disable">1</property>
     </transition>
+    <transition id="transition2">
+    <property name="a_track">0</property>
+    <property name="b_track">1</property>
+    <property name="version">0.1</property>
+    <property name="mlt_service">frei0r.cairoblend</property>
+    <property name="threads">0</property>
+    <property name="disable">1</property>
+  </transition>
+    <transition id="transition3">
+      <property name="a_track">0</property>
+      <property name="b_track">2</property>
+      <property name="mlt_service">mix</property>
+      <property name="always_active">1</property>
+      <property name="sum">1</property>
+    </transition>
+    <transition id="transition4">
+    <property name="a_track">0</property>
+    <property name="b_track">3</property>
+    <property name="mlt_service">mix</property>
+    <property name="always_active">1</property>
+    <property name="sum">1</property>
+  </transition>
+  <transition id="transition5">
+  <property name="a_track">0</property>
+  <property name="b_track">3</property>
+  <property name="mlt_service">mix</property>
+  <property name="always_active">1</property>
+  <property name="sum">1</property>
+</transition>
   </tractor>
 </mlt>`
   },
