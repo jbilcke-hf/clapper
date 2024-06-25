@@ -68,6 +68,7 @@ export function TopMenuFile() {
           Save project (.clap)<MenubarShortcut>⌘S</MenubarShortcut>
         </MenubarItem>
         <MenubarSeparator />
+        {/*
         <MenubarItem
         onClick={() => {
           saveVideoFile()
@@ -75,6 +76,7 @@ export function TopMenuFile() {
           Export project to MP4
         </MenubarItem>
         <MenubarSeparator />
+        */}
         <MenubarItem
         onClick={() => {
           saveZipFile()
