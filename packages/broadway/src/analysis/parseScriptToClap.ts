@@ -4,7 +4,6 @@ import { cleanUTF8Characters } from "@/utils"
 import { analyzeScreenplay } from "@/analysis/analyzeScreenplay"
 
 import { getScreenplayFromText } from "./getScreenplayFromText"
-import { Scene } from "@/types"
 
 export type ParseScriptProgressUpdate = ({
   value,
@@ -29,7 +28,7 @@ export async function parseScriptToClap(
 
   const screenplay = await getScreenplayFromText(content)
 
-  await onProgressUpdate({ value: 30 })
+  await onProgressUpdate({ value: 10 })
 
   const {
     movieGenreLabel,
@@ -47,8 +46,8 @@ export async function parseScriptToClap(
 
     // so we want to continue the progress bar in the range [20, 70]
     await onProgressUpdate({
-      value: 30 + (ratio * 60),
-      sleepDelay: 100,
+      value: 10 + (ratio * 80),
+      sleepDelay: 25,
       message
     })
   })
@@ -76,7 +75,7 @@ export async function parseScriptToClap(
       isLoop: false,
       isInteractive: false,
     },
-    scenes: scenes.map(scene => ({
+    scenes: scenes.map((scene, i) => ({
       ...scene,
       // let's deprecate this field, this was a bad idea
       // (too much redundancy)
