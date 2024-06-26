@@ -12,6 +12,7 @@
   "dependencies": {
     "@aitube/broadway": "0.0.20",
     "@aitube/clap": "0.0.29",
+    "@aitube/clapper-services": "0.0.2",
     "@aitube/engine": "0.0.25",
     "@aitube/timeline": "0.0.33",
     "@fal-ai/serverless-client": "^0.11.0",
@@ -92,7 +93,7 @@
     "uuid": "^9.0.1",
     "web-audio-beat-detector": "^8.2.10",
     "yaml": "^2.4.5",
-    "zustand": "^4.5.2",
+    "zustand": "4.5.2",
     "zx": "^8.1.3"
   },
   "devDependencies": {

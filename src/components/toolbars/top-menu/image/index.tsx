@@ -11,8 +11,8 @@ import {
   MenubarSubTrigger,
   MenubarTrigger
 } from "@/components/ui/menubar"
-import { useSettings } from "@/controllers/settings"
-import { useUI } from "@/controllers/ui"
+import { useSettings } from "@/services/settings"
+import { useUI } from "@/services/ui"
 
 import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { ImageGenerationModelList } from "../lists/ImageGenerationModelList"
@@ -20,7 +20,7 @@ import { ImageUpscalingModelList } from "../lists/ImageUpscalingModelList"
 import { IsBusy } from "../IsBusy"
 
 import { SettingsCategory } from "@/types"
-import { useResolver } from "@/controllers/resolver/useResolver"
+import { useResolver } from "@/services/resolver/useResolver"
 import { ImageDepthModelList } from "../lists/ImageDepthModelList"
 import { ImageSegmentationModelList } from "../lists/ImageSegmentationModelList"
 

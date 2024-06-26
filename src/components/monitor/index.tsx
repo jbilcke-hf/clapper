@@ -6,8 +6,8 @@ import { useFullscreenStatus } from "@/lib/hooks"
 
 import { UniversalPlayer } from "./UniversalPlayer"
 import { PlayerControls } from "./PlayerControls"
-import { useUI } from "@/controllers/ui"
-import { useTheme } from "@/controllers/ui/useTheme"
+import { useUI } from "@/services/ui"
+import { useTheme } from "@/services/ui/useTheme"
 
 export function Monitor() {
   const [isFullscreen, setFullscreen, ref] = useFullscreenStatus()

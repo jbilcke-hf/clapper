@@ -1,6 +1,6 @@
 import { ClapEntity, ClapMeta, ClapSegment, ClapSegmentCategory, ClapSegmentStatus } from "@aitube/clap"
-import { SettingsState } from "./controllers/settings"
-import { ChatEvent } from "./controllers/assistant/types"
+import { SettingsState } from "./services/settings"
+import { ChatEvent } from "@aitube/clapper-services"
 
 export enum SettingsCategory {
   NONE = "NONE",

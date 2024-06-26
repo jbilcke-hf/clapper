@@ -1,5 +1,5 @@
 import { FormSection } from "@/components/forms/FormSection"
-import { useSettings } from "@/controllers/settings"
+import { useSettings } from "@/services/settings"
 import { ComputeProvider } from "@/types"
 
 import { FormSelect } from "../forms/FormSelect"

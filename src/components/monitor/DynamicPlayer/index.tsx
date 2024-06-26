@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { MonitoringMode } from "@aitube/clapper-services"
 
 import { cn } from "@/lib/utils"
-import { useMonitor } from "@/controllers/monitor/useMonitor"
+import { useMonitor } from "@/services/monitor/useMonitor"
 
-import { MonitoringMode } from "@/controllers/monitor/types"
-import { useRenderLoop } from "@/controllers/renderer/useRenderLoop"
-import { useRenderer } from "@/controllers/renderer/useRenderer"
+import { useRenderLoop } from "@/services/renderer/useRenderLoop"
+import { useRenderer } from "@/services/renderer/useRenderer"
 import { DynamicBuffer } from "./DynamicBuffer"
 
 export const DynamicPlayer = ({

@@ -11,10 +11,10 @@ import {
   MenubarSubTrigger,
   MenubarTrigger
 } from "@/components/ui/menubar"
-import { useUI } from "@/controllers/ui"
+import { useUI } from "@/services/ui"
 import { SettingsCategory } from "@/types"
 import { AssistantModelList } from "../lists/AssistantModelList"
-import { useInitAssistant } from "@/controllers/assistant/useAssistant"
+import { useInitAssistant } from "@/services/assistant/useAssistant"
 
 export function TopMenuAssistant() {
   const setShowSettings = useUI(s => s.setShowSettings)

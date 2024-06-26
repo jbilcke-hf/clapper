@@ -3,8 +3,8 @@
 import { create } from "zustand"
 import { toast } from "sonner"
 import { UUID } from "@aitube/clap"
+import { TasksStore, NewTask, Task, TaskCategory, TaskProgressType, TaskRemoteControl, TaskStatus, TaskVisibility } from "@aitube/clapper-services"
 
-import { NewTask, Task, TaskCategory, TaskProgressType, TaskRemoteControl, TaskStatus, TaskVisibility } from "./types"
 import { TaskStatusUpdate } from "./TaskStatusUpdate"
 import { sleep } from "@/lib/utils/sleep"
 
@@ -35,36 +35,7 @@ function statusTransition(current: TaskStatus, requested: TaskStatus): TaskStatu
  * 
  * and it also provides tons of helper to track the status
  */
-export const useTasks = create<{
-  tasks: Record<string, Task>,
-  expandTasks: boolean,
-  setExpandTasks: (expandTasks: boolean) => void,
-  get: (taskId?: string) => TaskRemoteControl | undefined
-  find: (params?: {
-    status?: TaskStatus
-    category?: TaskCategory
-    visibility?: TaskVisibility
-  }) => Task[]
-  add: (partialTask: Partial<Task>, status?: TaskStatus) => TaskRemoteControl
-  pause: (taskId?: string) => void
-  continue: (taskId?: string) => void
-  setStatus: (status: TaskStatus, taskId?: string) => void
-  setProgress: (taskId: string, options?: {
-    value?: number
-    sleepDelay?: number
-    message?: string
-    isFinished?: boolean
-    hasFailed?: boolean
-  }) => Promise<void>
-
-  // cancel and clear all tasks (used when switching project)
-  clear: () => void
-
-  // mark a task as completed
-  success: (taskId: string) => void
-  fail: (taskId: string, reason?: string) => void
-  cancel: (taskId?: string) => void
-}>((set, get) => ({
+export const useTasks = create<TasksStore>((set, get) => ({
   tasks: {} as Record<string, Task>,
   expandTasks: false,
   setExpandTasks: (expandTasks: boolean) => {

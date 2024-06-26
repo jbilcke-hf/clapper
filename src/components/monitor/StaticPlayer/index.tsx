@@ -4,7 +4,7 @@ import React, { ReactNode, useEffect, useRef } from "react"
 
 import { useTimeline } from "@aitube/timeline"
 import { useRequestAnimationFrame } from "@/lib/hooks/useRequestAnimationFrame"
-import { useMonitor } from "@/controllers/monitor/useMonitor"
+import { useMonitor } from "@/services/monitor/useMonitor"
 
 export function StaticPlayer({
   video = "",

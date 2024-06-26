@@ -1,8 +1,8 @@
 import { useEffect, useState, useTransition } from "react"
 import { useFilePicker } from "use-file-picker"
 
-import { parseFileName } from "@/controllers/io/parseFileName"
-import { useIO } from "@/controllers/io/useIO"
+import { parseFileName } from "@/services/io/parseFileName"
+import { useIO } from "@/services/io/useIO"
 
 export function useOpenFilePicker() {
   const [isLoading, setIsLoading] = useState(false)

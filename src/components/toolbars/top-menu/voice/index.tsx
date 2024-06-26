@@ -11,14 +11,14 @@ import {
   MenubarSubTrigger,
   MenubarTrigger
 } from "@/components/ui/menubar"
-import { useSettings } from "@/controllers/settings"
-import { useUI } from "@/controllers/ui"
+import { useSettings } from "@/services/settings"
+import { useUI } from "@/services/ui"
 
 
 import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { VoiceGenerationModelList } from "../lists/VoiceGenerationModelList"
 import { SettingsCategory } from "@/types"
-import { useResolver } from "@/controllers/resolver/useResolver"
+import { useResolver } from "@/services/resolver/useResolver"
 import { IsBusy } from "../IsBusy"
 
 export function TopMenuVoice() {

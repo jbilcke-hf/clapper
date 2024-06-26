@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-import { useSettings } from "@/controllers/settings"
+import { useSettings } from "@/services/settings"
 
 import { getSpaces } from "./getSpaces"
 import { HFSpace } from "./types"

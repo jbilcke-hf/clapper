@@ -11,14 +11,14 @@ import {
   MenubarSubTrigger,
   MenubarTrigger
 } from "@/components/ui/menubar"
-import { useSettings } from "@/controllers/settings"
-import { useUI } from "@/controllers/ui"
+import { useSettings } from "@/services/settings"
+import { useUI } from "@/services/ui"
 
 import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { VideoGenerationModelList } from "../lists/VideoGenerationModelList"
 import { VideoUpscalingModelList } from "../lists/VideoUpscalingModelList"
 import { SettingsCategory } from "@/types"
-import { useResolver } from "@/controllers/resolver/useResolver"
+import { useResolver } from "@/services/resolver/useResolver"
 import { IsBusy } from "../IsBusy"
 import { VideoDepthModelList } from "../lists/VideoDepthModelList"
 import { VideoSegmentationModelList } from "../lists/VideoSegmentationModelList"
