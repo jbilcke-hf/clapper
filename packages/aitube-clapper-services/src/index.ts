@@ -15,6 +15,7 @@ export {
 
 export {
   AudioController,
+  TasksController,
   BroadcastController,
   EditorController,
   MonitorController,
@@ -69,3 +70,18 @@ export {
   RendererControls,
   RendererStore,
 } from "./renderer"
+
+export {
+  TaskVisibility,
+  TaskProgressType,
+  TaskCategory,
+  TaskStatus,
+  StatusGetter,
+  TaskRunner,
+  NewTask,
+  Task,
+  TaskRemoteControl,
+  TasksState,
+  TasksControls,
+  TasksStore,
+} from "./tasks"
