@@ -405,3 +405,13 @@ export enum ClapCompletionMode {
    */
   REPLACE = "replace"
 }
+
+export type ParseClapProgressUpdate = ({
+  value,
+  sleepDelay,
+  message
+}: {
+  value: number
+  sleepDelay?: number
+  message?: string
+}) => Promise<void>
