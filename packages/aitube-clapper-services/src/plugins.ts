@@ -3,10 +3,8 @@ import { PublicControllers } from "./controllers"
 import {
   ClapperPlugin,
   ClapperPluginMeta,
-  ClapperPluginSetting,
+  ClapperPluginSettings,
 } from "./plugin"
-
-export type ClapperPluginSettings =  ClapperPluginSetting[]
 
 export type ClapperPluginApi = {
   /**
@@ -22,7 +20,7 @@ export type ClapperPluginApi = {
    * (to the local storage usually)
    * @returns 
    */
-  getSettings: () => ClapperPluginSetting[]
+  getSettings: () => ClapperPluginSettings
 }
 
 export type PluginsState = {
@@ -38,7 +36,7 @@ export type PluginsControls = {
   refreshAvailablePlugins: () => Promise<void>
 
   getPluginControllers: (plugin: ClapperPlugin) => PublicControllers
-  getPluginSettings: (plugin: ClapperPlugin) => ClapperPluginSetting[]
+  getPluginSettings: (plugin: ClapperPlugin) => ClapperPluginSettings
 
   install: (plugin: ClapperPlugin) => Promise<void>
   uninstall: (plugin: ClapperPlugin) => Promise<void>

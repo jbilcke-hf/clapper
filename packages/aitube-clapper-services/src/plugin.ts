@@ -40,6 +40,8 @@ ClapperPluginSettingBase &
     ClapperPluginSettingBoolean
   )
 
+export type ClapperPluginSettings = ClapperPluginSetting[]
+
 export type ClapperPluginMeta = {
   // a lowercase alphabetical name (letters and digits only)
   // used to uniquely identify the plugin
