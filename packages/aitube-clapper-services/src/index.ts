@@ -1,6 +1,4 @@
 export {
-  ChatEvent,
-  ChatHistory,
   AssistantStore,
   AssistantState,
   AssistantControls,
@@ -13,6 +11,22 @@ export {
   AudioStore,
   CurrentlyPlayingAudioSource
 } from "./audio"
+
+export {
+  ChatEvent,
+  ChatHistory,
+  SettingsCategory,
+  ComputeProvider,
+  ComfyIcuAccelerator,
+  ResolveRequestPrompts,
+  AssistantResponse,
+  ComfyParameter,
+  ComfyNode,
+  FalAiImageSize,
+  StabilityAiImageSize,
+  StabilityAiGenerationMode,
+  ImageSegment,
+} from "./base-types"
 
 export {
   BroadcastState,
@@ -30,13 +44,15 @@ export {
   RendererService,
   ResolverService,
   TimelineService,
-
+  UIService,
   PrivateServices,
   PublicServices,
   Services,
 } from "./services"
 
 export {
+  EditorView,
+  ScrollData,
   EditorState,
   EditorControls,
   EditorStore
@@ -101,3 +117,16 @@ export {
   TasksControls,
   TasksStore,
 } from "./tasks"
+
+export {
+  ResolveRequest,
+  AssistantRequest,
+} from "./types"
+
+export {
+  UIThemeName,
+  UITheme,
+  UIStore,
+  UIState,
+  UIControls
+} from "./ui"

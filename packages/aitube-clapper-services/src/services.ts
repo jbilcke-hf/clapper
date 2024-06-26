@@ -10,6 +10,7 @@ import { ResolverStore } from "./resolver"
 import { PluginsStore } from "./plugins"
 import { AudioStore } from "./audio"
 import { TasksStore } from "./tasks"
+import { UIStore } from "./ui"
 
 export type AssistantService = UseBoundStore<StoreApi<AssistantStore>>
 export type AudioService = UseBoundStore<StoreApi<AudioStore>>
@@ -21,6 +22,7 @@ export type ResolverService = UseBoundStore<StoreApi<ResolverStore>>
 export type TasksService = UseBoundStore<StoreApi<TasksStore>>
 export type TimelineService = UseBoundStore<StoreApi<TimelineStore>>
 export type PluginsService = UseBoundStore<StoreApi<PluginsStore>>
+export type UIService = UseBoundStore<StoreApi<UIStore>>
 
 export type PrivateServices = {
   plugins: PluginsService
@@ -38,6 +40,7 @@ export type PublicServices = {
   renderer: RendererService
   resolver: ResolverService
   broadcast: BroadcastService
+  ui: UIService
 }
 
 export type Services = PrivateServices & PublicServices
