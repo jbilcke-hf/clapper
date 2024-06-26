@@ -13,6 +13,8 @@
     "publish": "npm publish --access public"
   },
   "devDependencies": {
+    "@types/react": "*",
+    "@types/react-dom": "*",
     "bun-types": "latest",
     "prettier": "^3.3.2",
     "rimraf": "^5.0.7",
@@ -23,6 +25,8 @@
     "@aitube/timeline": "0.0.33",
     "@monaco-editor/react": "^4.6.0",
     "monaco-editor": "^0.50.0",
+    "react": "*",
+    "react-dom": "*",
     "zustand": "4.5.2"
   },
   "dependencies": {
