@@ -24,6 +24,9 @@ import { useIO } from "@/services/io/useIO"
 import { ChatView } from "@/components/assistant/ChatView"
 import { ScriptEditor } from "@/components/editor/ScriptEditor"
 import { useSearchParams } from "next/navigation"
+import EditorMenu from "@/components/toolbars/editor-menu/EditorSideMenu"
+import EditorSideMenu from "@/components/toolbars/editor-menu/EditorSideMenu"
+import { Editor } from "@/components/editor/Editor"
 
 type DroppableThing = { files: File[] }
 
@@ -95,7 +98,7 @@ function MainContent() {
                       minSize={showTimeline ? 100 : 1}
                       maxSize={showTimeline ? 1600 : 1}
                       >
-                      <ScriptEditor />
+                      <Editor />
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement
