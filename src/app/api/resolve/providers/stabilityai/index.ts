@@ -1,6 +1,6 @@
 import { ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 
-import { ResolveRequest } from "@/types"
+import { ResolveRequest } from "@aitube/clapper-services"
 import { generateImage } from "./generateImage"
 
 export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {

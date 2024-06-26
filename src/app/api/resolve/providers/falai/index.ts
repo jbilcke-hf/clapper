@@ -1,6 +1,6 @@
 import * as fal from '@fal-ai/serverless-client'
 
-import { FalAiImageSize, ResolveRequest } from "@/types"
+import { FalAiImageSize, ResolveRequest } from "@aitube/clapper-services"
 import { ClapMediaOrientation, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 import { FalAiAudioResponse, FalAiImageResponse, FalAiSpeechResponse, FalAiVideoResponse } from './types'
 

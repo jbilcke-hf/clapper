@@ -340,4 +340,8 @@ export const useTasks = create<TasksStore>((set, get) => ({
   cancel: (taskId?: string) => {
     get().setStatus(TaskStatus.CANCELLED, taskId)
   }
-}))
+}));
+
+if (typeof window !== "undefined") {
+  (window as any).useTasks = useTasks;
+}

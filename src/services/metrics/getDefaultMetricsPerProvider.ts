@@ -1,4 +1,4 @@
-import { ComputeProvider } from "@/types"
+import { ComputeProvider } from "@aitube/clapper-services"
 
 import { MetricsPerProvider } from "./types"
 import { getDefaultComputeProviderMetrics } from "./getDefaultComputeProviderMetrics"

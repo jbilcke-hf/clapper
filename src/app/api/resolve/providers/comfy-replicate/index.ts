@@ -1,6 +1,6 @@
 import { ClapSegment, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
 
-import { ResolveRequest } from "@/types"
+import { ResolveRequest } from "@aitube/clapper-services"
 import { getComfyWorkflow } from "../comfy/getComfyWorkflow"
 import { runWorkflow } from "./runWorkflow"
 

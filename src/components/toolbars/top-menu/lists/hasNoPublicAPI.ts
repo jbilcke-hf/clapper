@@ -1,4 +1,4 @@
-import { ComputeProvider } from "@/types"
+import { ComputeProvider } from "@aitube/clapper-services"
 
 export function hasNoPublicAPI(model: string) {
   model = model.toLowerCase()

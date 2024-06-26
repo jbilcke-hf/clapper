@@ -12,7 +12,7 @@ import { useSettings } from "../settings"
 
 import { askAssistant } from "./askAssistant"
 import { useRenderer } from "../renderer"
-import { AssistantRequest } from "@/types"
+import { AssistantRequest } from "@aitube/clapper-services"
 
 // URL to the speech to text websocket server
 export const STT_API_URL = process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_API_URL || ""

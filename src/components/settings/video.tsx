@@ -1,7 +1,7 @@
 import { FormSection } from "@/components/forms/FormSection"
 import { getDefaultSettingsState, useSettings } from "@/services/settings"
 import { FormSelect } from "../forms/FormSelect"
-import { ComputeProvider } from "@/types"
+import { ComputeProvider } from "@aitube/clapper-services"
 import { FormInput } from "../forms/FormInput"
 import { APP_NAME } from "@/lib/core/constants"
 import { availableComputeProvidersForVideos, computeProviderShortNames } from "./constants"

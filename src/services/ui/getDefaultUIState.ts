@@ -1,5 +1,4 @@
-import { SettingsCategory } from "@/types"
-import { UIState } from "./types"
+import { SettingsCategory, UIState } from "@aitube/clapper-services"
 
 export function getDefaultUIState(): UIState {
   const state: UIState = {

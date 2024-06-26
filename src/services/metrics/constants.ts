@@ -3,7 +3,7 @@
 // some providers don't provide APIs to get those statistics
 // so we have to resort to using very approximative estimations
 
-import { ComputeProvider } from "@/types"
+import { ComputeProvider } from "@aitube/clapper-services"
 import { ProviderMetricsEstimationType, ProviderMetricsModelEstimations } from "./types"
 
 // also note that duration depends on the parameters and image size

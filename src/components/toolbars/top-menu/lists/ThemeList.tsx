@@ -1,5 +1,7 @@
 "use client"
 
+import { UIThemeName } from "@aitube/clapper-services"
+
 import { Tag } from "@/components/tags/Tag"
 import { TagColor } from "@/components/tags/types"
 import {
@@ -13,8 +15,9 @@ import {
   MenubarSubTrigger,
 } from "@/components/ui/menubar"
 import { useUI } from "@/services/ui"
-import { themes, UIThemeName } from "@/services/ui/theme"
+import { themes } from "@/services/ui/theme"
 import { useTheme } from "@/services/ui/useTheme"
+
 
 export function ThemeList() {
   const theme = useTheme()

@@ -8,13 +8,18 @@ import { useTasks } from "../../tasks/useTasks"
 
 // a loading dialog that cannot be closed once it's loading
 export function LoadingDialog({ className = "" }: { className?: string }) {
-  const { find } = useTasks()
+  const { find, tasks,} = useTasks()
 
   const runningBlockerTasks = find({ status: TaskStatus.RUNNING, visibility: TaskVisibility.BLOCKER })
   const isLoading = runningBlockerTasks.length > 0
   const currentMessage = runningBlockerTasks[0]?.currentMessage || ""
   const progress = runningBlockerTasks[0]?.progress || 0
 
+  console.log(`LoadingDialog:`, {
+    runningBlockerTasks,
+    isLoading,
+    tasks,
+  })
   return (
     <Dialog open={isLoading}>
       <DialogContent className="h-44">

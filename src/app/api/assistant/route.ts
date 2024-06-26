@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server"
 
-import { AssistantRequest, AssistantResponse } from "@/types"
+import { AssistantRequest, AssistantResponse } from "@aitube/clapper-services"
 import { askAnyAssistant } from "./askAnyAssistant"
 
 export async function POST(req: NextRequest) {

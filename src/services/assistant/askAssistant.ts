@@ -1,4 +1,4 @@
-import { AssistantRequest, AssistantResponse } from "@/types"
+import { AssistantRequest, AssistantResponse } from "@aitube/clapper-services"
 
 export async function askAssistant(request: AssistantRequest) {
   const res = await fetch("/api/assistant", {

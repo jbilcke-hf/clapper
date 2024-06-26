@@ -1,6 +1,6 @@
 import { HfInference, HfInferenceEndpoint } from "@huggingface/inference"
 
-import { ResolveRequest } from "@/types"
+import { ResolveRequest } from "@aitube/clapper-services"
 import { ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 
 import { generateImage } from "./generateImage"

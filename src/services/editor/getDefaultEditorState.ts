@@ -1,7 +1,8 @@
-import { EditorState } from "./types"
+import { EditorState, EditorView } from "@aitube/clapper-services"
 
 export function getDefaultEditorState(): EditorState {
   const state: EditorState = {
+    view: EditorView.SCRIPT,
     monaco: undefined,
     textModel: undefined,
     standaloneCodeEditor: undefined,

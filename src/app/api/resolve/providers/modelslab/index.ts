@@ -1,4 +1,4 @@
-import { ResolveRequest } from "@/types"
+import { ResolveRequest } from "@aitube/clapper-services"
 import { ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
 
 export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {

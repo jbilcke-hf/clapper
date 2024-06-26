@@ -2,7 +2,7 @@ import { FormSection } from "@/components/forms/FormSection"
 import { getDefaultSettingsState, useSettings } from "@/services/settings"
 
 import { FormInput } from "../forms/FormInput"
-import { ComputeProvider } from "@/types"
+import { ComputeProvider } from "@aitube/clapper-services"
 import { availableComputeProvidersForImages, computeProviderShortNames } from "./constants"
 import { FormSelect } from "../forms/FormSelect"
 

@@ -12,7 +12,7 @@ import {
   MenubarTrigger
 } from "@/components/ui/menubar"
 import { useUI } from "@/services/ui"
-import { SettingsCategory } from "@/types"
+import { SettingsCategory } from "@aitube/clapper-services"
 import { AssistantModelList } from "../lists/AssistantModelList"
 import { useInitAssistant } from "@/services/assistant/useAssistant"
 

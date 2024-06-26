@@ -1,4 +1,4 @@
-import { ComfyIcuAccelerator } from "@/types"
+import { ComfyIcuAccelerator } from "@aitube/clapper-services"
 
 export function parseComfyIcuAccelerator(input: any, defaultAccelerator?: ComfyIcuAccelerator): ComfyIcuAccelerator {
   

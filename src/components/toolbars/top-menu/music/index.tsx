@@ -15,7 +15,7 @@ import { useSettings } from "@/services/settings"
 import { useUI } from "@/services/ui"
 
 import { RenderingStrategyList } from "../lists/RenderingStrategyList"
-import { SettingsCategory } from "@/types"
+import { SettingsCategory } from "@aitube/clapper-services"
 import { MusicGenerationModelList } from "../lists/MusicGenerationModelList"
 import { useResolver } from "@/services/resolver/useResolver"
 import { IsBusy } from "../IsBusy"

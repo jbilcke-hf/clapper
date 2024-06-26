@@ -1,4 +1,6 @@
-import { UITheme } from "./theme"
+
+import { UITheme } from "@aitube/clapper-services"
+
 import { useUI } from "./useUI"
 
 export function useTheme(): UITheme {

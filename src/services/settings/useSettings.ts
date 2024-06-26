@@ -1,15 +1,14 @@
 "use client"
 
 import { create } from "zustand"
-import { persist } from 'zustand/middleware'
+import { persist } from "zustand/middleware"
 import { getValidNumber } from "@aitube/clap"
 import { parseRenderingStrategy, RenderingStrategy } from "@aitube/timeline"
+import { ComfyIcuAccelerator, ComputeProvider, SettingsState, SettingsStore } from "@aitube/clapper-services"
 
-import { ComfyIcuAccelerator, ComputeProvider } from "@/types"
 import { getValidBoolean, getValidString, parseComputeProvider } from "@/lib/utils"
 import { HARD_LIMIT_NB_MAX_ASSETS_TO_GENERATE_IN_PARALLEL } from "@/lib/core/constants"
 
-import { SettingsState, SettingsStore } from "./types"
 import { getDefaultSettingsState } from "./getDefaultSettingsState"
 import { getValidComfyWorkflowTemplate } from "@/lib/utils/getValidComfyWorkflowTemplate"
 import { parseComfyIcuAccelerator } from "@/lib/utils/parseComfyIcuAccelerator"

@@ -1,6 +1,6 @@
 import { FormSection } from "@/components/forms/FormSection"
 import { useSettings } from "@/services/settings"
-import { ComputeProvider } from "@/types"
+import { ComputeProvider } from "@aitube/clapper-services"
 
 import { FormSelect } from "../forms/FormSelect"
 import { availableComputeProvidersForAssistant, computeProviderShortNames } from "./constants"

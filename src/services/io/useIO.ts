@@ -2,7 +2,7 @@
 
 import { ClapAssetSource, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType, newSegment, parseClap, serializeClap } from "@aitube/clap"
 import { TimelineStore, useTimeline } from "@aitube/timeline"
-import { parseScriptToClap } from "@aitube/broadway"
+import { ParseScriptProgressUpdate, parseScriptToClap } from "@aitube/broadway"
 import { TaskCategory, TaskVisibility } from "@aitube/clapper-services"
 import { create } from "zustand"
 import * as fflate from 'fflate'
@@ -20,6 +20,7 @@ import { base64DataUriToUint8Array } from "@/lib/utils/base64DataUriToUint8Array
 
 import { formatDuration } from "@/lib/utils/formatDuration"
 import { ExportableSegment, formatSegmentForExport } from "@/lib/utils/formatSegmentForExport"
+import { sleep } from "@/lib/utils/sleep"
 
 
 export const useIO = create<IOStore>((set, get) => ({
@@ -94,7 +95,7 @@ export const useIO = create<IOStore>((set, get) => ({
     const task = useTasks.getState().add({
       category: TaskCategory.IMPORT,
       visibility: TaskVisibility.BLOCKER,
-      initialMessage:  `Loading ${fileName}`,
+      initialMessage: `Loading ${fileName}`,
       successMessage: `Successfully loaded the screenplay!`,
       value: 0,
     })
@@ -119,20 +120,34 @@ export const useIO = create<IOStore>((set, get) => ({
       // })
       // const clap = await parseClap(blob)
 
+
       // new way: we analyze the screenplay on browser side
-      const clap = await parseScriptToClap(plainText)
+      const clap = await parseScriptToClap(plainText, async ({
+        value,
+        sleepDelay,
+        message,
+      }) => {
+        const relativeProgressRatio = value / 100
+        const totalProgress = 10 + relativeProgressRatio * 80
+        task.setProgress({
+          message,
+          value: totalProgress
+        })
+        await sleep(sleepDelay || 25)
+      })
+
       clap.meta.title = `${projectName || ""}`
 
       task.setProgress({
         message: "Loading rendering engine..",
-        value: 70
+        value: 90
       })
 
       await timeline.setClap(clap)
 
       task.setProgress({
         message: "Nearly there..",
-        value: 95
+        value: 98
       })
 
       task.success()

@@ -6,10 +6,11 @@ import { useAssistant } from "@/services/assistant/useAssistant"
 
 import { ChatBubble } from "./ChatBubble"
 import { Input } from "../ui/input"
+import { useTheme } from "@/services/ui/useTheme"
 
 export function ChatView() {
   const [_isPending, startTransition] = useTransition()
-
+  const theme = useTheme()
   
   const [draft, setDraft] = useState("")
   const history = useAssistant((s) => s.history)
@@ -27,7 +28,11 @@ export function ChatView() {
   }
 
   return (
-    <div className="flex h-full w-full items-center justify-center pt-8">
+    <div
+      className="flex h-full w-full items-center justify-center pt-8"
+      style={{
+        background: theme.assistantBgColor || theme.defaultBgColor || ""
+      }}>
       <div className="flex flex-col w-full h-full">
         <div className="flex flex-grow overflow-y-scroll">
           <div className="flex flex-col space-y-6 p-2 w-full">

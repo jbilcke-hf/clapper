@@ -1,7 +1,7 @@
 import { HfInference, HfInferenceEndpoint } from "@huggingface/inference"
 
 import { decodeOutput } from "@/lib/utils/decodeOutput"
-import { ResolveRequest } from "@/types"
+import { ResolveRequest } from "@aitube/clapper-services"
 
 export async function generateImage(request: ResolveRequest): Promise<string> {
   
