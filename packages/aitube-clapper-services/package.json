@@ -1,0 +1,45 @@
+{
+  "name": "@aitube/clapper-controllers",
+  "module": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Base types for Clapper controllers",
+  "scripts": {
+    "build": "bun build ./src/index.ts --outfile=dist/index.js --external=yaml && bun run build:declaration",
+    "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
+    "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
+    "publish": "npm publish --access public"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "prettier": "^3.3.2",
+    "rimraf": "^5.0.7",
+    "typescript": "^5.5.2"
+  },
+  "peerDependencies": {
+    "@aitube/clap": "0.0.29",
+    "@aitube/timeline": "0.0.33",
+    "@monaco-editor/react": "^4.6.0",
+    "monaco-editor": "^0.50.0",
+    "zustand": "4.5.2"
+  },
+  "dependencies": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jbilcke-hf/clapper-controllers.git"
+  },
+  "keywords": [
+    "Clapper",
+    "Clapper.app"
+  ],
+  "author": "Julian Bilcke",
+  "license": "MIT",
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/**/*.d.ts"
+  ]
+}
