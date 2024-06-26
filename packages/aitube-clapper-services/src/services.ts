@@ -9,6 +9,7 @@ import { RendererStore } from "./renderer"
 import { ResolverStore } from "./resolver"
 import { PluginsStore } from "./plugins"
 import { AudioStore } from "./audio"
+import { SettingsStore } from "./settings"
 import { TasksStore } from "./tasks"
 import { UIStore } from "./ui"
 
@@ -19,6 +20,7 @@ export type EditorService = UseBoundStore<StoreApi<EditorStore>>
 export type MonitorService = UseBoundStore<StoreApi<MonitorStore>>
 export type RendererService = UseBoundStore<StoreApi<RendererStore>>
 export type ResolverService = UseBoundStore<StoreApi<ResolverStore>>
+export type SettingsService = UseBoundStore<StoreApi<SettingsStore>>
 export type TasksService = UseBoundStore<StoreApi<TasksStore>>
 export type TimelineService = UseBoundStore<StoreApi<TimelineStore>>
 export type PluginsService = UseBoundStore<StoreApi<PluginsStore>>
@@ -26,6 +28,7 @@ export type UIService = UseBoundStore<StoreApi<UIStore>>
 
 export type PrivateServices = {
   plugins: PluginsService
+  settings: SettingsService
 }
 
 // the controllers publicly available

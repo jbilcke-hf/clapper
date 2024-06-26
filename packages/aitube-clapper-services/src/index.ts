@@ -43,6 +43,7 @@ export {
   MonitorService,
   RendererService,
   ResolverService,
+  SettingsService,
   TimelineService,
   UIService,
   PrivateServices,
@@ -117,6 +118,12 @@ export {
   TasksControls,
   TasksStore,
 } from "./tasks"
+
+export {
+  SettingsState,
+  SettingsControls,
+  SettingsStore
+} from "./settings"
 
 export {
   ResolveRequest,
