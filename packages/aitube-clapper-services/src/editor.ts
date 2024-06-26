@@ -2,6 +2,14 @@ import { ClapProject, ClapSegment } from "@aitube/clap"
 import { Monaco } from "@monaco-editor/react"
 import MonacoEditor from "monaco-editor"
 
+export enum EditorView {
+  PROJECT = "PROJECT",
+  SCRIPT = "SCRIPT",
+  ENTITY = "ENTITY",
+  SEGMENT = "SEGMENT",
+  HISTORY = "HISTORY"
+}
+
 export type ScrollData = {
   scrollHeight: number
   scrollLeft: number
@@ -10,6 +18,8 @@ export type ScrollData = {
 }
 
 export type EditorState = {
+  view: EditorView
+  
   monaco?: Monaco
 
   textModel?: MonacoEditor.editor.ITextModel
@@ -37,6 +47,7 @@ export type EditorState = {
 } & ScrollData
 
 export type EditorControls = {
+  setView: (editorView: EditorView) => void
   setMonaco: (monaco?: Monaco) => void
   setTextModel: (textModel?: MonacoEditor.editor.ITextModel) => void
   setStandaloneCodeEditor: (standaloneCodeEditor?: MonacoEditor.editor.IStandaloneCodeEditor) => void

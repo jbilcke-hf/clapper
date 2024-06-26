@@ -1,16 +1,4 @@
-export type ChatEvent = {
-  eventId: string
-  senderId: string
-  senderName: string
-  roomId: string
-  roomName: string
-  sentAt: string
-  message: string
-  isCurrentUser: boolean
-}
-
-export type ChatHistory = ChatEvent[]
-
+import { ChatEvent, ChatHistory } from "./base-types"
 
 /**
  * Assistant 
