@@ -12,7 +12,10 @@ export {
   MonitorController,
   RendererController,
   TimelineController,
-  PublicControllers
+
+  PrivateControllers,
+  PublicControllers,
+  Controllers,
 } from "./controllers"
 
 export {
@@ -36,11 +39,19 @@ export {
   ClapperPluginSettingNumber,
   ClapperPluginSettingBoolean,
   ClapperPluginSetting,
+  ClapperPluginSettings,
   ClapperPluginMeta,
   BaseClapperPluginStore,
   ClapperPluginController,
   ClapperPlugin,
 } from "./plugin"
+
+export {
+  ClapperPluginApi,
+  PluginsState,
+  PluginsControls,
+  PluginsStore,
+} from "./plugins"
 
 export {
   ActiveSegments,
