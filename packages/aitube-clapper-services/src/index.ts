@@ -1,12 +1,20 @@
 
 export {
+  AudioAnalysis,
+  AudioState,
+  AudioControls,
+  AudioStore,
+  CurrentlyPlayingAudioSource
+} from "./audio"
+
+export {
   BroadcastState,
   BroadcastControls,
   BroadcastStore
 } from "./broadcast"
 
-
 export {
+  AudioController,
   BroadcastController,
   EditorController,
   MonitorController,
