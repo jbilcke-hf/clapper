@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react"
 
-import { useAssistant } from "@/controllers/assistant/useAssistant"
+import { useAssistant } from "@/services/assistant/useAssistant"
 
 import { ChatBubble } from "./ChatBubble"
 import { Input } from "../ui/input"

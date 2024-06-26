@@ -16,8 +16,8 @@ import { cn } from "@/lib/utils"
 
 import { Counter } from "../Counter"
 import { IconSwitch } from "../icons/icon-switch"
-import { useMonitor } from "@/controllers/monitor/useMonitor"
-import { useTheme } from "@/controllers/ui/useTheme"
+import { useMonitor } from "@/services/monitor/useMonitor"
+import { useTheme } from "@/services/ui/useTheme"
 
 export function PlayerControls({
   className

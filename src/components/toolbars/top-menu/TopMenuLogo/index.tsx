@@ -3,13 +3,13 @@ import { PiPauseFill, PiPlayFill } from "react-icons/pi"
 import { BiSolidMoviePlay } from "react-icons/bi"
 // import Image from "next/image"
 
-import { useResolver } from "@/controllers/resolver/useResolver"
+import { useResolver } from "@/services/resolver/useResolver"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 // import logo from "../../../app/logo-v2.png"
 
 import { ActivitySpinner } from "../ActivitySpinner"
 import { cn } from "@aitube/timeline"
-import { useTheme } from "@/controllers/ui/useTheme"
+import { useTheme } from "@/services/ui/useTheme"
 
 export function TopMenuLogo() {
   const theme = useTheme()

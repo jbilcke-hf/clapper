@@ -2,7 +2,7 @@ import { cn } from "@aitube/timeline"
 
 import { Menubar } from "@/components/ui/menubar"
 import { APP_REVISION } from "@/lib/core/constants"
-import { useResolver } from "@/controllers/resolver/useResolver"
+import { useResolver } from "@/services/resolver/useResolver"
 
 import { TopMenuFile } from "./file"
 import { TopMenuImage } from "./image"
@@ -13,6 +13,7 @@ import { TopMenuMusic } from "./music"
 import { TopMenuAssistant } from "./assistant"
 import { TopMenuView } from "./view"
 import { TopMenuLogo } from "./TopMenuLogo"
+import { TopMenuPlugins } from "./plugins"
 
 export function TopMenu() {
   const isBusyResolving = useResolver(s => s.isBusyResolving)
@@ -27,6 +28,7 @@ export function TopMenu() {
       <TopMenuSound />
       <TopMenuMusic />
       <TopMenuAssistant />
+      <TopMenuPlugins />
       <TopMenuView />
       <div className={cn(`
         flex flex-row flex-grow

@@ -7,7 +7,7 @@ import { MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShor
 import { useOpenFilePicker, useQueryStringParams } from "@/lib/hooks"
 import { Loader } from "@/components/dialogs/loader"
 import { IframeWarning } from "@/components/dialogs/iframe-warning"
-import { useIO } from "@/controllers/io/useIO"
+import { useIO } from "@/services/io/useIO"
 
 export function TopMenuFile() {
   const { clapUrl } = useQueryStringParams({

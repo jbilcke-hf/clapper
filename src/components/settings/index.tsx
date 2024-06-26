@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
-import { useUI } from "@/controllers/ui"
+import { useUI } from "@/services/ui"
 
 import { SettingsSectionProvider } from "./provider"
 import { SettingsSectionAssistant } from "./assistant"

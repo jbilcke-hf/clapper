@@ -10,7 +10,7 @@ import {
   MenubarTrigger
 } from "@/components/ui/menubar"
 import { useFullscreenStatus } from "@/lib/hooks"
-import { useUI } from "@/controllers/ui"
+import { useUI } from "@/services/ui"
 import { ThemeList } from "../lists/ThemeList"
 
 export function TopMenuView() {

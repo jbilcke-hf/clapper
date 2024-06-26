@@ -2,9 +2,9 @@ import { useEffect } from "react"
 import { ClapTimeline, useTimeline, SegmentResolver } from "@aitube/timeline"
 
 import { cn } from "@/lib/utils"
-import { useMonitor } from "@/controllers/monitor/useMonitor"
-import { useResolver } from "@/controllers/resolver/useResolver"
-import { useUI } from "@/controllers/ui"
+import { useMonitor } from "@/services/monitor/useMonitor"
+import { useResolver } from "@/services/resolver/useResolver"
+import { useUI } from "@/services/ui"
 
 export function Timeline() {
   const isReady = useTimeline(s => s.isReady)

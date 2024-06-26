@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 
 import { FormSection } from "@/components/forms/FormSection"
-import { getDefaultSettingsState, useSettings } from "@/controllers/settings"
+import { getDefaultSettingsState, useSettings } from "@/services/settings"
 import { ComfyIcuAccelerator } from "@/types"
 import { APP_NAME } from "@/lib/core/constants"
 
@@ -9,7 +9,7 @@ import { availableComfyIcuAccelerators } from "./constants"
 
 import { FormSelect } from "../forms/FormSelect"
 import { FormInput } from "../forms/FormInput"
-import { useUI } from "@/controllers/ui"
+import { useUI } from "@/services/ui"
 import { FormSwitch } from "../forms/FormSwitch"
 
 function GetItHere({ href, children }: { href: string; children: ReactNode }) {

@@ -1,5 +1,5 @@
 
-import { ChatEvent } from "@/controllers/assistant/types"
+import { ChatEvent } from "@aitube/clapper-services"
 import { cn } from "@/lib/utils"
 
 export function ChatBubble({

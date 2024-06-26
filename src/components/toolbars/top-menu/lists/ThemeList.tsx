@@ -12,9 +12,9 @@ import {
   MenubarSubContent,
   MenubarSubTrigger,
 } from "@/components/ui/menubar"
-import { useUI } from "@/controllers/ui"
-import { themes, UIThemeName } from "@/controllers/ui/theme"
-import { useTheme } from "@/controllers/ui/useTheme"
+import { useUI } from "@/services/ui"
+import { themes, UIThemeName } from "@/services/ui/theme"
+import { useTheme } from "@/services/ui/useTheme"
 
 export function ThemeList() {
   const theme = useTheme()

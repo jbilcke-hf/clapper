@@ -1,9 +1,10 @@
+import { TaskStatus, TaskVisibility } from "@aitube/clapper-services"
+
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 
 import { useTasks } from "../../tasks/useTasks"
-import { TaskStatus, TaskVisibility } from "@/components/tasks/types"
 
 // a loading dialog that cannot be closed once it's loading
 export function LoadingDialog({ className = "" }: { className?: string }) {
