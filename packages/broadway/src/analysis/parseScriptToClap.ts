@@ -25,11 +25,11 @@ export async function parseScriptToClap(
   // fix any mess which might be in it
   const content = cleanUTF8Characters(input)
 
-  await  onProgressUpdate({ value: 10 })
+  await  onProgressUpdate({ value: 5 })
 
   const screenplay = await getScreenplayFromText(content)
 
-  await onProgressUpdate({ value: 20 })
+  await onProgressUpdate({ value: 30 })
 
   const {
     movieGenreLabel,
@@ -47,13 +47,13 @@ export async function parseScriptToClap(
 
     // so we want to continue the progress bar in the range [20, 70]
     await onProgressUpdate({
-      value: 20 + (ratio * 50),
+      value: 30 + (ratio * 60),
       sleepDelay: 100,
       message
     })
   })
   
-  await onProgressUpdate({ value: 60 })
+  await onProgressUpdate({ value: 90 })
 
 
   // TODO: return a ClapProject instead
@@ -88,6 +88,7 @@ export async function parseScriptToClap(
     entities: Object.values(entitiesById),
     segments,
   })
-  
+  await onProgressUpdate({ value: 100 })
+
   return clap
 }
