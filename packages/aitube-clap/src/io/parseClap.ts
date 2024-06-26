@@ -1,6 +1,6 @@
 import YAML from "yaml"
 
-import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment, ClapFormat } from "../types"
+import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment, ClapFormat, ParseClapProgressUpdate } from "../types"
 import { getValidNumber } from "../utils/getValidNumber"
 import { dataUriToBlob } from "../converters/dataUriToBlob"
 import { UUID } from "@/utils/uuid"
@@ -8,6 +8,8 @@ import { buildEntityIndex } from "@/helpers/buildEntityIndex"
 import { parseMediaOrientation } from "@/utils"
 
 type StringOrBlob = string | Blob
+
+const defaultParseClapProgressUpdate: ParseClapProgressUpdate = async () => {}
 
 /**
  * Import a clap file from various data sources into an ClapProject
@@ -22,7 +24,13 @@ type StringOrBlob = string | Blob
  * note: it is not really async, because for some reason YAML.parse is a blocking call like for JSON,
  * there is no async version although we are now in the 20s not 90s
  */
-export async function parseClap(src?: ClapProject | string | Blob, debug = false): Promise<ClapProject> {
+export async function parseClap(
+  src?: ClapProject | string | Blob,
+  debug = false,
+  onProgressUpdate: ParseClapProgressUpdate = defaultParseClapProgressUpdate
+): Promise<ClapProject> {
+
+  await onProgressUpdate({ value: 0, message: "Opening .clap file.." })
 
   try {
     if (
@@ -63,6 +71,8 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
     }, null, 2)}`)
   }
 
+  await onProgressUpdate({ value: 10, message: "Analyzing .clap file.." })
+
   if (typeof stringOrBlob === "string") {
     if (debug) {
       console.log("parseClap: input is a string ", stringOrBlob.slice(0, 120))
@@ -81,6 +91,7 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
         if (debug) {
           console.log(`parseClap: input is a remote .clap file`)
         }
+        await onProgressUpdate({ value: 20, message: "Downloading .clap file.." })
         const res = await fetch(stringOrBlob)
         stringOrBlob = await res.blob()
         if (!stringOrBlob) { throw new Error("blob is empty") }
@@ -112,6 +123,9 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
       if (debug) {
         console.log("parseClap: decompressedOutput: ", decompressedOutput)
       }
+
+      await onProgressUpdate({ value: 30, message: "Decompressing .clap file.." })
+
       // const blobAgain = await decompressedOutput.blob()
       inputYamlArrayString = await decompressedOutput.text()
 
@@ -124,6 +138,8 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
       throw new Error(message)
     }
   }
+
+  await onProgressUpdate({ value: 40, message: "Parsing .clap file.." })
 
   // we don't need this anymore I think
   // new Blob([inputStringOrBlob], { type: "application/x-yaml" })
@@ -146,6 +162,9 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
   if (debug) {
     console.log("parseClap: the YAML seems okay, continuing decoding..")
   }
+
+
+  await onProgressUpdate({ value: 50, message: "Importing data from .clap file.." })
 
   const maybeClapHeader = maybeArray[0] as ClapHeader
 
@@ -207,6 +226,8 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
 
   const maybeSegments = maybeArray.slice(afterTheScenes) as ClapSegment[]
 
+  await onProgressUpdate({ value: 60, message: "Importing entities from .clap file.." })
+
   const clapEntities: ClapEntity[] = maybeEntities.map(({
     id,
     category,
@@ -251,6 +272,7 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
     region,
     appearance,
   }))
+  await onProgressUpdate({ value: 70, message: "Importing scenes from .clap file.." })
 
   const clapScenes: ClapScene[] = maybeScenes.map(({
     id,
@@ -275,7 +297,8 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
     endAtLine,
     events: events.map(e => e)
   }))
-  
+  await onProgressUpdate({ value: 80, message: "Importing segments from .clap file.." })
+
   const clapSegments: ClapSegment[] = maybeSegments.map(({
     id,
     track,
@@ -337,6 +360,8 @@ export async function parseClap(src?: ClapProject | string | Blob, debug = false
   if (debug) {
     console.log(`parseClap: successfully parsed ${clapEntities.length} entities, ${clapScenes.length} scenes and ${clapSegments.length} segments`)
   }
+
+  await onProgressUpdate({ value: 100, message: "Buiding entity index.." })
 
   return {
     meta: clapMeta,
