@@ -12,7 +12,7 @@ export type ClapperPluginApi = {
    * 
    * @returns 
    */
-  getServices: () => PublicServices
+  getServices: () => Promise<PublicServices>
 
   /**
    * Load the plugin settings saved by the user
@@ -20,26 +20,24 @@ export type ClapperPluginApi = {
    * (to the local storage usually)
    * @returns 
    */
-  getSettings: () => ClapperPluginSettings
+  getSettings: () => Promise<ClapperPluginSettings>
 }
 
 export type PluginsState = {
   // list of plugins available for install
   availablePlugins: ClapperPluginMeta[]
 
-  installedPlugins: ClapperPlugin[]
-
-  runningPlugins: ClapperPlugin[]
+  installedPlugins: Record<string, ClapperPlugin>
 }
 
 export type PluginsControls = {
   refreshAvailablePlugins: () => Promise<void>
 
-  install: (plugin: ClapperPluginMeta) => Promise<void>
-  uninstall: (plugin: ClapperPluginMeta) => Promise<void>
+  install: (id: string) => Promise<void>
+  uninstall: (id: string) => Promise<void>
 
-  pluginApiGetServices: (plugin: ClapperPlugin) => PublicServices
-  pluginApiGetSettings: (plugin: ClapperPlugin) => ClapperPluginSettings
+  pluginApiGetServices: (id: string) => Promise<PublicServices>
+  pluginApiGetSettings: (id: string) => Promise<ClapperPluginSettings>
 
   connect: (plugin: ClapperPlugin) => Promise<ClapperPluginApi>
 }
