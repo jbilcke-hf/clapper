@@ -78,5 +78,5 @@ export type ClapperPluginService = UseBoundStore<StoreApi<BaseClapperPluginStore
 
 export type ClapperPlugin = {
   meta: ClapperPluginMeta
-  controller: ClapperPluginService
+  service: ClapperPluginService
 }

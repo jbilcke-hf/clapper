@@ -27,19 +27,21 @@ export type PluginsState = {
   // list of plugins available for install
   availablePlugins: ClapperPluginMeta[]
 
-  installedPlugins: ClapperPluginMeta[]
+  installedPlugins: ClapperPlugin[]
 
-  runningPlugins: ClapperPluginMeta[]
+  runningPlugins: ClapperPlugin[]
 }
 
 export type PluginsControls = {
   refreshAvailablePlugins: () => Promise<void>
 
-  getPluginServices: (plugin: ClapperPlugin) => PublicServices
-  getPluginSettings: (plugin: ClapperPlugin) => ClapperPluginSettings
+  install: (plugin: ClapperPluginMeta) => Promise<void>
+  uninstall: (plugin: ClapperPluginMeta) => Promise<void>
 
-  install: (plugin: ClapperPlugin) => Promise<void>
-  uninstall: (plugin: ClapperPlugin) => Promise<void>
+  pluginApiGetServices: (plugin: ClapperPlugin) => PublicServices
+  pluginApiGetSettings: (plugin: ClapperPlugin) => ClapperPluginSettings
+
+  connect: (plugin: ClapperPlugin) => Promise<ClapperPluginApi>
 }
 
 export type PluginsStore = PluginsState & PluginsControls
