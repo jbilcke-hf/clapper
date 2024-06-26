@@ -1,13 +1,13 @@
 {
-  "name": "@aitube/clapper-controllers",
+  "name": "@aitube/clapper-services",
   "module": "index.ts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.2",
-  "description": "Base types for Clapper controllers",
+  "version": "0.0.0",
+  "description": "Base types for Clapper services",
   "scripts": {
-    "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap --external=@aitube/timeline --external=@monaco-editor/react --external=monaco-editor --external=zustand && bun run build:declaration",
+    "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap --external=@aitube/timeline --external=@monaco-editor/react --external=monaco-editor --external=zustand --external=react --external=react-dom && bun run build:declaration",
     "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
     "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
     "publish": "npm publish --access public"
@@ -33,7 +33,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jbilcke-hf/clapper-controllers.git"
+    "url": "https://github.com/jbilcke-hf/clapper-services.git"
   },
   "keywords": [
     "Clapper",

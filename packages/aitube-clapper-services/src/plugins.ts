@@ -1,5 +1,5 @@
 
-import { PublicControllers } from "./controllers"
+import { PublicServices } from "./services"
 import {
   ClapperPlugin,
   ClapperPluginMeta,
@@ -12,7 +12,7 @@ export type ClapperPluginApi = {
    * 
    * @returns 
    */
-  getControllers: () => PublicControllers
+  getServices: () => PublicServices
 
   /**
    * Load the plugin settings saved by the user
@@ -35,7 +35,7 @@ export type PluginsState = {
 export type PluginsControls = {
   refreshAvailablePlugins: () => Promise<void>
 
-  getPluginControllers: (plugin: ClapperPlugin) => PublicControllers
+  getPluginServices: (plugin: ClapperPlugin) => PublicServices
   getPluginSettings: (plugin: ClapperPlugin) => ClapperPluginSettings
 
   install: (plugin: ClapperPlugin) => Promise<void>
