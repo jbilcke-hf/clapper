@@ -7,12 +7,18 @@ import { LuClapperboard } from "react-icons/lu"
 import { useEditor } from "@/services/editor/useEditor"
 import { EditorSideMenuItem } from "./EditorSideMenuItem"
 import { EditorView } from "@aitube/clapper-services"
+import { useTheme } from "@/services/ui/useTheme"
 
-export default function EditorMenu() {
+export default function EditorSideMenu() {
+  const theme = useTheme()
   return (
 
-    <div className="flex flex-col w-14 h-full items-center justify-between border-r border-gray-800">
-      <div className="flex flex-col w-full items-center">
+    <div className="flex flex-col w-14 h-full items-center justify-between border-r"
+    style={{
+      borderRightColor: theme.defaultTextColor || "#eeeeee"
+    }}
+    >
+      <div className="flex flex-col h-full w-full items-center">
 
         <EditorSideMenuItem view={EditorView.PROJECT}><LuClapperboard /></EditorSideMenuItem>
         <EditorSideMenuItem view={EditorView.SCRIPT} label="Script editor"><MdOutlineHistoryEdu /></EditorSideMenuItem>

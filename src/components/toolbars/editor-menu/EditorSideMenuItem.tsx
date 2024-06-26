@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useEditor } from "@/services/editor/useEditor"
+import { useTheme } from "@/services/ui/useTheme"
 
 export function EditorSideMenuItem({
   children,
@@ -29,6 +30,7 @@ export function EditorSideMenuItem({
    */
   unmanaged?: boolean
 }) {
+  const theme = useTheme()
   const view = useEditor(s => s.view)
   const setView = useEditor(s => s.setView)
 
@@ -59,10 +61,14 @@ export function EditorSideMenuItem({
           unmanaged || isActive ? '' :  `cursor-pointer`,
           `border-l-[3px]`,
           isActive
-          ? 'border-fuchsia-400 hover:border-fuchsia-400 text-gray-50 fill-gray-50 hover:text-gray-50 hover:fill-gray-50'
-          : 'border-gray-900 hover:border-gray-900  text-gray-400 fill-gray-400 hover:text-gray-200 hover:tefillxt-gray-200',
+          ? ' text-gray-50 fill-gray-50 hover:text-gray-50 hover:fill-gray-50'
+          : ' text-gray-400 fill-gray-400 hover:text-gray-200 hover:tefillxt-gray-200',
           `group`
         )}
+        style={{
+          background: theme.editorBgColor || "#eeeeee",
+          borderColor: isActive ? theme.defaultPrimaryColor || "#ffffff" : "#111827"
+        }}
         onClick={handleClick}>
           <div className={cn(
             `flex-col items-center justify-center`,
