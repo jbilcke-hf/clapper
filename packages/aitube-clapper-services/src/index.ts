@@ -1,3 +1,10 @@
+export {
+  ChatEvent,
+  ChatHistory,
+  AssistantStore,
+  AssistantState,
+  AssistantControls,
+} from "./assistant"
 
 export {
   AudioAnalysis,
@@ -14,18 +21,20 @@ export {
 } from "./broadcast"
 
 export {
-  AudioController,
-  TasksController,
-  BroadcastController,
-  EditorController,
-  MonitorController,
-  RendererController,
-  TimelineController,
+  AudioService,
+  AssistantService,
+  TasksService,
+  BroadcastService,
+  EditorService,
+  MonitorService,
+  RendererService,
+  ResolverService,
+  TimelineService,
 
-  PrivateControllers,
-  PublicControllers,
-  Controllers,
-} from "./controllers"
+  PrivateServices,
+  PublicServices,
+  Services,
+} from "./services"
 
 export {
   EditorState,
@@ -51,7 +60,7 @@ export {
   ClapperPluginSettings,
   ClapperPluginMeta,
   BaseClapperPluginStore,
-  ClapperPluginController,
+  ClapperPluginService,
   ClapperPlugin,
 } from "./plugin"
 
@@ -70,6 +79,13 @@ export {
   RendererControls,
   RendererStore,
 } from "./renderer"
+
+
+export {
+  ResolverState,
+  ResolverControls,
+  ResolverStore,
+} from "./resolver"
 
 export {
   TaskVisibility,
