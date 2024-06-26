@@ -1,6 +1,6 @@
 import { StaticImageData } from "next/image"
 
-import { ComputeProvider } from "@/types"
+import { ComputeProvider } from "@aitube/clapper-services"
 
 import none from "./none.png"
 import anthropic from "./anthropic.png"

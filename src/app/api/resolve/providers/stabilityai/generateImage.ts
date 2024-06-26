@@ -1,6 +1,6 @@
 import { ClapMediaOrientation } from "@aitube/clap"
 
-import { ResolveRequest, StabilityAiImageSize } from "@/types"
+import { ResolveRequest, StabilityAiImageSize } from "@aitube/clapper-services"
 
 export async function generateImage(request: ResolveRequest): Promise<string> {
 

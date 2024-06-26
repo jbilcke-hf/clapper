@@ -1,6 +1,7 @@
 
 import { ChatEvent } from "@aitube/clapper-services"
 import { cn } from "@/lib/utils"
+import { useTheme } from "@/services/ui/useTheme"
 
 export function ChatBubble({
   eventId,
@@ -12,6 +13,7 @@ export function ChatBubble({
   isCurrentUser,
   message
 }: ChatEvent) {
+  const theme = useTheme()
   return (
     <div className={cn(
       `flex`,
@@ -23,9 +25,17 @@ export function ChatBubble({
         )}>
         <div className={cn(
           `flex flex-col p-4`,
-          isCurrentUser ? `bg-sky-800 text-sky-200` : `bg-indigo-800 text-indigo-200`,
           `rounded-lg`
-        )}>
+        )}
+        style={{
+          background: isCurrentUser
+            ? (theme.assistantUserBgColor || theme.defaultBgColor || "")
+            : (theme.assistantRobotBgColor || theme.defaultPrimaryColor || ""),
+          color: isCurrentUser
+            ? (theme.assistantUserTextColor || theme.defaultTextColor || "")
+            : (theme.assistantRobotTextColor || theme.defaultTextColor || ""),
+        }} 
+        >
           <p className={cn(`text-sm select-text`)}>{message}</p>
         </div>
         <div className={cn(

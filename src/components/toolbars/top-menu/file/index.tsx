@@ -5,7 +5,6 @@ import { useHotkeys } from "react-hotkeys-hook"
 
 import { MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarTrigger } from "@/components/ui/menubar"
 import { useOpenFilePicker, useQueryStringParams } from "@/lib/hooks"
-import { Loader } from "@/components/dialogs/loader"
 import { IframeWarning } from "@/components/dialogs/iframe-warning"
 import { useIO } from "@/services/io/useIO"
 
@@ -24,7 +23,7 @@ export function TopMenuFile() {
 
   const { openFilePicker, isLoading: filePickerIsLoading } = useOpenFilePicker()
 
-  const isLoading = isTimelineLoading || filePickerIsLoading
+  //const isLoading = isTimelineLoading || filePickerIsLoading
 
   const openClapUrl = useIO(s => s.openClapUrl)
   const saveClap = useIO(s => s.saveClap)
@@ -125,7 +124,9 @@ export function TopMenuFile() {
         */}
       </MenubarContent>
     </MenubarMenu>
-    <Loader isLoading={isLoading} />
+    {/*
+    deprecated, this is the old design with progress bar
+    <Loader isLoading={isLoading} /> */}
     <IframeWarning />
     </>
   )

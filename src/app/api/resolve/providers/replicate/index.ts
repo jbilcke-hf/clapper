@@ -2,7 +2,7 @@ import Replicate from 'replicate'
 
 import { ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 
-import { ResolveRequest } from "@/types"
+import { ResolveRequest } from "@aitube/clapper-services"
 
 export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
   if (!request.settings.replicateApiKey) {

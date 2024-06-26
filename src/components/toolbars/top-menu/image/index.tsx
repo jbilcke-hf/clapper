@@ -19,7 +19,7 @@ import { ImageGenerationModelList } from "../lists/ImageGenerationModelList"
 import { ImageUpscalingModelList } from "../lists/ImageUpscalingModelList"
 import { IsBusy } from "../IsBusy"
 
-import { SettingsCategory } from "@/types"
+import { SettingsCategory } from "@aitube/clapper-services"
 import { useResolver } from "@/services/resolver/useResolver"
 import { ImageDepthModelList } from "../lists/ImageDepthModelList"
 import { ImageSegmentationModelList } from "../lists/ImageSegmentationModelList"

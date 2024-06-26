@@ -17,7 +17,7 @@ import { useUI } from "@/services/ui"
 
 import { RenderingStrategyList } from "../lists/RenderingStrategyList"
 import { VoiceGenerationModelList } from "../lists/VoiceGenerationModelList"
-import { SettingsCategory } from "@/types"
+import { SettingsCategory } from "@aitube/clapper-services"
 import { useResolver } from "@/services/resolver/useResolver"
 import { IsBusy } from "../IsBusy"
 

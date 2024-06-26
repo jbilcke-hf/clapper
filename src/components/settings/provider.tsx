@@ -2,7 +2,7 @@ import { ReactNode } from "react"
 
 import { FormSection } from "@/components/forms/FormSection"
 import { getDefaultSettingsState, useSettings } from "@/services/settings"
-import { ComfyIcuAccelerator } from "@/types"
+import { ComfyIcuAccelerator } from "@aitube/clapper-services"
 import { APP_NAME } from "@/lib/core/constants"
 
 import { availableComfyIcuAccelerators } from "./constants"

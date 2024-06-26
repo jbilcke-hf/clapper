@@ -1,8 +1,6 @@
 import { RenderingStrategy } from "@aitube/timeline"
+import { ComfyIcuAccelerator, ComputeProvider, SettingsState } from "@aitube/clapper-services"
 
-import { ComfyIcuAccelerator, ComputeProvider } from "@/types"
-
-import { SettingsState } from "./types"
 import { defaultWorkflowForImages } from "./workflows/image"
 
 export function getDefaultSettingsState(): SettingsState {
@@ -183,7 +181,7 @@ export function getDefaultSettingsState(): SettingsState {
     // Context window	200K*
     // *~150K words, ~680K unicode characters
     // Max output	4096 tokens
-    anthropicModelForAssistant: "claude-3-opus-20240229",
+    anthropicModelForAssistant: "claude-3-5-sonnet-20240620",
 
     elevenLabsModelForVoice: "v1",
     elevenLabsModelForSound: "v1",

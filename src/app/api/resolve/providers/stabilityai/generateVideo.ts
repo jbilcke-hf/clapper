@@ -1,5 +1,5 @@
 import { sleep } from "@/lib/utils/sleep"
-import { ResolveRequest } from "@/types"
+import { ResolveRequest } from "@aitube/clapper-services"
 
 export async function generateVideo(request: ResolveRequest): Promise<string> {
 

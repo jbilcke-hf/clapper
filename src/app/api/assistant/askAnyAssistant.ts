@@ -15,7 +15,7 @@ import { ChatVertexAI } from "@langchain/google-vertexai"
 // Hugging Face will be supported once the following package becomes available
 // import { ChatHuggingFace } from "@langchain/huggingface"
 
-import { AssistantRequest, AssistantResponse, ComputeProvider } from "@/types"
+import { AssistantRequest, AssistantResponse, ComputeProvider } from "@aitube/clapper-services"
 
 import { SimplifiedSegmentData, simplifiedSegmentDataZ } from "./types"
 import { examples, humanTemplate, systemTemplate } from "./templates"

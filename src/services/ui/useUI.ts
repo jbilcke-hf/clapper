@@ -1,12 +1,11 @@
 "use client"
 
 import { create } from "zustand"
-import { persist } from 'zustand/middleware'
+import { persist } from "zustand/middleware"
 
-import { SettingsCategory } from "@/types"
-import { UIStore } from "./types"
+import { SettingsCategory, UIStore,  UITheme, UIThemeName } from "@aitube/clapper-services"
 import { getDefaultUIState } from "./getDefaultUIState"
-import { UITheme, UIThemeName, backstage, themes } from "./theme"
+import { themes } from "./theme"
 import { useEditor } from "../editor/useEditor"
 
 export const useUI = create<UIStore>()(
@@ -33,7 +32,7 @@ export const useUI = create<UIStore>()(
         // if (style) { style.filter = theme.timelineFilter }
       },
       getTheme: () => {
-        return themes[get().themeName] || themes.backstage
+        return (themes as any)[get().themeName] || themes.backstage
       },
       setShowApiKeys: (showApiKeys: boolean) => {
         set({ showApiKeys })

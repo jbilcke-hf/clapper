@@ -1,4 +1,4 @@
-import { ComputeProvider } from "@/types"
+import { ComputeProvider } from "@aitube/clapper-services"
 
 export enum ProviderMetricsEstimationType {
   // the metrics come from the provider's live API,

@@ -1,6 +1,6 @@
 import { cn } from "@aitube/timeline"
 
-import { ComputeProvider } from "@/types"
+import { ComputeProvider } from "@aitube/clapper-services"
 import { formatProvider } from "@/components/toolbars/top-menu/lists/formatProvider"
 
 import { ComputeProviderLogo } from "./ComputeProviderLogo"

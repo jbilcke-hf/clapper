@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
-import { useUI } from "@/services/ui"
+import { useUI } from "@/services"
 
 import { SettingsSectionProvider } from "./provider"
 import { SettingsSectionAssistant } from "./assistant"
@@ -13,7 +13,7 @@ import { SettingsSectionVideo } from "./video"
 import { SettingsSectionSound } from "./sound"
 import { SettingsSectionMusic } from "./music"
 import { SettingsSectionVoice } from "./voice"
-import { SettingsCategory } from "@/types"
+import { SettingsCategory } from "@aitube/clapper-services"
 
 const panels: Record<SettingsCategory, JSX.Element> = {
   [SettingsCategory.NONE]: <></>,

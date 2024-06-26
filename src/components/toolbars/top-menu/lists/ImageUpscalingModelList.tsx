@@ -9,7 +9,7 @@ import {
 
 import { TagColor } from "@/components/tags/types"
 import { Tag } from "@/components/tags/Tag"
-import { ComputeProvider } from "@/types"
+import { ComputeProvider } from "@aitube/clapper-services"
 import { availableModelsForImageUpscaling } from "@/components/settings/constants"
 import { useSettings } from "@/services/settings"
 import { ComputeProviderName } from "@/components/core/providers/ComputeProviderName"

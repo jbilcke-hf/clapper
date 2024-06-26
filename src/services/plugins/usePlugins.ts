@@ -1,7 +1,7 @@
 "use client"
 
 import { create } from "zustand"
-import { ClapperPlugin, ClapperPluginApi, ClapperPluginMeta, PluginsStore } from "@aitube/clapper-services"
+import { ClapperPlugin, ClapperPluginApi, ClapperPluginMeta, PluginsStore, PublicServices } from "@aitube/clapper-services"
 
 import { getDefaultPluginsState } from "./getDefaultPluginsState"
 import { useEditor } from "../editor/useEditor"
@@ -12,6 +12,7 @@ import { useBroadcast } from "../broadcast/useBroadcast"
 import { useResolver } from "../resolver/useResolver"
 import { useAssistant } from "../assistant/useAssistant"
 import { useAudio } from "../audio/useAudio"
+import { useUI } from "../ui"
 
 import { fetchAndRun } from "./fetchAndRun"
 import { useTasks } from "@/components/tasks/useTasks"
@@ -42,7 +43,7 @@ export const usePlugins = create<PluginsStore>((set, get) => ({
     // TODO
   },
 
-  pluginApiGetServices: async (id: string) => {
+  pluginApiGetServices: async (id: string): Promise<PublicServices> => {
     return {
       audio: useAudio,
       assistant: useAssistant,
@@ -53,6 +54,7 @@ export const usePlugins = create<PluginsStore>((set, get) => ({
       renderer: useRenderer,
       resolver: useResolver,
       broadcast: useBroadcast,
+      ui: useUI,
     }
   },
   pluginApiGetSettings: async (id: string) => {
@@ -61,7 +63,7 @@ export const usePlugins = create<PluginsStore>((set, get) => ({
 
   connect: async (plugin: ClapperPlugin) => {
     const api: ClapperPluginApi = {
-      getServices: async () => {
+      getServices: async (): Promise<PublicServices> => {
         return get().pluginApiGetServices(plugin.meta.id)
       },
       getSettings: async () => {

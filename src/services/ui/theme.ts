@@ -12,28 +12,8 @@
  * - handle light and dark themes
  * 
  */
-export type UITheme = {
-  id: string
-  label: string
-  author: string
-  description: string
-  defaultBgColor?: string
-  defaultTextColor?: string
-  defaultPrimaryColor?: string
-  logoColor?: string
-  editorBgColor?: string
-  editorCursorColor?: string
-  editorTextColor?: string
 
-  // background color of the video preview monitor
-  monitorBgColor?: string
-
-  // text of the elapsed/total duration counter in the video preview monitor
-  monitorSecondaryTextColor?: string
-  monitorPrimaryTextColor?: string
-
-  timelineFilter: string
-}
+import { UITheme, UIThemeName } from "@aitube/clapper-services"
 
 // a grey and yellow theme, inspired by the entertainment world
 export const backstage: UITheme = {
@@ -51,6 +31,13 @@ export const backstage: UITheme = {
   monitorBgColor: "#1c1917", // bg-stone-900
   monitorSecondaryTextColor: "#D6D3D1",
   monitorPrimaryTextColor: "#FACC15",
+
+  assistantBgColor: "#292524",
+  assistantUserBgColor: "#075985",
+  assistantUserTextColor: "#bae6fd",
+  assistantRobotBgColor: "#3730a3",
+  assistantRobotTextColor: "#e0e7ff",
+
   timelineFilter: "",
 }
 
@@ -69,6 +56,11 @@ export const mythril: UITheme = {
   monitorBgColor: "#0d3f39",
   monitorSecondaryTextColor: "#D6D3D1",
   monitorPrimaryTextColor: "#2DD4BF",
+  assistantBgColor: "#092a26",
+  assistantUserBgColor: "#075985",
+  assistantUserTextColor: "#bae6fd",
+  assistantRobotBgColor: "#3730a3",
+  assistantRobotTextColor: "#e0e7ff",
   timelineFilter: "hue-rotate(93deg) saturate(0.2)",
 }
 
@@ -87,6 +79,11 @@ export const midnight: UITheme = {
   monitorBgColor: "#152639",
   monitorSecondaryTextColor: "#b8bdc3",
   monitorPrimaryTextColor: "#5B9DF1",
+  assistantBgColor: "#101e2d",
+  assistantUserBgColor: "#075985",
+  assistantUserTextColor: "#bae6fd",
+  assistantRobotBgColor: "#3730a3",
+  assistantRobotTextColor: "#e0e7ff",
   timelineFilter: "hue-rotate(147deg) saturate(0.3) brightness(0.95) contrast(1.05)"
 }
 
@@ -105,6 +102,11 @@ export const lavender: UITheme = {
   monitorBgColor: "#32294b",
   monitorSecondaryTextColor: "#D6D3D1",
   monitorPrimaryTextColor: "#A78BFA",
+  assistantBgColor: "#32294b",
+  assistantUserBgColor: "#075985",
+  assistantUserTextColor: "#bae6fd",
+  assistantRobotBgColor: "#3730a3",
+  assistantRobotTextColor: "#e0e7ff",
   timelineFilter: "hue-rotate(221deg) saturate(0.3) brightness(0.9) sepia(0.15) contrast(1)"
 }
 
@@ -123,6 +125,11 @@ export const flix: UITheme = {
   monitorBgColor: "#000000",
   monitorSecondaryTextColor: "#D6D3D1",
   monitorPrimaryTextColor: "#D22F27",
+  assistantBgColor: "#000000",
+  assistantUserBgColor: "#075985",
+  assistantUserTextColor: "#bae6fd",
+  assistantRobotBgColor: "#3730a3",
+  assistantRobotTextColor: "#e0e7ff",
   timelineFilter: "hue-rotate(47deg) saturate(0.2) brightness(0.85) contrast(1.15)"
 }
 
@@ -141,7 +148,12 @@ export const sendhugs: UITheme = {
   monitorBgColor: "#312702",
   monitorSecondaryTextColor: "#D6D3D1",
   monitorPrimaryTextColor: "#312702",
-    timelineFilter: ""
+  assistantBgColor: "#181301",
+  assistantUserBgColor: "#075985",
+  assistantUserTextColor: "#bae6fd",
+  assistantRobotBgColor: "#3730a3",
+  assistantRobotTextColor: "#e0e7ff",
+  timelineFilter: ""
 }
 
 export const lore: UITheme = {
@@ -159,6 +171,11 @@ export const lore: UITheme = {
   monitorBgColor: "#151520",
   monitorSecondaryTextColor: "#D6D3D1",
   monitorPrimaryTextColor: "#DE4A80",
+  assistantBgColor: "#151520",
+  assistantUserBgColor: "#075985",
+  assistantUserTextColor: "#bae6fd",
+  assistantRobotBgColor: "#3730a3",
+  assistantRobotTextColor: "#e0e7ff",
   timelineFilter: "hue-rotate(303deg) saturate(0.3) brightness(0.9) contrast(1.1)"
 }
 
@@ -177,9 +194,14 @@ export const mocha: UITheme = {
   monitorBgColor: "#342619",
   monitorSecondaryTextColor: "#c1af9e",
   monitorPrimaryTextColor: "#D4AA6E",
+  assistantBgColor: "#271c12",
+  assistantUserBgColor: "#075985",
+  assistantUserTextColor: "#bae6fd",
+  assistantRobotBgColor: "#3730a3",
+  assistantRobotTextColor: "#e0e7ff",
   timelineFilter: "hue-rotate(353deg) saturate(1.2) brightness(0.85) contrast(1.09) sepia(0.5)"
 }
-export const themes = {
+export const themes: Record<UIThemeName, UITheme> = {
   backstage,
   midnight,
   lavender,
@@ -190,4 +212,4 @@ export const themes = {
   mocha
 }
 
-export type UIThemeName = keyof typeof themes
+// export type UIThemeName = keyof typeof themes

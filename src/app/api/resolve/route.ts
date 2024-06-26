@@ -11,7 +11,7 @@ import {
   resolveSegmentUsingStabilityAi
 } from "./providers"
 
-import { ComputeProvider, ResolveRequest } from "@/types"
+import { ComputeProvider, ResolveRequest } from "@aitube/clapper-services"
 import { decodeOutput } from "@/lib/utils/decodeOutput"
 import { getTypeAndExtension } from "@/lib/utils/getTypeAndExtension"
 import { getMediaInfo } from "@/lib/ffmpeg/getMediaInfo"

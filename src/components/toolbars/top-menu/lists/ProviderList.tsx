@@ -13,7 +13,7 @@ import {
 
 import { computeProviderShortNames } from "@/components/settings/constants"
 
-import { ComputeProvider } from "@/types"
+import { ComputeProvider } from "@aitube/clapper-services"
 import { TagColor } from "@/components/tags/types"
 import { Tag } from "@/components/tags/Tag"
 import { hasNoPublicAPI } from "./hasNoPublicAPI"

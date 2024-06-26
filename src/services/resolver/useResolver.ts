@@ -9,7 +9,7 @@ import { ResolverStore } from "@aitube/clapper-services"
 import { getDefaultResolverState } from "./getDefaultResolverState"
 import { useSettings } from "../settings"
 import { DEFAULT_WAIT_TIME_IF_NOTHING_TO_DO_IN_MS } from "./constants"
-import { ResolveRequest, ResolveRequestPrompts } from "@/types"
+import { ResolveRequest, ResolveRequestPrompts } from "@aitube/clapper-services"
 
 
 export const useResolver = create<ResolverStore>((set, get) => ({

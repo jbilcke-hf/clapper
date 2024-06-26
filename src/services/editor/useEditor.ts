@@ -1,16 +1,17 @@
 "use client"
 
-import MonacoEditor from "monaco-editor"
 import { create } from "zustand"
-
-import { EditorStore, ScrollData } from "./types"
-import { getDefaultEditorState } from "./getDefaultEditorState"
+import { Monaco } from "@monaco-editor/react"
+import MonacoEditor from "monaco-editor"
 import { ClapProject, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 import { TimelineStore, useTimeline, leftBarTrackScaleWidth } from "@aitube/timeline"
-import { Monaco } from "@monaco-editor/react"
+import { EditorStore, EditorView, ScrollData } from "@aitube/clapper-services"
+
+import { getDefaultEditorState } from "./getDefaultEditorState"
 
 export const useEditor = create<EditorStore>((set, get) => ({
   ...getDefaultEditorState(),
+  setView: (view: EditorView) => { set({ view }) },
   setMonaco: (monaco?: Monaco) => { set({ monaco }) },
   setTextModel: (textModel?: MonacoEditor.editor.ITextModel) => { set({ textModel }) },
   setStandaloneCodeEditor: (standaloneCodeEditor?: MonacoEditor.editor.IStandaloneCodeEditor) => { set({ standaloneCodeEditor }) },

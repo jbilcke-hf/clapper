@@ -1,4 +1,4 @@
-import { ComfyIcuAccelerator, ComputeProvider } from "@/types"
+import { ComfyIcuAccelerator, ComputeProvider } from "@aitube/clapper-services"
 
 export const computeProviderShortNames = {
   [ComputeProvider.ANTHROPIC]: "Anthropic",
@@ -145,8 +145,8 @@ export const availableModelsForAssistant: Partial<Record<ComputeProvider, string
   ],
   [ComputeProvider.ANTHROPIC]: [
     // you can find this list here: https://docs.anthropic.com/en/docs/models-overview
+    "claude-3-5-sonnet-20240620",
     "claude-3-opus-20240229",
-    "claude-3-sonnet-20240229",
     "claude-3-haiku-20240307"
   ], 
   [ComputeProvider.GOOGLE]: [
@@ -160,8 +160,8 @@ export const availableModelsForAssistant: Partial<Record<ComputeProvider, string
 
 
     // you can find this list here: https://docs.anthropic.com/en/docs/models-overview
+    "claude-3-5-sonnet@20240620",
     "claude-3-opus@20240229",
-    "claude-3-sonnet@20240229",
     "claude-3-haiku@20240307"
   ],
   [ComputeProvider.MISTRALAI]: [

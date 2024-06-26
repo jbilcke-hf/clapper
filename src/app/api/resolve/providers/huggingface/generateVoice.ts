@@ -1,6 +1,6 @@
 import { HfInference, HfInferenceEndpoint } from "@huggingface/inference"
 
-import { ResolveRequest } from "@/types"
+import { ResolveRequest } from "@aitube/clapper-services"
 
 export async function generateVoice(request: ResolveRequest): Promise<string> {
   

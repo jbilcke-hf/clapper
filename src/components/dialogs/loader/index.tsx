@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 
-export function Loader({
+export function DeprecatedLoader({
   isLoading = false,
   className = ""
 }: {
