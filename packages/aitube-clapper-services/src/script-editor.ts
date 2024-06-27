@@ -1,14 +1,7 @@
 import { ClapProject, ClapSegment } from "@aitube/clap"
 import { Monaco } from "@monaco-editor/react"
 import MonacoEditor from "monaco-editor"
-
-export enum EditorView {
-  PROJECT = "PROJECT",
-  SCRIPT = "SCRIPT",
-  ENTITY = "ENTITY",
-  SEGMENT = "SEGMENT",
-  HISTORY = "HISTORY"
-}
+import { VersionControls, VersionedState } from "./version-control"
 
 export type ScrollData = {
   scrollHeight: number
@@ -17,9 +10,7 @@ export type ScrollData = {
   scrollWidth: number
 }
 
-export type EditorState = {
-  view: EditorView
-  
+export type ScriptEditorState = {
   monaco?: Monaco
 
   textModel?: MonacoEditor.editor.ITextModel
@@ -44,10 +35,9 @@ export type EditorState = {
    * (the topmost visible timeline step in the current timeline)
    */
   scrollTopInMs: number
-} & ScrollData
+} & ScrollData & VersionedState<string>
 
-export type EditorControls = {
-  setView: (editorView: EditorView) => void
+export type ScriptEditorControls = {
   setMonaco: (monaco?: Monaco) => void
   setTextModel: (textModel?: MonacoEditor.editor.ITextModel) => void
   setStandaloneCodeEditor: (standaloneCodeEditor?: MonacoEditor.editor.IStandaloneCodeEditor) => void
@@ -59,6 +49,6 @@ export type EditorControls = {
   jumpCursorOnLineClick: (line?: number) => void
   highlightElements: () => void
   applyClassNameToKeywords: (className?: string, keywords?: string[], caseSensitive?: boolean) => void
-}
+} & VersionControls<string>
 
-export type EditorStore = EditorState & EditorControls
+export type ScriptEditorStore = ScriptEditorState & ScriptEditorControls

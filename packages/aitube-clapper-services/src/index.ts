@@ -39,7 +39,11 @@ export {
   AssistantService,
   TasksService,
   BroadcastService,
-  EditorService,
+  ProjectEditorService,
+  SegmentEditorService,
+  EntityEditorService,
+  ScriptEditorService,
+  EditorsService,
   MonitorService,
   RendererService,
   ResolverService,
@@ -52,12 +56,38 @@ export {
 } from "./services"
 
 export {
-  EditorView,
   ScrollData,
-  EditorState,
-  EditorControls,
-  EditorStore
-} from "./editor"
+  ScriptEditorState,
+  ScriptEditorControls,
+  ScriptEditorStore
+} from "./script-editor"
+
+
+export {
+  ProjectEditorState,
+  ProjectEditorControls,
+  ProjectEditorStore
+} from "./project-editor"
+
+
+export {
+  EntityEditorState,
+  EntityEditorControls,
+  EntityEditorStore
+} from "./entity-editor"
+
+export {
+  SegmentEditorState,
+  SegmentEditorControls,
+  SegmentEditorStore
+} from "./segment-editor"
+
+export {
+  EditorView,
+  EditorsState,
+  EditorsControls,
+  EditorsStore
+} from "./editors"
 
 export {
   MonitoringMode,
@@ -137,3 +167,8 @@ export {
   UIState,
   UIControls
 } from "./ui"
+
+export {
+  VersionedState,
+  VersionControls
+} from "./version-control"
