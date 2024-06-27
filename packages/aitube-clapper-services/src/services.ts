@@ -3,7 +3,11 @@ import { TimelineStore } from "@aitube/timeline"
 
 import { AssistantStore } from "./assistant"
 import { BroadcastStore } from "./broadcast"
-import { EditorStore } from "./editor"
+import { SegmentEditorStore } from "./segment-editor"
+import { EntityEditorStore } from "./entity-editor"
+import { ProjectEditorStore } from "./project-editor"
+import { ScriptEditorStore } from "./script-editor"
+import { EditorsStore } from "./editors"
 import { MonitorStore } from "./monitor"
 import { RendererStore } from "./renderer"
 import { ResolverStore } from "./resolver"
@@ -16,7 +20,11 @@ import { UIStore } from "./ui"
 export type AssistantService = UseBoundStore<StoreApi<AssistantStore>>
 export type AudioService = UseBoundStore<StoreApi<AudioStore>>
 export type BroadcastService = UseBoundStore<StoreApi<BroadcastStore>>
-export type EditorService = UseBoundStore<StoreApi<EditorStore>>
+export type SegmentEditorService = UseBoundStore<StoreApi<SegmentEditorStore>>
+export type EntityEditorService = UseBoundStore<StoreApi<EntityEditorStore>>
+export type ProjectEditorService = UseBoundStore<StoreApi<ProjectEditorStore>>
+export type ScriptEditorService = UseBoundStore<StoreApi<ScriptEditorStore>>
+export type EditorsService = UseBoundStore<StoreApi<EditorsStore>>
 export type MonitorService = UseBoundStore<StoreApi<MonitorStore>>
 export type RendererService = UseBoundStore<StoreApi<RendererStore>>
 export type ResolverService = UseBoundStore<StoreApi<ResolverStore>>
@@ -37,7 +45,11 @@ export type PublicServices = {
   assistant: AssistantService
   audio: AudioService
   tasks: TasksService
-  editor: EditorService
+  segmentEditor: SegmentEditorService
+  entityEditor: EntityEditorService
+  projectEditor: ProjectEditorService
+  scriptEditor: ScriptEditorService
+  editors: EditorsService
   monitor: MonitorService
   timeline: TimelineService
   renderer: RendererService
