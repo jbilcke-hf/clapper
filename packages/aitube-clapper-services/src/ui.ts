@@ -1,3 +1,4 @@
+import { ClapTimelineTheme } from "@aitube/timeline"
 import { SettingsCategory } from "./base-types"
 
 export type UIThemeName = "lavender" | "backstage" | "midnight" | "mythril" | "flix" | "lore" | "mocha" | string
@@ -41,8 +42,7 @@ export type UITheme = {
   assistantUserTextColor?: string
   assistantRobotTextColor?: string
 
-  // TODO replace by a proper theme system for the timeline
-  timelineFilter: string
+  timeline: ClapTimelineTheme
 }
 
 export type UIState = {
