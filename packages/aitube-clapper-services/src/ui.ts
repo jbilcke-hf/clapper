@@ -24,10 +24,13 @@ export type UITheme = {
   defaultBgColor?: string
   defaultTextColor?: string
   defaultPrimaryColor?: string
+  defaultBorderColor?: string
   logoColor?: string
   editorBgColor?: string
   editorCursorColor?: string
   editorTextColor?: string
+  editorMenuBgColor?: string
+  editorBorderColor?: string
 
   // background color of the video preview monitor
   monitorBgColor?: string
