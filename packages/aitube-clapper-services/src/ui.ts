@@ -30,6 +30,7 @@ export type UITheme = {
   editorCursorColor?: string
   editorTextColor?: string
   editorMenuBgColor?: string
+  editorMenuTextColor?: string
   editorBorderColor?: string
 
   // background color of the video preview monitor
