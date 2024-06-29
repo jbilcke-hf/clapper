@@ -19,6 +19,7 @@ export function TopBarTimeScale() {
 
   const jumpAt = useTimeline(s => s.jumpAt)
   const togglePlayback = useTimeline(s => s.togglePlayback)
+  const theme = useTimeline(s => s.theme)
 
   const wasPlayingRef = useRef<boolean | undefined>(undefined)
 
@@ -171,7 +172,7 @@ export function TopBarTimeScale() {
           <meshBasicMaterial
             // we need to set the color here to create a sticky overlay
               attach="material"
-              color="rgb(125,124,120)"
+              color={theme.topBarTimeScale.backgroundColor}
             />
         </Plane>
       </group>
@@ -187,11 +188,8 @@ export function TopBarTimeScale() {
             key={idx}>
             <lineBasicMaterial
               attach="material"
-              color={
-                idx % unit === 0
-                ? hslToHex(0, 0, 90)
-                : hslToHex(0, 0, 70)
-              }
+              color={theme.topBarTimeScale.lineColor}
+              opacity={idx % unit === 0 ? 1.0 : 0.7777}
               linewidth={1}
             />
           </line>
@@ -215,9 +213,7 @@ export function TopBarTimeScale() {
             ]}
 
             lineHeight={1.0}
-            color={
-              "#ffffff"
-            }
+            color={theme.topBarTimeScale.textColor}
             // fillOpacity={0.7}
             anchorX="center" // default
             anchorY="middle" // default

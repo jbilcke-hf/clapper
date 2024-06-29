@@ -44,7 +44,7 @@ to build with the jsxDEV enabled.
 You will also want to use a path like this to test the module directly dependency:
 
 ```json
- "@aitube/timeline": "file:/path/to/aitube-timeline",
+ "@aitube/timeline": "file:/Users/jbilcke/Projects/Typescript_Libraries/aitube-timeline",
 ```
    
 

@@ -16,7 +16,7 @@ export function LeftBarTrackScale() {
   const contentHeight = useTimeline((s) => s.contentHeight)
   
   const getCellHeight = useTimeline((s) => s.getCellHeight)
-
+  const theme = useTimeline(s => s.theme)
 
   const getVerticalCellPosition = useTimeline((s) => s.getVerticalCellPosition)
 
@@ -45,9 +45,7 @@ export function LeftBarTrackScale() {
           key={idx}>
           <lineBasicMaterial
             attach="material"
-            color={
-              hslToHex(0, 0, 70)
-            }
+            color={theme.leftBarTrackScale.lineColor}
             linewidth={1}
           />
         </line>
@@ -68,7 +66,7 @@ export function LeftBarTrackScale() {
             e.stopPropagation()
           }}
           >
-            <meshBasicMaterial color="rgb(125,124,120)" />
+            <meshBasicMaterial color={theme.leftBarTrackScale.backgroundColor} />
             <Text
               
               position={[
@@ -84,9 +82,7 @@ export function LeftBarTrackScale() {
               ]}
 
               lineHeight={1.0}
-              color={
-                "#ffffff"
-              }
+              color={theme.leftBarTrackScale.textColor}
               // fillOpacity={0.7}
               anchorX="center" // default
               anchorY="middle" // default
@@ -121,9 +117,7 @@ export function LeftBarTrackScale() {
             ]}
 
             lineHeight={1.0}
-            color={
-              "#ffffff"
-            }
+            color={theme.leftBarTrackScale.textColor}
             // fillOpacity={0.7}
             anchorX="center" // default
             anchorY="middle" // default
@@ -156,9 +150,7 @@ export function LeftBarTrackScale() {
             ]}
 
             lineHeight={1.0}
-            color={
-              "#ffffff"
-            }
+            color={theme.leftBarTrackScale.textColor}
             // fillOpacity={0.7}
             anchorX="center" // default
             anchorY="middle" // default

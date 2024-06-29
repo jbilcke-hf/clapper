@@ -32,6 +32,16 @@ export const baseClapSegmentCategoryHues: ClapSegmentCategoryHues = {
 }
 
 export const pastel: ClapTimelineTheme = {
+  topBarTimeScale: {
+    backgroundColor: "#7d7c78",
+    textColor: "#ffffff",
+    lineColor: "#E6E6E6"
+  },
+  leftBarTrackScale: {
+    backgroundColor: "#7d7c78",
+    textColor: "#ffffff",
+    lineColor: "#B3B3B3"
+  },
   grid: {
     backgroundColor: "#27272A",
   },
@@ -40,8 +50,4 @@ export const pastel: ClapTimelineTheme = {
     lightness: 78.6,
     hues: baseClapSegmentCategoryHues
   }
-}
-
-export const DEFAULT_THEMES: Record<string, ClapTimelineTheme> = {
-  pastel,
 }

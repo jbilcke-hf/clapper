@@ -3,9 +3,19 @@ import { ClapSegmentCategory } from "@aitube/clap"
 export type ClapSegmentCategoryHues = Record<ClapSegmentCategory, number>
 
 export type ClapTimelineTheme = {
+  topBarTimeScale: {
+    backgroundColor: string
+    textColor: string
+    lineColor: string
+  }
+  leftBarTrackScale: {
+    backgroundColor: string
+    textColor: string
+    lineColor: string
+  }
   grid: {
     backgroundColor: string
-  },
+  }
   cell: {
     saturation: number
     lightness: number
