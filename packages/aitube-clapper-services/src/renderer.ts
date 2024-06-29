@@ -13,7 +13,6 @@ export type UpcomingSegments = {
   upcomingSegments: ClapSegment[]
   upcomingVideoSegment?: ClapSegment
   upcomingStoryboardSegment?: ClapSegment
-  upcomingAudioSegments: ClapSegment[]
 }
 
 export type BufferedSegments = ActiveSegments & UpcomingSegments

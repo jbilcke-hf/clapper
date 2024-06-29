@@ -48,6 +48,7 @@ export {
   RendererService,
   ResolverService,
   SettingsService,
+  SimulatorService,
   TimelineService,
   UIService,
   PrivateServices,
@@ -154,6 +155,12 @@ export {
   SettingsControls,
   SettingsStore
 } from "./settings"
+
+export {
+  SimulatorState,
+  SimulatorControls,
+  SimulatorStore
+} from "./simulator"
 
 export {
   ResolveRequest,

@@ -14,6 +14,7 @@ import { ResolverStore } from "./resolver"
 import { PluginsStore } from "./plugins"
 import { AudioStore } from "./audio"
 import { SettingsStore } from "./settings"
+import { SimulatorStore } from "./simulator"
 import { TasksStore } from "./tasks"
 import { UIStore } from "./ui"
 
@@ -29,6 +30,7 @@ export type MonitorService = UseBoundStore<StoreApi<MonitorStore>>
 export type RendererService = UseBoundStore<StoreApi<RendererStore>>
 export type ResolverService = UseBoundStore<StoreApi<ResolverStore>>
 export type SettingsService = UseBoundStore<StoreApi<SettingsStore>>
+export type SimulatorService = UseBoundStore<StoreApi<SimulatorStore>>
 export type TasksService = UseBoundStore<StoreApi<TasksStore>>
 export type TimelineService = UseBoundStore<StoreApi<TimelineStore>>
 export type PluginsService = UseBoundStore<StoreApi<PluginsStore>>
@@ -55,6 +57,7 @@ export type PublicServices = {
   renderer: RendererService
   resolver: ResolverService
   broadcast: BroadcastService
+  simulator: SimulatorService
   ui: UIService
 }
 
