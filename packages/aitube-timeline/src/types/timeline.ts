@@ -191,6 +191,7 @@ export type TimelineStoreModifiers = {
   // that way we don't need to re-draw the whole thing
   trackSilentChangeInSegment: (segmentId: string) => void
 
+  setTimelineTheme: (theme: ClapTimelineTheme) => void
   setTimelineCamera: (timelineCamera?: TimelineCameraImpl) => void
   setTimelineControls: (timelineControls?: TimelineControlsImpl) => void
   setTopBarTimeScale: (topBarTimeScale?: THREE.Group<THREE.Object3DEventMap>) => void

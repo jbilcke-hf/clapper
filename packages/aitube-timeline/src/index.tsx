@@ -15,6 +15,13 @@ export {
 } from "./components"
 
 export {
+  DEFAULT_MIN_ZOOM,
+  DEFAULT_MAX_ZOOM,
+  DEFAULT_ZOOM_SPEED,
+  DEFAULT_ZOOM_DAMPING_FACTOR,
+  DEFAULT_SHOW_FPS,
+  DEFAULT_FRAMELOOP,
+  DEFAULT_THEMES,
   DEFAULT_DURATION_IN_MS_PER_STEP,
   DEFAULT_NB_TRACKS,
   DEFAULT_COLUMNS_PER_SLICE,
@@ -23,7 +30,6 @@ export {
   NB_MAX_SHOTS,
   baseClapSegmentCategoryHues,
   pastel,
-  DEFAULT_THEMES,
   segmentVisibilityPriority,
   leftBarTrackScaleWidth
 } from "./constants"

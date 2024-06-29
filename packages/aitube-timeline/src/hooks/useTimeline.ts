@@ -7,7 +7,7 @@ import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { removeFinalVideos } from "@/utils/removeFinalVideos"
 import { hslToHex } from "@/utils/hslToHex"
-import { ClapSegmentCategoryHues, ClapSegmentColorScheme, SegmentResolver } from "@/types"
+import { ClapSegmentCategoryHues, ClapSegmentColorScheme, ClapTimelineTheme, SegmentResolver } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { getFinalVideo } from "@/utils/getFinalVideo"
@@ -345,6 +345,9 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       })
     })
   },
+  setTimelineTheme: (theme: ClapTimelineTheme) => {
+    set({ theme })
+  },
   setTimelineCamera: (timelineCamera?: TimelineCameraImpl) => {
     set({ timelineCamera })
   },
@@ -622,12 +625,24 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     return findFreeTrack({ segments, startTimeInMs, endTimeInMs })
   },
 
+  // resize and move the end of a segmrnt, as well as the segment after it
   fitSegmentToAssetDuration: async (segment: ClapSegment, requestedDurationInMs?: number): Promise<void> => {
     
+    const {
+      clap,
+      tracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      segments,
+      segmentsChanged,
+      totalDurationInMs: previousTotalDurationInMs
+    } = get()
+
     const durationInMs: number =
       typeof requestedDurationInMs === "number" && isFinite(requestedDurationInMs) && !isNaN(requestedDurationInMs)
       ? requestedDurationInMs
       : segment.assetDurationInMs
+
 
     // trivial case: nothing to do!
     const segmentDurationInMs = segment.endTimeInMs - segment.startTimeInMs
@@ -638,7 +653,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     ) {
       return
     }
-
 
     // let's set some limits eg. at least 1 sec, I think this is reasonable
     const minimumLengthInSteps = 2
@@ -657,15 +671,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // ok, well, there is nothing to change actually
     if (segmentDurationInMs === newSegmentDurationInMs) { return }
 
-    const {
-      clap,
-      tracks,
-      cellWidth,
-      defaultSegmentDurationInSteps,
-      segments,
-      segmentsChanged,
-      totalDurationInMs: previousTotalDurationInMs
-    } = get()
 
     // positive if new duration is longer,
     // negative if shorter
