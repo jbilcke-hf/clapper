@@ -1,4 +1,5 @@
 import { ClapSegmentCategory } from "@aitube/clap"
+import { string } from "three/examples/jsm/nodes/Nodes.js"
 
 export type ClapSegmentCategoryHues = Record<ClapSegmentCategory, number>
 
@@ -20,6 +21,12 @@ export type ClapTimelineTheme = {
     saturation: number
     lightness: number
     hues: ClapSegmentCategoryHues
+
+    waveform: {
+      lineSpacing: number
+      gradientStart: number
+      gradientEnd: number
+    }
   }
 }
 
@@ -35,4 +42,8 @@ export type ClapSegmentColorScheme = {
   borderColor: string
   textColor: string
   textColorHover: string
+
+  waveformLineSpacing: number
+  waveformGradientStart: number
+  waveformGradientEnd: number
 }

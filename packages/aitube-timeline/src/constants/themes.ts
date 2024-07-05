@@ -48,6 +48,23 @@ export const pastel: ClapTimelineTheme = {
   cell: {
     saturation: 30,
     lightness: 78.6,
-    hues: baseClapSegmentCategoryHues
+    hues: baseClapSegmentCategoryHues,
+
+    waveform: {
+      // "original" style
+      lineSpacing: 2,
+      gradientStart: 1.0,
+      gradientEnd: 0.6,
+
+      // "drapes" style
+      // lineSpacing: 0,
+      // gradientStart: 0.7,
+      // gradientEnd: 0.1,
+
+      // that is an "aggressive" style
+      // lineSpacing: 1,
+      // gradientStart: 0.6,
+      // gradientEnd: 1.0,
+    }
   }
 }
