@@ -33,13 +33,17 @@ export type BrowserOnlySegmentData = {
   // used to give more context to the LLM, so it can have the full text of the scene
   scene?: ClapScene
 
-  // use for convenience, for easily match the script editor with segments
+  // used for convenience, to easily match the script editor with segments
   startAtLine?: number
   endAtLine?: number
 
   audioBuffer?: AudioBuffer
 
   visibility?: SegmentVisibility
+
+
+  // Cache for waveform textures
+  textures?: Record<string, THREE.Texture>
 }
 
 export type RuntimeSegment = ClapSegment & BrowserOnlySegmentData
@@ -231,6 +235,15 @@ export type TimelineStoreModifiers = {
     segments?: ClapSegment[]
     startTimeInMs?: number
     track?: number
+  }) => Promise<void>
+  assignTrack: ({
+    segment,
+    track,
+    triggerChange,
+  }: {
+    segment: ClapSegment
+    track: number
+    triggerChange?: boolean
   }) => Promise<void>
   addSegment: ({
     segment,

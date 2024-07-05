@@ -12,6 +12,7 @@ import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/theme
 import { RedrawButton } from "./RedrawButton"
 import { Suspense } from "react"
 import { useSegmentChanges } from "@/hooks/useSegmentChanges"
+import { AudioCell } from "./AudioCell"
 
 export function Cell({
   segment: s
@@ -65,8 +66,10 @@ export function Cell({
   const SpecializedCell =
     s.assetUrl.startsWith("data:image/")
       ? ImageCell
-    : s.assetUrl.startsWith("data:video/")
+      : s.assetUrl.startsWith("data:video/")
       ? VideoCell
+    : s.assetUrl.startsWith("data:audio/")
+      ? AudioCell
       : TextCell
 
   const setHoveredSegment = useTimeline(s => s.setHoveredSegment)

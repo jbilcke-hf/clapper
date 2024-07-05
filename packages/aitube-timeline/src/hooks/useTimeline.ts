@@ -15,6 +15,7 @@ import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/compone
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 import { findFreeTrack } from "@/utils/findFreeTrack"
 import { getAudioBuffer } from "@/utils"
+import { assign } from "three/examples/jsm/nodes/Nodes.js"
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -296,6 +297,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       borderColor: hslToHex(baseHue, baseSaturation + 40, baseLightness + 10),
       textColor: hslToHex(baseHue, baseSaturation + 55, baseLightness - 60),
       textColorHover: hslToHex(baseHue, baseSaturation + 55, baseLightness - 50),
+
+      waveformLineSpacing: theme.cell.waveform.lineSpacing,
+      waveformGradientStart: theme.cell.waveform.gradientStart,
+      waveformGradientEnd: theme.cell.waveform.gradientEnd,
     }
 
     if (!segment) { return colorScheme }
@@ -319,6 +324,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       borderColor: hslToHex(baseHue, baseSaturation + 40, baseLightness + 10),
       textColor: hslToHex(baseHue, baseSaturation + 55, baseLightness - 60),
       textColorHover: hslToHex(baseHue, baseSaturation + 55, baseLightness - 50),
+
+      waveformLineSpacing: theme.cell.waveform.lineSpacing,
+      waveformGradientStart: theme.cell.waveform.gradientStart,
+      waveformGradientEnd: theme.cell.waveform.gradientEnd,
     }
 
     return colorScheme
@@ -533,6 +542,62 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       })))
     }
   },
+  assignTrack: async ({
+    segment,
+    track,
+    triggerChange,
+  }: {
+    segment: ClapSegment
+    track: number
+    triggerChange?: boolean
+  }): Promise<void> => {
+    const {
+      clap,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      totalDurationInMs,
+      tracks,
+      defaultPreviewHeight,
+      defaultCellHeight,
+      segmentsChanged: previousSegmentsChanged,
+    } = get()
+
+    segment.track = track
+   
+    // add the track if it is missing
+    if (!tracks[segment.track]) {
+      const isPreview =
+        segment.category === ClapSegmentCategory.STORYBOARD ||
+        segment.category === ClapSegmentCategory.VIDEO
+   
+      tracks[segment.track] = {
+        id: segment.track,
+        // name: `Track ${s.track}`,
+        name: `${segment.category}`,
+        isPreview,
+        height:
+          isPreview
+          ? defaultPreviewHeight
+          : defaultCellHeight,
+        hue: 0,
+        occupied: true,
+        visible: true,
+      }
+    }
+
+    if (triggerChange) {
+      set({
+        segmentsChanged: previousSegmentsChanged + 1,
+        ...computeContentSizeMetrics({
+          clap,
+          tracks,
+          cellWidth,
+          defaultSegmentDurationInSteps,
+          totalDurationInMs,
+        }),
+      })
+    }
+  },
   addSegment: async ({
     segment,
     startTimeInMs,
@@ -554,6 +619,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       defaultSegmentDurationInSteps,
       defaultPreviewHeight,
       defaultCellHeight,
+      assignTrack,
     } = get()
 
     // note: the requestedTrack might not be empty
@@ -561,28 +627,14 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // for now let's do something simple: to always search for an available track
     const availableTrack = findFreeTrack({ startTimeInMs })
 
-    segment.track = availableTrack
+    assignTrack({
+      segment,
+      track: availableTrack,
 
-    // add the track if it is missing
-    if (!tracks[segment.track]) {
-      const isPreview =
-        segment.category === ClapSegmentCategory.STORYBOARD ||
-        segment.category === ClapSegmentCategory.VIDEO
+      // we don't want to trigger a state change just yet
+      triggerChange: false,
+    })
 
-      tracks[segment.track] = {
-        id: segment.track,
-        // name: `Track ${s.track}`,
-        name: `${segment.category}`,
-        isPreview,
-        height:
-          isPreview
-          ? defaultPreviewHeight
-          : defaultCellHeight,
-        hue: 0,
-        occupied: true,
-        visible: true,
-      }
-    }
 
     // we assume that the provided segment is valid, with a unique UUID
   
@@ -635,7 +687,9 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       defaultSegmentDurationInSteps,
       segments,
       segmentsChanged,
-      totalDurationInMs: previousTotalDurationInMs
+      totalDurationInMs: previousTotalDurationInMs,
+      findFreeTrack,
+      assignTrack
     } = get()
 
     const durationInMs: number =
@@ -676,25 +730,86 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // negative if shorter
     const newTimeDifferenceInMs = newSegmentDurationInMs - segmentDurationInMs
 
+    const startTimeInMs = segment.startTimeInMs
     const endTimeInMs = segment.endTimeInMs
     // const newEndTimeInMs = endTimeInMs + newTimeDifferenceInMs
 
     let totalDurationInMs = previousTotalDurationInMs
 
-    // we shift everything that's impacted
-    // overlapping segments will be stretched
-    // (those should be marked as "TO_GENERATE")
-    for (const s of segments) {
-      if (endTimeInMs <= s.startTimeInMs) {
-        s.startTimeInMs += newTimeDifferenceInMs
-      }
-      if (endTimeInMs <= s.endTimeInMs) {
-        s.endTimeInMs += newTimeDifferenceInMs
-      }
+    const referenceSegmentIsMusicOrSound =
+      segment.category === ClapSegmentCategory.MUSIC
+      || segment.category === ClapSegmentCategory.SOUND
 
-      // also need to update the total duration
-      if (s.endTimeInMs > totalDurationInMs) {
-        totalDurationInMs = s.endTimeInMs
+    let segmentsToDelete: string[] = []
+
+    for (const s of segments) {
+      // our strategy will be different depending on the type of segment
+      // basically, if it's a sound or a music, we don't need to cut the segment,
+      // and we don't have to extend the current shot.
+      // instead, we can let it go outerbound, although this creates 2 problems:
+      // 1. overlapping with another music/sound (on the same track or not)
+      //    -> fix is easy, we can resize or delete completely the other one
+      // 2. collision with an item on the same track (eg. of a different type)
+      //    -> fix is annoying, for now the a quick solution is to put the segment
+      //      onto its own free track
+      const currentSegmentIsMusicOrSound =
+        s.category === ClapSegmentCategory.MUSIC
+        || s.category === ClapSegmentCategory.SOUND
+
+      const isSameCategoryAsReferenceSegment = s.category === segment.category
+
+      const isSamePromptAsReferenceSegment = s.prompt === segment.prompt
+
+
+      if (referenceSegmentIsMusicOrSound) {
+        
+        if (isSameCategoryAsReferenceSegment && isSamePromptAsReferenceSegment) {
+          if (s.endTimeInMs <= endTimeInMs) { 
+            // we delete
+            console.log("TODO JULIAN: DELETE SEGMENT", s)
+            // segmentsToDelete.push(s.id)
+            // note: 
+          } else if (s.startTimeInMs < endTimeInMs) { 
+            // we resize
+            s.startTimeInMs = endTimeInMs
+          }
+        }
+        // independently, we run our collision detector
+        // it is important at this stage to take into account any change,
+        // eg. if we've already deleted segment `s` there is no need to
+        // assign a new free track
+        const isSameTrackAsReferenceSegment = s.track === segment.track
+
+        if (isSameTrackAsReferenceSegment) {
+          // if we have a collision, there is currently no way around it we need to create a new track
+          if (!(s.endTimeInMs <= startTimeInMs || s.startTimeInMs >= endTimeInMs)) {
+            const newTrack = findFreeTrack({ startTimeInMs, endTimeInMs })
+            // console.log(`NEW TRACK (${newTrack}) FOR SEGMENT`, s)
+     
+            assignTrack({
+              segment,
+              track: newTrack,
+
+              // we don't want to trigger a state change
+              triggerChange: false,
+            })
+            
+          }
+      
+        }
+      } else {
+        // this is a dialogue or a video, we can apply our regular strategy
+        if (endTimeInMs <= s.startTimeInMs) {
+          s.startTimeInMs += newTimeDifferenceInMs
+        }
+        if (endTimeInMs <= s.endTimeInMs) {
+          s.endTimeInMs += newTimeDifferenceInMs
+        }
+
+        // also need to update the total duration
+        if (s.endTimeInMs > totalDurationInMs) {
+          totalDurationInMs = s.endTimeInMs
+        }
       }
     }
     console.log(`TODO Julian: stretched segments (overlapping segments) should be re-generated`)
@@ -711,4 +826,5 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       })
     })
   }
-}))
+}
+))
