@@ -93,7 +93,7 @@ export function TimelineControls({
       // if you want to change those, fine,
       // but make sure the timeline still works properly when you change its height,
       // horizontal zoom, and number of tracks 
-      -topBottomSize + PROMPT_STEP_HEIGHT_IN_PX, // to take to top time scroll bar into account
+      -topBottomSize, // to take to top time scroll bar into account
      
       // the +38px as here to represent the top scroll bar,
       // but I'm not so sure we need it anymore?
