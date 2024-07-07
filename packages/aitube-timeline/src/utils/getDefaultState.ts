@@ -47,7 +47,11 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     // @deprecated, we now use a static WebGL camera zoom level set at 1.0
     currentZoomLevel: 1.0, 
 
+    // for developer convenience, the information about hovered, edited, selected..
+    // is both present inside each segment and also aliased here, for fast access
     hoveredSegment: undefined,
+    editedSegment: undefined,
+    selectedSegments: [],
     
     // used to track silent in-line changes in the segments
     // that way we don't need to re-draw the whole thing

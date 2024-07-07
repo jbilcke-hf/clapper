@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react"
 
 import { useTimeline } from "./useTimeline"
-import { ClapSegment } from "@aitube/clap"
+import { TimelineSegment } from "@/types"
 
-function getKey(segment: ClapSegment) {
+function getKey(segment: TimelineSegment) {
   const keyItems = [
     segment.id,
     segment.label,
@@ -25,7 +25,7 @@ function getKey(segment: ClapSegment) {
  * @param segment
  * @returns 
  */
-export function useSegmentChanges(segment: ClapSegment): number {
+export function useSegmentChanges(segment: TimelineSegment): number {
   const [changes, setChanges] = useState(0)
   const silentChangesInSegments = useTimeline(s => s.silentChangesInSegments)
 

@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "description": "React component to display an OpenClap timeline",
   "scripts": {
     "build": "NODE_ENV=production bun build ./src/index.tsx --outfile=dist/index.js --external @aitube/clap --external @radix-ui/react-slider --external @react-spring/three --external @react-spring/types --external @react-three/drei --external @react-three/fiber --external @types/react --external @types/react-dom --external react --external react-dom --external tailwindcss --external three --external typescript --external zustand && bun run build:declaration",
@@ -27,7 +27,7 @@
     "eslint-plugin-react-refresh": "^0.4.7",
     "prettier": "^3.3.2",
     "rimraf": "^5.0.7",
-    "typescript": "^5.5.2",
+    "typescript": "^5.5.3",
     "vite": "^5.2.13"
   },
   "peerDependencies": {

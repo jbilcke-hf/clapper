@@ -1,12 +1,17 @@
 import { ClapProject, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
 
-export function getFinalVideo(clap: ClapProject): ClapSegment | undefined {
-  const alreadyAnEmbeddedFinalVideo = clap.segments.filter(s =>
+import { TimelineSegment } from "@/types"
+import { clapSegmentToTimelineSegment } from "./clapSegmentToTimelineSegment"
+
+export async function getFinalVideo(clap: ClapProject): Promise<TimelineSegment | undefined> {
+  const alreadyAnEmbeddedFinalVideo: ClapSegment | undefined = clap.segments.filter(s =>
     s.category === ClapSegmentCategory.VIDEO &&
     s.status === "completed" &&
     s.startTimeInMs === 0 &&
     s.endTimeInMs === clap.meta.durationInMs &&
     s.assetUrl).at(0)
+  
+  if (!alreadyAnEmbeddedFinalVideo) { return undefined }
 
-  return alreadyAnEmbeddedFinalVideo
+  return clapSegmentToTimelineSegment(alreadyAnEmbeddedFinalVideo)
 }

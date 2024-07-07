@@ -1,5 +1,5 @@
 import { useTimeline } from "@/hooks"
-import { ClapSegment } from "@aitube/clap"
+import { TimelineSegment } from "@/types"
 import { Circle, Text } from "@react-three/drei"
 import { invalidate } from "@react-three/fiber"
 import { useState, useTransition } from "react"
@@ -13,7 +13,7 @@ export function RedrawButton({
   // isBusy,
   // onClick,
 }: {
-  segment: ClapSegment
+  segment: TimelineSegment
   cellWidth: number
   cellHeight: number
   isHovered: boolean

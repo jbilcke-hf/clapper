@@ -1,4 +1,5 @@
-import { ClapEntity, ClapMeta, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+import { ClapSegmentCategory } from "@aitube/clap"
+import { TimelineSegment } from "./timeline"
 
 export enum RenderingStrategy {
 
@@ -24,7 +25,7 @@ export enum RenderingStrategy {
   ON_SCREEN_THEN_ALL = "ON_SCREEN_THEN_ALL",
 }
 
-export type SegmentResolver = (segment: ClapSegment) => Promise<ClapSegment>
+export type SegmentResolver = (segment: TimelineSegment) => Promise<TimelineSegment>
 
 export type RenderableSegmentCategory =
   | ClapSegmentCategory.VIDEO

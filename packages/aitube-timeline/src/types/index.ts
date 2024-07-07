@@ -5,8 +5,9 @@ export {
 
 export {
   SegmentVisibility,
+  SegmentEditionStatus,
   BrowserOnlySegmentData,
-  RuntimeSegment,
+  TimelineSegment,
   ContentSizeMetrics,
   TimelineStore,
   TimelineStoreState,

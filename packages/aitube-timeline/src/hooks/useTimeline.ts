@@ -2,20 +2,15 @@ import { create } from "zustand"
 import * as THREE from "three"
 import { ClapOutputType, ClapProject, ClapSceneEvent, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, isValidNumber, newClap, serializeClap, ClapTrack, ClapTracks } from "@aitube/clap"
 
-import { RuntimeSegment, TimelineStore } from "@/types/timeline"
+import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
-import { removeFinalVideos } from "@/utils/removeFinalVideos"
-import { hslToHex } from "@/utils/hslToHex"
+import { hslToHex, findFreeTrack, getAudioBuffer, getFinalVideo, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment } from "@/utils"
 import { ClapSegmentCategoryHues, ClapSegmentColorScheme, ClapTimelineTheme, SegmentResolver } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
-import { getFinalVideo } from "@/utils/getFinalVideo"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
-import { findFreeTrack } from "@/utils/findFreeTrack"
-import { getAudioBuffer } from "@/utils"
-import { assign } from "three/examples/jsm/nodes/Nodes.js"
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -42,8 +37,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     set({ isLoading: true })
 
+    // actually you know what.. let's drop the concept of final video for the moment
+    // in Clapper and the timeline
+    // const finalVideo = await getFinalVideo(clap)
+    const finalVideo = undefined
+    
     // we remove the big/long video
-    const segments = removeFinalVideos(clap) as RuntimeSegment[]
+    const segments = await removeFinalVideosAndConvertToTimelineSegments(clap)
 
     const {
       defaultCellHeight,
@@ -87,7 +87,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       defaultSegmentLengthInPixels / defaultMediaRatio
     )
 
-    const lineNumberToMentionedSegments: Record<number, ClapSegment[]> = {}
+    const lineNumberToMentionedSegments: Record<number, TimelineSegment[]> = {}
 
     for (const segment of segments) {
       
@@ -98,12 +98,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         continue
       }
 
+      // --------
       const isSegmentDirectlyMentionedInTheScript = segment.category === ClapSegmentCategory.DIALOGUE || segment.category === ClapSegmentCategory.ACTION
       
       if (isSegmentDirectlyMentionedInTheScript) {
         for (let i = segment.startTimeInLines; i <= segment.endTimeInLines; i++) {
           // we only add the segment if it is not already in the map
-          let existingArray: ClapSegment[] = lineNumberToMentionedSegments[i] || []
+          let existingArray: TimelineSegment[] = lineNumberToMentionedSegments[i] || []
           if (!existingArray.find(s => s.id === segment.id)) {
             existingArray.push(segment)
           }
@@ -150,16 +151,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         
       }
 
-      if (segment.outputType === ClapOutputType.AUDIO) {
-        const rs = segment as RuntimeSegment
-        if (rs.outputType === ClapOutputType.AUDIO) {
-          try {
-            rs.audioBuffer = await getAudioBuffer(rs.assetUrl)
-          } catch (err) {
-            console.error(`failed to load the audio file: ${err}`)
-          }
-        }
-      }
     }
 
 
@@ -178,17 +169,15 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       }
     }
 
-    const finalVideo = getFinalVideo(clap)
-    
     let totalDurationInMs = clap.meta.durationInMs
     let totalNumberOfLines = clap.meta.screenplay.split('\n').length
 
-    console.log("totalNumberOfLines = " + totalNumberOfLines)
+    // console.log("totalNumberOfLines = " + totalNumberOfLines)
 
     const isEmpty = segments.length === 0
 
     // ---------- REPAIR THE LINE-2-SEGMENT DICTIONARY ---------------
-    let previousValue: ClapSegment[] = []
+    let previousValue: TimelineSegment[] = []
     // we aren't finished yet: the lineNumberToMentionedSegments will be missing some entries
     for (let i = 1; i <= totalNumberOfLines; i++) {
       if (!Array.isArray(lineNumberToMentionedSegments[i])) {
@@ -255,11 +244,11 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     })
   },
   
-  setSegments: (segments: ClapSegment[] = []) => {
+  setSegments: (segments: TimelineSegment[] = []) => {
     set({ segments, loadedSegments: [] })
   },
-  setLoadedSegments: (loadedSegments: ClapSegment[] = []) => { set({ loadedSegments }) },
-  setVisibleSegments: (visibleSegments: ClapSegment[] = []) => { set({ visibleSegments }) },
+  setLoadedSegments: (loadedSegments: TimelineSegment[] = []) => { set({ loadedSegments }) },
+  setVisibleSegments: (visibleSegments: TimelineSegment[] = []) => { set({ visibleSegments }) },
 
   getCellHeight: (trackNumber?: number): number => {
     const { defaultCellHeight, tracks } = get()
@@ -277,7 +266,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     return height
   },
 
-  getSegmentColorScheme: (segment?: ClapSegment): ClapSegmentColorScheme => {
+  getSegmentColorScheme: (segment?: TimelineSegment): ClapSegmentColorScheme => {
 
     const { theme } = get()
 
@@ -332,18 +321,115 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     return colorScheme
   },
-  setHoveredSegment: (hoveredSegment?: ClapSegment) => {
+  setHoveredSegment: (hoveredSegment?: TimelineSegment) => {
+    const {
+      hoveredSegment: previousHoveredSegment,
+      segmentsChanged: previousSegmentsChanged
+    } = get()
+
     // note: we do all of this in order to avoid useless state updates
     if (hoveredSegment) {
-      if (get().hoveredSegment?.id !== hoveredSegment?.id) {
-        set({ hoveredSegment })
+      if (previousHoveredSegment) {
+        if (previousHoveredSegment.id === hoveredSegment.id) {
+          // nothing to do
+          return
+        } else {
+          previousHoveredSegment.isHovered = false
+        }
+      } else {
+        hoveredSegment.isHovered = true
+        set({
+          hoveredSegment,
+          segmentsChanged: 1 + previousSegmentsChanged
+        })
       }
     } else {
-      if (get().hoveredSegment) {
-        set({ hoveredSegment: undefined })
+      if (previousHoveredSegment) {
+        previousHoveredSegment.isHovered = false
+        set({
+          hoveredSegment: undefined,
+          segmentsChanged: 1 + previousSegmentsChanged
+        })
+      } else {
+        // nothing to do
       }
     }
+  },
+  setEditedSegment: (editedSegment?: TimelineSegment) => {
+    const {
+      editedSegment: previousEditedSegment,
+      segmentsChanged: previousSegmentsChanged
+    } = get()
 
+    // note: we do all of this in order to avoid useless state updates
+    if (editedSegment) {
+      if (previousEditedSegment) {
+        if (previousEditedSegment.id === editedSegment.id) {
+          // nothing to do
+          return
+        } else {
+          previousEditedSegment.editionStatus = SegmentEditionStatus.EDITABLE
+        }
+      } else {
+        editedSegment.editionStatus = SegmentEditionStatus.EDITING
+        set({
+          editedSegment,
+          segmentsChanged: 1 + previousSegmentsChanged
+        })
+      }
+    } else {
+      if (previousEditedSegment) {
+        previousEditedSegment.editionStatus = SegmentEditionStatus.EDITABLE
+        set({
+          editedSegment: undefined,
+          segmentsChanged: 1 + previousSegmentsChanged
+        })
+      } else {
+        // nothing to do
+      }
+    }
+  },
+  setSelectedSegment: (segment?: TimelineSegment, isSelected?: boolean) => {
+    const {
+      segments,
+      selectedSegments: previousSelectedSegments,
+      segmentsChanged: previousSegmentsChanged
+    } = get()
+
+    let newValue = typeof isSelected !== "boolean"
+      ? (typeof segment?.isSelected === "boolean" ? (!segment.isSelected) : false)
+      : isSelected
+
+    // note: we do all of this in order to avoid useless state updates
+    if (segment) {
+
+      if (segment.isSelected === newValue) {
+        // nothing to do
+        return
+      }
+
+      segment.isSelected = newValue
+
+      if (segment.isSelected) {
+        set({
+          selectedSegments: previousSelectedSegments.concat(segment),
+          segmentsChanged: 1 + previousSegmentsChanged
+        })
+      } else {
+        set({
+          selectedSegments: previousSelectedSegments.filter(s => s.id !== segment.id),
+          segmentsChanged: 1 + previousSegmentsChanged
+        })
+      }
+    } else {
+      segments.forEach(s => {
+        s.isSelected = newValue
+      })
+      set({
+        selectedSegments: isSelected ? segments : [],
+        segmentsChanged: 1 + previousSegmentsChanged
+      })
+    }
   },
   trackSilentChangeInSegment: (segmentId: string) => {
     const { silentChangesInSegments, silentChangesInSegment } = get()
@@ -497,7 +583,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   setSegmentResolver: (segmentResolver: SegmentResolver) => {
     set({ segmentResolver })
   },
-  resolveSegment: async (segment: ClapSegment): Promise<ClapSegment> => {
+  resolveSegment: async (segment: TimelineSegment): Promise<TimelineSegment> => {
     const { segmentResolver, fitSegmentToAssetDuration } = get()
     if (!segmentResolver) { return segment }
     
@@ -529,7 +615,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     startTimeInMs,
     track
   }: {
-    segments?: ClapSegment[]
+    segments?: TimelineSegment[]
     startTimeInMs?: number
     track?: number
   }): Promise<void> => {
@@ -603,7 +689,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     startTimeInMs,
     track: requestedTrack
   }: {
-    segment: ClapSegment
+    segment: TimelineSegment
     startTimeInMs?: number
     track?: number
   }): Promise<void> => {
@@ -627,6 +713,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // for now let's do something simple: to always search for an available track
     const availableTrack = findFreeTrack({ startTimeInMs })
 
+    // we just make sure to sanitize it before adding it
+    segment = await clapSegmentToTimelineSegment(segment)
+
+    // also, we assume that we are adding a segment in a place where it's visible
+    // (if we are wrong don't worry, our visibility detector will fix it anyway)
+    segment.visibility = SegmentVisibility.VISIBLE
+    
     assignTrack({
       segment,
       track: availableTrack,
@@ -640,6 +733,11 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   
     // then we need to update everything
 
+    // ok so, I'm not a big fan of doing this,
+    // officially the order doesn't matter in the previousSegments array
+    // this means we don't have FOR LOOPs with a BREAK etc 
+    // still, I think we can improve our performance one day by storing them
+    // on a temporally sorted tree
     const segments = previousSegments.concat(segment)
 
     const segmentsChanged = previousSegmentsChanged + 1
@@ -678,7 +776,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   },
 
   // resize and move the end of a segmrnt, as well as the segment after it
-  fitSegmentToAssetDuration: async (segment: ClapSegment, requestedDurationInMs?: number): Promise<void> => {
+  fitSegmentToAssetDuration: async (segment: TimelineSegment, requestedDurationInMs?: number): Promise<void> => {
     
     const {
       clap,
@@ -771,7 +869,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
             // note: 
           } else if (s.startTimeInMs < endTimeInMs) { 
             // we resize
-            s.startTimeInMs = endTimeInMs
+            console.log("TODO JULIAN: resize segment")
+            // s.startTimeInMs = endTimeInMs
           }
         }
         // independently, we run our collision detector
@@ -784,7 +883,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           // if we have a collision, there is currently no way around it we need to create a new track
           if (!(s.endTimeInMs <= startTimeInMs || s.startTimeInMs >= endTimeInMs)) {
             const newTrack = findFreeTrack({ startTimeInMs, endTimeInMs })
-            // console.log(`NEW TRACK (${newTrack}) FOR SEGMENT`, s)
+            console.log(`ASSIGN NEW TRACK (${newTrack}) TO SEGMENT`, s)
      
             assignTrack({
               segment,

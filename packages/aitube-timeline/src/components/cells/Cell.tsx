@@ -1,23 +1,24 @@
+import { Suspense } from "react"
 import { a } from "@react-spring/three"
-import { ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+import { ClapSegmentCategory } from "@aitube/clap"
 
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
+import { useTimeline } from "@/hooks"
+import { useHoveredSegment } from "@/hooks/useHoveredSegment"
+import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
+import { TimelineSegment } from "@/types"
+import { useSegmentChanges } from "@/hooks/useSegmentChanges"
 
 import { ImageCell } from "./ImageCell"
 import { VideoCell } from "./VideoCell"
 import { TextCell } from "./TextCell"
-import { useTimeline } from "@/hooks"
-import { useHoveredSegment } from "@/hooks/useHoveredSegment"
-import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
 import { RedrawButton } from "./RedrawButton"
-import { Suspense } from "react"
-import { useSegmentChanges } from "@/hooks/useSegmentChanges"
 import { AudioCell } from "./AudioCell"
 
 export function Cell({
   segment: s
 }: {
-  segment: ClapSegment
+  segment: TimelineSegment
 }) {
 
 

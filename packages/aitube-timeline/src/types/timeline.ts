@@ -24,6 +24,25 @@ export enum SegmentVisibility {
   HIDDEN = "HIDDEN"
 }
 
+
+export enum SegmentEditionStatus {
+  // the segment is frozen and read-only and cannot be edited
+  // this is useful if you want a track to be read-only
+  LOCKED = "LOCKED",
+
+  // the segment is editable and cannot be edited
+  EDITABLE = "EDITABLE",
+
+  // the segment is being resized
+  RESIZING = "RESIZING",
+
+  // the segment is being dragged around
+  DRAGGING = "DRAGGING",
+
+  // the segment's is being edited (eg. in the edit pop-over)
+  EDITING = "EDITING",
+}
+
 // some data can only exist inside a browser session (eg. AudioBuffer)
 // or at least data that only make sense on client side
 // we could put things like a mouse hover or selected state in here
@@ -39,14 +58,38 @@ export type BrowserOnlySegmentData = {
 
   audioBuffer?: AudioBuffer
 
-  visibility?: SegmentVisibility
+  visibility: SegmentVisibility
 
+  // Cache for textures
+  textures: Record<string, THREE.Texture>
 
-  // Cache for waveform textures
-  textures?: Record<string, THREE.Texture>
+  /**
+   * the following fields have been added to this type only very recently
+   * and their implementation is not finished,
+   * so they may not contain the value you wish for.
+   * 
+   * please don't rely on them just yet.
+   * 
+   * Moreover they will be undefined by default, so you need 
+   * const isSelected = rs.isSelected || false
+   * const editionStatus = rs.editionStatus || SegmentEditionStatus.EDITABLE
+   */
+  // of the segment is currently selected by the user
+  isSelected: boolean
+
+  // if the segment is hovered by the mouse
+  isHovered: boolean
+  
+  // if the segment is currently crossed by the timeline cursor
+  isActive: boolean
+  
+  // if the segment is currently being played
+  isPlaying: boolean
+  
+  editionStatus: SegmentEditionStatus
 }
 
-export type RuntimeSegment = ClapSegment & BrowserOnlySegmentData
+export type TimelineSegment = ClapSegment & BrowserOnlySegmentData
 
 export type ContentSizeMetrics = {
   nbMaxShots: number
@@ -68,13 +111,13 @@ export type ContentSizeMetrics = {
 export type TimelineStoreProjectState = {
   clap: ClapProject
 
-  segments: ClapSegment[]
+  segments: TimelineSegment[]
   segmentsChanged: number
   totalDurationInMs: number
-  loadedSegments: ClapSegment[]
-  visibleSegments: ClapSegment[]
+  loadedSegments: TimelineSegment[]
+  visibleSegments: TimelineSegment[]
   nbIdentifiedTracks: number
-  lineNumberToMentionedSegments: Record<number, ClapSegment[]>
+  lineNumberToMentionedSegments: Record<number, TimelineSegment[]>
 
   isEmpty: boolean
   isLoading: boolean
@@ -110,7 +153,11 @@ export type TimelineStoreProjectState = {
   // it might change rapidly (many times per seconds), so use with care!
   currentZoomLevel: number
 
-  hoveredSegment?: ClapSegment
+  // for developer convenience, the information about hovered, edited, selected..
+  // is both present inside each segment and also aliased here, for fast access
+  hoveredSegment?: TimelineSegment
+  editedSegment?: TimelineSegment
+  selectedSegments: TimelineSegment[]
 
   // used to track silent in-line changes in the segments
   // that way we don't need to re-draw the whole thing
@@ -130,7 +177,7 @@ export type TimelineStoreProjectState = {
   isResizing: boolean
 
   // the final video, if available
-  finalVideo?: ClapSegment
+  finalVideo?: TimelineSegment
 
   // position of the current timestamp
   cursorTimestampAtInMs: number
@@ -183,14 +230,15 @@ export type TimelineStoreModifiers = {
   clear: () => void
   setClap: (clap?: ClapProject) => Promise<void>
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => void
-  setSegments: (segments?: ClapSegment[]) => void
-  setLoadedSegments: (loadedSegments?: ClapSegment[]) => void
-  setVisibleSegments: (visibleSegments?: ClapSegment[]) => void
+  setSegments: (segments?: TimelineSegment[]) => void
+  setLoadedSegments: (loadedSegments?: TimelineSegment[]) => void
+  setVisibleSegments: (visibleSegments?: TimelineSegment[]) => void
   getCellHeight: (trackNumber?: number) => number
   getVerticalCellPosition: (start: number, end: number) => number
-  getSegmentColorScheme: (segment?: ClapSegment) => ClapSegmentColorScheme
-  setHoveredSegment: (hoveredSegment?: ClapSegment) => void
-
+  getSegmentColorScheme: (segment?: TimelineSegment) => ClapSegmentColorScheme
+  setHoveredSegment: (hoveredSegment?: TimelineSegment) => void
+  setEditedSegment: (editedSegment?: TimelineSegment) => void
+  setSelectedSegment: (segment?: TimelineSegment, isSelected?: boolean) => void
   // used to track silent in-line changes in the segments
   // that way we don't need to re-draw the whole thing
   trackSilentChangeInSegment: (segmentId: string) => void
@@ -226,13 +274,13 @@ export type TimelineStoreModifiers = {
     extraLabel?: string
   }) => Promise<number>
   setSegmentResolver: (segmentResolver: SegmentResolver) => void
-  resolveSegment: (segment: ClapSegment) => Promise<ClapSegment>
+  resolveSegment: (segment: TimelineSegment) => Promise<TimelineSegment>
   addSegments: ({
     segments,
     startTimeInMs,
     track,
   }: {
-    segments?: ClapSegment[]
+    segments?: TimelineSegment[]
     startTimeInMs?: number
     track?: number
   }) => Promise<void>
@@ -241,7 +289,7 @@ export type TimelineStoreModifiers = {
     track,
     triggerChange,
   }: {
-    segment: ClapSegment
+    segment: TimelineSegment
     track: number
     triggerChange?: boolean
   }) => Promise<void>
@@ -250,13 +298,13 @@ export type TimelineStoreModifiers = {
     startTimeInMs,
     track,
   }: {
-    segment: ClapSegment
+    segment: TimelineSegment
     startTimeInMs?: number
     track?: number
 }) => Promise<void>
   findFreeTrack: (params: { startTimeInMs?: number; endTimeInMs?: number }) => number
 
-  fitSegmentToAssetDuration: (segment: ClapSegment, durationInMs?: number) => Promise<void>
+  fitSegmentToAssetDuration: (segment: TimelineSegment, durationInMs?: number) => Promise<void>
 }
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers

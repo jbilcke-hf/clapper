@@ -45,6 +45,7 @@ export {
 
 export {
   clamp,
+  clapSegmentToTimelineSegment,
   cn,
   debounceAsync,
   debounceSync,
@@ -60,7 +61,7 @@ export {
   hslToHex,
   parseRenderingStrategy,
   readFileAsArrayBuffer,
-  removeFinalVideos,
+  removeFinalVideosAndConvertToTimelineSegments,
   similar,
   sleep,
   sliceSegments,
@@ -69,8 +70,9 @@ export {
 
 export {
   SegmentVisibility,
+  SegmentEditionStatus,
   BrowserOnlySegmentData,
-  RuntimeSegment,
+  TimelineSegment,
   ContentSizeMetrics,
   RenderedCell,
   TimelineStore,

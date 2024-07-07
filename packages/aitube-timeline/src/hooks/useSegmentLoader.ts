@@ -1,13 +1,12 @@
 import { useEffect, useRef } from "react"
 import * as THREE from "three"
 import { useThree } from "@react-three/fiber"
-import { ClapSegment } from "@aitube/clap"
 
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { similar, sliceSegments } from "@/utils"
 
 import { useTimeline } from "./useTimeline"
-import { TimelineStore } from "@/types"
+import { TimelineSegment, TimelineStore } from "@/types"
 import { leftBarTrackScaleWidth } from "@/constants/themes"
 
 export const useSegmentLoader = ({
@@ -16,8 +15,8 @@ export const useSegmentLoader = ({
   refreshRateInMs: number
 }):
   {
-    visibleSegments: ClapSegment[]
-    loadedSegments: ClapSegment[]
+    visibleSegments: TimelineSegment[]
+    loadedSegments: TimelineSegment[]
   }=> {
   // to make it react to screen width change
   // however, this doesn't seem to work well

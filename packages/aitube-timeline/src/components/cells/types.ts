@@ -1,12 +1,13 @@
-import { ClapSegmentColorScheme } from "@/types"
-import { ClapSegment, ClapTrack } from "@aitube/clap"
+import { ClapTrack } from "@aitube/clap"
+
+import { ClapSegmentColorScheme, TimelineSegment } from "@/types"
 
 export type SpecializedCellProps = {
-  segment: ClapSegment
+  segment: TimelineSegment
   cellWidth: number
   cellHeight: number
   isHovered: boolean
-  setHoveredSegment: (hoveredSegment?: ClapSegment) => void
+  setHoveredSegment: (hoveredSegment?: TimelineSegment) => void
   durationInSteps: number
   startTimeInSteps: number
   colorScheme: ClapSegmentColorScheme
