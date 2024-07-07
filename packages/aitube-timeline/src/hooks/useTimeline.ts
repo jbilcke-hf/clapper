@@ -389,7 +389,16 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       }
     }
   },
-  setSelectedSegment: (segment?: TimelineSegment, isSelected?: boolean) => {
+  setSelectedSegment: ({
+    segment,
+    isSelected,
+    onlyOneSelectedAtOnce,
+  }: {
+    segment?: TimelineSegment
+    isSelected?: boolean
+    onlyOneSelectedAtOnce?: boolean
+  } = {
+  }) => {
     const {
       segments,
       selectedSegments: previousSelectedSegments,
@@ -408,9 +417,15 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         return
       }
 
+      // if needed we clear any other selected item
+      if (onlyOneSelectedAtOnce) {
+        segments.forEach(s => { s.isSelected = false })
+        set({ selectedSegments: [] })
+      }
+
       segment.isSelected = newValue
 
-      if (segment.isSelected) {
+      if (newValue) {
         set({
           selectedSegments: previousSelectedSegments.concat(segment),
           segmentsChanged: 1 + previousSegmentsChanged

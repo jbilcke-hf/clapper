@@ -19,6 +19,18 @@ export async function clapSegmentToTimelineSegment(clapSegment: ClapSegment): Pr
 
   if (typeof segment.isPlaying !== "boolean") { segment.isPlaying = false }
 
+  if (typeof segment.isHoveredOnBody !== "boolean") { segment.isHoveredOnBody = false }
+
+  if (typeof segment.isHoveredOnLeftHandle !== "boolean") { segment.isHoveredOnLeftHandle = false }
+
+  if (typeof segment.isHoveredOnRightHandle !== "boolean") { segment.isHoveredOnRightHandle = false }
+
+  if (typeof segment.isGrabbedOnBody !== "boolean") { segment.isGrabbedOnBody = false }
+
+  if (typeof segment.isGrabbedOnLeftHandle !== "boolean") { segment.isGrabbedOnLeftHandle = false }
+
+  if (typeof segment.isGrabbedOnRightHandle !== "boolean") { segment.isGrabbedOnRightHandle = false }
+
   if (!segment.editionStatus) { segment.editionStatus = SegmentEditionStatus.EDITABLE }
 
 
