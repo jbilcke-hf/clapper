@@ -1,4 +1,4 @@
-import { ClapSegment } from "@aitube/clap"
+import { TimelineSegment } from "@aitube/timeline"
 
 export type ResolverState = {
   // this indicate the status of the loop
@@ -52,7 +52,7 @@ export type ResolverControls = {
    * @param segment 
    * @returns 
    */
-  resolveSegment: (segment: ClapSegment) => Promise<ClapSegment>
+  resolveSegment: (segment: TimelineSegment) => Promise<TimelineSegment>
 }
 
 export type ResolverStore = ResolverState & ResolverControls
