@@ -1,4 +1,4 @@
-import { RuntimeSegment } from "@aitube/timeline"
+import { TimelineSegment } from "@aitube/timeline"
 
 export type AudioAnalysis = {
   audioBuffer: AudioBuffer
@@ -23,7 +23,7 @@ export type AudioControls = {
   setCurrentGain: (currentGain: number) => void
   mute: () => void
   unmute: () =>  void
-  syncAudioToCurrentCursorPosition: (activeAudioSegments: RuntimeSegment[]) => void
+  syncAudioToCurrentCursorPosition: (activeAudioSegments: TimelineSegment[]) => void
 }
 
 export type AudioStore = AudioState & AudioControls
