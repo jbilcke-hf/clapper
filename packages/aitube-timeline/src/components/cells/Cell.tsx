@@ -75,6 +75,8 @@ export function Cell({
 
   const setHoveredSegment = useTimeline(s => s.setHoveredSegment)
     
+  const setSelectedSegment = useTimeline(s => s.setSelectedSegment)
+    
   // cells are rendered often (eg. whenever we mouse the mouse from one cell to another)
   // because we need to handle their color change on hover / transition
   // console.log(`re-rendering a <Cell>`)
@@ -101,20 +103,13 @@ export function Cell({
         } else {
           setHoveredSegment(s)
         }
+        // TODO: compute where exactly we are hovering,
+        // so that we can display a small hover effect on the left or right handles
+        // console.log("onPointerMove: e = ", e)
         e.stopPropagation()
         return false
       }}
 
-      /*
-      onPointerEnter={(e) => {
-        // crude code to ignore the event when we are over the left column or the top row
-        if (e.offsetX < leftBarTrackScaleWidth || e.offsetY < topBarTimeScaleHeight) {
-          setHoveredSegment(undefined)
-        } else {
-          setHoveredSegment(s)
-        }
-      }}
-        */
       onPointerLeave={(e) => {
         // console.log('leave')
         setHoveredSegment(undefined)
@@ -123,14 +118,32 @@ export function Cell({
         return false
       }}
 
-
       onClick={(e) => {
         // console.log('click on cell ' + s.id)
+        // crude code to ignore the event when we are over the left column or the top row
+        if (e.offsetX < leftBarTrackScaleWidth || e.offsetY < topBarTimeScaleHeight) {
+          // we just ignore clicks outside
+        } else {
+          setSelectedSegment({
+            segment: s,
+
+            // we leave it unspecified to create a toggle
+            // isSelected: true,
+
+            onlyOneSelectedAtOnce: false,
+          })
+        }
+        // TODO: compute where exactly we are hovering,
+        // so that we can display a small hover effect on the left or right handles
+        console.log("cells.Cell:onClick() e = ", e)
         e.stopPropagation()
         return false
       }}
       onContextMenu={(e) => console.log('context menu')}
-      onDoubleClick={(e) => console.log('double click')}
+      onDoubleClick={(e) => {
+        console.log('double click')
+        // TODO: do something eg. switch to an edit mode
+      }}
       // onWheel={(e) => console.log('wheel spins')}
       // onPointerUp={(e) => console.log('up')}
       // onPointerDown={(e) => console.log('down')}

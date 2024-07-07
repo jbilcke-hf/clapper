@@ -77,9 +77,28 @@ export type BrowserOnlySegmentData = {
   // of the segment is currently selected by the user
   isSelected: boolean
 
-  // if the segment is hovered by the mouse
+  // if the segment is hovered by the mouse (anywhere)
+  // note: if the mouse is pressed, this will also trigger this to TRUE
   isHovered: boolean
   
+  // if the segment's body is hovered by the mouse
+  isHoveredOnBody: boolean
+
+  // if the segment's left handle is hovered by the mouse
+  isHoveredOnLeftHandle: boolean
+
+  // if the segment's right handle is hovered by the mouse
+  isHoveredOnRightHandle: boolean
+
+  // if the segment's body is being grabbed by the mouse
+  isGrabbedOnBody: boolean
+
+  // if the segment's left handle is being grabbed by the mouse
+  isGrabbedOnLeftHandle: boolean
+
+  // if the segment's right handle is being grabbed by the mouse
+  isGrabbedOnRightHandle: boolean
+
   // if the segment is currently crossed by the timeline cursor
   isActive: boolean
   
@@ -238,7 +257,11 @@ export type TimelineStoreModifiers = {
   getSegmentColorScheme: (segment?: TimelineSegment) => ClapSegmentColorScheme
   setHoveredSegment: (hoveredSegment?: TimelineSegment) => void
   setEditedSegment: (editedSegment?: TimelineSegment) => void
-  setSelectedSegment: (segment?: TimelineSegment, isSelected?: boolean) => void
+  setSelectedSegment: (params?: {
+    segment?: TimelineSegment
+    isSelected?: boolean
+    onlyOneSelectedAtOnce?: boolean
+  }) => void
   // used to track silent in-line changes in the segments
   // that way we don't need to re-draw the whole thing
   trackSilentChangeInSegment: (segmentId: string) => void
