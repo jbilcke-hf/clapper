@@ -1,18 +1,18 @@
-import { ClapSegment } from "@aitube/clap"
+import { TimelineSegment } from "@aitube/timeline"
 
 export type ActiveSegments = {
   activeSegmentsCacheKey: string
-  activeSegments: ClapSegment[]
-  activeVideoSegment?: ClapSegment
-  activeStoryboardSegment?: ClapSegment
-  activeAudioSegments: ClapSegment[]
+  activeSegments: TimelineSegment[]
+  activeVideoSegment?: TimelineSegment
+  activeStoryboardSegment?: TimelineSegment
+  activeAudioSegments: TimelineSegment[]
 }
 
 export type UpcomingSegments = {
   upcomingSegmentsCacheKey: string
-  upcomingSegments: ClapSegment[]
-  upcomingVideoSegment?: ClapSegment
-  upcomingStoryboardSegment?: ClapSegment
+  upcomingSegments: TimelineSegment[]
+  upcomingVideoSegment?: TimelineSegment
+  upcomingStoryboardSegment?: TimelineSegment
 }
 
 export type BufferedSegments = ActiveSegments & UpcomingSegments
@@ -22,11 +22,11 @@ export type RendererState = {
 
   // various helpers to manage buffering,
   // cache, cache invalidation..
-  dataUriBuffer1?: ClapSegment
-  dataUriBuffer2?: ClapSegment
+  dataUriBuffer1?: TimelineSegment
+  dataUriBuffer2?: TimelineSegment
   activeBufferNumber: number
-  currentSegment?: ClapSegment
-  preloadSegment?: ClapSegment
+  currentSegment?: TimelineSegment
+  preloadSegment?: TimelineSegment
   currentSegmentKey: string
   preloadSegmentKey: string
   dataUriBuffer1Key: string
@@ -57,8 +57,8 @@ export type RendererControls = {
    */
   computeBufferedSegments: () => BufferedSegments
 
-  setDataUriBuffer1: (dataUriBuffer1?: ClapSegment) => void
-  setDataUriBuffer2: (dataUriBuffer2?: ClapSegment) => void
+  setDataUriBuffer1: (dataUriBuffer1?: TimelineSegment) => void
+  setDataUriBuffer2: (dataUriBuffer2?: TimelineSegment) => void
   setActiveBufferNumber: (activeBufferNumber: number) => void
 
   syncVideoToCurrentCursorPosition: () => void

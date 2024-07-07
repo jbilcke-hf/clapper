@@ -1,4 +1,5 @@
-import { ClapEntity, ClapMeta, ClapSegment } from "@aitube/clap"
+import { ClapEntity, ClapMeta } from "@aitube/clap"
+import { TimelineSegment } from "@aitube/timeline"
 
 import { SettingsState } from "./settings"
 import { ChatEvent, ResolveRequestPrompts } from "./base-types"
@@ -7,10 +8,10 @@ export type ResolveRequest = {
   settings: SettingsState
 
   // the reference segment to render (eg. storyboard or video)
-  segment: ClapSegment
+  segment: TimelineSegment
 
   // the slice to use for rendering
-  segments: ClapSegment[]
+  segments: TimelineSegment[]
 
   entities: Record<string, ClapEntity>
 
@@ -30,7 +31,7 @@ export type AssistantRequest = {
   prompt: string
 
   // the slice to edit
-  segments: ClapSegment[]
+  segments: TimelineSegment[]
 
   // the full text of the current scene
   fullScene: string

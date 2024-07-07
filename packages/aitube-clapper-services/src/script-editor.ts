@@ -1,6 +1,8 @@
-import { ClapProject, ClapSegment } from "@aitube/clap"
+import { ClapProject } from "@aitube/clap"
+import { TimelineSegment } from "@aitube/timeline"
 import { Monaco } from "@monaco-editor/react"
 import MonacoEditor from "monaco-editor"
+
 import { VersionControls, VersionedState } from "./version-control"
 
 export type ScrollData = {
@@ -26,7 +28,7 @@ export type ScriptEditorState = {
 
   // map screenplay lines to dialogue segments
   // (note: some lines point to nothing, eg. when we have empty spaces)
-  lineNumberToMentionedSegments: Record<number, ClapSegment>
+  lineNumberToMentionedSegments: Record<number, TimelineSegment>
 
 
   /**

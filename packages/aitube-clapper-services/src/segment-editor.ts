@@ -1,12 +1,13 @@
-import { ClapSegment } from "@aitube/clap"
+import { TimelineSegment } from "@aitube/timeline"
+
 import { VersionControls, VersionedState } from "./version-control"
 
 export type SegmentEditorState = {
 
-} & VersionedState<ClapSegment>
+} & VersionedState<TimelineSegment>
 
 export type SegmentEditorControls = {
   
-} & VersionControls<ClapSegment>
+} & VersionControls<TimelineSegment>
 
 export type SegmentEditorStore = SegmentEditorState & SegmentEditorControls
