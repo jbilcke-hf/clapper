@@ -1,5 +1,6 @@
-import { ClapSegment, ClapSegmentFilteringMode, filterSegmentsWithinRange } from "@aitube/clap"
+import { ClapSegmentFilteringMode, filterSegmentsWithinRange } from "@aitube/clap"
 
+import { TimelineSegment } from "@/types"
 
 // TODO put this in a web workers for smoother operations?
 export function sliceSegments({
@@ -7,10 +8,10 @@ export function sliceSegments({
   afterTimeInMs,
   beforeTimeInMs,
 }: {
-  segments: ClapSegment[]
+  segments: TimelineSegment[]
   afterTimeInMs: number
   beforeTimeInMs: number
-}): ClapSegment[] {
+}): TimelineSegment[] {
   const result = filterSegmentsWithinRange(
     ClapSegmentFilteringMode.ANY,
     afterTimeInMs,

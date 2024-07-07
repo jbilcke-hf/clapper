@@ -3,12 +3,12 @@ import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { ClapTrack } from '@aitube/clap';
 
-import { RuntimeSegment } from '@/types';
+import { TimelineSegment } from '@/types';
 
 type WaveformVariant = 'stereo' | 'mono' | 'compact';
 
 type WaveformProps = {
-  segment: RuntimeSegment;
+  segment: TimelineSegment;
   track: ClapTrack;
   cellWidth: number;
   cellHeight: number;
@@ -20,6 +20,7 @@ type WaveformProps = {
   thickness?: number;
   topOrBottomFillOpacity?: number;
   middleFillOpacity?: number;
+  isHovered?: boolean;
 };
 
 export const Waveform: React.FC<WaveformProps> = ({
@@ -34,9 +35,11 @@ export const Waveform: React.FC<WaveformProps> = ({
   lineSpacing = 0,
   thickness = 1,
   topOrBottomFillOpacity = 0.2,
-  middleFillOpacity = 0.8
+  middleFillOpacity = 0.8,
+  isHovered = false,
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
+  const isLoadedRef = useRef<boolean>(false);
   const { gl } = useThree();
 
   const width = durationInSteps * cellWidth;
@@ -51,9 +54,9 @@ export const Waveform: React.FC<WaveformProps> = ({
       const cacheKey = `waveform_${width}_${height}_${color}_${variant}_${lineSpacing}_${thickness}_${topOrBottomFillOpacity}_${middleFillOpacity}`;
       
       if (segment.textures[cacheKey]) {
+        isLoadedRef.current = true;
         return segment.textures[cacheKey];
       }
-
       const canvas = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
@@ -109,8 +112,10 @@ export const Waveform: React.FC<WaveformProps> = ({
 
       const texture = new THREE.Texture(canvas);
       texture.needsUpdate = true;
-
       segment.textures[cacheKey] = texture;
+
+      isLoadedRef.current = true;
+
       return texture;
     };
   }, [color, variant, lineSpacing, thickness, topOrBottomFillOpacity, middleFillOpacity]);
@@ -128,6 +133,7 @@ export const Waveform: React.FC<WaveformProps> = ({
           if (meshRef.current) {
             (meshRef.current.material as THREE.MeshBasicMaterial).map = texture;
             (meshRef.current.material as THREE.MeshBasicMaterial).needsUpdate = true;
+            isLoadedRef.current = true;
           }
         })
         .catch(error => console.error('Error loading audio:', error));
@@ -139,7 +145,7 @@ export const Waveform: React.FC<WaveformProps> = ({
       ref={meshRef}
       position={[0, 0, 1]}>
       <planeGeometry args={[width, height]} />
-      <meshBasicMaterial transparent opacity={opacity * (track.visible ? 1 : 0.5)} />
+      <meshBasicMaterial transparent opacity={isLoadedRef?.current ? opacity * (track.visible ? 1 : 0.5) :  0} />
     </mesh>
   );
 };
