@@ -14,13 +14,15 @@ import { VideoCell } from "./VideoCell"
 import { TextCell } from "./TextCell"
 import { RedrawButton } from "./RedrawButton"
 import { AudioCell } from "./AudioCell"
+import { useThree } from "@react-three/fiber"
+import { SegmentArea } from "@/types/timeline"
 
 export function Cell({
   segment: s
 }: {
   segment: TimelineSegment
 }) {
-
+  const { size } = useThree()
 
   // TODO JULIAN: we should optimize this component because it causes
   // some performance issues due to the numerous re-renders
@@ -81,61 +83,130 @@ export function Cell({
   // because we need to handle their color change on hover / transition
   // console.log(`re-rendering a <Cell>`)
 
+  const posX = 
+    (startTimeInSteps * cellWidth) 
+
+    // the position of a RoundedBox is defined from its center
+    // so we have to shift its container (the a.mesh)
+    // to the right, exactly one half of the RoundedBox's width
+    + ((durationInSteps * cellWidth) / 2)
+
+  const posY =
+    -verticalCellPosition 
+    + (cellHeight / 2)
+
+  const segmentWidth = widthInPx
+  const segmentHeight = cellHeight
+
+  const computeBoundaries = ({
+    pointX,
+    offsetX,
+    offsetY
+  }: {
+    pointX: number
+    offsetX: number
+    offsetY: number
+  }) => {
+    const isOutOfRange = offsetX < leftBarTrackScaleWidth ||offsetY < topBarTimeScaleHeight
+
+    const cursorX = pointX + (size.width / 2)
+    const cursorTimestampAtInMs = (cursorX / cellWidth) * DEFAULT_DURATION_IN_MS_PER_STEP
+    
+    //console.log("cells.Cell:onClick() e:", e)
+
+    const wMin = cursorTimestampAtInMs - s.startTimeInMs
+    const wMax = s.endTimeInMs - s.startTimeInMs
+    const cursorLeftPosInRatio = wMin / wMax
+
+    const cursorLeftPosInPx = cursorLeftPosInRatio * segmentWidth
+    const cursorRightPosInPx = segmentWidth - cursorLeftPosInPx 
+
+    // note: this should be "responsive", with a max width
+    const sideGrabHandleWidth = 8
+    // let isInLeftArea = cursorLeftPosInRatio < 0.5
+    // let isInRightArea = cursorLeftPosInRatio > 0.5
+  
+    const area =
+      (cursorRightPosInPx < 8) ? SegmentArea.LEFT
+     : (cursorRightPosInPx < 8) ? SegmentArea.RIGHT
+     : SegmentArea.MIDDLE
+
+    return {
+      isOutOfRange,
+      cursorLeftPosInPx,
+      cursorRightPosInPx,
+      area
+    }
+  }
+
   return (
     <a.mesh
       key={s.id}
       position={[
-        (startTimeInSteps * cellWidth) 
-
-          // the position of a RoundedBox is defined from its center
-          // so we have to shift its container (the a.mesh)
-          // to the right, exactly one half of the RoundedBox's width
-          + ((durationInSteps * cellWidth) / 2),
-
-        -verticalCellPosition  + (cellHeight / 2),
+        posX,
+        posY,
         -3
       ]}
-
       onPointerMove={(e) => {
-        // crude code to ignore the event when we are over the left column or the top row
-        if (e.offsetX < leftBarTrackScaleWidth || e.offsetY < topBarTimeScaleHeight) {
-          setHoveredSegment(undefined)
+        const {
+          isOutOfRange,
+          cursorLeftPosInPx,
+          cursorRightPosInPx,
+          area
+        } = computeBoundaries({
+          pointX: e.point.x,
+          offsetX: e.offsetX,
+          offsetY: e.offsetY
+        })
+        if (isOutOfRange) {
+          setHoveredSegment({
+            hoveredSegment: undefined,
+            area,
+          })
         } else {
-          setHoveredSegment(s)
+          setHoveredSegment({
+            hoveredSegment: s,
+            area
+          })
         }
-        // TODO: compute where exactly we are hovering,
-        // so that we can display a small hover effect on the left or right handles
-        // console.log("onPointerMove: e = ", e)
+
         e.stopPropagation()
         return false
       }}
 
       onPointerLeave={(e) => {
         // console.log('leave')
-        setHoveredSegment(undefined)
+        setHoveredSegment({
+          hoveredSegment: undefined,
+          // area,
+        })
 
         e.stopPropagation()
         return false
       }}
 
       onClick={(e) => {
-        // console.log('click on cell ' + s.id)
-        // crude code to ignore the event when we are over the left column or the top row
-        if (e.offsetX < leftBarTrackScaleWidth || e.offsetY < topBarTimeScaleHeight) {
-          // we just ignore clicks outside
-        } else {
+        const {
+          isOutOfRange,
+          cursorLeftPosInPx,
+          cursorRightPosInPx
+        } = computeBoundaries({
+          pointX: e.point.x,
+          offsetX: e.offsetX,
+          offsetY: e.offsetY
+        })
+
+        if (!isOutOfRange) {
           setSelectedSegment({
             segment: s,
 
             // we leave it unspecified to create a toggle
             // isSelected: true,
 
-            onlyOneSelectedAtOnce: false,
+            onlyOneSelectedAtOnce: true,
           })
         }
-        // TODO: compute where exactly we are hovering,
-        // so that we can display a small hover effect on the left or right handles
-        console.log("cells.Cell:onClick() e = ", e)
+
         e.stopPropagation()
         return false
       }}
