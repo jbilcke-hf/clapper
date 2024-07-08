@@ -12,7 +12,6 @@ export function getDefaultBufferedSegments(): BufferedSegments {
     upcomingSegments: [],
     upcomingVideoSegment: undefined,
     upcomingStoryboardSegment: undefined,
-    upcomingAudioSegments: [],
   }
   return result
 }

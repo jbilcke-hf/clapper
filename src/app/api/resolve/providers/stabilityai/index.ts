@@ -1,9 +1,10 @@
-import { ClapSegment, ClapSegmentCategory } from "@aitube/clap"
-
+import { ClapSegmentCategory } from "@aitube/clap"
+import { TimelineSegment } from "@aitube/timeline"
 import { ResolveRequest } from "@aitube/clapper-services"
 import { generateImage } from "./generateImage"
 
-export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
+
+export async function resolveSegment(request: ResolveRequest): Promise<TimelineSegment> {
   if (!request.settings.stabilityAiApiKey) {
     throw new Error(`Missing API key for "Stability.ai"`)
   }

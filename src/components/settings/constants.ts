@@ -222,6 +222,7 @@ export const availableModelsForImageGeneration: Partial<Record<ComputeProvider, 
 
 export const availableModelsForImageUpscaling: Partial<Record<ComputeProvider, string[]>> = {
   [ComputeProvider.FALAI]: [
+    "fal-ai/aura-sr", // "input": { "image_url": "<url>" }
     "fal-ai/ccsr",
   ],
   [ComputeProvider.STABILITYAI]: [

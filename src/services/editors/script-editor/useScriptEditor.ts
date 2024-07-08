@@ -3,15 +3,14 @@
 import { create } from "zustand"
 import { Monaco } from "@monaco-editor/react"
 import MonacoEditor from "monaco-editor"
-import { ClapProject, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+import { ClapProject, ClapSegmentCategory } from "@aitube/clap"
 import { TimelineStore, useTimeline, leftBarTrackScaleWidth } from "@aitube/timeline"
-import { EditorStore, EditorView, ScrollData } from "@aitube/clapper-services"
+import { ScriptEditorStore, EditorView, ScrollData } from "@aitube/clapper-services"
 
-import { getDefaultEditorState } from "./getDefaultEditorState"
+import { getDefaultScriptEditorState } from "./getDefaultScriptEditorState"
 
-export const useEditor = create<EditorStore>((set, get) => ({
-  ...getDefaultEditorState(),
-  setView: (view: EditorView) => { set({ view }) },
+export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
+  ...getDefaultScriptEditorState(),
   setMonaco: (monaco?: Monaco) => { set({ monaco }) },
   setTextModel: (textModel?: MonacoEditor.editor.ITextModel) => { set({ textModel }) },
   setStandaloneCodeEditor: (standaloneCodeEditor?: MonacoEditor.editor.IStandaloneCodeEditor) => { set({ standaloneCodeEditor }) },
@@ -203,10 +202,13 @@ export const useEditor = create<EditorStore>((set, get) => ({
         ])
       })
     })
-  }
+  },
+  setCurrent: (current?: string) => { set({ current }) },
+  undo: () => {},
+  redo: () => {},
 }))
 
 
 if (typeof window !== "undefined") {
-  (window as any).useEditor = useEditor
+  (window as any).useScriptEditor = useScriptEditor
 }

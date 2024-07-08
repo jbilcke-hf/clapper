@@ -1,8 +1,7 @@
-import { EditorState, EditorView } from "@aitube/clapper-services"
+import { ScriptEditorState, EditorView } from "@aitube/clapper-services"
 
-export function getDefaultEditorState(): EditorState {
-  const state: EditorState = {
-    view: EditorView.SCRIPT,
+export function getDefaultScriptEditorState(): ScriptEditorState {
+  const state: ScriptEditorState = {
     monaco: undefined,
     textModel: undefined,
     standaloneCodeEditor: undefined,
@@ -15,6 +14,10 @@ export function getDefaultEditorState(): EditorState {
     scrollTop: 0,
     scrollWidth: 0,
     scrollTopInMs: 0,
+
+    current: undefined,
+    version: 0,
+    history: [],
   }
 
   return state

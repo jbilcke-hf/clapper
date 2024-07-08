@@ -14,6 +14,7 @@ export function FormSelect<T>({
   items = [],
   onSelect,
   horizontal,
+  centered,
 }: {
   label?: string
   className?: string
@@ -29,6 +30,7 @@ export function FormSelect<T>({
    }[]
   onSelect?: (value?: T) => void
   horizontal?: boolean
+  centered?: boolean
 }) {
   
   return (
@@ -39,7 +41,8 @@ export function FormSelect<T>({
         : `${label}:`
       }
       className={cn(``, className)}
-      horizontal={horizontal}>
+      horizontal={horizontal}
+      centered={centered}>
       <Select
         onValueChange={(newSelectedItemId: string) => {
           if (!onSelect) {

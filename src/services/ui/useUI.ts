@@ -3,10 +3,11 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
-import { SettingsCategory, UIStore,  UITheme, UIThemeName } from "@aitube/clapper-services"
+import { ScriptEditorService, ScriptEditorStore, SettingsCategory, UIStore,  UITheme, UIThemeName } from "@aitube/clapper-services"
 import { getDefaultUIState } from "./getDefaultUIState"
 import { themes } from "./theme"
-import { useEditor } from "../editor/useEditor"
+import { useScriptEditor } from "../editors/script-editor/useScriptEditor"
+import { TimelineStore, useTimeline } from "@aitube/timeline"
 
 export const useUI = create<UIStore>()(
   persist(
@@ -20,11 +21,15 @@ export const useUI = create<UIStore>()(
         get().applyThemeToComponents()
       },
       applyThemeToComponents: () => {
+        const scriptEditor: ScriptEditorStore = useScriptEditor.getState()
+        const timeline: TimelineStore = useTimeline.getState()
+
         const theme = get().getTheme()
 
         // update the editor's theme
-        useEditor.getState().monaco?.editor?.setTheme?.(theme.id)
+        scriptEditor.monaco?.editor?.setTheme?.(theme.id)
 
+        timeline.setTimelineTheme(theme.timeline)
         // update the timeline's theme
         // this is an interesting "fast trial" mode to test color hues,
         // but obviously we cannot use that in production

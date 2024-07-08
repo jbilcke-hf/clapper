@@ -1,7 +1,7 @@
 "use client"
 
-import { ClapAssetSource, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType, newSegment, parseClap, serializeClap } from "@aitube/clap"
-import { TimelineStore, useTimeline } from "@aitube/timeline"
+import { ClapAssetSource, ClapProject, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType, newSegment, parseClap, serializeClap } from "@aitube/clap"
+import { TimelineStore, useTimeline, TimelineSegment } from "@aitube/timeline"
 import { ParseScriptProgressUpdate, parseScriptToClap } from "@aitube/broadway"
 import { TaskCategory, TaskVisibility } from "@aitube/clapper-services"
 import { create } from "zustand"
@@ -296,7 +296,7 @@ export const useIO = create<IOStore>((set, get) => ({
 
     const clap: ClapProject = useTimeline.getState().clap
 
-    const segments: ClapSegment[] = useTimeline.getState().segments
+    const segments: TimelineSegment[] = useTimeline.getState().segments
 
     // note: I didn't put it inside the clapper's own API,
     // because this is something a bit fragile
@@ -359,8 +359,8 @@ export const useIO = create<IOStore>((set, get) => ({
     })
 
     const timeline: TimelineStore = useTimeline.getState()
-    const { clap } = timeline
-    const segments: ExportableSegment[] = clap.segments
+    const { clap, segments: timelineSegments } = timeline
+    const segments: ExportableSegment[] = timelineSegments
       .map((segment, i) => formatSegmentForExport(segment, i))
       .filter(({ isExportableToFile }) => isExportableToFile)
 
@@ -423,9 +423,9 @@ export const useIO = create<IOStore>((set, get) => ({
   generateMLT: async (): Promise<string> => {
 
     const timeline: TimelineStore = useTimeline.getState()
-    const { clap } = timeline
+    const { clap, segments: timelineSegments } = timeline
     
-    const segments: ExportableSegment[] = clap.segments
+    const segments: ExportableSegment[] = timelineSegments
       .map((segment, i) => formatSegmentForExport(segment, i))
       .filter(({ isExportableToFile }) => isExportableToFile)
     

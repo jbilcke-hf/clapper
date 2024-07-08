@@ -1,10 +1,10 @@
 import Replicate from 'replicate'
 
-import { ClapSegment, ClapSegmentCategory } from "@aitube/clap"
-
+import { ClapSegmentCategory } from "@aitube/clap"
 import { ResolveRequest } from "@aitube/clapper-services"
+import { TimelineSegment } from '@aitube/timeline'
 
-export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
+export async function resolveSegment(request: ResolveRequest): Promise<TimelineSegment> {
   if (!request.settings.replicateApiKey) {
     throw new Error(`Missing API key for "Replicate.com"`)
   }

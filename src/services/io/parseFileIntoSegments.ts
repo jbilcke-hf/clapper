@@ -1,7 +1,7 @@
 "use client"
 
-import { ClapAssetSource, ClapOutputType, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, newSegment, UUID } from "@aitube/clap"
-import { RuntimeSegment } from "@aitube/timeline"
+import { ClapAssetSource, ClapOutputType, ClapSegmentCategory, ClapSegmentStatus, newSegment, UUID } from "@aitube/clap"
+import { clapSegmentToTimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineSegment } from "@aitube/timeline"
 
 import { blobToBase64DataUri } from "@/lib/utils/blobToBase64DataUri"
 
@@ -13,7 +13,7 @@ export async function parseFileIntoSegments({ file }: {
    * The file to import
    */
   file: File
-}): Promise<ClapSegment[]> {
+}): Promise<TimelineSegment[]> {
   // console.log(`parseFileIntoSegments(): filename = ${file.name}`)
   // console.log(`parseFileIntoSegments(): file size = ${file.size} bytes`)
   // console.log(`parseFileIntoSegments(): file type = ${file.type}`)
@@ -25,7 +25,7 @@ export async function parseFileIntoSegments({ file }: {
   let type: ResourceType = "misc"
   let resourceCategory: ResourceCategory = "misc"
 
-  const newSegments: ClapSegment[] = []
+  const newSegments: TimelineSegment[] = []
 
   switch (file.type) {
     case "image/webp":
@@ -68,7 +68,7 @@ export async function parseFileIntoSegments({ file }: {
 
       const assetUrl = await blobToBase64DataUri(file)
 
-      const newSegmentData: Partial<ClapSegment> = {
+      const newSegmentData: Partial<TimelineSegment> = {
         prompt: "audio track",
         startTimeInMs, // start time of the segment
         endTimeInMs, // end time of the segment (startTimeInMs + durationInMs)
@@ -82,20 +82,18 @@ export async function parseFileIntoSegments({ file }: {
         assetFileFormat: `${file.type}`,
       }
 
-      const clapSegment = newSegment(newSegmentData)
+      const timelineSegment = await clapSegmentToTimelineSegment(newSegment(newSegmentData))
+      timelineSegment.outputType = ClapOutputType.AUDIO
+      timelineSegment.outputGain = 1.0
+      timelineSegment.audioBuffer = audioBuffer
 
-      const audioSegment: RuntimeSegment = {
-        ...clapSegment,
-
-        outputType: ClapOutputType.AUDIO,
-        outputGain: 1,
-        audioBuffer,
-      }
+      // we assume we want it to be immediately visible
+      timelineSegment.visibility = SegmentVisibility.VISIBLE
 
       // console.log("newSegment:", audioSegment)
 
       // poof! type disappears.. it's magic
-      newSegments.push(audioSegment)
+      newSegments.push(timelineSegment)
       break;
     
     case "text/plain":

@@ -1,13 +1,12 @@
 "use client"
 
 import { create } from "zustand"
-import { ClapOutputType, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+import { ClapOutputType, ClapSegmentCategory } from "@aitube/clap"
 import { BufferedSegments, RendererStore } from "@aitube/clapper-services"
-import { TimelineStore, useTimeline, RuntimeSegment } from "@aitube/timeline"
+import { TimelineStore, useTimeline, TimelineSegment } from "@aitube/timeline"
 
 import { getDefaultRendererState } from "./getDefaultRendererState"
 import { getSegmentCacheKey } from "./getSegmentCacheKey"
-import { blockSizeInMs } from "./constants"
 import { getDefaultBufferedSegments } from "./getDefaultBufferedSegments"
 
 export const useRenderer = create<RendererStore>((set, get) => ({
@@ -112,11 +111,11 @@ export const useRenderer = create<RendererStore>((set, get) => ({
   computeBufferedSegments: (): BufferedSegments => {
     const timelineState: TimelineStore = useTimeline.getState()
     const { cursorTimestampAtInMs, segments: clapSegments } = timelineState
-    const segments = clapSegments as RuntimeSegment[]
+    const segments = clapSegments as TimelineSegment[]
   
     const results: BufferedSegments = getDefaultBufferedSegments()
 
-  
+    
     // we could use a temporal index to keep things efficient here
     // thiere is this relatively recent algorithm, the IB+ Tree, 
     // which seems to be good for what we want to do
@@ -125,7 +124,7 @@ export const useRenderer = create<RendererStore>((set, get) => ({
     // although we will have to see when those segments are re-computed / synced
     for (const segment of segments) {
       const inActiveShot = segment.startTimeInMs <= cursorTimestampAtInMs && cursorTimestampAtInMs < segment.endTimeInMs
-  
+      
       if (inActiveShot) {
         const isActiveVideo = segment.category === ClapSegmentCategory.VIDEO && segment.assetUrl
         if (isActiveVideo) {
@@ -162,57 +161,58 @@ export const useRenderer = create<RendererStore>((set, get) => ({
         continue
       }
       
-      const inUpcomingShot =
-        (segment.startTimeInMs <= (cursorTimestampAtInMs + blockSizeInMs))
-        &&
-        ((cursorTimestampAtInMs + blockSizeInMs) < segment.endTimeInMs)
-  
-      if (inUpcomingShot) {
-        const isUpcomingVideo = segment.category === ClapSegmentCategory.VIDEO && segment.assetUrl
-        // const isUpcomingStoryboard = segment.category === ClapSegmentCategory.STORYBOARD && segment.assetUrl
-        if (isUpcomingVideo) {
-          results.upcomingSegments.push(segment)
-          results.upcomingVideoSegment = segment
-          results.upcomingSegmentsCacheKey = getSegmentCacheKey(segment, results.upcomingSegmentsCacheKey)
-          continue
-        }
-  
-        const isUpcomingAudio =
-          // IF this is an audio segment
-          segment.outputType === ClapOutputType.AUDIO &&
-        
-          // AND there is an actual audio buffer attached to it
-          segment.audioBuffer
-  
-        if (isUpcomingAudio) {
-          results.upcomingSegments.push(segment)
-          results.upcomingAudioSegments.push(segment)
-          results.upcomingSegmentsCacheKey = getSegmentCacheKey(segment, results.upcomingSegmentsCacheKey)
-          continue
-        }
+      const existingVideoShot: TimelineSegment | undefined = results.upcomingVideoSegment
+          
+      const isUpcoming = segment.startTimeInMs > cursorTimestampAtInMs
+      if (isUpcoming) {
+        // for the "upcoming" video we need to find the closest one
+        // in terms of distance with the current cursor position
 
-        const isUpcomingStoryboard = segment.category === ClapSegmentCategory.STORYBOARD && segment.assetUrl
-        if (isUpcomingStoryboard) {
-          results.upcomingSegments.push(segment)
-          results.upcomingStoryboardSegment = segment
-          results.upcomingSegmentsCacheKey = getSegmentCacheKey(segment, results.upcomingSegmentsCacheKey)
+        // otherwise we populare the upcoming segments,
+        // if we find the closests candidates
+        const isVideo = segment.category === ClapSegmentCategory.VIDEO && segment.assetUrl
+        // const isUpcomingStoryboard = segment.category === ClapSegmentCategory.STORYBOARD && segment.assetUrl
+        if (isVideo) {
+       
+          // if the candidate isn't "more upcoming" than the current result,
+          // then we continue
+          if (existingVideoShot && existingVideoShot.startTimeInMs < segment.startTimeInMs) {
+            continue
+          }
+          results.upcomingVideoSegment = segment
           continue
         }
-        results.upcomingSegments.push(segment)
-        results.upcomingSegmentsCacheKey = getSegmentCacheKey(segment, results.upcomingSegmentsCacheKey)
-        continue
+  
+
+        const isStoryboard = segment.category === ClapSegmentCategory.STORYBOARD && segment.assetUrl
+        if (isStoryboard && !results.upcomingStoryboardSegment) {
+          results.upcomingStoryboardSegment = segment
+          continue
+        }
       }
         
+    }
+
+    results.upcomingSegments = []
+    results.upcomingSegmentsCacheKey = ''
+    if (results.upcomingVideoSegment) {
+      results.upcomingSegments.push(results.upcomingVideoSegment)
+      results.upcomingSegmentsCacheKey = getSegmentCacheKey(results.upcomingVideoSegment, '')
+    }
+
+    if (results.upcomingStoryboardSegment) {
+      results.upcomingSegments.push(results.upcomingStoryboardSegment)
+      results.upcomingSegmentsCacheKey = getSegmentCacheKey(results.upcomingStoryboardSegment, results.upcomingSegmentsCacheKey)
     }
 
     return results
   },
 
 
-  setDataUriBuffer1: (dataUriBuffer1?: ClapSegment) => {
+  setDataUriBuffer1: (dataUriBuffer1?: TimelineSegment) => {
     set({ dataUriBuffer1 })
   },
-  setDataUriBuffer2: (dataUriBuffer2?: ClapSegment) => {
+  setDataUriBuffer2: (dataUriBuffer2?: TimelineSegment) => {
     set({ dataUriBuffer2 })
   },
   setActiveBufferNumber: (activeBufferNumber: number) => {
@@ -222,7 +222,8 @@ export const useRenderer = create<RendererStore>((set, get) => ({
   syncVideoToCurrentCursorPosition: () => {
     const timeline: TimelineStore = useTimeline.getState()
     // @TODO julian: make sure we play the video at the correct time
-    // console.log(`syncing Video..`)
+    console.log(`syncing Video..`)
+
   }
 }))
 

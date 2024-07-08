@@ -3,7 +3,13 @@ import { useTasks } from "@/components/tasks/useTasks"
 export { useAssistant } from "./assistant/useAssistant"
 export { useAudio } from "./audio/useAudio"
 export { useBroadcast } from "./broadcast/useBroadcast"
-export { useEditor } from "./editor/useEditor"
+export {
+  useEntityEditor,
+  useProjectEditor,
+  useSegmentEditor,
+  useScriptEditor,
+  useEditors
+} from "./editors"
 export { useIO } from "./io/useIO"
 export { useMetrics } from "./metrics/useMetrics"
 export { useMonitor } from "./monitor/useMonitor"

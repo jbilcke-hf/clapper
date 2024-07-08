@@ -3,16 +3,15 @@
 import { useEffect } from "react"
 import { useVoiceToText } from "react-speakup"
 import { create } from "zustand"
-import { ClapOutputType, ClapProject, ClapSegment, ClapSegmentCategory, newSegment, UUID } from "@aitube/clap"
-import { AssistantStore, ChatEvent } from "@aitube/clapper-services"
+import { AssistantRequest, AssistantStore, ChatEvent } from "@aitube/clapper-services"
+import { ClapOutputType, ClapProject, ClapSegmentCategory, newSegment, UUID } from "@aitube/clap"
+import { DEFAULT_DURATION_IN_MS_PER_STEP, findFreeTrack, TimelineSegment, TimelineStore, useTimeline } from "@aitube/timeline"
 
 import { getDefaultAssistantState } from "./getDefaultAssistantState"
-import { DEFAULT_DURATION_IN_MS_PER_STEP, findFreeTrack, TimelineStore, useTimeline } from "@aitube/timeline"
 import { useSettings } from "../settings"
 
 import { askAssistant } from "./askAssistant"
 import { useRenderer } from "../renderer"
-import { AssistantRequest } from "@aitube/clapper-services"
 
 // URL to the speech to text websocket server
 export const STT_API_URL = process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_API_URL || ""
@@ -135,7 +134,7 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
 
     const cursorInSteps = 0
   
-    const referenceSegment: ClapSegment | undefined = activeSegments.at(0)
+    const referenceSegment: TimelineSegment | undefined = activeSegments.at(0)
     
     if (!referenceSegment) {
       throw new Error(`No segment under the current cursor`)
@@ -154,7 +153,7 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
     const fullScene: string = scene?.sequenceFullText || ""
     const actionLine: string = scene?.line || ""
   
-    const segments: ClapSegment[] = activeSegments
+    const segments: TimelineSegment[] = activeSegments
       .filter(s =>
         s.category === ClapSegmentCategory.CAMERA ||
         s.category === ClapSegmentCategory.LOCATION ||

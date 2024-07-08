@@ -18,6 +18,7 @@ export function FormInput<T>({
   onChange,
   horizontal,
   type,
+  centered,
   // ...props
  }: {
   label?: ReactNode
@@ -31,6 +32,7 @@ export function FormInput<T>({
   onChange?: (newValue: T) => void
   horizontal?: boolean
   type?: HTMLInputTypeAttribute
+  centered?: boolean
  }
  //  & Omit<ComponentProps<typeof Input>, "value" | "defaultValue" | "placeholder" | "type" | "className" | "disabled" | "onChange">
  // & ComponentProps<typeof Input>
@@ -87,11 +89,15 @@ export function FormInput<T>({
     <FormField
       label={<>{label}:</>}
       horizontal={horizontal}
+      centered={centered}
        >
       <Input
         ref={ref}
         placeholder={`${placeholder || defaultValue || ""}`}
-        className={cn(`w-full md:w-60 lg:w-64 xl:w-80 font-light text-base`, className)}
+        className={cn(
+          `w-full`,
+          `md:w-60 lg:w-64 xl:w-80`,
+          `font-light text-base`, className)}
         disabled={disabled}
         onChange={handleChange}
         // {...props}

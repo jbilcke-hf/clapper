@@ -1,7 +1,7 @@
 "use client"
 
 import { create } from "zustand"
-import { TimelineStore, useTimeline, RuntimeSegment } from "@aitube/timeline"
+import { TimelineStore, useTimeline, TimelineSegment } from "@aitube/timeline"
 import { AudioStore, CurrentlyPlayingAudioSource } from "@aitube/clapper-services"
 
 import { getDefaultAudioState } from "./getDefaultAudioState"
@@ -59,14 +59,14 @@ export const useAudio = create<AudioStore>((set, get) => ({
    * 
    * @returns 
    */
-  syncAudioToCurrentCursorPosition: (activeAudioSegments: RuntimeSegment[]) => {
+  syncAudioToCurrentCursorPosition: (activeAudioSegments: TimelineSegment[]) => {
 
     const { audioContext, currentlyPlaying } = get()
 
     const timelineStore: TimelineStore = useTimeline.getState()
     const { cursorTimestampAtInMs } = timelineStore
 
-    const segments: RuntimeSegment[] = activeAudioSegments.filter(s =>
+    const segments: TimelineSegment[] = activeAudioSegments.filter(s =>
       !currentlyPlaying.some(p => p.segmentId === s.id)
     )
 
@@ -75,7 +75,7 @@ export const useAudio = create<AudioStore>((set, get) => ({
     }
     // console.log("useAudio: found audio segments that should be playing")
 
-    const newlyStartedAudioSourceNodes = segments.map((segment: RuntimeSegment) =>
+    const newlyStartedAudioSourceNodes = segments.map((segment: TimelineSegment) =>
       startAudioSourceNode({
         audioContext,
         segment,

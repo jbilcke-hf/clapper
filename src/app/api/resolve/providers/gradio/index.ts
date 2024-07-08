@@ -1,9 +1,10 @@
-import { ClapSegment, ClapSegmentCategory } from "@aitube/clap"
-
+import { ClapSegmentCategory } from "@aitube/clap"
 import { ResolveRequest } from "@aitube/clapper-services"
+import { TimelineSegment } from "@aitube/timeline"
+
 import { callGradioApi } from "@/lib/hf/callGradioApi"
 
-export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
+export async function resolveSegment(request: ResolveRequest): Promise<TimelineSegment> {
 
   const segment = request.segment
 

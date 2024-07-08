@@ -1,7 +1,8 @@
-import { ClapAssetSource, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+import { ClapAssetSource, ClapSegmentCategory } from "@aitube/clap"
+import { TimelineSegment } from "@aitube/timeline"
 
 export type ExportableSegment = {
-  segment: ClapSegment
+  segment: TimelineSegment
 
   // lowercase category name
   category: string
@@ -34,7 +35,7 @@ export type ExportableSegment = {
   isExportableToFile: boolean
 }
 
-export function formatSegmentForExport(segment: ClapSegment, index: number): ExportableSegment {
+export function formatSegmentForExport(segment: TimelineSegment, index: number): ExportableSegment {
   const directory = `${segment.category}`.toLowerCase()
   const prefix = `shot_${String(index).padStart(4, '0')}_`
   let mimetype = `${segment.assetFileFormat || "unknown/unknown"}`
