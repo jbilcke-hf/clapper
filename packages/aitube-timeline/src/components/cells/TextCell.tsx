@@ -54,10 +54,11 @@ export function TextCell({
         cellHeight - padding, // tiny padding
         1
       ]} // Width, height, depth. Default is [1, 1, 1]
-      radius={2.5} // Radius of the rounded corners. Default is 0.05
+      radius={6} // Radius of the rounded corners. Default is 0.05
       smoothness={2} // The number of curve segments. Default is 4
       bevelSegments={1} // The number of bevel segments. Default is 4, setting it to 0 removes the bevel, as a result the texture is applied to the whole geometry.
       creaseAngle={0.4} // Smooth normals everywhere except faces that meet at an angle greater than the crease angle
+    
     >
       <meshBasicMaterial
         color={
@@ -145,11 +146,13 @@ export function TextCell({
           // so you will have to change the "Arial" or "bold Arial"
           // in the function which computes a character's width
           fontWeight={400}
+          /*
           onClick={(e) => {
             // 'click on text in cell ' + s.id)
             e.stopPropagation()
             return false
           }}
+            */
         >
           {lines.join("\n")}
         </Text>}

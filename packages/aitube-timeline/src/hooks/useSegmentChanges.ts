@@ -6,15 +6,33 @@ import { TimelineSegment } from "@/types"
 function getKey(segment: TimelineSegment) {
   const keyItems = [
     segment.id,
+
+    // properties of the timeline segment
+    segment.startAtLine,
+    segment.endAtLine,
+    segment.visibility,
+    segment.isSelected,
+    segment.isHovered,
+    segment.isHoveredOnBody,
+    segment.isHoveredOnLeftHandle,
+    segment.isHoveredOnRightHandle,
+    segment.isGrabbedOnBody,
+    segment.isGrabbedOnLeftHandle,
+    segment.isGrabbedOnRightHandle,
+    segment.isActive,
+    segment.isPlaying,
+    segment.editionStatus,
+
+    // properties of the segment
+    segment.status,
     segment.label,
     segment.prompt,
     segment.assetUrl.slice(0, 1024),
-    segment.status
   ]
 
-  const hash = keyItems.join("::")
+  const segmentKey = keyItems.join("✇✇")
 
-  return hash
+  return segmentKey
 }
 
 /**

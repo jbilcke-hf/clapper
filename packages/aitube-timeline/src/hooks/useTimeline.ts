@@ -2,7 +2,7 @@ import { create } from "zustand"
 import * as THREE from "three"
 import { ClapOutputType, ClapProject, ClapSceneEvent, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, isValidNumber, newClap, serializeClap, ClapTrack, ClapTracks } from "@aitube/clap"
 
-import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore } from "@/types/timeline"
+import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { hslToHex, findFreeTrack, getAudioBuffer, getFinalVideo, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment } from "@/utils"
@@ -266,22 +266,27 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     return height
   },
 
-  getSegmentColorScheme: (segment?: TimelineSegment): ClapSegmentColorScheme => {
+  getSegmentColorScheme: (segment: TimelineSegment): ClapSegmentColorScheme => {
 
     const { theme } = get()
 
     let baseHue = 0
+
     let baseSaturation = theme.cell.saturation
+
     let baseLightness = theme.cell.lightness
     
+    let backgroundColorSaturation = (segment.isSelected ? 2.2 : 1.4) * baseSaturation
+    let backgroundColorHoverSaturation = (segment.isSelected ? 2.2 : 1.8) * baseSaturation
+
     let colorScheme: ClapSegmentColorScheme = {
       baseHue,
       baseSaturation,
       baseLightness,
       
-      backgroundColor: hslToHex(baseHue, baseSaturation + 10, baseLightness),
-      backgroundColorHover: hslToHex(baseHue, baseSaturation + 20, baseLightness + 1),
-      backgroundColorDisabled: hslToHex(baseHue, baseSaturation - 10, baseLightness - 2),
+      backgroundColor: hslToHex(baseHue, backgroundColorSaturation, baseLightness),
+      backgroundColorHover: hslToHex(baseHue, backgroundColorHoverSaturation, baseLightness + 1),
+      backgroundColorDisabled: hslToHex(baseHue, baseSaturation - 15, baseLightness - 2),
       foregroundColor: hslToHex(baseHue, baseSaturation + 40, baseLightness),
       borderColor: hslToHex(baseHue, baseSaturation + 40, baseLightness + 10),
       textColor: hslToHex(baseHue, baseSaturation + 55, baseLightness - 60),
@@ -306,9 +311,9 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       baseSaturation,
       baseLightness,
     
-      backgroundColor: hslToHex(baseHue, baseSaturation + 10, baseLightness),
-      backgroundColorHover: hslToHex(baseHue, baseSaturation + 20, baseLightness + 1),
-      backgroundColorDisabled: hslToHex(baseHue, baseSaturation - 10, baseLightness - 2),
+      backgroundColor: hslToHex(baseHue, backgroundColorSaturation, baseLightness),
+      backgroundColorHover: hslToHex(baseHue, backgroundColorHoverSaturation, baseLightness + 1),
+      backgroundColorDisabled: hslToHex(baseHue, baseSaturation - 15, baseLightness - 2),
       foregroundColor: hslToHex(baseHue, baseSaturation + 40, baseLightness),
       borderColor: hslToHex(baseHue, baseSaturation + 40, baseLightness + 10),
       textColor: hslToHex(baseHue, baseSaturation + 55, baseLightness - 60),
@@ -321,7 +326,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     return colorScheme
   },
-  setHoveredSegment: (hoveredSegment?: TimelineSegment) => {
+  setHoveredSegment: ({
+    hoveredSegment,
+    area,
+  }: {
+    hoveredSegment?: TimelineSegment
+    area?: SegmentArea 
+  } = {}) => {
     const {
       hoveredSegment: previousHoveredSegment,
       segmentsChanged: previousSegmentsChanged
@@ -335,9 +346,15 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           return
         } else {
           previousHoveredSegment.isHovered = false
+          hoveredSegment.isHoveredOnLeftHandle = false
+          hoveredSegment.isHoveredOnRightHandle = false
+          hoveredSegment.isHoveredOnBody = false
         }
       } else {
         hoveredSegment.isHovered = true
+        hoveredSegment.isHoveredOnLeftHandle = area === SegmentArea.LEFT
+        hoveredSegment.isHoveredOnRightHandle = area === SegmentArea.RIGHT
+        hoveredSegment.isHoveredOnBody = area === SegmentArea.MIDDLE
         set({
           hoveredSegment,
           segmentsChanged: 1 + previousSegmentsChanged
@@ -346,6 +363,9 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     } else {
       if (previousHoveredSegment) {
         previousHoveredSegment.isHovered = false
+        previousHoveredSegment.isHoveredOnLeftHandle = false
+        previousHoveredSegment.isHoveredOnRightHandle = false
+        previousHoveredSegment.isHoveredOnBody = false
         set({
           hoveredSegment: undefined,
           segmentsChanged: 1 + previousSegmentsChanged
@@ -404,25 +424,42 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       selectedSegments: previousSelectedSegments,
       segmentsChanged: previousSegmentsChanged
     } = get()
+    /*
+    console.log(`setSelectedSegment() called with:`, {
+      segment,
+    isSelected,
+    onlyOneSelectedAtOnce,
+    })
+    */
 
     let newValue = typeof isSelected !== "boolean"
       ? (typeof segment?.isSelected === "boolean" ? (!segment.isSelected) : false)
       : isSelected
 
+    // console.log('`setSelectedSegment(): new value:', newValue)
+
     // note: we do all of this in order to avoid useless state updates
     if (segment) {
 
       if (segment.isSelected === newValue) {
+
+        // console.log('`setSelectedSegment(): nothing to do')
+    
         // nothing to do
         return
       }
 
       // if needed we clear any other selected item
       if (onlyOneSelectedAtOnce) {
+
+        // console.log('`setSelectedSegment(): unselecting all previous segments')
+    
         segments.forEach(s => { s.isSelected = false })
         set({ selectedSegments: [] })
       }
 
+      // console.log('`setSelectedSegment(): assigning new value and propagating changes:', newValue)
+    
       segment.isSelected = newValue
 
       if (newValue) {
@@ -437,6 +474,9 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         })
       }
     } else {
+
+      // console.log('`setSelectedSegment(): mass change requested')
+    
       segments.forEach(s => {
         s.isSelected = newValue
       })

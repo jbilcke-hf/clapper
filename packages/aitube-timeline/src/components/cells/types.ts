@@ -1,13 +1,17 @@
 import { ClapTrack } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, TimelineSegment } from "@/types"
+import { SegmentArea } from "@/types/timeline"
 
 export type SpecializedCellProps = {
   segment: TimelineSegment
   cellWidth: number
   cellHeight: number
   isHovered: boolean
-  setHoveredSegment: (hoveredSegment?: TimelineSegment) => void
+  setHoveredSegment: (params?: {
+    hoveredSegment?: TimelineSegment
+    area?: SegmentArea 
+  }) => void
   durationInSteps: number
   startTimeInSteps: number
   colorScheme: ClapSegmentColorScheme

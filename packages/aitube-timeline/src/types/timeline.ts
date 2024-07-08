@@ -43,6 +43,12 @@ export enum SegmentEditionStatus {
   EDITING = "EDITING",
 }
 
+export enum SegmentArea {
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+  MIDDLE = 'MIDLE'
+}
+
 // some data can only exist inside a browser session (eg. AudioBuffer)
 // or at least data that only make sense on client side
 // we could put things like a mouse hover or selected state in here
@@ -254,8 +260,11 @@ export type TimelineStoreModifiers = {
   setVisibleSegments: (visibleSegments?: TimelineSegment[]) => void
   getCellHeight: (trackNumber?: number) => number
   getVerticalCellPosition: (start: number, end: number) => number
-  getSegmentColorScheme: (segment?: TimelineSegment) => ClapSegmentColorScheme
-  setHoveredSegment: (hoveredSegment?: TimelineSegment) => void
+  getSegmentColorScheme: (segment: TimelineSegment) => ClapSegmentColorScheme
+  setHoveredSegment: (params?: {
+    hoveredSegment?: TimelineSegment
+    area?: SegmentArea 
+  }) => void
   setEditedSegment: (editedSegment?: TimelineSegment) => void
   setSelectedSegment: (params?: {
     segment?: TimelineSegment
