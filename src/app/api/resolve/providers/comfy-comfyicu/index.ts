@@ -1,8 +1,9 @@
 
 import { ResolveRequest } from "@aitube/clapper-services"
-import { ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
+import { ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
+import { TimelineSegment } from "@aitube/timeline"
 
-export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
+export async function resolveSegment(request: ResolveRequest): Promise<TimelineSegment> {
   if (!request.settings.comfyIcuApiKey) {
     throw new Error(`Missing API key for "Comfy.icu"`)
   }
@@ -10,7 +11,7 @@ export async function resolveSegment(request: ResolveRequest): Promise<ClapSegme
     throw new Error(`Clapper doesn't support ${request.segment.category} generation for provider "Comfy.icu". Please open a pull request with (working code) to solve this!`)
   }
   
-  const segment: ClapSegment = { ...request.segment }
+  const segment: TimelineSegment = { ...request.segment }
 
 
   try {

@@ -1,10 +1,11 @@
 import * as fal from '@fal-ai/serverless-client'
-
+import { TimelineSegment } from '@aitube/timeline'
 import { FalAiImageSize, ResolveRequest } from "@aitube/clapper-services"
-import { ClapMediaOrientation, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+import { ClapMediaOrientation, ClapSegmentCategory } from "@aitube/clap"
 import { FalAiAudioResponse, FalAiImageResponse, FalAiSpeechResponse, FalAiVideoResponse } from './types'
 
-export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
+
+export async function resolveSegment(request: ResolveRequest): Promise<TimelineSegment> {
   if (!request.settings.falAiApiKey) {
     throw new Error(`Missing API key for "Fal.ai"`)
   }
@@ -13,7 +14,7 @@ export async function resolveSegment(request: ResolveRequest): Promise<ClapSegme
     credentials: request.settings.falAiApiKey
   })
 
-  const segment = request.segment
+  const segment: TimelineSegment = request.segment
 
 
   // for doc see: 

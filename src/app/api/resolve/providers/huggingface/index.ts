@@ -1,13 +1,14 @@
 import { HfInference, HfInferenceEndpoint } from "@huggingface/inference"
 
 import { ResolveRequest } from "@aitube/clapper-services"
-import { ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+import { ClapSegmentCategory } from "@aitube/clap"
 
 import { generateImage } from "./generateImage"
 import { generateVoice } from "./generateVoice"
 import { generateVideo } from "./generateVideo"
+import { TimelineSegment } from "@aitube/timeline"
 
-export async function resolveSegment(request: ResolveRequest): Promise<ClapSegment> {
+export async function resolveSegment(request: ResolveRequest): Promise<TimelineSegment> {
 
   if (!request.settings.huggingFaceApiKey) {
     throw new Error(`Missing API key for "Hugging Face"`)

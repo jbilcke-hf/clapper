@@ -13,7 +13,8 @@ export function FormFile({
   disabled,
   onChange,
   horizontal,
-  accept
+  accept,
+  centered,
  }: {
   label?: string
   className?: string
@@ -22,6 +23,7 @@ export function FormFile({
   onChange?: (files: File[]) => void
   horizontal?: boolean
   accept?: string
+  centered?: boolean
   }) {
   const ref = useRef<HTMLInputElement>(null)
 
@@ -43,6 +45,7 @@ export function FormFile({
       `${label}:`
       }
       horizontal={horizontal}
+      centered={centered}
        >
       <Input
         ref={ref}

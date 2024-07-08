@@ -4,11 +4,12 @@ import { cn } from "@/lib/utils"
 
 import { FormLabel } from "./FormLabel"
 
-export function FormField({ label, children, className, horizontal = false }: {
+export function FormField({ label, children, className, horizontal = false, centered = false }: {
   label?: ReactNode
   children?: ReactNode
   className?: string
   horizontal?: boolean
+  centered?: boolean
 }) {
   return (
     <div className={cn(
@@ -20,6 +21,9 @@ export function FormField({ label, children, className, horizontal = false }: {
       <div className={cn(
         `flex`,
         horizontal ? '' : 'w-full',
+        centered ? (
+          horizontal ? 'items-center' : 'justify-center'
+        ) : '',
         className
         )}>
         {children}

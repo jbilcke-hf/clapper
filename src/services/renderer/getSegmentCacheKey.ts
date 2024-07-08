@@ -1,6 +1,6 @@
-import { ClapSegment } from "@aitube/clap"
+import { TimelineSegment } from "@aitube/timeline"
 
-export function getSegmentCacheKey(segment: ClapSegment, prefix = "") {
+export function getSegmentCacheKey(segment: TimelineSegment, prefix = "") {
 
   // we have to be smart here because we can't take the full base64 assetUrl (it might be huge)
   // so we only use a portion of it

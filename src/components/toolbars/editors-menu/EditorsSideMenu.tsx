@@ -1,27 +1,30 @@
 "use client"
 
 import { LiaCogSolid, LiaTheaterMasksSolid } from "react-icons/lia"
-import { MdAccountCircle, MdOutlineAccountTree, MdOutlineHistoryEdu } from "react-icons/md"
+import { MdAccountCircle, MdLocalMovies, MdOutlineAccountTree, MdOutlineHistoryEdu } from "react-icons/md"
 import { LuClapperboard } from "react-icons/lu"
-
-import { useEditor } from "@/services/editor/useEditor"
-import { EditorSideMenuItem } from "./EditorSideMenuItem"
+import { IoFilmOutline } from "react-icons/io5"
 import { EditorView } from "@aitube/clapper-services"
-import { useTheme } from "@/services/ui/useTheme"
 
-export default function EditorSideMenu() {
+import { useTheme } from "@/services/ui/useTheme"
+import { EditorsSideMenuItem } from "./EditorsSideMenuItem"
+
+export function EditorsSideMenu() {
   const theme = useTheme()
   return (
 
     <div className="flex flex-col w-14 h-full items-center justify-between border-r"
     style={{
-      borderRightColor: theme.defaultTextColor || "#eeeeee"
+      backgroundColor: theme.editorMenuBgColor || theme.defaultBgColor || "#eeeeee",
+      borderRightColor: theme.editorBorderColor || theme.defaultBorderColor || "#eeeeee"
     }}
     >
       <div className="flex flex-col h-full w-full items-center">
 
-        <EditorSideMenuItem view={EditorView.PROJECT}><LuClapperboard /></EditorSideMenuItem>
-        <EditorSideMenuItem view={EditorView.SCRIPT} label="Script editor"><MdOutlineHistoryEdu /></EditorSideMenuItem>
+        <EditorsSideMenuItem view={EditorView.PROJECT}><MdLocalMovies /></EditorsSideMenuItem>
+        <EditorsSideMenuItem view={EditorView.SCRIPT} label="Script editor"><MdOutlineHistoryEdu /></EditorsSideMenuItem>
+        <EditorsSideMenuItem view={EditorView.ENTITY} label="Entity editor"><LiaTheaterMasksSolid /></EditorsSideMenuItem>
+        <EditorsSideMenuItem view={EditorView.SEGMENT} label="Segment editor"><IoFilmOutline /></EditorsSideMenuItem>
 
         {/*<EditorSideMenuItem name="Characters"><LiaTheaterMasksSolid /></EditorSideMenuItem>*/}
         {/*<EditorSideMenuItem name="Project"><MdLocalMovies /></EditorSideMenuItem>*/}

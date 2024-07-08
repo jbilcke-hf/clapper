@@ -1,35 +1,35 @@
 import React, { useEffect, useState } from "react"
 import MonacoEditor from "monaco-editor"
 import Editor, { Monaco } from "@monaco-editor/react"
+import { ClapSegmentCategory } from "@aitube/clap"
 import { DEFAULT_DURATION_IN_MS_PER_STEP, leftBarTrackScaleWidth, TimelineStore, useTimeline } from "@aitube/timeline"
 
-import { useEditor } from "@/services/editor/useEditor"
+import { useScriptEditor } from "@/services/editors/script-editor/useScriptEditor"
 import { useRenderer } from "@/services/renderer"
 import { useUI } from "@/services/ui"
 import { useTheme } from "@/services/ui/useTheme"
 import { themes } from "@/services/ui/theme"
 
 import "./styles.css"
-import { ClapSegmentCategory } from "@aitube/clap"
 
 export function ScriptEditor() {
 
-  const standaloneCodeEditor = useEditor(s => s.standaloneCodeEditor)
-  const setStandaloneCodeEditor = useEditor(s => s.setStandaloneCodeEditor)
-  const draft = useEditor(s => s.draft)
-  const setDraft = useEditor(s => s.setDraft)
-  const loadDraftFromClap = useEditor(s => s.loadDraftFromClap)
-  const onDidScrollChange = useEditor(s => s.onDidScrollChange)
-  const jumpCursorOnLineClick = useEditor(s => s.jumpCursorOnLineClick)
+  const standaloneCodeEditor = useScriptEditor(s => s.standaloneCodeEditor)
+  const setStandaloneCodeEditor = useScriptEditor(s => s.setStandaloneCodeEditor)
+  const draft = useScriptEditor(s => s.draft)
+  const setDraft = useScriptEditor(s => s.setDraft)
+  const loadDraftFromClap = useScriptEditor(s => s.loadDraftFromClap)
+  const onDidScrollChange = useScriptEditor(s => s.onDidScrollChange)
+  const jumpCursorOnLineClick = useScriptEditor(s => s.jumpCursorOnLineClick)
   
   // this is an expensive function, we should only call it on blur or on click on a "save button maybe"
-  const publishDraftToTimeline = useEditor(s => s.publishDraftToTimeline)
+  const publishDraftToTimeline = useScriptEditor(s => s.publishDraftToTimeline)
 
   const clap = useTimeline((s: TimelineStore) => s.clap)
 
   useEffect(() => { loadDraftFromClap(clap) }, [clap])
 
-  const scrollHeight = useEditor(s => s.scrollHeight)
+  const scrollHeight = useScriptEditor(s => s.scrollHeight)
 
   const scrollX = useTimeline(s => s.scrollX)
   const contentWidth = useTimeline(s => s.contentWidth)
@@ -43,7 +43,7 @@ export function ScriptEditor() {
     // let's do something basic for now: we disable the
     // timeline-to-editor scroll sync when the user is
     // hovering the editor
-    if (useEditor.getState().mouseIsInside) { return }
+    if (useScriptEditor.getState().mouseIsInside) { return }
 
      if (horizontalTimelineRatio !== standaloneCodeEditor.getScrollTop()) {
       standaloneCodeEditor.setScrollPosition({ scrollTop: horizontalTimelineRatio })
@@ -67,7 +67,7 @@ export function ScriptEditor() {
   }, [standaloneCodeEditor, horizontalTimelineRatio])
 
   const onMount = (codeEditor: MonacoEditor.editor.IStandaloneCodeEditor) => {
-    const { textModel } = useEditor.getState()
+    const { textModel } = useScriptEditor.getState()
     if (!textModel) { return }
 
     codeEditor.setModel(textModel)
@@ -97,9 +97,9 @@ export function ScriptEditor() {
    // setDraft(plainText || "")
   }
 
-  const setMonaco = useEditor(s => s.setMonaco)
-  const setTextModel = useEditor(s => s.setTextModel)
-  const setMouseIsInside = useEditor(s => s.setMouseIsInside)
+  const setMonaco = useScriptEditor(s => s.setMonaco)
+  const setTextModel = useScriptEditor(s => s.setTextModel)
+  const setMouseIsInside = useScriptEditor(s => s.setMouseIsInside)
   const themeName = useUI(s => s.themeName)
   const editorFontSize = useUI(s => s.editorFontSize)
 
@@ -143,7 +143,7 @@ export function ScriptEditor() {
 
   return (
     <div
-      className="h-full"
+      className="h-full w-full"
       onMouseEnter={() => setMouseIsInside(true)}
       onMouseLeave={() => setMouseIsInside(false)}
     >

@@ -6,6 +6,7 @@ import {
   ReflexSplitter,
   ReflexElement
 } from "react-reflex"
+import { useSearchParams } from "next/navigation"
 import { DndProvider, useDrop } from "react-dnd"
 import { HTML5Backend, NativeTypes } from "react-dnd-html5-backend"
 import { useTimeline } from "@aitube/timeline"
@@ -22,19 +23,15 @@ import { TopBar } from "@/components/toolbars/top-bar"
 import { Timeline } from "@/components/core/timeline"
 import { useIO } from "@/services/io/useIO"
 import { ChatView } from "@/components/assistant/ChatView"
-import { ScriptEditor } from "@/components/editor/ScriptEditor"
-import { useSearchParams } from "next/navigation"
-import EditorMenu from "@/components/toolbars/editor-menu/EditorSideMenu"
-import EditorSideMenu from "@/components/toolbars/editor-menu/EditorSideMenu"
-import { Editor } from "@/components/editor/Editor"
+import { Editors } from "@/components/editors/Editors"
 
 type DroppableThing = { files: File[] }
 
 function MainContent() {
   const ref = useRef<HTMLDivElement>(null)
   const isEmpty = useTimeline(s => s.isEmpty)
-  const showTimeline = useUI((s) => s.showTimeline)
-  const showAssistant = useUI((s) => s.showAssistant)
+  const showTimeline = useUI(s => s.showTimeline)
+  const showAssistant = useUI(s => s.showAssistant)
   
   const openFiles = useIO(s => s.openFiles)
   
@@ -98,7 +95,7 @@ function MainContent() {
                       minSize={showTimeline ? 100 : 1}
                       maxSize={showTimeline ? 1600 : 1}
                       >
-                      <Editor />
+                      <Editors />
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement

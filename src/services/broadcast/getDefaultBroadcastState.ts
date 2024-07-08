@@ -1,4 +1,4 @@
-import { BroadcastState } from "./types"
+import { BroadcastState } from "@aitube/clapper-services"
 
 export function getDefaultBroadcastState(): BroadcastState {
   const state: BroadcastState = {

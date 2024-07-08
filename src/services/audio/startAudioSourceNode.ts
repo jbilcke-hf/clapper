@@ -1,6 +1,6 @@
 import { UUID } from "@aitube/clap"
 import { CurrentlyPlayingAudioSource } from "@aitube/clapper-services"
-import { RuntimeSegment } from "@aitube/timeline"
+import { TimelineSegment } from "@aitube/timeline"
 
 /**
  * Create an audio source node from a segment
@@ -23,7 +23,7 @@ export function startAudioSourceNode({
   /**
    * The segment to play (this is a ClapSegment with some extra fields)
    */
-  segment: RuntimeSegment
+  segment: TimelineSegment
 
   /**
    * The current elapsed playback time

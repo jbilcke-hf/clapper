@@ -14,6 +14,7 @@ export function FormDir({
   onChange,
   horizontal,
   accept,
+  centered,
  }: {
   label?: string
   className?: string
@@ -22,6 +23,7 @@ export function FormDir({
   onChange?: (files: File[]) => void
   horizontal?: boolean
   accept?: string
+  centered?: boolean
   }) {
 
   const handleChange = useMemo(() => (event: ChangeEvent<HTMLInputElement>) => {
@@ -42,6 +44,7 @@ export function FormDir({
       `${label}:`
       }
       horizontal={horizontal}
+      centered={centered}
        >
       <Input
         placeholder={`${placeholder || ""}`}

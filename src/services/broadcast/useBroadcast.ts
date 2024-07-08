@@ -1,10 +1,10 @@
 "use client"
 
 import { create } from "zustand"
+import { BroadcastStore } from "@aitube/clapper-services"
+
 
 import { getDefaultBroadcastState } from "./getDefaultBroadcastState"
-
-import { BroadcastStore } from "./types"
 
 export const useBroadcast = create<BroadcastStore>((set, get) => ({
   ...getDefaultBroadcastState(),

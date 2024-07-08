@@ -4,10 +4,10 @@ import { EditorView } from "@aitube/clapper-services"
 import { cn } from "@/lib/utils"
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { useEditor } from "@/services/editor/useEditor"
+import { useEditors } from "@/services/editors/useEditors"
 import { useTheme } from "@/services/ui/useTheme"
 
-export function EditorSideMenuItem({
+export function EditorsSideMenuItem({
   children,
   view: expectedView,
   label,
@@ -31,8 +31,8 @@ export function EditorSideMenuItem({
   unmanaged?: boolean
 }) {
   const theme = useTheme()
-  const view = useEditor(s => s.view)
-  const setView = useEditor(s => s.setView)
+  const view = useEditors(s => s.view)
+  const setView = useEditors(s => s.setView)
 
   const isActive = !unmanaged && view === expectedView
 
@@ -66,7 +66,7 @@ export function EditorSideMenuItem({
           `group`
         )}
         style={{
-          background: theme.editorBgColor || "#eeeeee",
+          // background: theme.editorMenuBgColor || theme.defaultBgColor || "#eeeeee",
           borderColor: isActive ? theme.defaultPrimaryColor || "#ffffff" : "#111827"
         }}
         onClick={handleClick}>
@@ -74,6 +74,7 @@ export function EditorSideMenuItem({
             `flex-col items-center justify-center`,
             `text-center text-[28px]`,
             `transition-all duration-200 ease-out`,
+            `stroke-1`,
             isActive ? `scale-110` : `group-hover:scale-110`
           )}>
             {children}

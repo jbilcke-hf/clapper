@@ -1,8 +1,8 @@
 "use client"
 
 import { create } from "zustand"
-import { ClapEntity, ClapOutputType, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, ClapSegmentStatus, filterSegments } from "@aitube/clap"
-import { RenderingStrategy, TimelineStore, useTimeline, getAudioBuffer, RuntimeSegment, SegmentVisibility, segmentVisibilityPriority } from "@aitube/timeline"
+import { ClapEntity, ClapOutputType, ClapSegmentCategory, ClapSegmentFilteringMode, ClapSegmentStatus, filterSegments } from "@aitube/clap"
+import { RenderingStrategy, TimelineStore, useTimeline, getAudioBuffer, SegmentVisibility, segmentVisibilityPriority, TimelineSegment } from "@aitube/timeline"
 import { getVideoPrompt } from "@aitube/engine"
 import { ResolverStore } from "@aitube/clapper-services"
 
@@ -68,13 +68,13 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     // - there is a priority order: the info that a segment is "visible" (on screen),
     //   is more important, which is why it is done after processing the "loaded" segments (the ones that are buffered, because near the sliding window)
   
-    for (const s of loadedSegments) { (s as RuntimeSegment).visibility = SegmentVisibility.BUFFERED }
-    for (const s of visibleSegments) { (s as RuntimeSegment).visibility = SegmentVisibility.VISIBLE }
+    for (const s of loadedSegments) { (s as TimelineSegment).visibility = SegmentVisibility.BUFFERED }
+    for (const s of visibleSegments) { (s as TimelineSegment).visibility = SegmentVisibility.VISIBLE }
 
     // sort segments by visibility:
     // segments visible on screen are show first,
     // then those nearby, then the hidden ones
-    const segments: RuntimeSegment[] = ([...allSegments] as RuntimeSegment[]).sort((segment1, segment2) => {
+    const segments: TimelineSegment[] = ([...allSegments] as TimelineSegment[]).sort((segment1, segment2) => {
       const priority1 = (segmentVisibilityPriority as any)[segment1.visibility || SegmentVisibility.HIDDEN] || 0
       const priority2 = (segmentVisibilityPriority as any)[segment2.visibility || SegmentVisibility.HIDDEN] || 0
       
@@ -98,7 +98,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     // (currentParallelismQuotas is only used in the UI 
     // to display of the parallel request counter)
 
-    const segmentsToRender: ClapSegment[] = []
+    const segmentsToRender: TimelineSegment[] = []
     
     // the following loop isn't the prettiest, but I think it presents
     // the dynamic generation logic in a clear way, so let's keep it for now
@@ -369,7 +369,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
    * @param segment 
    * @returns 
    */
-  resolveSegment: async (segment: ClapSegment): Promise<ClapSegment> => {
+  resolveSegment: async (segment: TimelineSegment): Promise<TimelineSegment> => {
 
     const settings = useSettings.getState().getSettings()
   
@@ -385,7 +385,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       // throw new Error(`please call setSegmentRender(...) first`)
     }
 
-    const segments: ClapSegment[] = filterSegments(
+    const segments: TimelineSegment[] = filterSegments(
       ClapSegmentFilteringMode.ANY,
       segment,
       allSegments
@@ -454,10 +454,16 @@ export const useResolver = create<ResolverStore>((set, get) => ({
         negative: ""
       }
     }
+
+    const serializableSegment = { ...segment }
+      // we delete things that cannot be serialized properly
+    delete serializableSegment.scene;
+    delete serializableSegment.audioBuffer;
+    serializableSegment.textures = {};
   
     const request: ResolveRequest = {
       settings,
-      segment,
+      segment: serializableSegment,
       segments,
       entities,
       speakingCharactersIds,
@@ -478,12 +484,26 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       })
       // console.log(`useResolver.resolveSegment(): result from /api.render:`, res)
 
-      const newSegmentData = (await res.json()) as ClapSegment
+      // note: this isn't really a "full" TimelineSegment,
+      // it will miss some data that cannot be serialized
+      const newSegmentData = (await res.json()) as TimelineSegment
+
       // console.log(`useResolver.resolveSegment(): newSegmentData`, newSegmentData)
 
       // note: this modifies the old object in-place
       // it is super important as this helps preserving the reference
-      const newSegment = Object.assign(segment, newSegmentData) as RuntimeSegment
+      const newSegment = Object.assign(
+        segment,
+        newSegmentData,
+
+        // this step is super-important when rendering multiple segments at once:
+        // the position of the segment might have changed while it was being generated,
+        // so we need to preserve it
+        {
+          startTimeInMs: segment.startTimeInMs,
+          endTimeInMs: segment.endTimeInMs,
+        }
+      ) as TimelineSegment
 
       if (newSegment.outputType === ClapOutputType.AUDIO) {
         try {
@@ -519,9 +539,24 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           ? newSegment.assetDurationInMs + 700
           : 2000
         )
+      } else if (newSegment.category === ClapSegmentCategory.SOUND) {
+        await timeline.fitSegmentToAssetDuration(
+          newSegment,
+          typeof newSegment.assetDurationInMs === "number"
+          // this delay is arbitrary, could be another value (200, 500, 1200..)
+          ? newSegment.assetDurationInMs
+          : 2000
+        )
+      } else if (newSegment.category === ClapSegmentCategory.MUSIC) {
+        await timeline.fitSegmentToAssetDuration(
+          newSegment,
+          typeof newSegment.assetDurationInMs === "number"
+          // this delay is arbitrary, could be another value (200, 500, 1200..)
+          ? newSegment.assetDurationInMs
+          : 2000
+        )
       } else if (newSegment.category === ClapSegmentCategory.VIDEO) {
-        // TODO @Julian finish this
-        // await timeline.fitSegmentToAssetDuration(newSegment)
+        await timeline.fitSegmentToAssetDuration(newSegment)
       }
 
       newSegment.status = ClapSegmentStatus.COMPLETED

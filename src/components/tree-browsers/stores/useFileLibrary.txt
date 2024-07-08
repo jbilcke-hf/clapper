@@ -1,0 +1,211 @@
+"use client"
+
+import { create } from "zustand"
+
+import { ClapEntity, UUID } from "@aitube/clap"
+import { HuggingFaceUserCollection, LibraryNodeItem, LibraryNodeType, LibraryTreeNode, LocalUserCollection } from "../types"
+import { icons } from "@/components/icons"
+import { getAppropriateIcon } from "@/components/icons/getAppropriateIcon"
+import { className } from "@/app/fonts"
+import { getCollectionItemTextColor } from "../utils/getCollectionItemTextColor"
+
+// TODO: this isn't the best place for this as this is style,
+// and we are in a state manager
+const libraryClassName = "text-base font-semibold"
+
+const collectionClassName = `text-base font-normal`
+
+const itemClassName = "text-sm font-light text-gray-200/60 hover:text-gray-200/100"
+
+export const useFileLibrary = create<{
+  localUserLibraryTreeNodeId: string
+  huggingfaceUserLibraryTreeNodeId: string
+  libraryTreeRoot: LibraryTreeNode[]
+  init: () => void
+
+  /**
+   * Load local user collections (projects, assets) into the tree
+   * 
+   * @param collections
+   * @returns 
+   */
+  setLocalUserCollections: (collections: LocalUserCollection[]) => void
+  
+  /**
+   * Load Hugging Face user collections (projects, assets) into the tree
+   * 
+   * @param collections
+   * @returns 
+   */
+  setHuggingFaceUserCollections: (collections: HuggingFaceUserCollection[]) => void
+
+  // we support those all selection modes for convenience - please keep them!
+  selectedNodeItem?: LibraryNodeItem
+  selectedNodeType?: LibraryNodeType
+  selectTreeNode: (treeNodeId?: string | null, nodeType?: LibraryNodeType, nodeItem?: LibraryNodeItem) => void
+  selectedTreeNodeId: string | null
+}>((set, get) => ({
+  localUserLibraryTreeNodeId: "",
+  huggingfaceUserLibraryTreeNodeId: "",
+  libraryTreeRoot: [],
+  init: () => {
+
+    const localUserLibrary: LibraryTreeNode = {
+      id: UUID(),
+      nodeType: "LIB_NODE_LOCAL_USER_COLLECTION",
+      label: "My Computer",
+      icon: icons.computer,
+      className: libraryClassName,
+      isExpanded: true, // This node is expanded by default
+      children: [
+        {
+          id: UUID(),
+          nodeType: "LIB_NODE_GENERIC_EMPTY",
+          label: "(No files to display)",
+          icon: icons.misc,
+          className: `${collectionClassName} text-gray-100/30`,
+          isExpanded: false, // This node is expanded by default
+          children: []
+        }
+      ]
+    }
+
+    const huggingfaceUserLibrary: LibraryTreeNode = {
+      id: UUID(),
+      nodeType: "LIB_NODE_HUGGINGFACE_USER_COLLECTION",
+      label: "My HF Cloud",
+      icon: icons.cloud,
+      className: libraryClassName,
+      isExpanded: true, // This node is expanded by default
+      children: [
+        {
+          id: UUID(),
+          nodeType: "LIB_NODE_GENERIC_EMPTY",
+          label: "(No files to display)",
+          icon: icons.misc,
+          className: `${collectionClassName} text-gray-100/30`,
+          isExpanded: false, // This node is expanded by default
+          children: []
+        }
+      ]
+    }
+
+    const libraryTreeRoot = [
+      localUserLibrary,
+      huggingfaceUserLibrary,
+    ]
+    
+    set({
+      localUserLibraryTreeNodeId: localUserLibrary.id,
+      huggingfaceUserLibraryTreeNodeId: huggingfaceUserLibrary.id,
+      libraryTreeRoot,
+      selectedNodeItem: undefined,
+      selectedTreeNodeId: null,
+    })
+  },
+
+  setLocalUserCollections: (collections: LocalUserCollection[]) => {
+    const { localUserLibraryTreeNodeId, libraryTreeRoot } = get()
+
+    console.log("setLocalUserCollections:", collections)
+
+    set({
+      libraryTreeRoot: libraryTreeRoot.map(node => {
+        if (node.id !== localUserLibraryTreeNodeId) { return node }
+
+        return {
+          ...node,
+
+          children: collections.map<LibraryTreeNode>(c => ({
+            id: UUID(),
+            nodeType: "LIB_NODE_LOCAL_USER_FOLDER",
+            data: c,
+            label: c.name, // file directory name
+            icon: getAppropriateIcon(c.name),
+            className: collectionClassName, // `${collectionClassName} ${getCollectionColor(c.name)}`,
+            isExpanded: false, // This node is expanded by default
+            children: c.items.map<LibraryTreeNode>(m => ({
+              nodeType: "LIB_NODE_LOCAL_USER_FILE",
+              id: m.id,
+              data: m,
+              label: <><span>{
+                m.fileName.split(".").slice(0, -1)
+              }</span><span className="opacity-50">{
+                `.${m.fileName.split(".").pop()}`
+              }</span></>,
+              icon: getAppropriateIcon(m.fileName, getAppropriateIcon(c.name)),
+              className: `${itemClassName} ${
+                getCollectionItemTextColor(m.fileName)
+              }`, // `${itemClassName} ${getItemColor(m.label, getItemColor(c.name))}`,
+            }))
+          }))
+        }
+      })
+    })
+  },
+
+  setHuggingFaceUserCollections: (collections: HuggingFaceUserCollection[]) => {
+    const { huggingfaceUserLibraryTreeNodeId, libraryTreeRoot } = get()
+
+    set({
+      libraryTreeRoot: libraryTreeRoot.map(node => {
+        if (node.id !== huggingfaceUserLibraryTreeNodeId) { return node }
+
+        return {
+          ...node,
+
+          children: collections.map<LibraryTreeNode>(c => ({
+            id: c.id,
+            nodeType: "LIB_NODE_HUGGINGFACE_USER_DATASET",
+            data: c,
+            label: c.name, // file directory name
+            icon: getAppropriateIcon(c.name),
+            className: collectionClassName, // `${collectionClassName} ${getCollectionColor(c.name)}`,
+            isExpanded: false, // This node is expanded by default
+            children: c.items.map<LibraryTreeNode>(m => ({
+              nodeType: "LIB_NODE_HUGGINGFACE_USER_FILE",
+              id: m.id,
+              data: m,
+              label: <><span>{
+                m.fileName.split(".").slice(0, -1)
+              }</span><span className="opacity-50">{
+                `.${m.fileName.split(".").pop()}`
+              }</span></>,
+              icon: getAppropriateIcon(m.fileName, getAppropriateIcon(c.name)),
+              className: `${itemClassName} ${
+                getCollectionItemTextColor(m.fileName)
+              }`, // `${itemClassName} ${getItemColor(m.label, getItemColor(c.name))}`,
+            }))
+          }))
+        }
+      })
+    })
+  },
+    
+  selectedNodeItem: undefined,
+  selectEntity: (entity?: ClapEntity) => {
+    if (entity) {
+      console.log("TODO julian: change this code to search in the entity collections")
+      const selectedTreeNode =
+        get().libraryTreeRoot
+        .find(node => node.data?.id === entity.id)
+
+      // set({ selectedTreeNode })
+      set({ selectedTreeNodeId: selectedTreeNode?.id || null })
+      set({ selectedNodeItem: entity })
+    } else {
+      // set({ selectedTreeNode: undefined })
+      set({ selectedTreeNodeId:  null })
+      set({ selectedNodeItem: undefined })
+    }
+  },
+  // selectedTreeNode: undefined,
+  selectedTreeNodeId: null,
+  selectTreeNode: (treeNodeId?: string | null, nodeType?: LibraryNodeType, nodeItem?: LibraryNodeItem) => {
+    set({ selectedTreeNodeId: treeNodeId ? treeNodeId : undefined })
+    set({ selectedNodeType: nodeType ? nodeType : undefined })
+    set({ selectedNodeItem: nodeItem ? nodeItem : undefined })
+  }
+}))
+
+useFileLibrary.getState().init()

@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server"
-import { ClapOutputType, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
+import { ClapOutputType, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
 
 import {
   resolveSegmentUsingHuggingFace,
