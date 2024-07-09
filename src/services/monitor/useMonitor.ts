@@ -112,9 +112,11 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
 
     const { isPlaying, mode, staticVideoRef } = monitor
     const { renderLoop } = renderer
-    const { setCursorTimestampAtInMs } = timeline
+    const { setCursorTimestampAtInMs, cursorTimestampAtInMs } = timeline
 
-    setCursorTimestampAtInMs(timeInMs)
+    if (cursorTimestampAtInMs !== timeInMs) {
+      setCursorTimestampAtInMs(timeInMs)
+    }
 
     if (mode === MonitoringMode.NONE) {
       return

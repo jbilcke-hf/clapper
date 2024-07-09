@@ -106,6 +106,9 @@ export const backstage: UITheme = {
         // gradientStart: 0.6,
         // gradientEnd: 1.0,
       }
+    },
+    playbackCursor: {
+      lineColor: "#FACC15"
     }
   }
 
@@ -170,6 +173,9 @@ export const midnight: UITheme = {
         gradientStart: 0.6,
         gradientEnd: 1.0,
       }
+    },
+    playbackCursor: {
+      lineColor: "#5B9DF1",
     }
   }
 }
@@ -233,6 +239,9 @@ export const lavender: UITheme = {
         // gradientStart: 0.6,
         // gradientEnd: 1.0,
       }
+    },
+    playbackCursor: {
+      lineColor: "#A78BFA",
     }
   }
 }
@@ -296,6 +305,9 @@ export const flix: UITheme = {
         gradientStart: 0.6,
         gradientEnd: 1.0,
       }
+    },
+    playbackCursor: {
+      lineColor: "#D22F27",
     }
   }
 }
@@ -359,6 +371,9 @@ export const lore: UITheme = {
         gradientStart: 0.6,
         gradientEnd: 1.0,
       }
+    },
+    playbackCursor: {
+      lineColor: "#DE4A80",
     }
   }
 }
@@ -423,6 +438,9 @@ export const gordon: UITheme = {
         // gradientStart: 0.6,
         // gradientEnd: 1.0,
       }
+    },
+    playbackCursor: {
+      lineColor: "#ff8400",
     }
   }
 }
@@ -488,6 +506,9 @@ export const system360: UITheme = {
         // gradientStart: 0.6,
         // gradientEnd: 1.0,
       }
+    },
+    playbackCursor: {
+      lineColor: "#C74E40",
     }
   }
 }
@@ -551,6 +572,9 @@ export const silent: UITheme = {
         // gradientStart: 0.6,
         // gradientEnd: 1.0,
       }
+    },
+    playbackCursor: {
+      lineColor: "#ffffff",
     }
   }
 }
@@ -614,6 +638,9 @@ export const sandy: UITheme = {
         // gradientStart: 0.6,
         // gradientEnd: 1.0,
       }
+    },
+    playbackCursor: {
+      lineColor:  "#e67a7a",
     }
   }
 }

@@ -1,14 +1,36 @@
+import { TimelineSegment, useTimeline } from "@aitube/timeline"
+
 import { FormFile } from "@/components/forms/FormFile"
 import { FormInput } from "@/components/forms/FormInput"
 import { FormSection } from "@/components/forms/FormSection"
-import { useEntityEditor } from "@/services"
+import { useEntityEditor, useRenderer } from "@/services"
+import { useEffect } from "react"
+import { ClapEntity, ClapProject } from "@aitube/clap"
 
 export function EntityEditor() {
+  const clap: ClapProject = useTimeline(s => s.clap)
+
+  const segmentsChanged: number = useTimeline(s => s.segmentsChanged)
+  const selectedSegments: TimelineSegment[] = useTimeline(s => s.selectedSegments)
+  const { activeSegments } = useRenderer(s => s.bufferedSegments)
+
   const current = useEntityEditor(s => s.current)
   const setCurrent = useEntityEditor(s => s.setCurrent)
   const history = useEntityEditor(s => s.history)
   const undo = useEntityEditor(s => s.undo)
   const redo = useEntityEditor(s => s.redo)
+
+  let segment = selectedSegments.at(-1)
+  let entity: ClapEntity | undefined = clap.entityIndex[segment?.entityId as any]
+ 
+  if (!entity) {
+    segment = activeSegments.find(s => clap.entityIndex[s?.entityId as any])
+    entity = clap.entityIndex[segment?.entityId as any]
+  }
+
+  useEffect(() => {
+    setCurrent(entity)
+  }, [clap, entity, segmentsChanged])
 
   if (!current) {
     return <div>
@@ -30,7 +52,7 @@ export function EntityEditor() {
           ? <img src={current?.imageId}></img>
           : null}
         <FormFile
-          label={"Visual identity file"}
+          label={"Visual identity file (TODO)"}
         />
         {/*
         <FormInput<string>
@@ -38,6 +60,9 @@ export function EntityEditor() {
           value={current?.audioId.slice(0, 20)}
         />
         */}
+        <FormFile
+          label={"Audio identity file (TODO)"}
+        />
         <FormInput<string>
           label={"Label"}
           value={current.label}
