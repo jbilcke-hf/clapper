@@ -1,19 +1,21 @@
-import { useEffect, useState } from "react"
-
-import { HorizontalSlider } from "@/components/slider"
-import { leftBarTrackScaleWidth } from "@/constants/themes"
 import { useTimeline } from "@/hooks/useTimeline"
-import { cn } from "@/utils"
+
+import TimelineSlider from "../slider/TimelineSlider"
 
 export function HorizontalScroller() {
-  const width = useTimeline(s => s.width)
+  const theme = useTimeline(s => s.theme)
+
+  const segments = useTimeline(s => s.segments)
 
   const timelineCamera = useTimeline(s => s.timelineCamera)
   const timelineControls = useTimeline(s => s.timelineControls)
 
-  const minHorizontalZoomLevel = useTimeline((s) => s.minHorizontalZoomLevel)
-  const maxHorizontalZoomLevel = useTimeline((s) => s.maxHorizontalZoomLevel)
-  const cellWidth = useTimeline((s) => s.cellWidth)
+  // note: those do two different things:
+  // move the actual "physical" cursor (with setCursorTimestampAtInMs())
+  // and trigger a callback to ask the parent app to do something (eg. jump/seek into the timeline)
+  const setCursorTimestampAtInMs = useTimeline(s => s.setCursorTimestampAtInMs)
+  const jumpAt = useTimeline(s => s.jumpAt)
+
   const setHorizontalZoomLevel = useTimeline((s) => s.setHorizontalZoomLevel)
 
   // we could display the cursor as an extra line, I guess
@@ -21,72 +23,27 @@ export function HorizontalScroller() {
   const cursorTimestampAtInMs = useTimeline(s => s.cursorTimestampAtInMs)
   const totalDurationInMs = useTimeline(s => s.totalDurationInMs)
 
-  const scrollX = useTimeline(s => s.scrollX)
   const setScrollX = useTimeline(s => s.setScrollX)
   const contentWidth = useTimeline(s => s.contentWidth)
-  
-  const [rangeStart, setRangeStart] = useState(0)
-  const [rangeEnd, setRangeEnd] = useState(10)
-  const [cursor, setCursor] = useState(0)
-  
-  useEffect(() => {
-    const cursorPosX = Math.min(cursorTimestampAtInMs, totalDurationInMs)
-    const cursorStartRatio = totalDurationInMs > 0 ? (cursorPosX / totalDurationInMs) : 0.0
-    
-    const posX = scrollX + leftBarTrackScaleWidth
-    const rangeStartRatio = contentWidth > 0 ? (posX / contentWidth) : 0.0
-    const rangeEndRatio = (posX + width) > 0 ? ((posX + width) / contentWidth) : 1.0
-  
-    setCursor(Math.round(cursorStartRatio * width))
-    setRangeStart(Math.round(rangeStartRatio * width))
-    setRangeEnd(Math.round(rangeEndRatio * width))
-  }, [
-    // don't forget anything in here! all are important!
-    width,
-    cellWidth,
-    cursorTimestampAtInMs,
-    totalDurationInMs,
-    leftBarTrackScaleWidth,
-    contentWidth,
-    scrollX,
-  ])
+
+  const getSegmentColorScheme = useTimeline(s => s.getSegmentColorScheme)
 
   if (!timelineCamera || !timelineControls) { return null }
-
-  const handleTimelinePositionChange = (newValue: number) => {
-    setRangeStart(newValue)
-    const scrollRatio = newValue / width
-    const newScrollX = scrollRatio * contentWidth
-    setScrollX(newScrollX)
-    timelineCamera.position.setX(newScrollX)
-    timelineControls.target.setX(newScrollX)
-  }
 
   const handleZoomChange = (newZoom: number) => {
     setHorizontalZoomLevel(newZoom)
   }
 
-  // not sure if we need this, as it is easy to just move the sliding window
-  // then click on the timeline to set the cursor
-  const handleClickOnMiniCursor = (newValue: number) => {
-    // convert from the screen coordinates back to the camera position
-    // const newCursorPositionInMs = newValue * cellWidth * DEFAULT_DURATION_IN_MS_PER_STEP
-  }
-
   return (
     <div className="flex flex-row items-center w-full">
+      {/*
+      PREVIOUS COMPONENT, NOW OBSOLETE:
       <HorizontalSlider
-        // defaultValue={range}
-        defaultValue={[rangeStart]} 
+        defaultValue={[rangeStart, rangeEnd]} 
         min={0}
         max={width}
         step={1}
-        className={cn(`
-          rounded-none
-          border-none
-          w-full
-         `)}
-        value={[rangeStart]}
+        value={[rangeStart, rangeEnd]}
         onValueChange={(newRange: number[]) => {
           handleTimelinePositionChange(newRange[0])
         }}
@@ -94,18 +51,53 @@ export function HorizontalScroller() {
           // handleZoomChange(cellWidth + e.deltaY)
         }}
       />
-      <div
-        className={cn(`
-          absolute
-          bg-yellow-500
-          h-4
-          border-2
-          border-yellow-500
-          pointer-events-none
-          `
-        )}
-        style={{
-          marginLeft: `${cursor}px`
+      */}
+
+      <TimelineSlider
+        minTimeInMs={0}
+        maxTimeInMs={totalDurationInMs}
+        currentPlaybackCursorPosition={cursorTimestampAtInMs}
+        playbackCursorPositionColor={theme.playbackCursor.lineColor}
+        playbackCursorPositionWidthInPx={2}
+        allowPlaybackCursorToBeDragged={true}
+        slidingWindowRangeThumbStartTimeInMs={0}
+        slidingWindowRangeThumbEndTimeInMs={16000}
+        allowSlidingWindowRangeThumbResizeOnMouseWheel={false}
+        mouseWheelSensibility={1.0}
+        minSlidingWindowRangeThumbWidthInPx={8}
+        slidingWindowRangeThumbBorderColor="rgba(255,255,255,0.2)"
+        slidingWindowRangeThumbBorderRadiusInPx={2}
+        slidingWindowRangeThumbBackgroundColor="rgba(0,123,123,0.2)"
+        className="w-full h-14"
+        events={segments.map(s => ({
+          id: s.id,
+          track: s.track,
+          startTimeInMs: s.startTimeInMs,
+          endTimeInMs: s.endTimeInMs,
+          color: getSegmentColorScheme(s).backgroundColor,
+        }))}
+        eventOpacityWhenInsideSlidingWindowRangeThumb={1.0}
+        eventOpacityWhenOutsideSlidingWindowRangeThumb={0.7}
+        onSlidingWindowRangeThumbUpdate={({
+          slidingWindowRangeThumbStartTimeInMs,
+          slidingWindowRangeThumbEndTimeInMs
+        }) => {
+          // we base ourself on the starting range so slidingWindowRangeThumbStartTimeInMs
+          // is enough, however we could also use slidingWindowRangeThumbEndTimeInMs
+          // to change the zoom factor in the timeline (@julian will implement this)
+
+          const scrollRatio = slidingWindowRangeThumbStartTimeInMs / totalDurationInMs
+          const newScrollX = scrollRatio * contentWidth
+          setScrollX(newScrollX)
+          timelineCamera.position.setX(newScrollX)
+          timelineControls.target.setX(newScrollX)
+        }}
+        onPlaybackCursorUpdate={({ playbackCursorPositionInMs }) => {
+          // note: those do two different things:
+          // move the actual "physical" cursor (with setCursorTimestampAtInMs())
+          // and trigger a callback to ask the parent app to do something (eg. jump/seek into the timeline)
+          setCursorTimestampAtInMs(playbackCursorPositionInMs)
+          jumpAt(playbackCursorPositionInMs)
         }}
       />
     </div>

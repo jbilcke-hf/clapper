@@ -1,5 +1,4 @@
 import { ClapSegmentCategory } from "@aitube/clap"
-import { string } from "three/examples/jsm/nodes/Nodes.js"
 
 export type ClapSegmentCategoryHues = Record<ClapSegmentCategory, number>
 
@@ -27,6 +26,9 @@ export type ClapTimelineTheme = {
       gradientStart: number
       gradientEnd: number
     }
+  }
+  playbackCursor: {
+    lineColor: string
   }
 }
 

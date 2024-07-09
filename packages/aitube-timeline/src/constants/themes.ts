@@ -66,5 +66,8 @@ export const pastel: ClapTimelineTheme = {
       // gradientStart: 0.6,
       // gradientEnd: 1.0,
     }
+  },
+  playbackCursor: {
+    lineColor: "rgba(255, 255, 0, 1.0)"
   }
 }
