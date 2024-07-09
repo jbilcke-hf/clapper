@@ -36,6 +36,15 @@ export interface TimelineSliderProps {
   }) => void;
 }
 
+/**
+ * A timeline slider component made using React and TypeScript.
+ * The idea is to control a temporal timeline, so the unit is the milliseconds,
+ * and coordinates are based on timestamps.
+ * 
+ * The component has a draggable range thumb, and a separate draggable "playback cursor".
+ * 
+ * We also show a nice little minimap made of a background canvas of events.
+ */
 const TimelineSlider: React.FC<TimelineSliderProps> = ({
   minTimeInMs,
   maxTimeInMs,
@@ -101,25 +110,19 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
   const handleMouseDown = (e: React.MouseEvent) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
-
+  
     const x = e.clientX - rect.left;
-    const windowStartX = ((windowStart - minTimeInMs) / (maxTimeInMs - minTimeInMs)) * rect.width;
-    const windowEndX = ((windowEnd - minTimeInMs) / (maxTimeInMs - minTimeInMs)) * rect.width;
     const cursorX = ((playbackCursor - minTimeInMs) / (maxTimeInMs - minTimeInMs)) * rect.width;
-
+  
     if (Math.abs(x - cursorX) <= playbackCursorPositionWidthInPx * 2 && allowPlaybackCursorToBeDragged) {
       setIsDraggingCursor(true);
-      setShowOverlay(true);
-    } else if (x >= windowStartX && x <= windowEndX) {
-      setIsDraggingWindow(true);
-      setShowOverlay(true);
     } else {
-      // Clicking on the background track
+      setIsDraggingWindow(true);
       const clickedTime = minTimeInMs + (x / rect.width) * (maxTimeInMs - minTimeInMs);
       const windowWidth = windowEnd - windowStart;
       let newStart = clickedTime - windowWidth / 2;
       let newEnd = clickedTime + windowWidth / 2;
-
+  
       if (newStart < minTimeInMs) {
         newStart = minTimeInMs;
         newEnd = newStart + windowWidth;
@@ -127,14 +130,16 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
         newEnd = maxTimeInMs;
         newStart = newEnd - windowWidth;
       }
-
+  
       setWindowStart(newStart);
       setWindowEnd(newEnd);
       onSlidingWindowRangeThumbUpdate({ slidingWindowRangeThumbStartTimeInMs: newStart, slidingWindowRangeThumbEndTimeInMs: newEnd });
     }
-
+  
     setDragStartX(e.clientX);
+    setShowOverlay(true);
   };
+  
 
   const setCanvasSize = useCallback(() => {
     const canvas = canvasRef.current;
@@ -157,36 +162,37 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDraggingWindow && !isDraggingCursor) return;
-
+  
     const containerWidth = containerRef.current?.clientWidth || 1;
     const deltaX = e.clientX - dragStartX;
-    const deltaTime = (deltaX / containerWidth) * (maxTimeInMs - minTimeInMs);
-
+  
     if (isDraggingWindow) {
-      let newStart = windowStart + deltaTime;
-      let newEnd = windowEnd + deltaTime;
-
+      const windowWidth = windowEnd - windowStart;
+      let newStart = windowStart + (deltaX / containerWidth) * (maxTimeInMs - minTimeInMs);
+      let newEnd = newStart + windowWidth;
+  
       if (newStart < minTimeInMs) {
         newStart = minTimeInMs;
-        newEnd = newStart + (windowEnd - windowStart);
+        newEnd = newStart + windowWidth;
       } else if (newEnd > maxTimeInMs) {
         newEnd = maxTimeInMs;
-        newStart = newEnd - (windowEnd - windowStart);
+        newStart = newEnd - windowWidth;
       }
-
+  
       setWindowStart(newStart);
       setWindowEnd(newEnd);
       onSlidingWindowRangeThumbUpdate({ slidingWindowRangeThumbStartTimeInMs: newStart, slidingWindowRangeThumbEndTimeInMs: newEnd });
     } else if (isDraggingCursor) {
-      let newCursor = playbackCursor + deltaTime;
+      let newCursor = playbackCursor + (deltaX / containerWidth) * (maxTimeInMs - minTimeInMs);
       newCursor = Math.max(minTimeInMs, Math.min(maxTimeInMs, newCursor));
       setPlaybackCursor(newCursor);
       onPlaybackCursorUpdate({ playbackCursorPositionInMs: newCursor });
     }
-
+  
     setDragStartX(e.clientX);
   }, [isDraggingWindow, isDraggingCursor, dragStartX, windowStart, windowEnd, playbackCursor, minTimeInMs, maxTimeInMs, onSlidingWindowRangeThumbUpdate, onPlaybackCursorUpdate]);
-
+  
+    
   useEffect(() => {
     setCanvasSize();
     drawEvents();
@@ -247,12 +253,43 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
     onSlidingWindowRangeThumbUpdate({ slidingWindowRangeThumbStartTimeInMs: newStart, slidingWindowRangeThumbEndTimeInMs: newEnd });
   };
 
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+  
+    const x = e.clientX - rect.left;
+    const clickedTime = minTimeInMs + (x / rect.width) * (maxTimeInMs - minTimeInMs);
+    
+    // Move the range thumb
+    const windowWidth = windowEnd - windowStart;
+    let newStart = clickedTime - windowWidth / 2;
+    let newEnd = clickedTime + windowWidth / 2;
+  
+    if (newStart < minTimeInMs) {
+      newStart = minTimeInMs;
+      newEnd = newStart + windowWidth;
+    } else if (newEnd > maxTimeInMs) {
+      newEnd = maxTimeInMs;
+      newStart = newEnd - windowWidth;
+    }
+  
+    setWindowStart(newStart);
+    setWindowEnd(newEnd);
+    onSlidingWindowRangeThumbUpdate({ slidingWindowRangeThumbStartTimeInMs: newStart, slidingWindowRangeThumbEndTimeInMs: newEnd });
+  
+    // Move the playback cursor
+    const newCursor = Math.max(minTimeInMs, Math.min(maxTimeInMs, clickedTime));
+    setPlaybackCursor(newCursor);
+    onPlaybackCursorUpdate({ playbackCursorPositionInMs: newCursor });
+  };
+  
   return (
     <div
       ref={containerRef}
       className={`relative ${className}`}
       onMouseDown={handleMouseDown}
       onWheel={handleWheel}
+      onDoubleClick={handleDoubleClick}
       style={{ cursor: 'default' }}
     >
       <canvas
