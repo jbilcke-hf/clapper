@@ -29,7 +29,16 @@ const TimelineSliderBase = React.forwardRef<
        )} />
     </SliderPrimitive.Track>
     <SliderPrimitive.Thumb className={cn(
-      `block rounded-sm border border-stone-400 bg-stone-500 ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-stone-950 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50 dark:border-stone-400 dark:bg-stone-500 shadow-md dark:ring-offset-stone-500 dark:focus-visible:ring-stone-400`,
+      `block rounded-sm
+      border border-stone-400
+      bg-stone-500
+      ring-offset-white transition-colors 
+      focus-visible:outline-none focus-visible:ring-1
+      focus-visible:ring-stone-950 focus-visible:ring-offset-1
+      disabled:pointer-events-none disabled:opacity-50
+      dark:border-stone-400 dark:bg-stone-500
+      shadow-md
+      dark:ring-offset-stone-500 dark:focus-visible:ring-stone-400`,
       thumbClass
      )} />
   </SliderPrimitive.Root>
