@@ -1,3 +1,5 @@
+import React, { useMemo } from 'react';
+
 import { GradientTexture, RoundedBox, Text } from "@react-three/drei"
 import { useSpring, a, animated, config } from "@react-spring/three"
 
@@ -5,7 +7,7 @@ import { clampWebGLText } from "@/utils"
 
 import { SpecializedCellProps } from "./types"
 
-export function TextCell({
+const MemoizedTextCell = React.memo(function TextCell({
   segment: s,
   cellWidth,
   cellHeight,
@@ -29,15 +31,15 @@ export function TextCell({
   // note: an alternative could be to create a small fade or blur effect,
   // but I think it might be expensive
   // console.log(" durationInSteps * cellWidth:",  durationInSteps * cellWidth)
-  const lines = clampWebGLText(
+  const lines = useMemo(() => clampWebGLText(
     s.label || s.prompt,
     widthInPx,
     maxNbLines
-  )
+  ), [s.label, s.prompt, widthInPx, maxNbLines]);
+
   // const label = clampWebGLTextNaive(s.label, durationInSteps * cellWidth)
 
   const padding = 1.2
-
   const fontSize = 13
   const lineHeight = 1.2
 
@@ -159,4 +161,14 @@ export function TextCell({
       </a.mesh>
     </RoundedBox>
   )
-}
+}, (prevProps, nextProps) => {
+  // Custom comparison function
+  return prevProps.segment.id === nextProps.segment.id &&
+         prevProps.isHovered === nextProps.isHovered &&
+         prevProps.widthInPx === nextProps.widthInPx &&
+         prevProps.widthInPxAfterZoom === nextProps.widthInPxAfterZoom &&
+         prevProps.isResizing === nextProps.isResizing &&
+         prevProps.track.visible === nextProps.track.visible;
+});
+
+export { MemoizedTextCell as TextCell };

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import * as THREE from "three"
 
 import { useTimeline } from "./useTimeline"
+import { leftBarTrackScaleWidth } from "@/constants";
+import { topBarTimeScaleHeight } from "@/constants/themes";
 
 export const useCursorGeometry = () => {
 
@@ -10,7 +12,8 @@ export const useCursorGeometry = () => {
 
   const contentHeight = useTimeline(s => s.contentHeight)
  
-  const widthInPx = 18
+  // the width of the cursor (this includes the cursor + a nice gradient trail)
+  const widthInPx = 24
 
   useEffect(() => {
 

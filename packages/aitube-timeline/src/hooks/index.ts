@@ -1,3 +1,4 @@
+export { useAnimationFrame } from "./useAnimationFrame"
 export { useAxis } from "./useAxis"
 export { useVerticalGridLines } from "./useVerticalGridLines"
 export { useHorizontalGridLines } from "./useHorizontalGridLines"
