@@ -67,7 +67,8 @@ function MainContent() {
       flex flex-col
       w-screen h-screen
       overflow-hidden
-      items-center justify-center
+      justify-between
+      
       font-light
       text-stone-900/90 dark:text-stone-100/90
       `)}
@@ -76,10 +77,14 @@ function MainContent() {
       }}
       >
       <TopBar />
-        <div className={cn(
-          `flex flex-row flex-grow w-full overflow-hidden`, 
-          isEmpty ? "opacity-0" : "opacity-100"
-        )}>
+        <div className={cn(`
+        flex flex-row overflow-hidden
+        h-[calc(100vh-40px)] w-screen
+        `, 
+        isEmpty ? "opacity-0" : "opacity-100"
+        )}
+
+        >
           <ReflexContainer orientation="vertical">
           
             <ReflexElement>
@@ -120,7 +125,6 @@ function MainContent() {
           {showAssistant && <ReflexElement size={300}><ChatView /></ReflexElement>}
 
           </ReflexContainer>
-          
         </div>
 
       <SettingsDialog />
