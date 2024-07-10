@@ -361,10 +361,28 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     }
   },
 
-  /**
-   * This resolve a segment
+    /**
+   * This resolve an entity (eg. aa character or a location)
    * 
    * Note: while we return a clap segment, the original will be replaced, too
+   * 
+   * @param segment 
+   * @returns 
+   */
+  resolveEntity: async (entity: ClapEntity): Promise<ClapEntity> => {
+
+  },
+
+  /**
+   * This resolve a segment.
+   * 
+   * Resolving means taking input parameters and generating an output (changes in the
+   * segment settings, typically the assetUrl but this can have other implications
+   * and changes as well)
+   * 
+   * This function returns the original segment, modified in-line.
+   * 
+   * Side-effects are propagated by using useTimeline.trackSilentChangeInSegment()
    * 
    * @param segment 
    * @returns 
