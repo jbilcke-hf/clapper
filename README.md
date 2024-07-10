@@ -73,4 +73,8 @@ I haven't setup Prettier or a Linter yet.
 
 There are no automated tests yet, @jbilcke-hf will act as the "QA engineer".
 
+### Architecture
+
+
+![Arch|800](documentation/diagrams/architecture-draft.png)
 
