@@ -45,7 +45,7 @@ Those generous sponsors are paying for code bounties:
 
 If you wish to sponsor the project, help attract new developers, or promote a specific feature faster, you can open a bounty for a specific ticket (eg `"fix music segment duration"`, `"add support for Adobe Premiere Pro export"`, `"finish .fbx integration"`) and open-source community members will be able to submit pull requests to solve them.
 
-I propose to use the Boss to do this as it has lower fees than other platforms: [boss.dev](https://www.boss.dev/doc/#create-bounties)
+I propose to use Boss.dev to do this as it has lower fees than other platforms: [boss.dev](https://www.boss.dev/doc/#create-bounties)
 
 If you submit (to pay) or take on (to earn) a bounty, please post a message in the GitHub thread and/or on [Discord](https://discord.com/invite/AEruz9B92B) to help everyone coordinate around it.
 
