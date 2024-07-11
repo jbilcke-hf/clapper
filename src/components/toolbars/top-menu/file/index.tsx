@@ -3,7 +3,7 @@ import { useEffect } from "react"
 import { useTimeline } from "@aitube/timeline"
 import { useHotkeys } from "react-hotkeys-hook"
 
-import { MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarTrigger } from "@/components/ui/menubar"
+import { MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from "@/components/ui/menubar"
 import { useOpenFilePicker, useQueryStringParams } from "@/lib/hooks"
 import { IframeWarning } from "@/components/dialogs/iframe-warning"
 import { useIO } from "@/services/io/useIO"
@@ -66,6 +66,17 @@ export function TopMenuFile() {
         }}>
           Save project (.clap)<MenubarShortcut>⌘S</MenubarShortcut>
         </MenubarItem>
+        <MenubarSeparator />
+        <MenubarSub>
+          <MenubarSubTrigger>Examples</MenubarSubTrigger>
+          <MenubarSubContent>
+            <MenubarItem onClick={() => {
+              openClapUrl('/samples/claps/wasteland.clap')
+            }}>
+              Wasteland
+            </MenubarItem>
+          </MenubarSubContent>
+        </MenubarSub>
         <MenubarSeparator />
         {/*
         <MenubarItem
