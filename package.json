@@ -14,7 +14,7 @@
     "@aitube/clap": "0.0.30",
     "@aitube/clapper-services": "0.0.16",
     "@aitube/engine": "0.0.26",
-    "@aitube/timeline": "file:/Users/jbilcke/Projects/Typescript_Libraries/aitube-timeline",
+    "@aitube/timeline": "0.0.40",
     "@fal-ai/serverless-client": "^0.11.0",
     "@gradio/client": "^1.1.1",
     "@huggingface/hub": "^0.15.1",
