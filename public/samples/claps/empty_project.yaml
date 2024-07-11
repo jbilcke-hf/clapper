@@ -1,0 +1,24 @@
+- format: clap-0
+  numberOfEntities: 0
+  numberOfScenes: 0
+  numberOfSegments: 27
+- id: 5ffcfd0b-cb91-465e-87b6-bde41037373e
+  title: ""
+  description: An exciting new project
+  synopsis: ""
+  licence: ""
+  orientation: landscape
+  durationInMs: 18000
+  width: 1024
+  height: 575
+  defaultVideoModel: AnimateDiff-Lightning
+  extraPositivePrompt: []
+  screenplay: ""
+  isLoop: false
+  isInteractive: false
+- id: e16478cf-3535-48e9-98e8-f702ec9ca348
+  track: 0
+  startTimeInMs: 0
+  endTimeInMs: 0
+  category: video
+  outputType: video
