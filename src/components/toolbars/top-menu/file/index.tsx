@@ -31,6 +31,8 @@ export function TopMenuFile() {
   const saveZipFile = useIO(s => s.saveZipFile)
   const saveKdenline = useIO(s => s.saveKdenline)
 
+  const hasBetaAccess = useUI(s => s.hasBetaAccess)
+
   useEffect(() => {
     (async () => {
       if (!clapUrl) {
@@ -55,6 +57,13 @@ export function TopMenuFile() {
     <MenubarMenu>
       <MenubarTrigger>File</MenubarTrigger>
       <MenubarContent>
+        {hasBetaAccess &&
+          <MenubarItem onClick={() => {
+            openClapUrl('/samples/claps/empty_project.clap')
+          }}>
+            New Project<MenubarShortcut>⌘N</MenubarShortcut>
+          </MenubarItem>
+        }
         <MenubarItem onClick={() => {
           openFilePicker()
         }}>
