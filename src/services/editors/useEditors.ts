@@ -10,7 +10,3 @@ export const useEditors = create<EditorsStore>((set, get) => ({
   setView: (view: EditorView) => { set({ view }) },
 }))
 
-
-if (typeof window !== "undefined") {
-  (window as any).useEditors = useEditors
-}

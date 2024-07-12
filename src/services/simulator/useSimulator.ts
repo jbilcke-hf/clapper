@@ -28,7 +28,3 @@ export const useSimulator = create<SimulatorStore>((set, get) => ({
     return isRunning
   }
 }))
-
-if (typeof window !== "undefined") {
-  (window as any).useSimulator = useSimulator
-}

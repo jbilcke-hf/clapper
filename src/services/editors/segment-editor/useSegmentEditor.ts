@@ -12,8 +12,3 @@ export const useSegmentEditor = create<SegmentEditorStore>((set, get) => ({
   undo: () => {},
   redo: () => {},
 }))
-
-
-if (typeof window !== "undefined") {
-  (window as any).useSegmentEditor = useSegmentEditor
-}

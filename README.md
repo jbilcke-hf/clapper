@@ -60,9 +60,38 @@ Clapper is under a GPL v3 licence, see the [LICENCE](LICENSE.txt) file for more 
 
 ### Installation
 
+### Prerequisites
+
+As a prerequisite you need to have [git lfs](https://git-lfs.com/) installed (see the `.gitattributes` file at the root of project):
+
+```bash
+git lfs install
+```
+
+Clapper has been tested with Node `20.9.*`.
+
+To make sure you use this version, you can use [NVM](https://github.com/nvm-sh/nvm) to activate it:
+
+```bash
+nvm use
+```
+
+If you find that Clapper is working with a more recent (stable) version of Node, or have a better version management to suggest, please open a ticket.
+
+### Installing and running the app
+
 ```bash
 npm i
 npm run dev
+```
+
+### Making sure everything is working properly
+
+There are no tests yet (I will create a ticket for that),
+but until then you can run the following command to make sure all the types are consistant and properly set:
+
+```bash
+npm run build
 ```
 
 ### Code conventions

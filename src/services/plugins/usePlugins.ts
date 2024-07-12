@@ -2,22 +2,22 @@
 
 import { create } from "zustand"
 import { ClapperPlugin, ClapperPluginApi, ClapperPluginMeta, PluginsStore, PublicServices } from "@aitube/clapper-services"
+import { useTimeline } from "@aitube/timeline"
 
 import { getDefaultPluginsState } from "./getDefaultPluginsState"
 import { useScriptEditor } from "../editors/script-editor/useScriptEditor"
 import { useMonitor } from "../monitor/useMonitor"
-import { useTimeline } from "@aitube/timeline"
+import { useTasks } from "@/components/tasks/useTasks"
 import { useRenderer } from "../renderer"
 import { useBroadcast } from "../broadcast/useBroadcast"
 import { useResolver } from "../resolver/useResolver"
 import { useAssistant } from "../assistant/useAssistant"
 import { useAudio } from "../audio/useAudio"
 import { useUI } from "../ui"
-
 import { fetchAndRun } from "./fetchAndRun"
-import { useTasks } from "@/components/tasks/useTasks"
 import { useEditors, useEntityEditor, useProjectEditor, useSegmentEditor } from "../editors"
 import { useSimulator } from "../simulator/useSimulator"
+import { useIO } from "../io/useIO"
 
 export const usePlugins = create<PluginsStore>((set, get) => ({
   ...getDefaultPluginsState(),
@@ -62,6 +62,7 @@ export const usePlugins = create<PluginsStore>((set, get) => ({
       broadcast: useBroadcast,
       simulator: useSimulator,
       ui: useUI,
+      io: useIO,
     }
   },
   pluginApiGetSettings: async (id: string) => {

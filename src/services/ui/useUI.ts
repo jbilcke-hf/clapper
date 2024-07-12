@@ -75,7 +75,3 @@ export const useUI = create<UIStore>()(
     },
   ),
 )
-
-if (typeof window !== "undefined") {
-  (window as any).useUI = useUI
-}

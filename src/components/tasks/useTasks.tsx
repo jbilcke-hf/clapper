@@ -342,6 +342,3 @@ export const useTasks = create<TasksStore>((set, get) => ({
   }
 }));
 
-if (typeof window !== "undefined") {
-  (window as any).useTasks = useTasks;
-}

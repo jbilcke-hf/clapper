@@ -662,7 +662,3 @@ export const useSettings = create<SettingsStore>()(
     },
   ),
 )
-
-if (typeof window !== "undefined") {
-  (window as any).useSettings = useSettings
-}

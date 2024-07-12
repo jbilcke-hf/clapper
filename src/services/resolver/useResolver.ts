@@ -590,9 +590,4 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     }
     return segment
   }
-
 }))
-
-if (typeof window !== "undefined") {
-  (window as any).useResolver = useResolver
-}

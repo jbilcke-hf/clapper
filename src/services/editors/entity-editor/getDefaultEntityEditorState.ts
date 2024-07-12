@@ -5,6 +5,9 @@ export function getDefaultEntityEditorState(): EntityEditorState {
     current: undefined,
     version: 0,
     history: [],
+
+    draft: undefined,
+    showEntityList: false,
   }
 
   return state
