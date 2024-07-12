@@ -33,9 +33,10 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
   // For example: The sky was a crisp (blue:0.3) and (green:0.8) would
   // convey a sky that was blue and green, but more green than blue.
 
+  const output_format = "jpeg"
   const body = new FormData()
   body.set("prompt", `${request.prompts.image.positive || ""}`)
-  body.set("output_format", "jpeg") // "png"
+  body.set("output_format", output_format) // "png"
   body.set("negative_prompt", `${request.prompts.image.negative || ""}`)
   body.set("aspect_ratio", `${aspectRatio || ""}`)
 
@@ -43,21 +44,20 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
     method: "POST",
     headers: {
       Authorization: `Bearer ${request.settings.stabilityAiApiKey}`,
+      Accept: "image/*",
     },
     body,
     cache: "no-store"
   })
 
-  console.log("response:", response)
-
-  /*
   if (response.status === 200) {
-    const buffer = Buffer.from(response.data)
-    const rawAssetUrl = `data:image/${payload.output_format};base64,${buffer.toString('base64')}`
+    const arrayBuffer = await response.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+    const rawAssetUrl = `data:image/${output_format};base64,${buffer.toString('base64')}`
     return rawAssetUrl
   } else {
-    throw new Error(`${response.status}: ${response.data.toString()}`);
+    const data = await response.json()
+    throw new Error(`${response.status}: ${data.errors}`)
   }
-    */
-   throw new Error("finish me")
+  
 }
