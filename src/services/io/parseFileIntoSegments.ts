@@ -6,7 +6,7 @@ import { clapSegmentToTimelineSegment, SegmentEditionStatus, SegmentVisibility, 
 import { blobToBase64DataUri } from "@/lib/utils/blobToBase64DataUri"
 
 import { analyzeAudio } from "../audio/analyzeAudio"
-import { ResourceCategory, ResourceType } from "./types"
+import { ResourceCategory, ResourceType } from "@aitube/clapper-services"
 
 export async function parseFileIntoSegments({ file }: {
   /**

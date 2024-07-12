@@ -26,6 +26,7 @@ export function TopMenuFile() {
   //const isLoading = isTimelineLoading || filePickerIsLoading
 
   const openClapUrl = useIO(s => s.openClapUrl)
+  const openScreenplayUrl = useIO(s => s.openScreenplayUrl)
   const saveClap = useIO(s => s.saveClap)
   const saveVideoFile = useIO(s => s.saveVideoFile)
   const saveZipFile = useIO(s => s.saveZipFile)
@@ -85,12 +86,12 @@ export function TopMenuFile() {
               Wasteland.clap
             </MenubarItem>
             <MenubarItem onClick={() => {
-              openClapUrl('/samples/scripts/Citizen Kane.txt')
+              openScreenplayUrl('/samples/scripts/Citizen Kane.txt')
             }}>
               Citizen Kane.txt
             </MenubarItem>
             <MenubarItem onClick={() => {
-              openClapUrl('/samples/scripts/The Wizard Of Oz.txt')
+              openScreenplayUrl('/samples/scripts/The Wizard Of Oz.txt')
             }}>
               The Wizard Of Oz.txt
             </MenubarItem>

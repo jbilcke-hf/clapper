@@ -3,12 +3,11 @@
 import { ClapAssetSource, ClapEntity, ClapProject, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType, newClap, newSegment, parseClap, serializeClap } from "@aitube/clap"
 import { TimelineStore, useTimeline, TimelineSegment } from "@aitube/timeline"
 import { ParseScriptProgressUpdate, parseScriptToClap } from "@aitube/broadway"
-import { TaskCategory, TaskVisibility } from "@aitube/clapper-services"
+import { IOStore, TaskCategory, TaskVisibility } from "@aitube/clapper-services"
 import { create } from "zustand"
 import * as fflate from 'fflate'
 
 import { getDefaultIOState } from "./getDefaultIOState"
-import { IOStore } from "./types"
 
 import { blobToBase64DataUri } from "@/lib/utils/blobToBase64DataUri"
 import { parseFileIntoSegments } from "./parseFileIntoSegments"
@@ -156,6 +155,61 @@ export const useIO = create<IOStore>((set, get) => ({
       task.fail(`${err || "unknown screenplay import error"}`)
     } finally {
 
+    }
+  },
+  openScreenplayUrl: async (url: string) => {
+    const timeline: TimelineStore = useTimeline.getState()
+   
+    const { fileName, projectName } = parseFileName(`${url.split("/").pop() || url}`)
+    
+    const task = useTasks.getState().add({
+      category: TaskCategory.IMPORT,
+      visibility: TaskVisibility.BLOCKER,
+      initialMessage:  `Loading ${fileName}`,
+      successMessage: `Successfully downloaded the screenplay!`,
+      value: 0,
+    })
+
+    task.setProgress({
+      message: "Downloading screenplay..",
+      value: 10
+    })
+
+    try {
+      const res = await fetch(url)
+      const plainText = await res.text()
+      // new way: we analyze the screenplay on browser side
+      const clap = await parseScriptToClap(plainText, async ({
+        value,
+        sleepDelay,
+        message,
+      }) => {
+        const relativeProgressRatio = value / 100
+        const totalProgress = 10 + relativeProgressRatio * 80
+        task.setProgress({
+          message,
+          value: totalProgress
+        })
+        await sleep(sleepDelay || 25)
+      })
+
+      clap.meta.title = `${projectName || ""}`
+
+      task.setProgress({
+        message: "Loading rendering engine..",
+        value: 90
+      })
+
+      await timeline.setClap(clap)
+
+      task.setProgress({
+        message: "Nearly there..",
+        value: 98
+      })
+
+      task.success()
+    } catch (err) {
+      task.fail(`${err || "unknown error"}`)
     }
   },
   saveAnyFile: (blob: Blob, fileName: string) => {
