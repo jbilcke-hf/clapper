@@ -279,7 +279,3 @@ export function useInitAssistant() {
     setVoiceTranscript(transcript)
   }, [transcript])
 }
-
-if (typeof window !== "undefined") {
-  (window as any).useAssistant = useAssistant
-}

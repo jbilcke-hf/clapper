@@ -226,7 +226,3 @@ export const useRenderer = create<RendererStore>((set, get) => ({
 
   }
 }))
-
-if (typeof window !== "undefined") {
-  (window as any).useRenderer = useRenderer
-}

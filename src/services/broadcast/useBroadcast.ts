@@ -24,7 +24,3 @@ export const useBroadcast = create<BroadcastStore>((set, get) => ({
     return isBroadcasting
   },
 }))
-
-if (typeof window !== "undefined") {
-  (window as any).useBroadcast = useBroadcast
-}

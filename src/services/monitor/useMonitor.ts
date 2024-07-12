@@ -147,8 +147,3 @@ setTimeout(() => {
     useMonitor.getState().bindShortcuts()
   }
 }, 0)
-
-
-if (typeof window !== "undefined") {
-  (window as any).useMonitor = useMonitor
-}

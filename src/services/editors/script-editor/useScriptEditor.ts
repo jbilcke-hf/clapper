@@ -207,8 +207,3 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
   undo: () => {},
   redo: () => {},
 }))
-
-
-if (typeof window !== "undefined") {
-  (window as any).useScriptEditor = useScriptEditor
-}

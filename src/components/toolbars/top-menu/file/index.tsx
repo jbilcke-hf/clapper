@@ -3,10 +3,10 @@ import { useEffect } from "react"
 import { useTimeline } from "@aitube/timeline"
 import { useHotkeys } from "react-hotkeys-hook"
 
-import { MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarTrigger } from "@/components/ui/menubar"
+import { MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from "@/components/ui/menubar"
 import { useOpenFilePicker, useQueryStringParams } from "@/lib/hooks"
 import { IframeWarning } from "@/components/dialogs/iframe-warning"
-import { useIO } from "@/services/io/useIO"
+import { useIO, useUI } from "@/services"
 
 export function TopMenuFile() {
   const { clapUrl } = useQueryStringParams({
@@ -30,6 +30,8 @@ export function TopMenuFile() {
   const saveVideoFile = useIO(s => s.saveVideoFile)
   const saveZipFile = useIO(s => s.saveZipFile)
   const saveKdenline = useIO(s => s.saveKdenline)
+
+  const hasBetaAccess = useUI(s => s.hasBetaAccess)
 
   useEffect(() => {
     (async () => {
@@ -55,6 +57,13 @@ export function TopMenuFile() {
     <MenubarMenu>
       <MenubarTrigger>File</MenubarTrigger>
       <MenubarContent>
+        {hasBetaAccess &&
+          <MenubarItem onClick={() => {
+            openClapUrl('/samples/claps/empty_project.clap')
+          }}>
+            New Project<MenubarShortcut>⌘N</MenubarShortcut>
+          </MenubarItem>
+        }
         <MenubarItem onClick={() => {
           openFilePicker()
         }}>
@@ -66,6 +75,17 @@ export function TopMenuFile() {
         }}>
           Save project (.clap)<MenubarShortcut>⌘S</MenubarShortcut>
         </MenubarItem>
+        <MenubarSeparator />
+        <MenubarSub>
+          <MenubarSubTrigger>Examples</MenubarSubTrigger>
+          <MenubarSubContent>
+            <MenubarItem onClick={() => {
+              openClapUrl('/samples/claps/wasteland.clap')
+            }}>
+              Wasteland
+            </MenubarItem>
+          </MenubarSubContent>
+        </MenubarSub>
         <MenubarSeparator />
         {/*
         <MenubarItem

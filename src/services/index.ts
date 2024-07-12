@@ -19,3 +19,5 @@ export { useResolver } from "./resolver/useResolver"
 export { useSettings } from "./settings/useSettings"
 export { useUI } from "./ui/useUI"
 export { useTasks }
+
+import "./debug"

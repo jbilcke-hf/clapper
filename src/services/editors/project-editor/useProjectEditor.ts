@@ -19,8 +19,3 @@ export const useProjectEditor = create<ProjectEditorStore>((set, get) => ({
   undo: () => {},
   redo: () => {},
 }))
-
-
-if (typeof window !== "undefined") {
-  (window as any).useProjectEditor = useProjectEditor
-}

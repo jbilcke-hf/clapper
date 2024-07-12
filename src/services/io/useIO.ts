@@ -766,7 +766,3 @@ export const useIO = create<IOStore>((set, get) => ({
     return entities
   },
 }))
-
-if (typeof window !== "undefined") {
-  (window as any).useIO = useIO
-}
