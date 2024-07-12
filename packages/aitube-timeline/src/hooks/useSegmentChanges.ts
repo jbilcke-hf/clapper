@@ -44,8 +44,8 @@ function getKey(segment: TimelineSegment) {
  * @returns 
  */
 export function useSegmentChanges(segment: TimelineSegment): number {
-  const [changes, setChanges] = useState(0)
-  const silentChangesInSegments = useTimeline(s => s.silentChangesInSegments)
+  const [changeCounter, setChangeCounter] = useState(0)
+  const atLeastOneSegmentChanged = useTimeline(s => s.atLeastOneSegmentChanged)
 
   const changesRef = useRef(0)
   const hashRef = useRef(getKey(segment))
@@ -55,8 +55,8 @@ export function useSegmentChanges(segment: TimelineSegment): number {
     // so we need to recompute some kind of hash change
     const newHash = getKey(segment)
     if (hashRef.current === newHash) { return }
-    setChanges(changesRef.current++)
-  }, [silentChangesInSegments])
+    setChangeCounter(changesRef.current++)
+  }, [atLeastOneSegmentChanged])
  
-  return changes
+  return changeCounter
 }

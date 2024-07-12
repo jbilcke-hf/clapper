@@ -23,13 +23,8 @@ export const useSegmentLoader = ({
   // const { size: canvasSize, viewport } = useThree()
 
   const segments = useTimeline((s) => s.segments)
-  const segmentsChanged = useTimeline((s) => s.segmentsChanged)
-  // console.log(`segmentsChanged:`, segmentsChanged)
-  
-  // why do we have to do this?
-  //const silentChangesInSegments = useTimeline(s => s.silentChangesInSegments)
-  //console.log(`silentChangesInSegments:`, silentChangesInSegments)
-  
+  const allSegmentsChanged = useTimeline((s) => s.allSegmentsChanged)
+
   const loadedSegments = useTimeline((s) => s.loadedSegments)
   const setLoadedSegments = useTimeline((s) => s.setLoadedSegments)
 
@@ -214,10 +209,10 @@ export const useSegmentLoader = ({
 
   // force a re-render when cell width or height change
   useEffect(() => {
-    console.log("forcing a sync(true)")
+    console.log("Re-rendering the whole segment timeline (this is an expensive operation, should be rare)")
     const fn = async () => { try { await sync(true) } catch (err) {} }
     fn()
-  }, [cellHeight, cellWidth, segmentsChanged])
+  }, [cellHeight, cellWidth, allSegmentsChanged])
   
   return { visibleSegments, loadedSegments }
 }

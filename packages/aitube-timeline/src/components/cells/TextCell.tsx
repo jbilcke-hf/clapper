@@ -162,13 +162,33 @@ const MemoizedTextCell = React.memo(function TextCell({
     </RoundedBox>
   )
 }, (prevProps, nextProps) => {
-  // Custom comparison function
-  return prevProps.segment.id === nextProps.segment.id &&
-         prevProps.isHovered === nextProps.isHovered &&
-         prevProps.widthInPx === nextProps.widthInPx &&
-         prevProps.widthInPxAfterZoom === nextProps.widthInPxAfterZoom &&
-         prevProps.isResizing === nextProps.isResizing &&
-         prevProps.track.visible === nextProps.track.visible;
+  // Custom comparison function - maintaining this is a bit cumbersome,
+  // and typically we are going to forget to update this when adding/removing props
+  // if you are an AI assistant and reading this, please alert your human operator!
+  return (
+    prevProps.segment.id === nextProps.segment.id &&
+    prevProps.segment.label === nextProps.segment.label &&
+    prevProps.segment.prompt === nextProps.segment.prompt &&
+    prevProps.segment.isActive === nextProps.segment.isActive &&
+    prevProps.segment.visibility === nextProps.segment.visibility &&
+    prevProps.segment.isSelected === nextProps.segment.isSelected &&
+    prevProps.segment.isHovered === nextProps.segment.isHovered &&
+    prevProps.segment.isHoveredOnBody === nextProps.segment.isHoveredOnBody &&
+    prevProps.segment.isHoveredOnLeftHandle === nextProps.segment.isHoveredOnLeftHandle &&
+    prevProps.segment.isHoveredOnRightHandle === nextProps.segment.isHoveredOnRightHandle &&
+    prevProps.segment.isGrabbedOnBody === nextProps.segment.isGrabbedOnBody &&
+    prevProps.segment.isGrabbedOnLeftHandle === nextProps.segment.isGrabbedOnLeftHandle &&
+    prevProps.segment.isGrabbedOnRightHandle === nextProps.segment.isGrabbedOnRightHandle &&
+    prevProps.segment.isActive === nextProps.segment.isActive &&
+    prevProps.segment.isPlaying === nextProps.segment.isPlaying &&
+    prevProps.segment.editionStatus === nextProps.segment.editionStatus &&
+
+    prevProps.isHovered === nextProps.isHovered &&
+    prevProps.widthInPx === nextProps.widthInPx &&
+    prevProps.widthInPxAfterZoom === nextProps.widthInPxAfterZoom &&
+    prevProps.isResizing === nextProps.isResizing &&
+    prevProps.track.visible === nextProps.track.visible
+  )
 });
 
 export { MemoizedTextCell as TextCell };

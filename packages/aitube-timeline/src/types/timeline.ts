@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapEntity, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -137,12 +137,16 @@ export type TimelineStoreProjectState = {
   clap: ClapProject
 
   segments: TimelineSegment[]
-  segmentsChanged: number
+
   totalDurationInMs: number
   loadedSegments: TimelineSegment[]
   visibleSegments: TimelineSegment[]
   nbIdentifiedTracks: number
   lineNumberToMentionedSegments: Record<number, TimelineSegment[]>
+
+  entities: ClapEntity[]
+  entitiesIndex: Record<string, ClapEntity>
+  entitiesChanged: number
 
   isEmpty: boolean
   isLoading: boolean
@@ -184,9 +188,11 @@ export type TimelineStoreProjectState = {
   editedSegment?: TimelineSegment
   selectedSegments: TimelineSegment[]
 
-  // used to track silent in-line changes in the segments
-  // that way we don't need to re-draw the whole thing
-  silentChangesInSegments: number
+  allSegmentsChanged: number
+  atLeastOneSegmentChanged: number
+
+  // the purpose is to allow an external component
+  // to modify the segments in-line, and then trigger a redraw
   silentChangesInSegment: Record<string, number>
 
   isDraggingCursor: boolean
@@ -271,9 +277,11 @@ export type TimelineStoreModifiers = {
     isSelected?: boolean
     onlyOneSelectedAtOnce?: boolean
   }) => void
-  // used to track silent in-line changes in the segments
-  // that way we don't need to re-draw the whole thing
+
+  // the purpose of those functions is to allow an external component
+  // to modify the segments in-line, and then trigger a redraw
   trackSilentChangeInSegment: (segmentId: string) => void
+  trackSilentChangeInSegments: (segmentIds: string[]) => void
 
   setTimelineTheme: (theme: ClapTimelineTheme) => void
   setTimelineCamera: (timelineCamera?: TimelineCameraImpl) => void
@@ -337,6 +345,10 @@ export type TimelineStoreModifiers = {
   findFreeTrack: (params: { startTimeInMs?: number; endTimeInMs?: number }) => number
 
   fitSegmentToAssetDuration: (segment: TimelineSegment, durationInMs?: number) => Promise<void>
+
+  addEntities: (entities: ClapEntity[]) => Promise<void>
+  updateEntities: (entities: ClapEntity[]) => Promise<void>
+  deleteEntities: (entities: (ClapEntity|string)[]) => Promise<void>
 }
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers
