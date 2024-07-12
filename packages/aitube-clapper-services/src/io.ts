@@ -37,7 +37,7 @@ export type IOControls = {
   openFiles: (files: File[]) => Promise<void>
 
   openScreenplay: (projectName: string, fileName: string, fileContent: string | Blob) => Promise<void>
-
+  openScreenplayUrl: (url: string) => Promise<void>
   saveAnyFile: (blob: Blob, fileName: string) => void
   openClapUrl: (url: string) => Promise<void>
   openClapBlob: (projectName: string, fileName: string, blob: Blob) => Promise<void>
