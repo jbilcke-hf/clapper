@@ -36,7 +36,7 @@ export function Cursor() {
       const granularSpeed = Math.floor(speed / SPEED_RESOLUTION) * SPEED_RESOLUTION
 
       if (granularSpeed !== lastSpeedRef.current) {
-        const maxSpeed = 300
+        const maxSpeed = 200
         const visibility = Math.min(granularSpeed / maxSpeed, 1)
 
         lineMatRefs.current.forEach((mat, idx) => {

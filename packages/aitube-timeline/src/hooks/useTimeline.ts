@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import * as THREE from "three"
-import { ClapOutputType, ClapProject, ClapSceneEvent, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, isValidNumber, newClap, serializeClap, ClapTrack, ClapTracks } from "@aitube/clap"
+import { ClapOutputType, ClapProject, ClapSceneEvent, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, isValidNumber, newClap, serializeClap, ClapTrack, ClapTracks, ClapEntity } from "@aitube/clap"
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
@@ -192,9 +192,11 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       segments,
       loadedSegments: [],
       visibleSegments: [],
-      segmentsChanged: 1,
+      atLeastOneSegmentChanged: 1,
+      allSegmentsChanged: 1,
       totalDurationInMs,
       lineNumberToMentionedSegments,
+
 
       isEmpty,
       isLoading: false,
@@ -335,7 +337,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   } = {}) => {
     const {
       hoveredSegment: previousHoveredSegment,
-      segmentsChanged: previousSegmentsChanged
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+      allSegmentsChanged: previousAllSegmentsChanged,
     } = get()
 
     // note: we do all of this in order to avoid useless state updates
@@ -357,7 +360,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         hoveredSegment.isHoveredOnBody = area === SegmentArea.MIDDLE
         set({
           hoveredSegment,
-          segmentsChanged: 1 + previousSegmentsChanged
+          allSegmentsChanged: 1 + previousAllSegmentsChanged,
+          atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged
         })
       }
     } else {
@@ -368,7 +372,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         previousHoveredSegment.isHoveredOnBody = false
         set({
           hoveredSegment: undefined,
-          segmentsChanged: 1 + previousSegmentsChanged
+          allSegmentsChanged: 1 + previousAllSegmentsChanged,
+          atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged
         })
       } else {
         // nothing to do
@@ -378,7 +383,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   setEditedSegment: (editedSegment?: TimelineSegment) => {
     const {
       editedSegment: previousEditedSegment,
-      segmentsChanged: previousSegmentsChanged
+      allSegmentsChanged: previousAllSegmentsChanged,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged
     } = get()
 
     // note: we do all of this in order to avoid useless state updates
@@ -394,7 +400,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         editedSegment.editionStatus = SegmentEditionStatus.EDITING
         set({
           editedSegment,
-          segmentsChanged: 1 + previousSegmentsChanged
+          atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
+          allSegmentsChanged: 1 + previousAllSegmentsChanged
         })
       }
     } else {
@@ -402,7 +409,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         previousEditedSegment.editionStatus = SegmentEditionStatus.EDITABLE
         set({
           editedSegment: undefined,
-          segmentsChanged: 1 + previousSegmentsChanged
+          atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
+          allSegmentsChanged: 1 + previousAllSegmentsChanged
         })
       } else {
         // nothing to do
@@ -422,7 +430,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     const {
       segments,
       selectedSegments: previousSelectedSegments,
-      segmentsChanged: previousSegmentsChanged
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+      allSegmentsChanged: previousAllSegmentsChanged
     } = get()
     /*
     console.log(`setSelectedSegment() called with:`, {
@@ -449,13 +458,17 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         return
       }
 
+      let newSelectedSegments: TimelineSegment[] = previousSelectedSegments
+
       // if needed we clear any other selected item
       if (onlyOneSelectedAtOnce) {
 
         // console.log('`setSelectedSegment(): unselecting all previous segments')
     
-        segments.forEach(s => { s.isSelected = false })
-        set({ selectedSegments: [] })
+        segments.forEach(s => {
+          s.isSelected = false
+        })
+        newSelectedSegments = []
       }
 
       // console.log('`setSelectedSegment(): assigning new value and propagating changes:', newValue)
@@ -463,16 +476,16 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       segment.isSelected = newValue
 
       if (newValue) {
-        set({
-          selectedSegments: previousSelectedSegments.concat(segment),
-          segmentsChanged: 1 + previousSegmentsChanged
-        })
+        newSelectedSegments = newSelectedSegments.concat(segment)
       } else {
-        set({
-          selectedSegments: previousSelectedSegments.filter(s => s.id !== segment.id),
-          segmentsChanged: 1 + previousSegmentsChanged
-        })
+        newSelectedSegments = newSelectedSegments.filter(s => s.id !== segment.id)
       }
+      set({
+        selectedSegments: newSelectedSegments,
+        atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
+        allSegmentsChanged: 1 + previousAllSegmentsChanged,
+      })
+
     } else {
 
       // console.log('`setSelectedSegment(): mass change requested')
@@ -482,17 +495,29 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       })
       set({
         selectedSegments: isSelected ? segments : [],
-        segmentsChanged: 1 + previousSegmentsChanged
+        atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
+        allSegmentsChanged: 1 + previousAllSegmentsChanged,
       })
     }
   },
   trackSilentChangeInSegment: (segmentId: string) => {
-    const { silentChangesInSegments, silentChangesInSegment } = get()
+    const { silentChangesInSegment, atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged } = get()
     set({
-      silentChangesInSegments: 1 + silentChangesInSegments,
       silentChangesInSegment: Object.assign(silentChangesInSegment, {
         [segmentId]: 1 + (silentChangesInSegment[segmentId] || 0)
-      })
+      }),
+      atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
+    })
+  },
+  trackSilentChangeInSegments: (segmentIds: string[]) => {
+    const { silentChangesInSegment, atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged } = get()
+    
+    for (const id of segmentIds) {
+      silentChangesInSegment[id] = 1 + (silentChangesInSegment[id] || 0)
+    }
+    set({
+      silentChangesInSegment,
+      atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
     })
   },
   setTimelineTheme: (theme: ClapTimelineTheme) => {
@@ -700,7 +725,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       tracks,
       defaultPreviewHeight,
       defaultCellHeight,
-      segmentsChanged: previousSegmentsChanged,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+      allSegmentsChanged: previousAllSegmentsChanged,
     } = get()
 
     segment.track = track
@@ -728,7 +754,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     if (triggerChange) {
       set({
-        segmentsChanged: previousSegmentsChanged + 1,
+        allSegmentsChanged: previousAllSegmentsChanged + 1,
+        atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
         ...computeContentSizeMetrics({
           clap,
           tracks,
@@ -755,7 +782,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       cellWidth,
       tracks,
       segments: previousSegments,
-      segmentsChanged: previousSegmentsChanged,
+      allSegmentsChanged: previousAllSegmentsChanged,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
       totalDurationInMs: previousTotalDurationInMs,
       defaultSegmentDurationInSteps,
       defaultPreviewHeight,
@@ -795,8 +823,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // on a temporally sorted tree
     const segments = previousSegments.concat(segment)
 
-    const segmentsChanged = previousSegmentsChanged + 1
-
     const totalDurationInMs =
       segment.endTimeInMs > previousTotalDurationInMs
       ? segment.endTimeInMs
@@ -808,7 +834,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     set({
       clap,
       segments,
-      segmentsChanged,
+      allSegmentsChanged: previousAllSegmentsChanged + 1,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
       totalDurationInMs,
       ...computeContentSizeMetrics({
         clap,
@@ -839,7 +866,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       cellWidth,
       defaultSegmentDurationInSteps,
       segments,
-      segmentsChanged,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+      allSegmentsChanged: previousAllSegmentsChanged,
       totalDurationInMs: previousTotalDurationInMs,
       findFreeTrack,
       assignTrack
@@ -970,7 +998,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     set({
       segments,
-      segmentsChanged: segmentsChanged + 1,
+      allSegmentsChanged: previousAllSegmentsChanged + 1,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
       ...computeContentSizeMetrics({
         clap,
         tracks,
@@ -979,6 +1008,85 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         totalDurationInMs,
       })
     })
+  },
+  addEntities: async (newEntities: ClapEntity[]) => {
+    const {
+      entities: previousEntities,
+      entitiesIndex: previousEntitiesIndex,
+      entitiesChanged: previousEntitiesChanged,
+    } = get()
+
+
+    let somethingChanged = false
+
+    for (const newEntity of newEntities) {
+      if (previousEntitiesIndex[newEntity.id]) {
+        // entity already exists
+        continue
+      }
+      previousEntities.push(newEntity)
+      previousEntitiesIndex[newEntity.id] = newEntity
+      somethingChanged = true
+    }
+
+    if (somethingChanged) {
+      set({
+        entities: previousEntities,
+        entitiesIndex: previousEntitiesIndex,
+        entitiesChanged: previousEntitiesChanged + 1,
+      })
+    }
+  },
+  updateEntities: async (newEntities: ClapEntity[]) => {
+    const {
+      entities: previousEntities,
+      entitiesIndex: previousEntitiesIndex,
+      entitiesChanged: previousEntitiesChanged,
+    } = get()
+
+    let somethingChanged = false
+    for (const newEntity of newEntities) {
+      const entity = previousEntitiesIndex[newEntity.id]
+      if (!entity) {
+        // entity doesn't exist
+        continue
+      }
+      Object.assign(entity, newEntity)
+
+      // to optimize things, we could check if the assign really did change something
+      somethingChanged = true
+    }
+
+    if (somethingChanged) {
+      set({
+        entities: previousEntities,
+        entitiesIndex: previousEntitiesIndex,
+        entitiesChanged: previousEntitiesChanged + 1,
+      })
+    }
+  },
+  deleteEntities: async (entitiesToDelete: (ClapEntity|string)[]) => {
+    const {
+      entities: previousEntities,
+      entitiesIndex: previousEntitiesIndex,
+      entitiesChanged: previousEntitiesChanged,
+    } = get()
+
+    let idsToDelete: string[] = []
+  
+    for (const newEntityOrId of entitiesToDelete) {
+      const id = typeof newEntityOrId === "string" ? newEntityOrId : newEntityOrId.id
+      delete previousEntitiesIndex[id]
+      idsToDelete.push(id)
+    }
+
+    if (idsToDelete.length) {
+      set({
+        entities: previousEntities.filter(e => !idsToDelete.includes(e.id)),
+        entitiesIndex: previousEntitiesIndex,
+        entitiesChanged: previousEntitiesChanged + 1,
+      })
+    }
   }
 }
 ))

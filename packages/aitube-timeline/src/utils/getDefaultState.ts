@@ -10,11 +10,14 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
   return {
     clap: newClap(),
     segments: [],
-    segmentsChanged: 0,
     totalDurationInMs: 0,
     loadedSegments: [],
     visibleSegments: [],
     lineNumberToMentionedSegments: {},
+
+    entities: [],
+    entitiesIndex: {},
+    entitiesChanged: 0,
 
     isEmpty: true,
     isLoading: false,
@@ -53,9 +56,11 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     editedSegment: undefined,
     selectedSegments: [],
     
-    // used to track silent in-line changes in the segments
-    // that way we don't need to re-draw the whole thing
-    silentChangesInSegments: 0,
+    allSegmentsChanged: 0,
+    atLeastOneSegmentChanged: 0,
+  
+    // the purpose is to allow an external component
+    // to modify the segments in-line, and then trigger a redraw
     silentChangesInSegment: {},
 
     scrollX: 0,
