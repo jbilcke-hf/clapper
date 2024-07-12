@@ -1,18 +1,19 @@
 {
   "name": "@aitube/clapper",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "description": "🎬 Clapper",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "npm i && next dev",
+    "build": "npm i && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix"
   },
   "dependencies": {
     "@aitube/broadway": "0.0.22",
     "@aitube/clap": "0.0.30",
-    "@aitube/clapper-services": "0.0.22",
+    "@aitube/clapper-services": "0.0.23",
     "@aitube/engine": "0.0.26",
     "@aitube/timeline": "0.0.42",
     "@fal-ai/serverless-client": "^0.11.0",
