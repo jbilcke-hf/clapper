@@ -1,6 +1,6 @@
 "use client"
 
-import { ClapAssetSource, ClapProject, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType, newSegment, parseClap, serializeClap } from "@aitube/clap"
+import { ClapAssetSource, ClapEntity, ClapProject, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType, newClap, newSegment, parseClap, serializeClap } from "@aitube/clap"
 import { TimelineStore, useTimeline, TimelineSegment } from "@aitube/timeline"
 import { ParseScriptProgressUpdate, parseScriptToClap } from "@aitube/broadway"
 import { TaskCategory, TaskVisibility } from "@aitube/clapper-services"
@@ -741,9 +741,31 @@ export const useIO = create<IOStore>((set, get) => ({
 
   saveOpenTimelineIO: async () => {
 
-  }
-}))
+  },
 
+  saveEntitiesToClap: async (entities: ClapEntity[]): Promise<void> => {
+    const blob = await serializeClap(newClap({ entities }))
+    get().saveAnyFile(blob, `my_entities.clap`)
+  },
+
+  openEntitiesFromClap: async (file: File): Promise<ClapEntity[]> => {
+    if (!file) {
+      throw new Error("openEntities: no file provided")
+    }
+
+    const input = `${file.name || ""}`
+    const fileType = `${file.type || ""}`
+    console.log(`file type: ${fileType}`)
+
+    const isClapFile = parseFileName(input).extension === "clap"
+    if (!isClapFile) {
+      throw new Error(`openEntities: cannot open this file type: ${fileType}`)
+    }
+
+    const { entities } = await parseClap(file)
+    return entities
+  },
+}))
 
 if (typeof window !== "undefined") {
   (window as any).useIO = useIO

@@ -361,16 +361,17 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     }
   },
 
-    /**
-   * This resolve an entity (eg. aa character or a location)
+  /**
+   * This resolve an entity (eg. a character or a location)
    * 
-   * Note: while we return a clap segment, the original will be replaced, too
+   * This will generate for instance an image and a voice 
+   * for the entity, based on the entity description.
    * 
    * @param segment 
    * @returns 
    */
   resolveEntity: async (entity: ClapEntity): Promise<ClapEntity> => {
-
+    throw new Error("Not implemented (TODO by @Julian)")
   },
 
   /**
