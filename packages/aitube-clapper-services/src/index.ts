@@ -51,6 +51,7 @@ export {
   SimulatorService,
   TimelineService,
   UIService,
+  IOService,
   PrivateServices,
   PublicServices,
   Services,
@@ -174,6 +175,14 @@ export {
   UIState,
   UIControls
 } from "./ui"
+
+export {
+  ResourceType,
+  ResourceCategory,
+  IOState,
+  IOControls,
+  IOStore
+} from "./io"
 
 export {
   VersionedState,

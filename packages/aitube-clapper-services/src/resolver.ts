@@ -1,3 +1,4 @@
+import { ClapEntity } from "@aitube/clap"
 import { TimelineSegment } from "@aitube/timeline"
 
 export type ResolverState = {
@@ -43,8 +44,19 @@ export type ResolverControls = {
   runLoop: () => Promise<void>
 
   togglePause: (isPaused?: boolean) => boolean
+  
+  /**
+   * This resolve an entity (eg. a character or a location)
+   * 
+   * This will generate for instance an image and a voice 
+   * for the entity, based on the entity description.
+   * 
+   * @param segment 
+   * @returns 
+   */
+  resolveEntity: (entity: ClapEntity) => Promise<ClapEntity>
 
-    /**
+  /**
    * This resolve a segment
    * 
    * Note: while we return a clap segment, the original will be replaced, too
