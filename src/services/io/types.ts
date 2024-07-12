@@ -1,3 +1,4 @@
+import { ClapEntity } from "@aitube/clap"
 
 /**
  * Describe a resource file type that has been uploaded and attached to a project
@@ -53,6 +54,9 @@ export type IOControls = {
 
   openOpenTimelineIO: (file: File) => Promise<void>
   saveOpenTimelineIO: () => Promise<void>
+
+  saveEntitiesToClap: (entities: ClapEntity[]) => Promise<void>
+  openEntitiesFromClap: (file: File) => Promise<ClapEntity[]> 
 }
 
 export type IOStore =
