@@ -46,7 +46,6 @@ function EntityList({ onSelectEntity }: {
                 selectEntity(entity.id);
                 onSelectEntity(entity.id);
               }}
-              className={`${current && current?.id === entity.id ? "border" : ""}`}
               variant="ghost"
             >
               {entity.label} ({entity.category})
