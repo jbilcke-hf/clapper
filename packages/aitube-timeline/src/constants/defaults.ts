@@ -1,6 +1,5 @@
 import { ClapTimelineTheme } from "@/types"
-import { ClapSegmentCategory } from "@aitube/clap"
-import { baseClapSegmentCategoryHues, pastel } from "./themes"
+import { pastel } from "./themes"
 
 
 export const DEFAULT_MIN_ZOOM = 0.2

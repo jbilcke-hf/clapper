@@ -1,6 +1,12 @@
 import { ClapSegmentCategory } from "@aitube/clap"
 
-export type ClapSegmentCategoryHues = Record<ClapSegmentCategory, number>
+export type ClapSegmentCategoryHSL = {
+  hue: number
+  saturation: number
+  lightness: number
+}
+
+export type ClapSegmentCategoryColors = Record<ClapSegmentCategory, ClapSegmentCategoryHSL>
 
 export type ClapTimelineTheme = {
   topBarTimeScale: {
@@ -17,9 +23,7 @@ export type ClapTimelineTheme = {
     backgroundColor: string
   }
   cell: {
-    saturation: number
-    lightness: number
-    hues: ClapSegmentCategoryHues
+    categoryColors: ClapSegmentCategoryColors
 
     waveform: {
       lineSpacing: number

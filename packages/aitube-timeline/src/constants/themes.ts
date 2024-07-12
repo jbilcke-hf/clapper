@@ -1,34 +1,34 @@
 import { ClapSegmentCategory } from "@aitube/clap"
 
 import { ClapTimelineTheme } from "@/types"
-import { ClapSegmentCategoryHues } from "@/types/theme"
+import { ClapSegmentCategoryColors } from "@/types/theme"
 
 export const leftBarTrackScaleWidth = 120
 export const topBarTimeScaleHeight = 40
 
-export const baseClapSegmentCategoryHues: ClapSegmentCategoryHues = {
-  [ClapSegmentCategory.SPLAT]: 347,
-  [ClapSegmentCategory.MESH]: 32,
-  [ClapSegmentCategory.DEPTH]: 242,
-  [ClapSegmentCategory.EVENT]: 270,
-  [ClapSegmentCategory.INTERFACE]: 216,
-  [ClapSegmentCategory.PHENOMENON]: 270,
-  [ClapSegmentCategory.VIDEO]: 70,
-  [ClapSegmentCategory.STORYBOARD]: 70,
-  [ClapSegmentCategory.TRANSITION]: 55,
-  [ClapSegmentCategory.CHARACTER]: 285.8,
-  [ClapSegmentCategory.LOCATION]: 80.9,
-  [ClapSegmentCategory.TIME]: 250,
-  [ClapSegmentCategory.ERA]: 250,
-  [ClapSegmentCategory.LIGHTING]: 50,
-  [ClapSegmentCategory.WEATHER]: 197.2,
-  [ClapSegmentCategory.ACTION]: 3,
-  [ClapSegmentCategory.MUSIC]: 100,
-  [ClapSegmentCategory.SOUND]: 60,
-  [ClapSegmentCategory.DIALOGUE]: 23,
-  [ClapSegmentCategory.STYLE]: 285,
-  [ClapSegmentCategory.CAMERA]: 10,
-  [ClapSegmentCategory.GENERIC]: 200,
+export const baseClapSegmentCategoryColors: ClapSegmentCategoryColors = {
+  [ClapSegmentCategory.SPLAT]: { hue: 347, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.MESH]: { hue: 32, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.DEPTH]: { hue: 242, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.EVENT]: { hue: 270, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.INTERFACE]: { hue: 216, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.PHENOMENON]: { hue: 270, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.VIDEO]: { hue: 70, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.STORYBOARD]: { hue: 70, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.TRANSITION]: { hue: 55, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.CHARACTER]: { hue: 285.8, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.LOCATION]: { hue: 80.9, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.TIME]: { hue: 250, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.ERA]: { hue: 250, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.LIGHTING]: { hue: 50, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.WEATHER]: { hue: 197.2, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.ACTION]: { hue: 3, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.MUSIC]: { hue: 100, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.SOUND]: { hue: 60, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.DIALOGUE]: { hue: 23, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.STYLE]: { hue: 285, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.CAMERA]: { hue: 10, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.GENERIC]: { hue: 200, saturation: 30, lightness: 78.6 },
 }
 
 export const pastel: ClapTimelineTheme = {
@@ -46,9 +46,7 @@ export const pastel: ClapTimelineTheme = {
     backgroundColor: "#27272A",
   },
   cell: {
-    saturation: 30,
-    lightness: 78.6,
-    hues: baseClapSegmentCategoryHues,
+    categoryColors: baseClapSegmentCategoryColors,
 
     waveform: {
       // "original" style
