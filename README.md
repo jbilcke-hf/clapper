@@ -104,6 +104,6 @@ There are no automated tests yet, @jbilcke-hf will act as the "QA engineer".
 
 ### Architecture
 
-
 ![Arch|800](documentation/diagrams/architecture-draft.png)
 
+For convenience, you can access and inspect any of the services at runtime (in the browser's JS console) by typing `useUI.getState(), useIO.getState()` etc
