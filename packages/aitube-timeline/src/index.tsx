@@ -28,7 +28,6 @@ export {
   PROMPT_STEP_HEIGHT_IN_PX,
   PREVIEW_STEP_HEIGHT_IN_PX,
   NB_MAX_SHOTS,
-  baseClapSegmentCategoryHues,
   pastel,
   segmentVisibilityPriority,
   leftBarTrackScaleWidth
@@ -79,7 +78,8 @@ export {
   TimelineStoreState,
   TimelineStoreModifiers,
   ClapTimelineTheme,
-  ClapSegmentCategoryHues,
+  ClapSegmentCategoryHSL,
+  ClapSegmentCategoryColors,
   ClapSegmentColorScheme,
   RenderingStrategy,
  type SegmentResolver,

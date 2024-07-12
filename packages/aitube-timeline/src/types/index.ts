@@ -16,7 +16,8 @@ export {
 
 export {
   ClapTimelineTheme,
-  ClapSegmentCategoryHues,
+  ClapSegmentCategoryHSL,
+  ClapSegmentCategoryColors,
   ClapSegmentColorScheme
 } from "./theme"
 

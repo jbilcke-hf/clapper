@@ -22,7 +22,6 @@ export {
 } from "./priorities"
 
 export {
-  baseClapSegmentCategoryHues,
   pastel,
   leftBarTrackScaleWidth
 } from "./themes"

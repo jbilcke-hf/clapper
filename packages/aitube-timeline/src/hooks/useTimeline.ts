@@ -6,7 +6,7 @@ import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { hslToHex, findFreeTrack, getAudioBuffer, getFinalVideo, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment } from "@/utils"
-import { ClapSegmentCategoryHues, ClapSegmentColorScheme, ClapTimelineTheme, SegmentResolver } from "@/types"
+import { ClapSegmentCategoryColors, ClapSegmentColorScheme, ClapTimelineTheme, SegmentResolver } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
@@ -190,6 +190,9 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     set({
       clap,
       segments,
+      entities: clap.entities,
+      entityIndex: clap.entityIndex,
+      entitiesChanged: 0,
       loadedSegments: [],
       visibleSegments: [],
       atLeastOneSegmentChanged: 1,
@@ -274,9 +277,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     let baseHue = 0
 
-    let baseSaturation = theme.cell.saturation
-
-    let baseLightness = theme.cell.lightness
+    let baseSaturation = theme.cell.categoryColors.generic.saturation
+    let baseLightness = theme.cell.categoryColors.generic.lightness
     
     let backgroundColorSaturation = (segment.isSelected ? 2.2 : 1.4) * baseSaturation
     let backgroundColorHoverSaturation = (segment.isSelected ? 2.2 : 1.8) * baseSaturation
@@ -301,12 +303,14 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     if (!segment) { return colorScheme }
 
-    const clapSegmentCategoryHues: ClapSegmentCategoryHues = theme.cell.hues
+    const clapSegmentCategoryColors: ClapSegmentCategoryColors = theme.cell.categoryColors
 
-    const candidateHue = clapSegmentCategoryHues[segment.category]
-    if (!candidateHue) { return colorScheme }
+    const candidateHSL = clapSegmentCategoryColors[segment.category]
+    if (!candidateHSL) { return colorScheme }
 
-    baseHue = candidateHue
+    baseHue = candidateHSL.hue
+    baseSaturation = candidateHSL.saturation
+    baseLightness = candidateHSL.lightness
 
     colorScheme = {
       baseHue,
@@ -1012,7 +1016,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   addEntities: async (newEntities: ClapEntity[]) => {
     const {
       entities: previousEntities,
-      entitiesIndex: previousEntitiesIndex,
+      entityIndex: previousentityIndex,
       entitiesChanged: previousEntitiesChanged,
     } = get()
 
@@ -1020,19 +1024,19 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     let somethingChanged = false
 
     for (const newEntity of newEntities) {
-      if (previousEntitiesIndex[newEntity.id]) {
+      if (previousentityIndex[newEntity.id]) {
         // entity already exists
         continue
       }
       previousEntities.push(newEntity)
-      previousEntitiesIndex[newEntity.id] = newEntity
+      previousentityIndex[newEntity.id] = newEntity
       somethingChanged = true
     }
 
     if (somethingChanged) {
       set({
         entities: previousEntities,
-        entitiesIndex: previousEntitiesIndex,
+        entityIndex: previousentityIndex,
         entitiesChanged: previousEntitiesChanged + 1,
       })
     }
@@ -1040,13 +1044,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   updateEntities: async (newEntities: ClapEntity[]) => {
     const {
       entities: previousEntities,
-      entitiesIndex: previousEntitiesIndex,
+      entityIndex: previousentityIndex,
       entitiesChanged: previousEntitiesChanged,
     } = get()
 
     let somethingChanged = false
     for (const newEntity of newEntities) {
-      const entity = previousEntitiesIndex[newEntity.id]
+      const entity = previousentityIndex[newEntity.id]
       if (!entity) {
         // entity doesn't exist
         continue
@@ -1060,7 +1064,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     if (somethingChanged) {
       set({
         entities: previousEntities,
-        entitiesIndex: previousEntitiesIndex,
+        entityIndex: previousentityIndex,
         entitiesChanged: previousEntitiesChanged + 1,
       })
     }
@@ -1068,7 +1072,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   deleteEntities: async (entitiesToDelete: (ClapEntity|string)[]) => {
     const {
       entities: previousEntities,
-      entitiesIndex: previousEntitiesIndex,
+      entityIndex: previousentityIndex,
       entitiesChanged: previousEntitiesChanged,
     } = get()
 
@@ -1076,14 +1080,14 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   
     for (const newEntityOrId of entitiesToDelete) {
       const id = typeof newEntityOrId === "string" ? newEntityOrId : newEntityOrId.id
-      delete previousEntitiesIndex[id]
+      delete previousentityIndex[id]
       idsToDelete.push(id)
     }
 
     if (idsToDelete.length) {
       set({
         entities: previousEntities.filter(e => !idsToDelete.includes(e.id)),
-        entitiesIndex: previousEntitiesIndex,
+        entityIndex: previousentityIndex,
         entitiesChanged: previousEntitiesChanged + 1,
       })
     }

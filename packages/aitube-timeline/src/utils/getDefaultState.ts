@@ -16,7 +16,7 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     lineNumberToMentionedSegments: {},
 
     entities: [],
-    entitiesIndex: {},
+    entityIndex: {},
     entitiesChanged: 0,
 
     isEmpty: true,

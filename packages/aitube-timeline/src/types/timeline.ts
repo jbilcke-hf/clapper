@@ -145,7 +145,7 @@ export type TimelineStoreProjectState = {
   lineNumberToMentionedSegments: Record<number, TimelineSegment[]>
 
   entities: ClapEntity[]
-  entitiesIndex: Record<string, ClapEntity>
+  entityIndex: Record<string, ClapEntity>
   entitiesChanged: number
 
   isEmpty: boolean
