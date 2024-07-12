@@ -1,6 +1,6 @@
 "use client"
 
-import { ClapAssetSource, ClapProject, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType, newSegment, parseClap, serializeClap } from "@aitube/clap"
+import { ClapAssetSource, ClapEntity, ClapProject, ClapSegmentCategory, ClapSegmentStatus, getClapAssetSourceType, newSegment, parseClap, serializeClap } from "@aitube/clap"
 import { TimelineStore, useTimeline, TimelineSegment } from "@aitube/timeline"
 import { ParseScriptProgressUpdate, parseScriptToClap } from "@aitube/broadway"
 import { TaskCategory, TaskVisibility } from "@aitube/clapper-services"
@@ -741,7 +741,28 @@ export const useIO = create<IOStore>((set, get) => ({
 
   saveOpenTimelineIO: async () => {
 
-  }
+  },
+  
+  exportEntity: async (entity: ClapEntity) => {
+    const blob = new Blob([JSON.stringify(entity, null, 2)], { type: 'application/json' })
+    const fileName = `${entity.label.toLowerCase()}.clap`
+    get().saveAnyFile(blob, fileName)
+  },
+
+  importEntity: async (file: File): Promise<ClapEntity | undefined> => {
+    try {
+      const text = await file.text()
+      const entity = JSON.parse(text) as ClapEntity
+      if (!entity.id || !entity.label || !entity.category) {
+        throw new Error('Invalid entity file format')
+      }
+      return entity
+    } catch (error) {
+      console.error('Error importing entity:', error)
+      // You might want to show an error message to the user here
+      return undefined
+    }
+  },
 }))
 
 
