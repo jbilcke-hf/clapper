@@ -256,7 +256,7 @@ export const useIO = create<IOStore>((set, get) => ({
   },
   saveClap: async () => {
     const { saveAnyFile } = get()
-    const { clap } = useTimeline.getState()
+    const { clap, entities, entityIndex } = useTimeline.getState()
 
     if (!clap) { throw new Error(`cannot save a clap.. if there is no clap`) }
 
@@ -278,6 +278,10 @@ export const useIO = create<IOStore>((set, get) => ({
         clap.meta.durationInMs = s.endTimeInMs
       }
     }
+
+    // update the clap with the in-memory versions of the entities
+    clap.entities = entities
+    clap.entityIndex = entityIndex
 
     // TODO: serializeClap should have a progress callback, so that we can
     // track the progression.

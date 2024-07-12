@@ -82,7 +82,17 @@ export function TopMenuFile() {
             <MenubarItem onClick={() => {
               openClapUrl('/samples/claps/wasteland.clap')
             }}>
-              Wasteland
+              Wasteland.clap
+            </MenubarItem>
+            <MenubarItem onClick={() => {
+              openClapUrl('/samples/scripts/Citizen Kane.txt')
+            }}>
+              Citizen Kane.txt
+            </MenubarItem>
+            <MenubarItem onClick={() => {
+              openClapUrl('/samples/scripts/The Wizard Of Oz.txt')
+            }}>
+              The Wizard Of Oz.txt
             </MenubarItem>
           </MenubarSubContent>
         </MenubarSub>
