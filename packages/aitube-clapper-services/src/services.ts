@@ -17,6 +17,7 @@ import { SettingsStore } from "./settings"
 import { SimulatorStore } from "./simulator"
 import { TasksStore } from "./tasks"
 import { UIStore } from "./ui"
+import { IOStore } from "./io"
 
 export type AssistantService = UseBoundStore<StoreApi<AssistantStore>>
 export type AudioService = UseBoundStore<StoreApi<AudioStore>>
@@ -35,6 +36,7 @@ export type TasksService = UseBoundStore<StoreApi<TasksStore>>
 export type TimelineService = UseBoundStore<StoreApi<TimelineStore>>
 export type PluginsService = UseBoundStore<StoreApi<PluginsStore>>
 export type UIService = UseBoundStore<StoreApi<UIStore>>
+export type IOService = UseBoundStore<StoreApi<IOStore>>
 
 export type PrivateServices = {
   plugins: PluginsService
@@ -59,6 +61,7 @@ export type PublicServices = {
   broadcast: BroadcastService
   simulator: SimulatorService
   ui: UIService
+  io: IOService
 }
 
 export type Services = PrivateServices & PublicServices
