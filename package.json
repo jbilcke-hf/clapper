@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "test:unit": "vitest",
+    "test": "npm run build && npm run test:unit:ci && npm run test:e2e",
+    "test:unit:ci": "vitest run",
+    "test:unit:watch": "vitest",
     "test:e2e": "npx playwright test"
   },
   "dependencies": {
