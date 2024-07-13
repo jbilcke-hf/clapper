@@ -1,6 +1,7 @@
 export { cn } from "./cn"
 export { debounceAsync } from "./debounceAsync"
 export { debounceSync } from "./debounceSync"
+export { formatDuration } from "./formatDuration"
 export { getValidBoolean } from "./getValidBoolean"
 export { getValidNumber } from "./getValidNumber"
 export { getValidString } from "./getValidString"
