@@ -5,6 +5,12 @@ export {
 } from "./assistant"
 
 export {
+  MicStore,
+  MicState,
+  MicControls,
+} from "./mic"
+
+export {
   AudioAnalysis,
   AudioState,
   AudioControls,
@@ -37,6 +43,7 @@ export {
 export {
   AudioService,
   AssistantService,
+  MicService,
   TasksService,
   BroadcastService,
   ProjectEditorService,

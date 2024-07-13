@@ -4,13 +4,6 @@ import { ChatEvent, ChatHistory } from "./base-types"
  * Assistant 
  */
 export type AssistantState = {
-  isVoiceEnabled: boolean
-
-  /**
-   * The last transcript detected by the speech-to-text engine
-   */
-  transcript: string
-
   /**
    * the chat history
    */
@@ -22,16 +15,6 @@ export type AssistantState = {
   socket?: WebSocket
 }
 export type AssistantControls = {
-
-  /**
-   * Toggle the speech to text on or off
-   * 
-   * @returns true if operation succeeded, false otherwise
-   */
-  toggleVoice: () => boolean
-
-  setVoiceTranscript: (transcript: string) => void
-
   /**
    * Run a prompt command (which can come from a transcript or somewhere else)
    * 
