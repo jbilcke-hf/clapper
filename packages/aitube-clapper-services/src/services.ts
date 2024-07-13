@@ -2,6 +2,7 @@ import { StoreApi, UseBoundStore } from "zustand"
 import { TimelineStore } from "@aitube/timeline"
 
 import { AssistantStore } from "./assistant"
+import { MicStore } from "./mic"
 import { BroadcastStore } from "./broadcast"
 import { SegmentEditorStore } from "./segment-editor"
 import { EntityEditorStore } from "./entity-editor"
@@ -20,6 +21,7 @@ import { UIStore } from "./ui"
 import { IOStore } from "./io"
 
 export type AssistantService = UseBoundStore<StoreApi<AssistantStore>>
+export type MicService = UseBoundStore<StoreApi<MicStore>>
 export type AudioService = UseBoundStore<StoreApi<AudioStore>>
 export type BroadcastService = UseBoundStore<StoreApi<BroadcastStore>>
 export type SegmentEditorService = UseBoundStore<StoreApi<SegmentEditorStore>>
@@ -47,6 +49,7 @@ export type PrivateServices = {
 // missing from this list are the settings and the plugins store itself
 export type PublicServices = {
   assistant: AssistantService
+  mic: MicService
   audio: AudioService
   tasks: TasksService
   segmentEditor: SegmentEditorService
