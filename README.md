@@ -102,17 +102,33 @@ I haven't setup Prettier or a Linter yet.
 
 @jbilcke-hf is working to add tests, and will also act as the "QA engineer".
 
+To run all the tests (unit and e2e) please run: 
+
+`npm test`
+
+This is not instantaneous: playwright may seems to do nothing for a while at first.
+
 #### Unit tests
 
-Note: I've just added Vitest, we don't have tests yet.
+Note: I've just added Vitest so we only have like 2 tests for now.
 
-`npm run test`
+
+To run the test without watching, type:
+`npm run test:unit:ci`
+
+To run the tests with watching, type:
+`npm run test:unit:watch`
 
 #### End-to-end tests
 
+Note: I've just added Playwright, but we don't really have tests yet.
 
-Note: I've just added Playwright, we don't have tests yet.
+Please note that due to the app needing to build during 30~60s (depending on the speed of your computer), running those tests may
+take some time to execute.
 
+`npm run test:e2e`
+
+More Playwright commands:
   `npx playwright test`
     Runs the end-to-end tests.
 
