@@ -1,5 +1,6 @@
 import { useTasks } from "@/components/tasks/useTasks"
 import { useAssistant } from "./assistant/useAssistant"
+import { useMic } from "./mic/useMic"
 import { useAudio } from "./audio/useAudio"
 import { useBroadcast } from "./broadcast/useBroadcast"
 import { useEditors, useEntityEditor, useProjectEditor, useScriptEditor, useSegmentEditor } from "./editors"
@@ -18,6 +19,7 @@ if (typeof window !== "undefined") {
   const w = window as any
   w.useTasks = useTasks
   w.useAssistant = useAssistant
+  w.useMic = useMic
   w.useAudio = useAudio
   w.useBroadcast = useBroadcast
   w.useEditors = useEditors

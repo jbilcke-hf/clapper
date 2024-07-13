@@ -1,6 +1,6 @@
 {
   "name": "@aitube/clapper",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "description": "🎬 Clapper",
   "scripts": {
@@ -8,12 +8,14 @@
     "build": "npm i && next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:fix": "next lint --fix"
+    "lint:fix": "next lint --fix",
+    "test:unit": "vitest",
+    "test:e2e": "npx playwright test"
   },
   "dependencies": {
     "@aitube/broadway": "0.0.22",
     "@aitube/clap": "0.0.30",
-    "@aitube/clapper-services": "0.0.23",
+    "@aitube/clapper-services": "0.0.25",
     "@aitube/engine": "0.0.26",
     "@aitube/timeline": "0.0.42",
     "@fal-ai/serverless-client": "^0.11.0",
@@ -55,12 +57,14 @@
     "@react-three/uikit": "^0.3.4",
     "@react-three/uikit-lucide": "^0.3.4",
     "@tailwindcss/container-queries": "^0.1.1",
+    "@types/dom-speech-recognition": "^0.0.4",
     "@upstash/ratelimit": "^1.1.3",
     "@upstash/redis": "^1.31.1",
     "autoprefixer": "10.4.19",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^0.2.1",
+    "date-fns": "^3.6.0",
     "fflate": "^0.8.2",
     "fluent-ffmpeg": "^2.1.3",
     "framer-motion": "11.1.7",
@@ -100,17 +104,22 @@
     "zx": "^8.1.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.45.1",
+    "@testing-library/react": "^16.0.0",
     "@types/fluent-ffmpeg": "^2.1.24",
     "@types/is-hotkey": "^0.1.10",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^9.0.8",
+    "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
+    "jsdom": "^24.1.0",
     "postcss": "^8",
     "tailwind-scrollbar": "^3.1.0",
     "tailwindcss": "^3.4.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^2.0.2"
   }
 }

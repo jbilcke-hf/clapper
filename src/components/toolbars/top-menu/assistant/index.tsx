@@ -14,13 +14,13 @@ import {
 import { useUI } from "@/services/ui"
 import { SettingsCategory } from "@aitube/clapper-services"
 import { AssistantModelList } from "../lists/AssistantModelList"
-import { useInitAssistant } from "@/services/assistant/useAssistant"
+import { useVoiceAssistant } from "@/services/assistant/useVoiceAssistant"
 
 export function TopMenuAssistant() {
   const setShowSettings = useUI(s => s.setShowSettings)
 
   // this should only be called on and at only one place in the project!
-  useInitAssistant()
+  useVoiceAssistant()
 
   return (
     <MenubarMenu>

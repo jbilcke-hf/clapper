@@ -36,3 +36,7 @@ yarn-error.log*
 next-env.d.ts
 
 /sandbox/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

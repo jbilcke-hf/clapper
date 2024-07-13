@@ -23,9 +23,9 @@ export function findMainGradioEndpoint({
   const sortableEndpoints = endpoints.map(({ isNamed, name, endpoint, score }) => {
     console.log(`found endpoint: ${name}`)
 
-    const isContinuous = !!endpoint.type?.continuous
-    const isGenerator = !!endpoint.type?.generator
-    const canCancel = !!endpoint.type?.cancel
+    // const isContinuous = !!endpoint.type?.continuous
+    // const isGenerator = !!endpoint.type?.generator
+    // const canCancel = !!endpoint.type?.cancel
     
     let gradioFields: Record<string, Partial<SupportedFields>> = {}
     let allGradioFields = getDefaultFields()

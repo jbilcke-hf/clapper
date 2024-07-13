@@ -1,25 +1,27 @@
-export const HOUR = 60 * 60 * 1000; // Converted to milliseconds
-export const MINUTE = 60 * 1000; // Converted to milliseconds
+
+import {  intervalToDuration } from 'date-fns'
 
 export function formatDuration(float_ms: number) {
 
-  let float_s = float_ms / 1000; // Converted to seconds
-  
-  const hours = Math.floor(float_s / HOUR);
-  float_s = float_s % HOUR;
-  const minutes = Math.floor(float_s / MINUTE);
-  float_s = float_s % MINUTE;
-  const seconds = float_s;
+  const duration = intervalToDuration({ start: 0, end: float_ms })
 
-  return `${twoDigits(hours)}:${twoDigits(minutes)}:${twoDigits(seconds, 3)}`;
-}
+  const hours = duration.hours || 0
+  const minutes = duration.minutes || 0
+  const seconds = duration.seconds || 0
 
-export function twoDigits(number: number, decimal = 0) {
-  let [int, dec] = number.toFixed(decimal).split(".");
-  dec = dec || "";
-  if (dec == "") {
-    return int.padStart(2, "0");
-  } else {
-    return int.padStart(2, "0") + "." + dec;
-  }
+  const total =
+    (hours * 60 * 60 * 1000)
+     + (minutes * 60 * 1000)
+     + (seconds * 1000)
+
+  const formatted = [
+    duration.hours || 0,
+    duration.minutes || 0,
+    duration.seconds || 0,
+    float_ms - total
+  ]
+  .map((num, i) => String(num as number).padStart(i === 3 ? 3 : 2, '0'))
+  .join(':')
+
+  return formatted
 }

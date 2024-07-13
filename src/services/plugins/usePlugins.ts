@@ -18,6 +18,7 @@ import { fetchAndRun } from "./fetchAndRun"
 import { useEditors, useEntityEditor, useProjectEditor, useSegmentEditor } from "../editors"
 import { useSimulator } from "../simulator/useSimulator"
 import { useIO } from "../io/useIO"
+import { useMic } from "../mic/useMic"
 
 export const usePlugins = create<PluginsStore>((set, get) => ({
   ...getDefaultPluginsState(),
@@ -49,6 +50,7 @@ export const usePlugins = create<PluginsStore>((set, get) => ({
     return {
       audio: useAudio,
       assistant: useAssistant,
+      mic: useMic,
       segmentEditor: useSegmentEditor,
       entityEditor: useEntityEditor,
       projectEditor: useProjectEditor,
