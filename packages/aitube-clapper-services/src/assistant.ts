@@ -8,11 +8,6 @@ export type AssistantState = {
    * the chat history
    */
   history: ChatHistory
-
-  // those are used to stream the results to the backend
-  stream?: MediaStream
-  recorder?: MediaRecorder
-  socket?: WebSocket
 }
 export type AssistantControls = {
   /**
