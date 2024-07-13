@@ -1,10 +1,8 @@
 "use client"
 
-import { useEffect } from "react"
-import { useVoiceToText } from "react-speakup"
 import { create } from "zustand"
 import { AssistantRequest, AssistantStore, ChatEvent } from "@aitube/clapper-services"
-import { ClapOutputType, ClapProject, ClapSegmentCategory, newSegment, UUID } from "@aitube/clap"
+import { ClapOutputType, ClapSegmentCategory, newSegment, UUID } from "@aitube/clap"
 import { DEFAULT_DURATION_IN_MS_PER_STEP, findFreeTrack, TimelineSegment, TimelineStore, useTimeline } from "@aitube/timeline"
 
 import { getDefaultAssistantState } from "./getDefaultAssistantState"
@@ -13,36 +11,11 @@ import { useSettings } from "../settings"
 import { askAssistant } from "./askAssistant"
 import { useRenderer } from "../renderer"
 
-// URL to the speech to text websocket server
-export const STT_API_URL = process.env.NEXT_PUBLIC_SPEECH_TO_TEXT_API_URL || ""
-
 const enableTextToSpeech = false
 
 export const useAssistant = create<AssistantStore>((set, get) => ({
   ...getDefaultAssistantState(),
 
-  toggleVoice: (): boolean => {
-   
-    if (!navigator?.mediaDevices?.getUserMedia || !MediaRecorder.isTypeSupported("audio/webm")) {
-      console.error("This environment doesn't support microphone recording")
-      return false
-    }
-
-    if (!enableTextToSpeech) {
-      console.error("Text to speech is currently disabled, aborting")
-      return false
-    }
-
-    const isVoiceEnabled = !get().isVoiceEnabled
-
-    set({ isVoiceEnabled })
-
-    return isVoiceEnabled
-  },
-
-  setVoiceTranscript: (transcript: string) => {
-    set({ transcript })
-  },
   runCommand: (prompt: string) => {
 
     const query = prompt
@@ -256,26 +229,3 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
     }
   }
 }))
-
-export function useInitAssistant() {
-  const isVoiceEnabled = useAssistant(s => s.isVoiceEnabled)
-  const toggleVoice = useAssistant(s => s.toggleVoice)
-  const setVoiceTranscript = useAssistant(s => s.setVoiceTranscript)
-  const { startListening, stopListening, transcript } = useVoiceToText({
-    continuous: true
-  })
-
-  useEffect(() => {
-    if (isVoiceEnabled) {
-      console.log(`TODO: startListening`)
-
-      startListening()
-    } else {
-      stopListening()
-    }
-  }, [isVoiceEnabled])
-
-  useEffect(() =>  {
-    setVoiceTranscript(transcript)
-  }, [transcript])
-}
