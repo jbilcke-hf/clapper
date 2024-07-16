@@ -100,6 +100,8 @@ export type SettingsState = {
   gradioApiUrlForSound: string
   gradioApiUrlForMusic: string
 
+  scriptEditorShowLineNumbers: boolean
+  scriptEditorShowMinimap: boolean
 }
 
 export type SettingsControls = {
@@ -186,6 +188,10 @@ export type SettingsControls = {
   setGradioApiUrlForVoice: (gradioApiUrlForVoice?: string) => void
   setGradioApiUrlForSound: (gradioApiUrlForSound?: string) => void
   setGradioApiUrlForMusic: (gradioApiUrlForMusic?: string) => void
+
+  setScriptEditorShowLineNumbers: (scriptEditorShowLineNumbers: boolean) => void
+  setScriptEditorShowMinimap: (scriptEditorShowMinimap: boolean) => void
+
 
   getSettings: () => SettingsState
 }
