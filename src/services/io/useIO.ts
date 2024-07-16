@@ -34,6 +34,11 @@ import {
   formatSegmentForExport,
 } from '@/lib/utils/formatSegmentForExport'
 import { sleep } from '@/lib/utils/sleep'
+import {
+  FFMPegAudioInput,
+  FFMPegVideoInput,
+  createFullVideo,
+} from './createFullVideo'
 
 export const useIO = create<IOStore>((set, get) => ({
   ...getDefaultIOState(),
@@ -442,71 +447,121 @@ export const useIO = create<IOStore>((set, get) => ({
       value: 0,
     })
 
-    const timeline: TimelineStore = useTimeline.getState()
-    const { clap, segments: timelineSegments } = timeline
-    const segments: ExportableSegment[] = timelineSegments
-      .map((segment, i) => formatSegmentForExport(segment, i))
-      .filter(({ isExportableToFile }) => isExportableToFile)
+    try {
+      const timeline: TimelineStore = useTimeline.getState()
+      const { clap, segments: timelineSegments } = timeline
+      const segments: ExportableSegment[] = timelineSegments
+        .map((segment, i) => formatSegmentForExport(segment, i))
+        .filter(({ isExportableToFile }) => isExportableToFile)
 
-    let files: fflate.AsyncZippable = {}
+      let files: fflate.AsyncZippable = {}
 
-    files['screenplay.txt'] = fflate.strToU8(clap.meta.screenplay)
+      files['screenplay.txt'] = fflate.strToU8(clap.meta.screenplay)
 
-    files['meta.json'] = fflate.strToU8(JSON.stringify(clap.meta, null, 2))
+      files['meta.json'] = fflate.strToU8(JSON.stringify(clap.meta, null, 2))
 
-    const shotcutMltXml = await generateMLT()
-    files['shotcut_project.mlt'] = fflate.strToU8(shotcutMltXml)
+      const shotcutMltXml = await generateMLT()
+      files['shotcut_project.mlt'] = fflate.strToU8(shotcutMltXml)
 
-    segments.forEach(
-      ({
-        segment,
-        prefix,
-        filePath,
-        assetUrl,
-        assetSourceType,
-        isExportableToFile,
-      }) => {
-        // we extract the base64 files
-        if (isExportableToFile) {
-          files[filePath] = [
-            // we don't compress assets since normally they already use
-            // some form of compression (PNG, JPEG, MP3, MP4 etc..)
-            base64DataUriToUint8Array(segment.assetUrl),
-            { level: 0 },
-          ]
-          assetUrl = filePath
-          assetSourceType = ClapAssetSource.PATH
-        }
+      const videos: FFMPegVideoInput[] = []
+      const audios: FFMPegAudioInput[] = []
 
-        // segment metadata
-        files[`segments/${prefix}${segment.id}.json`] = fflate.strToU8(
-          JSON.stringify(
-            {
-              ...segment,
-              assetUrl,
-              assetSourceType,
-            },
-            null,
-            2
+      segments.forEach(
+        ({
+          segment,
+          prefix,
+          filePath,
+          assetUrl,
+          assetSourceType,
+          isExportableToFile,
+        }) => {
+          // we extract the base64 files
+          if (isExportableToFile) {
+            files[filePath] = [
+              // we don't compress assets since normally they already use
+              // some form of compression (PNG, JPEG, MP3, MP4 etc..)
+              base64DataUriToUint8Array(segment.assetUrl),
+              { level: 0 },
+            ]
+            assetUrl = filePath
+            assetSourceType = ClapAssetSource.PATH
+
+            if (filePath.startsWith('video/')) {
+              videos.push({
+                data: base64DataUriToUint8Array(segment.assetUrl),
+                startTimeInMs: segment.startTimeInMs,
+                endTimeInMs: segment.endTimeInMs,
+                durationInSecs: segment.assetDurationInMs / 1000,
+              })
+            }
+
+            if (
+              filePath.startsWith('music/') ||
+              filePath.startsWith('dialogue/')
+            ) {
+              audios.push({
+                data: base64DataUriToUint8Array(segment.assetUrl),
+                startTimeInMs: segment.startTimeInMs,
+                endTimeInMs: segment.endTimeInMs,
+                durationInSecs: segment.assetDurationInMs / 1000,
+              })
+            }
+          }
+
+          // segment metadata
+          files[`segments/${prefix}${segment.id}.json`] = fflate.strToU8(
+            JSON.stringify(
+              {
+                ...segment,
+                assetUrl,
+                assetSourceType,
+              },
+              null,
+              2
+            )
           )
-        )
-      }
-    )
+        }
+      )
 
-    fflate.zip(
-      files,
-      {
-        // options
-      },
-      (error, zipFile) => {
-        task.setProgress({
-          message: 'Saving to file..',
-          value: 90,
-        })
-        saveAnyFile(new Blob([zipFile]), 'my_project.zip')
-        task.success()
-      }
-    )
+      const fullVideo = await createFullVideo(
+        videos,
+        audios,
+        1024,
+        576,
+        timeline.totalDurationInMs,
+        (progress, message) => {
+          task.setProgress({
+            message,
+            value: progress * 0.9,
+          })
+        }
+      )
+
+      files['video/full.mp4'] = [
+        // we don't compress assets since normally they already use
+        // some form of compression (PNG, JPEG, MP3, MP4 etc..)
+        fullVideo as Uint8Array,
+        { level: 0 },
+      ]
+
+      fflate.zip(
+        files,
+        {
+          // options
+        },
+        (error, zipFile) => {
+          task.setProgress({
+            message: 'Saving to file..',
+            value: 100,
+          })
+          saveAnyFile(new Blob([zipFile]), 'my_project.zip')
+          task.success()
+        }
+      )
+    } catch (err) {
+      console.error(err)
+      task.fail(`${err || 'unknown error'}`)
+    }
   },
 
   openMLT: async (file: File) => {},
