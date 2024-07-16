@@ -18,6 +18,7 @@ export enum SettingsCategory {
   NONE = "NONE",
   PROVIDER = "PROVIDER",
   ASSISTANT = "ASSISTANT",
+  EDITORS = "EDITORS",
   IMAGE = "IMAGE",
   VIDEO = "VIDEO",
   VOICE = "VOICE",
