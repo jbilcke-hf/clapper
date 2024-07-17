@@ -2,9 +2,10 @@ import { cn } from "@aitube/timeline"
 
 import { Menubar } from "@/components/ui/menubar"
 import { APP_REVISION } from "@/lib/core/constants"
-import { useResolver } from "@/services/resolver/useResolver"
+import { useUI, useResolver } from "@/services"
 
 import { TopMenuFile } from "./file"
+import { TopMenuEdit } from "./edit"
 import { TopMenuImage } from "./image"
 import { TopMenuVideo } from "./video"
 import { TopMenuVoice } from "./voice"
@@ -18,10 +19,13 @@ import { TopMenuPlugins } from "./plugins"
 export function TopMenu() {
   const isBusyResolving = useResolver(s => s.isBusyResolving)
 
+  const hasBetaAccess = useUI(s => s.hasBetaAccess)
+
   return (
     <Menubar className="w-full ml-1">
       <TopMenuLogo />
       <TopMenuFile />
+      {hasBetaAccess && <TopMenuEdit />}
       <TopMenuImage />
       <TopMenuVideo />
       <TopMenuVoice />

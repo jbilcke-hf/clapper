@@ -303,6 +303,12 @@ export const useSettings = create<SettingsStore>()(
       setGradioApiUrlForMusic: (gradioApiUrlForMusic?: string) => {
         set({ gradioApiUrlForMusic: getValidString(gradioApiUrlForMusic, getDefaultSettingsState().gradioApiUrlForMusic) })
       },
+      setScriptEditorShowLineNumbers: (scriptEditorShowLineNumbers: boolean) => {
+        set({ scriptEditorShowLineNumbers: getValidBoolean(scriptEditorShowLineNumbers, getDefaultSettingsState().scriptEditorShowLineNumbers) })
+      },
+      setScriptEditorShowMinimap: (scriptEditorShowMinimap: boolean) => {
+        set({ scriptEditorShowMinimap: getValidBoolean(scriptEditorShowMinimap, getDefaultSettingsState().scriptEditorShowMinimap) })
+      },
       /*
       should we deprecate this? or rename to "default<something>"?
       setHuggingFaceModelForAssistant: (huggingFaceModelForAssistant?: string) => {
@@ -587,7 +593,8 @@ export const useSettings = create<SettingsStore>()(
           gradioApiUrlForVoice: state.gradioApiUrlForVoice || defaultSettings.gradioApiUrlForVoice,
           gradioApiUrlForSound: state.gradioApiUrlForSound || defaultSettings.gradioApiUrlForSound,
           gradioApiUrlForMusic: state.gradioApiUrlForMusic || defaultSettings.gradioApiUrlForMusic,
-          
+          scriptEditorShowLineNumbers: state.scriptEditorShowLineNumbers || defaultSettings.scriptEditorShowLineNumbers,
+          scriptEditorShowMinimap: state.scriptEditorShowMinimap || defaultSettings.scriptEditorShowMinimap,
           /*
           should we deprecate this? or rename to "default<something>"?
           huggingFaceModelForAssistant: state.huggingFaceModelForAssistant || defaultSettings.huggingFaceModelForAssistant,
