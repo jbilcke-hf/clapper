@@ -34,9 +34,8 @@ export function FormDir({
       return
     }
 
-    const files = Array.from(event.currentTarget.files || [])
-    onChange(files)
-  }, [])
+    onChange(Array.from<File>(event.currentTarget.files || []))
+  }, [disabled, onChange])
 
   return (
     <FormField

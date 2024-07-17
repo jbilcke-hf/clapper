@@ -44,7 +44,7 @@ export function StaticPlayer({
   useEffect(() => {
     if (!ref.current) { return }
     setStaticVideoRef(ref.current)
-  }, [ref])
+  }, [setStaticVideoRef])
 
   const placeholder = <div
     className="

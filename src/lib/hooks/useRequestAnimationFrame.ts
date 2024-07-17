@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useEffect, useRef } from 'react'
 
 type Config = {
   duration?: number
@@ -30,8 +30,8 @@ export const useRequestAnimationFrame = (
   }
     */
 
-  const frame = React.useRef(0)
-  const firstFrameTime = React.useRef(performance.now())
+  const frame = useRef(0)
+  const firstFrameTime = useRef(performance.now())
 
   const animate = (now: number) => {
     // calculate at what time fraction we are currently of whole time of animation
@@ -48,7 +48,7 @@ export const useRequestAnimationFrame = (
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (shouldAnimate) {
       firstFrameTime.current = performance.now()
       frame.current = requestAnimationFrame(animate)
@@ -57,6 +57,7 @@ export const useRequestAnimationFrame = (
     }
 
     return () => cancelAnimationFrame(frame.current)
+  // eslint-disable-next-line
   }, [shouldAnimate])
 }
 

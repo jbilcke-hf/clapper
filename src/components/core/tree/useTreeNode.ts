@@ -77,7 +77,7 @@ export function useTreeNode<T extends ElementType>(
       // Ensure the action is dispatched only once, otherwise we wouldn't be able to collapse the node
       dispatchOnce.current = true
     }
-  }, [id, options.isExpanded, open, dispatch])
+  }, [id, options?.isExpanded, options?.data?.nodeType, open, dispatch])
 
   return useMemo(() => {
     const isOpen = open.get(id) ?? false
@@ -189,6 +189,8 @@ export function useTreeNode<T extends ElementType>(
     open,
     options.isFolder,
     options.selectionType,
+    options?.data?.nodeType,
+    options?.data?.data,
     options.isExpanded,
     select,
     selectedId,

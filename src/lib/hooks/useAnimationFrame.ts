@@ -18,5 +18,6 @@ export function useAnimationFrame(callback: (time: number) => void, deps: Depend
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(requestRef.current as any);
+  // eslint-disable-next-line
   }, deps); // Make sure the effect runs only once
 }

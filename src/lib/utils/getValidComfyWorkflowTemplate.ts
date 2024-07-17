@@ -1,3 +1,10 @@
+/**
+ * Take a string, try to unpack it as JSON to validate it, return a string
+ * 
+ * @param something 
+ * @param defaultComfyWorkflowTemplate 
+ * @returns 
+ */
 export function getValidComfyWorkflowTemplate(something: any, defaultComfyWorkflowTemplate: string) {
   const strValue = `${something || defaultComfyWorkflowTemplate}`
   try {

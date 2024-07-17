@@ -69,10 +69,8 @@ export const DynamicPlayer = ({
     return () => {
       clearTimeout(timeoutRef.current)
     }
-  }, [
-    currentSegmentKey,
-    preloadSegmentKey
-  ])
+  // eslint-disable-next-line
+  }, [currentSegmentKey, preloadSegmentKey])
 
   return (
     <div className={cn(`

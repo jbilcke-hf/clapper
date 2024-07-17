@@ -18,7 +18,7 @@ export function ProjectEditor() {
 
   useEffect(() => {
     setCurrent(clap?.meta)
-  }, [clap?.meta])
+  }, [clap?.meta, setCurrent])
   
   if (!current) {
     return <div>

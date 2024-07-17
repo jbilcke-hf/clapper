@@ -42,7 +42,7 @@ export function TopMenuFile() {
       }
       await openClapUrl(clapUrl)
     })()
-  }, [clapUrl])
+  }, [openClapUrl, clapUrl])
 
   // const setShowSettings = useUISettings(s => s.setShowSettings)
   useHotkeys('ctrl+o', () => openFilePicker(), { preventDefault: true }, [])

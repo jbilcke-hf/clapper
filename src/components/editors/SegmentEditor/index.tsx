@@ -18,7 +18,8 @@ export function SegmentEditor() {
 
   useEffect(() => {
     setCurrent(selectedSegments.at(-1))
-  }, [selectedSegments.map(s => s.id).join(',')])
+  // eslint-disable-next-line
+  }, [setCurrent, selectedSegments.map(s => s.id).join(',')])
 
   if (!current) {
     return <div>
