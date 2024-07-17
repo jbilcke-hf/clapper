@@ -1,11 +1,13 @@
-import { ClapSegmentStatus, getClapAssetSourceType } from "@aitube/clap"
+import { ClapSegmentStatus, getClapAssetSourceType } from '@aitube/clap'
 
-import { ResolveRequest } from "@aitube/clapper-services"
-import { getComfyWorkflow } from "../comfy/getComfyWorkflow"
-import { runWorkflow } from "./runWorkflow"
-import { TimelineSegment } from "@aitube/timeline"
+import { ResolveRequest } from '@aitube/clapper-services'
+import { getComfyWorkflow } from '../comfy/getComfyWorkflow'
+import { runWorkflow } from './runWorkflow'
+import { TimelineSegment } from '@aitube/timeline'
 
-export async function resolveSegment(request: ResolveRequest): Promise<TimelineSegment> {
+export async function resolveSegment(
+  request: ResolveRequest
+): Promise<TimelineSegment> {
   if (!request.settings.replicateApiKey) {
     throw new Error(`Missing API key for "Replicate.com"`)
   }

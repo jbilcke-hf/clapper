@@ -1,4 +1,4 @@
-import { EditorsState, EditorView } from "@aitube/clapper-services"
+import { EditorsState, EditorView } from '@aitube/clapper-services'
 
 export function getDefaultEditorsState(): EditorsState {
   const state: EditorsState = {

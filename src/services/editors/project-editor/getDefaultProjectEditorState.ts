@@ -1,4 +1,4 @@
-import { ProjectEditorState } from "@aitube/clapper-services"
+import { ProjectEditorState } from '@aitube/clapper-services'
 
 export function getDefaultProjectEditorState(): ProjectEditorState {
   const state: ProjectEditorState = {

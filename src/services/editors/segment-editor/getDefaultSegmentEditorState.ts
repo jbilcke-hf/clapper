@@ -1,4 +1,4 @@
-import { SegmentEditorState } from "@aitube/clapper-services"
+import { SegmentEditorState } from '@aitube/clapper-services'
 
 export function getDefaultSegmentEditorState(): SegmentEditorState {
   const state: SegmentEditorState = {

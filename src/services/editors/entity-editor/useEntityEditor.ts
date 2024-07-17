@@ -1,9 +1,9 @@
-import { create } from "zustand"
-import { ClapEntity } from "@aitube/clap"
-import { EntityEditorStore } from "@aitube/clapper-services"
-import { TimelineStore, useTimeline } from "@aitube/timeline"
+import { create } from 'zustand'
+import { ClapEntity } from '@aitube/clap'
+import { EntityEditorStore } from '@aitube/clapper-services'
+import { TimelineStore, useTimeline } from '@aitube/timeline'
 
-import { getDefaultEntityEditorState } from "./getDefaultEntityEditorState"
+import { getDefaultEntityEditorState } from './getDefaultEntityEditorState'
 
 export const useEntityEditor = create<EntityEditorStore>((set, get) => ({
   ...getDefaultEntityEditorState(),
@@ -27,5 +27,5 @@ export const useEntityEditor = create<EntityEditorStore>((set, get) => ({
   },
   setShowEntityList: (showEntityList: boolean) => {
     set({ showEntityList })
-  }
+  },
 }))

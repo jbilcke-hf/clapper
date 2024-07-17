@@ -1,20 +1,20 @@
-"use client"
+'use client'
 
-import { useLayoutEffect, useState } from "react"
+import { useLayoutEffect, useState } from 'react'
 
-import { useDebounce } from "@/lib/hooks"
+import { useDebounce } from '@/lib/hooks'
 
-import { WaveformRenderingMode } from "./types"
+import { WaveformRenderingMode } from './types'
 
 // global cache definition
 const cache: Record<string, ImageData> = {}
 
 /**
  * This component renders a waveform for the given audio buffer
- * 
+ *
  * @param { string } id - Unique id
  * @param { AudioBuffer } audioBuffer - Audio buffer for the waveform
- * @param { number } width - The width of the canvas 
+ * @param { number } width - The width of the canvas
  * @param { number } height - The height of the canvas
  * @param { number } zoom - The zoom level of the waveform
  * @param { string } color - The color of the waveform
@@ -28,7 +28,7 @@ export function useWaveform({
   width = 500,
   height = 100,
   zoom = 1,
-  color = "#000000",
+  color = '#000000',
   mode = WaveformRenderingMode.MONO,
   onDone,
   gain = 1.2,
@@ -50,28 +50,37 @@ export function useWaveform({
   error: boolean
 } {
   const [canvas, setCanvas] = useState(document.createElement('canvas'))
-  const [canvasRenderingContext, setCanvasRenderingContext] = useState(canvas.getContext('2d') as CanvasRenderingContext2D)
+  const [canvasRenderingContext, setCanvasRenderingContext] = useState(
+    canvas.getContext('2d') as CanvasRenderingContext2D
+  )
 
-  const error = !canvas || !canvasRenderingContext || !isFinite(width) || isNaN(width) || !isFinite(height) || isNaN(height)
+  const error =
+    !canvas ||
+    !canvasRenderingContext ||
+    !isFinite(width) ||
+    isNaN(width) ||
+    !isFinite(height) ||
+    isNaN(height)
 
   const cacheKey = `${id}:${width}:${height}:${zoom}:${color}:${gain}`
 
   const debounceSize = useDebounce(cacheKey, 300)
 
-
   useLayoutEffect(() => {
-    if (error) { return }
+    if (error) {
+      return
+    }
 
     const cachedImage = cache[cacheKey]
 
     console.log(`redraw() for cache key "${cacheKey}"`)
     if (canvasRenderingContext) {
       if (cachedImage) {
-        console.log("redraw() we have a cached image:", cachedImage)
+        console.log('redraw() we have a cached image:', cachedImage)
         // If we have cached data
         canvasRenderingContext.putImageData(cachedImage, 0, 0)
       } else {
-        console.log("redraw() no cached image")
+        console.log('redraw() no cached image')
         const middle = mode === WaveformRenderingMode.MONO ? height : height / 2
         const channelData = audioBuffer.getChannelData(0)
         const step = Math.ceil(channelData.length / (width * zoom))
@@ -82,7 +91,7 @@ export function useWaveform({
           let max = -1.0
 
           for (let j = 0; j < step; j += 1) {
-            const datum = channelData[(i * step) + j]
+            const datum = channelData[i * step + j]
 
             if (datum < min) {
               min = datum
@@ -90,21 +99,42 @@ export function useWaveform({
               max = datum
             }
 
-            canvasRenderingContext.fillRect(i, (1 + min * gain) * middle, 1, Math.max(1, (max - min * gain) * middle))
+            canvasRenderingContext.fillRect(
+              i,
+              (1 + min * gain) * middle,
+              1,
+              Math.max(1, (max - min * gain) * middle)
+            )
           }
         }
 
         // cache the drawn data
-        const imgData = canvasRenderingContext.getImageData(0, 0, width * zoom, height)
+        const imgData = canvasRenderingContext.getImageData(
+          0,
+          0,
+          width * zoom,
+          height
+        )
         cache[cacheKey] = imgData
       }
 
-       onDone?.()
+      onDone?.()
     } else {
-      console.error("redraw(): no canvasRenderingContext")
+      console.error('redraw(): no canvasRenderingContext')
     }
-
-  }, [id, debounceSize, zoom, color, onDone, gain, error, height, width, mode, cacheKey])
+  }, [
+    id,
+    debounceSize,
+    zoom,
+    color,
+    onDone,
+    gain,
+    error,
+    height,
+    width,
+    mode,
+    cacheKey,
+  ])
 
   return {
     canvas,

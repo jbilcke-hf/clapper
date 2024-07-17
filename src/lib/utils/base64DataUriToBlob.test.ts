@@ -14,4 +14,3 @@ test('base64DataUriToBlob', async () => {
   expect(await blobToBase64DataUri(base64DataUriToBlob(pngUri))).toBe(pngUri)
   expect(await blobToBase64DataUri(base64DataUriToBlob(mp4Uri))).toBe(mp4Uri)
 })
-

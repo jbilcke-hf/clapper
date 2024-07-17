@@ -1,19 +1,19 @@
-import { cn } from "@aitube/timeline"
+import { cn } from '@aitube/timeline'
 
-import { ComputeProvider } from "@aitube/clapper-services"
-import { formatProvider } from "@/components/toolbars/top-menu/lists/formatProvider"
+import { ComputeProvider } from '@aitube/clapper-services'
+import { formatProvider } from '@/components/toolbars/top-menu/lists/formatProvider'
 
-import { ComputeProviderLogo } from "./ComputeProviderLogo"
+import { ComputeProviderLogo } from './ComputeProviderLogo'
 
 export function ComputeProviderName({
-  className = "",
+  className = '',
   children = ComputeProvider.NONE,
 }: {
   className?: string
   children?: ComputeProvider
 }) {
   return (
-    <div className={cn(`flex flex-row space-x-2 items-center`, className)}>
+    <div className={cn(`flex flex-row items-center space-x-2`, className)}>
       <ComputeProviderLogo
         provider={children}
         height={18}

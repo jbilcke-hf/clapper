@@ -1,4 +1,4 @@
-import { Producer } from "./producer"
+import { Producer } from './producer'
 
 export class Entry {
   constructor(
@@ -12,6 +12,6 @@ export class Entry {
       producer="${this.producer.id}"
       in="${this.in_point}"
       out="${this.out_point}"
-    ></entry>`;
+    ></entry>`
   }
 }

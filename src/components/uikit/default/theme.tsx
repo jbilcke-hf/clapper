@@ -1,4 +1,8 @@
-import { basedOnPreferredColorScheme, DefaultProperties, DefaultPropertiesProperties } from '@react-three/uikit'
+import {
+  basedOnPreferredColorScheme,
+  DefaultProperties,
+  DefaultPropertiesProperties,
+} from '@react-three/uikit'
 import React from 'react'
 import { Color } from 'three'
 

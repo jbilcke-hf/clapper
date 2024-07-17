@@ -1,17 +1,17 @@
-"use client"
+'use client'
 
-import { useEffect } from "react"
+import { useEffect } from 'react'
 
 import {
   MenubarCheckboxItem,
   MenubarContent,
   MenubarMenu,
   MenubarSeparator,
-  MenubarTrigger
-} from "@/components/ui/menubar"
-import { useFullscreenStatus } from "@/lib/hooks"
-import { useUI } from "@/services/ui"
-import { ThemeList } from "../lists/ThemeList"
+  MenubarTrigger,
+} from '@/components/ui/menubar'
+import { useFullscreenStatus } from '@/lib/hooks'
+import { useUI } from '@/services/ui'
+import { ThemeList } from '../lists/ThemeList'
 
 export function TopMenuView() {
   const [isFullscreen, setFullscreen, ref] = useFullscreenStatus()
@@ -19,27 +19,27 @@ export function TopMenuView() {
   // we want the whole body to become fullscreen
   // TODO: use pointer lock, to prevent the mouse from going up
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       ref.current = document.body
     }
   }, [ref])
 
-  const showTimeline = useUI(s => s.showTimeline)
-  const setShowTimeline = useUI(s => s.setShowTimeline)
+  const showTimeline = useUI((s) => s.showTimeline)
+  const setShowTimeline = useUI((s) => s.setShowTimeline)
 
-  const showExplorer = useUI(s => s.showExplorer)
-  const setShowExplorer = useUI(s => s.setShowExplorer)
+  const showExplorer = useUI((s) => s.showExplorer)
+  const setShowExplorer = useUI((s) => s.setShowExplorer)
 
-  const showAssistant = useUI(s => s.showAssistant)
-  const setShowAssistant = useUI(s => s.setShowAssistant)
+  const showAssistant = useUI((s) => s.showAssistant)
+  const setShowAssistant = useUI((s) => s.setShowAssistant)
 
-  const showVideoPlayer = useUI(s => s.showVideoPlayer)
-  const setShowVideoPlayer = useUI(s => s.setShowVideoPlayer)
+  const showVideoPlayer = useUI((s) => s.showVideoPlayer)
+  const setShowVideoPlayer = useUI((s) => s.setShowVideoPlayer)
 
-  const followCursor = useUI(s => s.followCursor)
-  const setFollowCursor = useUI(s => s.setFollowCursor)
+  const followCursor = useUI((s) => s.followCursor)
+  const setFollowCursor = useUI((s) => s.setFollowCursor)
 
-  const hasBetaAccess = useUI(s => s.hasBetaAccess)
+  const hasBetaAccess = useUI((s) => s.hasBetaAccess)
 
   return (
     <MenubarMenu>
@@ -58,11 +58,12 @@ export function TopMenuView() {
             e.stopPropagation()
             e.preventDefault()
             return false
-          }}>
+          }}
+        >
           Toggle fullscreen
         </MenubarCheckboxItem>
-     
-       {/*
+
+        {/*
         <MenubarSeparator />
         <MenubarCheckboxItem
           checked={showTimeline}
@@ -84,15 +85,17 @@ export function TopMenuView() {
           }}
           >Show asset explorer</MenubarCheckboxItem>
       */}
-      <MenubarCheckboxItem
-        checked={showAssistant}
-        onClick={(e) => {
-          setShowAssistant(!showAssistant)
-          e.stopPropagation()
-          e.preventDefault()
-          return false
-        }}
-        >Show assistant</MenubarCheckboxItem>
+        <MenubarCheckboxItem
+          checked={showAssistant}
+          onClick={(e) => {
+            setShowAssistant(!showAssistant)
+            e.stopPropagation()
+            e.preventDefault()
+            return false
+          }}
+        >
+          Show assistant
+        </MenubarCheckboxItem>
 
         <MenubarCheckboxItem
           checked={followCursor}
@@ -102,7 +105,9 @@ export function TopMenuView() {
             e.preventDefault()
             return false
           }}
-          >Follow cursor during playback</MenubarCheckboxItem>
+        >
+          Follow cursor during playback
+        </MenubarCheckboxItem>
         {/*
         <MenubarCheckboxItem
           checked={showVideoPlayer}

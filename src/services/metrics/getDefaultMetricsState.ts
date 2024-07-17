@@ -1,5 +1,5 @@
-import { getDefaultMetricsPerProvider } from "./getDefaultMetricsPerProvider"
-import { MetricsState } from "./types"
+import { getDefaultMetricsPerProvider } from './getDefaultMetricsPerProvider'
+import { MetricsState } from './types'
 
 export function getDefaultMetricsState(): MetricsState {
   const defaults: MetricsState = {

@@ -1,9 +1,9 @@
-import { ReactNode } from "react"
-import { IconType } from "react-icons/lib"
+import { ReactNode } from 'react'
+import { IconType } from 'react-icons/lib'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
-import { SingleIcon } from "./single-icon"
+import { SingleIcon } from './single-icon'
 
 export function IconSwitch({
   onIcon,
@@ -14,11 +14,11 @@ export function IconSwitch({
   isToggledOn = false,
   isAlt = false,
   disabled = false,
-  className = "",
-  size = "md",
+  className = '',
+  size = 'md',
   thickOnHover = false,
   children = null,
-  iconClass = "",
+  iconClass = '',
 }: {
   onIcon: IconType
   onIconAlt?: IconType
@@ -29,55 +29,64 @@ export function IconSwitch({
   isAlt?: boolean
   disabled?: boolean
   className?: string
-  size?: "2xs" | "xs" | "sm" | "md"
+  size?: '2xs' | 'xs' | 'sm' | 'md'
   thickOnHover?: boolean
   children?: ReactNode
   iconClass?: string
 }) {
-
-  const iconSize = 
-    size === "2xs" ? "w-4 h-4" :
-    size === "xs" ? "w-5 h-5" :
-    size === "sm" ? "w-6 h-6" :
-    "w-8 h-8"
+  const iconSize =
+    size === '2xs'
+      ? 'w-4 h-4'
+      : size === 'xs'
+        ? 'w-5 h-5'
+        : size === 'sm'
+          ? 'w-6 h-6'
+          : 'w-8 h-8'
 
   return (
-    <div className={cn(
-      // this `group` is important to coordinate the behavior of the inner icon
-      // (toggle a class during a "mouse hover" over the group)
-      `group`,
-      `select-none`,
-      `flex flex-row items-center justify-center cursor-pointer`,
-      `transition-all ease-in-out duration-100`,
-      `rounded-full`,
-      `text-sm font-light`,
-      disabled
-        ? `pointer-events-none opacity-50`
-        : `cursor-pointer text-gray-400  hover:text-gray-100`,
-      className
-    )}
-    onClick={onClick ? () => {
-      if (!disabled) {
-        onClick()
+    <div
+      className={cn(
+        // this `group` is important to coordinate the behavior of the inner icon
+        // (toggle a class during a "mouse hover" over the group)
+        `group`,
+        `select-none`,
+        `flex cursor-pointer flex-row items-center justify-center`,
+        `transition-all duration-100 ease-in-out`,
+        `rounded-full`,
+        `text-sm font-light`,
+        disabled
+          ? `pointer-events-none opacity-50`
+          : `cursor-pointer text-gray-400 hover:text-gray-100`,
+        className
+      )}
+      onClick={
+        onClick
+          ? () => {
+              if (!disabled) {
+                onClick()
+              }
+            }
+          : undefined
       }
-    } : undefined}
     >
-      <div className={cn(
-        `flex flex-row items-center justify-center`,
-        "scale-100",
-        `transition-all ease-in-out duration-100`,
-        "group-hover:scale-110",
-        `w-12 h-12`,
-        {
-          "w-9 h-9": size === "sm",
-        },
-      )}>
+      <div
+        className={cn(
+          `flex flex-row items-center justify-center`,
+          'scale-100',
+          `transition-all duration-100 ease-in-out`,
+          'group-hover:scale-110',
+          `h-12 w-12`,
+          {
+            'h-9 w-9': size === 'sm',
+          }
+        )}
+      >
         <SingleIcon
           type={offIcon}
           className={cn(
             iconSize,
             {
-              "opacity-0 pointer-events-none": isToggledOn || isAlt
+              'pointer-events-none opacity-0': isToggledOn || isAlt,
             },
             iconClass
           )}
@@ -88,7 +97,7 @@ export function IconSwitch({
           className={cn(
             iconSize,
             {
-              "opacity-0 pointer-events-none": !isToggledOn || isAlt
+              'pointer-events-none opacity-0': !isToggledOn || isAlt,
             },
             iconClass
           )}
@@ -99,7 +108,7 @@ export function IconSwitch({
           className={cn(
             iconSize,
             {
-              "opacity-0 pointer-events-none": isToggledOn || !isAlt
+              'pointer-events-none opacity-0': isToggledOn || !isAlt,
             },
             iconClass
           )}
@@ -110,21 +119,24 @@ export function IconSwitch({
           className={cn(
             iconSize,
             {
-              "opacity-0 pointer-events-none": !isToggledOn || !isAlt
+              'pointer-events-none opacity-0': !isToggledOn || !isAlt,
             },
             iconClass
           )}
           thickOnHover={thickOnHover}
         />
       </div>
-      {children
-        ? <div className={cn(
+      {children ? (
+        <div
+          className={cn(
             `transition-all duration-100 ease-in-out`,
-            `group-hover:cursor-pointer -ml-2`,
-            `pointer-events-none`,
-          )}>
-         {children}
-      </div> : null}
+            `-ml-2 group-hover:cursor-pointer`,
+            `pointer-events-none`
+          )}
+        >
+          {children}
+        </div>
+      ) : null}
     </div>
   )
 }

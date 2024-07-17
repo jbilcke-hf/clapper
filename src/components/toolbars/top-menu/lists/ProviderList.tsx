@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import {
   MenubarCheckboxItem,
@@ -9,16 +9,18 @@ import {
   MenubarSub,
   MenubarSubContent,
   MenubarSubTrigger,
-} from "@/components/ui/menubar"
+} from '@/components/ui/menubar'
 
-import { computeProviderShortNames } from "@/components/settings/constants"
+import { computeProviderShortNames } from '@/components/settings/constants'
 
-import { ComputeProvider } from "@aitube/clapper-services"
-import { TagColor } from "@/components/tags/types"
-import { Tag } from "@/components/tags/Tag"
-import { hasNoPublicAPI } from "./hasNoPublicAPI"
+import { ComputeProvider } from '@aitube/clapper-services'
+import { TagColor } from '@/components/tags/types'
+import { Tag } from '@/components/tags/Tag'
+import { hasNoPublicAPI } from './hasNoPublicAPI'
 
-const defaultProviders: ComputeProvider[] = Object.keys(computeProviderShortNames) as ComputeProvider[]
+const defaultProviders: ComputeProvider[] = Object.keys(
+  computeProviderShortNames
+) as ComputeProvider[]
 
 export function ProviderList({
   providers = defaultProviders,
@@ -32,22 +34,28 @@ export function ProviderList({
   return (
     <MenubarSub>
       <MenubarSubTrigger>
-        <Tag size="lg" color={TagColor.GRAY}>cloud&nbsp;vendor</Tag>
-        {(computeProviderShortNames as any)[current || ""] || "None"}
+        <Tag size="lg" color={TagColor.GRAY}>
+          cloud&nbsp;vendor
+        </Tag>
+        {(computeProviderShortNames as any)[current || ''] || 'None'}
       </MenubarSubTrigger>
       <MenubarSubContent>
-        {providers.map(provider => (
+        {providers.map((provider) => (
           <MenubarCheckboxItem
             key={provider}
             checked={current === provider}
             disabled={hasNoPublicAPI(provider)}
             className={
-              (hasNoPublicAPI(provider) || hasNoPublicAPI(computeProviderShortNames[provider]))
-              ? "opacity-50"
-              : "opacity-100"
+              hasNoPublicAPI(provider) ||
+              hasNoPublicAPI(computeProviderShortNames[provider])
+                ? 'opacity-50'
+                : 'opacity-100'
             }
             onClick={(e) => {
-              if (hasNoPublicAPI(provider) || hasNoPublicAPI(computeProviderShortNames[provider])) {
+              if (
+                hasNoPublicAPI(provider) ||
+                hasNoPublicAPI(computeProviderShortNames[provider])
+              ) {
                 e.stopPropagation()
                 e.preventDefault()
                 return false
@@ -56,7 +64,8 @@ export function ProviderList({
               e.stopPropagation()
               e.preventDefault()
               return false
-            }}>
+            }}
+          >
             {computeProviderShortNames[provider]}
           </MenubarCheckboxItem>
         ))}

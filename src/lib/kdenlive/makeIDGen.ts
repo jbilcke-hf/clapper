@@ -1,7 +1,7 @@
 export function* makeIDGen(first = 1): Generator<number, number> {
-  let i = first;
+  let i = first
   while (true) {
-    yield i;
-    i++;
+    yield i
+    i++
   }
 }

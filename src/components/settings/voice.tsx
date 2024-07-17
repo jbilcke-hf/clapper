@@ -1,16 +1,19 @@
-import { FormSection } from "@/components/forms/FormSection"
-import { getDefaultSettingsState, useSettings } from "@/services/settings"
-import { ComputeProvider } from "@aitube/clapper-services"
+import { FormSection } from '@/components/forms/FormSection'
+import { getDefaultSettingsState, useSettings } from '@/services/settings'
+import { ComputeProvider } from '@aitube/clapper-services'
 
-import { FormSelect } from "../forms/FormSelect"
-import { availableComputeProvidersForVoice, computeProviderShortNames } from "./constants"
-import { FormInput } from "../forms/FormInput"
+import { FormSelect } from '../forms/FormSelect'
+import {
+  availableComputeProvidersForVoice,
+  computeProviderShortNames,
+} from './constants'
+import { FormInput } from '../forms/FormInput'
 
 export function SettingsSectionVoice() {
   const defaultSettings = getDefaultSettingsState()
-  
-  const voiceProvider = useSettings(s => s.voiceProvider)
-  const setVoiceProvider = useSettings(s => s.setVoiceProvider)
+
+  const voiceProvider = useSettings((s) => s.voiceProvider)
+  const setVoiceProvider = useSettings((s) => s.setVoiceProvider)
 
   /*
   const huggingFaceModelForVoice = useSettings(s => s.huggingFaceModelForVoice)
@@ -26,37 +29,38 @@ export function SettingsSectionVoice() {
   const setModelsLabModelForVoice = useSettings(s => s.setModelsLabModelForVoice)
   */
 
-  const comfyWorkflowForVoice = useSettings(s => s.comfyWorkflowForVoice)
-  const setComfyWorkflowForVoice = useSettings(s => s.setComfyWorkflowForVoice)
+  const comfyWorkflowForVoice = useSettings((s) => s.comfyWorkflowForVoice)
+  const setComfyWorkflowForVoice = useSettings(
+    (s) => s.setComfyWorkflowForVoice
+  )
 
   return (
-    <div className="flex flex-col space-y-6 justify-between">
+    <div className="flex flex-col justify-between space-y-6">
       <FormSection label="Voice rendering">
-
         <FormSelect<ComputeProvider>
           label="Voice provider"
           selectedItemId={voiceProvider}
           selectedItemLabel={
-            computeProviderShortNames[voiceProvider]
-            || ComputeProvider.NONE
+            computeProviderShortNames[voiceProvider] || ComputeProvider.NONE
           }
-          items={availableComputeProvidersForVoice.map(provider => ({
+          items={availableComputeProvidersForVoice.map((provider) => ({
             id: provider,
-            label: computeProviderShortNames[provider] || "(missing name)",
+            label: computeProviderShortNames[provider] || '(missing name)',
             disabled: false,
             value: provider,
           }))}
           onSelect={setVoiceProvider}
           horizontal
         />
-     {voiceProvider.startsWith("COMFY_")
-         ? <FormInput
-          label="Default Comfy workflow template for voice"
-          value={comfyWorkflowForVoice}
-          defaultValue={defaultSettings.comfyWorkflowForVoice}
-          onChange={setComfyWorkflowForVoice}
-        />
-        : // "proprietary" parameters
+        {
+          voiceProvider.startsWith('COMFY_') ? (
+            <FormInput
+              label="Default Comfy workflow template for voice"
+              value={comfyWorkflowForVoice}
+              defaultValue={defaultSettings.comfyWorkflowForVoice}
+              onChange={setComfyWorkflowForVoice}
+            />
+          ) : // "proprietary" parameters
           null /* <>
             {voiceProvider === ComputeProvider.HUGGINGFACE && <FormInput
               label="HF Model ID (must be compatible with the Inference API)"
@@ -83,7 +87,8 @@ export function SettingsSectionVoice() {
               onChange={setModelsLabModelForVoice}
             />}
           </>
-          */}
+          */
+        }
       </FormSection>
     </div>
   )

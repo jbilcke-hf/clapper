@@ -8,8 +8,8 @@ import {
   useMemo,
   useEffect,
   useRef,
-} from "react"
-import isHotkey from "is-hotkey"
+} from 'react'
+import isHotkey from 'is-hotkey'
 
 import {
   getFirstFocusableId,
@@ -20,13 +20,10 @@ import {
   getPrevFocusableId,
   NOT_FOCUSABLE_SELECTOR,
   useRovingTabindex,
-} from "./roving"
+} from './roving'
 
-import {
-  TreeViewContextType,
-  TreeViewContext,
-} from "./tree-state"
-import { RovingTabindexItem, TreeViewActionTypes } from "./types"
+import { TreeViewContextType, TreeViewContext } from './tree-state'
+import { RovingTabindexItem, TreeViewActionTypes } from './types'
 
 export function useTreeNode<T extends ElementType>(
   id: string,
@@ -40,7 +37,7 @@ export function useTreeNode<T extends ElementType>(
     isFolder: false,
     isExpanded: false,
     data: undefined,
-  },
+  }
 ): {
   isOpen: boolean
   open: () => void
@@ -65,8 +62,7 @@ export function useTreeNode<T extends ElementType>(
   const { open, selectedId, select, dispatch } =
     useContext<TreeViewContextType>(TreeViewContext)
 
-  const { isFocusable, getOrderedItems, getRovingProps } =
-    useRovingTabindex(id)
+  const { isFocusable, getOrderedItems, getRovingProps } = useRovingTabindex(id)
 
   const dispatchOnce = useRef(false) // Add a ref to track initial dispatch of the default expander
 
@@ -140,10 +136,7 @@ export function useTreeNode<T extends ElementType>(
                   id,
                 })
               } else {
-                nextItemToFocus = getParentFocusableId(
-                  items,
-                  id,
-                )
+                nextItemToFocus = getParentFocusableId(items, id)
               }
             } else if (isHotkey('right', e)) {
               if (isOpen && options.isFolder) {
@@ -161,11 +154,7 @@ export function useTreeNode<T extends ElementType>(
               e.preventDefault()
               select(id, options?.data?.nodeType, options?.data?.data)
             } else if (/^[a-z]$/i.test(e.key)) {
-              nextItemToFocus = getNextFocusableIdByTypeahead(
-                items,
-                id,
-                e.key,
-              )
+              nextItemToFocus = getNextFocusableIdByTypeahead(items, id, e.key)
             }
 
             if (nextItemToFocus != null) {

@@ -1,23 +1,22 @@
-import { ComputeProvider } from "@aitube/clapper-services"
+import { ComputeProvider } from '@aitube/clapper-services'
 
 export enum ProviderMetricsEstimationType {
   // the metrics come from the provider's live API,
   // and should be considered reliable
-  LIVE_API = "LIVE_API",
+  LIVE_API = 'LIVE_API',
 
   // the metrics come from the provider's website,
   // and should be considered more or less reliable
-  PROVIDER_CLAIM = "PROVIDER_CLAIM",
+  PROVIDER_CLAIM = 'PROVIDER_CLAIM',
 
   // the metrics come from our own measurements,
   // and should not be considered reliable
-  MANUAL_MEASUREMENTS = "MANUAL_MEASUREMENTS",
+  MANUAL_MEASUREMENTS = 'MANUAL_MEASUREMENTS',
 
   // if we don't have the info, costs are negligible or
   // or it is not relevant (eg. local)
-  UNAVAILABLE = "UNAVAILABLE"
+  UNAVAILABLE = 'UNAVAILABLE',
 }
-
 
 export type ProviderMetricsModelEstimations = {
   estimationType: ProviderMetricsEstimationType
@@ -30,7 +29,7 @@ export type ProviderMetricsModelStats = {
   averageCostPerComputeTimeInSec: number
   averageDurationInSec: number
   averageCostPerGeneration: number
-  
+
   computeTimeInSec: number
   totalCost: number
 }
@@ -56,8 +55,6 @@ export type MetricsState = {
   totalCostSinceAppStarted: number
 }
 
-export type MetricsControls = {
-
-}
+export type MetricsControls = {}
 
 export type MetricsStore = MetricsState & MetricsControls

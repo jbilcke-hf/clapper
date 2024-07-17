@@ -1,12 +1,15 @@
 // adapted from joshuawootonn/react-components-from-scratch
-import { createContext, Dispatch } from "react"
+import { createContext, Dispatch } from 'react'
 
-import { ChainableMap } from "./chainable-map"
-import { OpenState, TreeViewActions, TreeViewActionTypes } from "./types"
+import { ChainableMap } from './chainable-map'
+import { OpenState, TreeViewActions, TreeViewActionTypes } from './types'
 
 export const TREE_VIEW_ROOT_ID = 'TREE_VIEW_ROOT_ID'
 
-export function treeviewReducer(state: OpenState, action: TreeViewActions): OpenState {
+export function treeviewReducer(
+  state: OpenState,
+  action: TreeViewActions
+): OpenState {
   switch (action.type) {
     case TreeViewActionTypes.OPEN:
       return new ChainableMap(state).set(action.id, true)
@@ -19,7 +22,7 @@ export function treeviewReducer(state: OpenState, action: TreeViewActions): Open
   }
 }
 
-export type TreeViewContextType= {
+export type TreeViewContextType = {
   open: OpenState
   dispatch: Dispatch<TreeViewActions>
   selectedId: string | null

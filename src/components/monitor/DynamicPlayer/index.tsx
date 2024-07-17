@@ -1,51 +1,43 @@
-"use client"
+'use client'
 
-import { useEffect, useRef } from "react"
-import { MonitoringMode } from "@aitube/clapper-services"
+import { useEffect, useRef } from 'react'
+import { MonitoringMode } from '@aitube/clapper-services'
 
-import { cn } from "@/lib/utils"
-import { useMonitor } from "@/services/monitor/useMonitor"
+import { cn } from '@/lib/utils'
+import { useMonitor } from '@/services/monitor/useMonitor'
 
-import { useRenderLoop } from "@/services/renderer/useRenderLoop"
-import { useRenderer } from "@/services/renderer/useRenderer"
-import { DynamicBuffer } from "./DynamicBuffer"
+import { useRenderLoop } from '@/services/renderer/useRenderLoop'
+import { useRenderer } from '@/services/renderer/useRenderer'
+import { DynamicBuffer } from './DynamicBuffer'
 
-export const DynamicPlayer = ({
-  className,
-}: {
-  className?: string
-}) => {  
-  const isPlaying = useMonitor(s => s.isPlaying)
-  const setMonitoringMode = useMonitor(s => s.setMonitoringMode)
-
+export const DynamicPlayer = ({ className }: { className?: string }) => {
+  const isPlaying = useMonitor((s) => s.isPlaying)
+  const setMonitoringMode = useMonitor((s) => s.setMonitoringMode)
 
   // this should only be called once and at only one place in the project,
   useRenderLoop()
 
-  const dataUriBuffer1 = useRenderer(s => s.dataUriBuffer1)
-  const dataUriBuffer2 = useRenderer(s => s.dataUriBuffer2)
-  const setDataUriBuffer1 = useRenderer(s => s.setDataUriBuffer1)
-  const setDataUriBuffer2 = useRenderer(s => s.setDataUriBuffer2)
+  const dataUriBuffer1 = useRenderer((s) => s.dataUriBuffer1)
+  const dataUriBuffer2 = useRenderer((s) => s.dataUriBuffer2)
+  const setDataUriBuffer1 = useRenderer((s) => s.setDataUriBuffer1)
+  const setDataUriBuffer2 = useRenderer((s) => s.setDataUriBuffer2)
 
-  const activeBufferNumber = useRenderer(s => s.activeBufferNumber)
-  const setActiveBufferNumber = useRenderer(s => s.setActiveBufferNumber)
+  const activeBufferNumber = useRenderer((s) => s.activeBufferNumber)
+  const setActiveBufferNumber = useRenderer((s) => s.setActiveBufferNumber)
 
   // TODO we should simplify this
-  const preloadSegment = useRenderer(s => s.preloadSegment)
-  const currentSegmentKey = useRenderer(s => s.currentSegmentKey)
-  const preloadSegmentKey = useRenderer(s => s.preloadSegmentKey)
+  const preloadSegment = useRenderer((s) => s.preloadSegment)
+  const currentSegmentKey = useRenderer((s) => s.currentSegmentKey)
+  const preloadSegmentKey = useRenderer((s) => s.preloadSegmentKey)
 
   const timeoutRef = useRef<NodeJS.Timeout>()
-
 
   useEffect(() => {
     setMonitoringMode(MonitoringMode.DYNAMIC)
   }, [])
 
-
   // used to control transitions between buffers
   useEffect(() => {
-
     clearTimeout(timeoutRef.current)
 
     const newActiveBufferNumber = activeBufferNumber === 1 ? 2 : 1
@@ -69,13 +61,16 @@ export const DynamicPlayer = ({
     return () => {
       clearTimeout(timeoutRef.current)
     }
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [currentSegmentKey, preloadSegmentKey])
 
   return (
-    <div className={cn(`
-    @container flex flex-col items-center flex-grow w-full
-    `, className)}>
+    <div
+      className={cn(
+        `flex w-full flex-grow flex-col items-center @container`,
+        className
+      )}
+    >
       <DynamicBuffer
         segment={dataUriBuffer1}
         isPlaying={isPlaying}

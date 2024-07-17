@@ -1,16 +1,20 @@
-import { TimelineStore, useTimeline } from "@aitube/timeline"
-import { AudioStore, MonitorStore, RendererStore } from "@aitube/clapper-services"
+import { TimelineStore, useTimeline } from '@aitube/timeline'
+import {
+  AudioStore,
+  MonitorStore,
+  RendererStore,
+} from '@aitube/clapper-services'
 
-import { useRequestAnimationFrame } from "@/lib/hooks"
-import { useRenderer } from "./useRenderer"
-import { useAudio } from "@/services/audio/useAudio"
-import { useMonitor } from "../monitor/useMonitor"
+import { useRequestAnimationFrame } from '@/lib/hooks'
+import { useRenderer } from './useRenderer'
+import { useAudio } from '@/services/audio/useAudio'
+import { useMonitor } from '../monitor/useMonitor'
 
 /**
  * Runs a rendering loop
- * 
+ *
  * Should only be called once!!
- * @returns 
+ * @returns
  */
 export function useRenderLoop(): void {
   useRequestAnimationFrame(() => {
@@ -19,20 +23,19 @@ export function useRenderLoop(): void {
     const renderer: RendererStore = useRenderer.getState()
     const audio: AudioStore = useAudio.getState()
 
-    const {
-      isPlaying,
-      lastTimelineUpdateAtInMs,
-      setLastTimelineUpdateAtInMs,
-    } = monitor
+    const { isPlaying, lastTimelineUpdateAtInMs, setLastTimelineUpdateAtInMs } =
+      monitor
 
-    if (!isPlaying) { return }
+    if (!isPlaying) {
+      return
+    }
 
     const {
-     //  isPlaying,
+      //  isPlaying,
       cursorTimestampAtInMs,
-      setCursorTimestampAtInMs
+      setCursorTimestampAtInMs,
     } = timeline
-  
+
     // this update the internal state of the renderer to make it hold
     // all the currently visible or hearable items
     const { activeAudioSegments } = useRenderer.getState().renderLoop()
@@ -47,6 +50,5 @@ export function useRenderLoop(): void {
     const elapsedTimeInMs = newTimelineUpdateAtInMs - lastTimelineUpdateAtInMs
     setCursorTimestampAtInMs(cursorTimestampAtInMs + elapsedTimeInMs)
     setLastTimelineUpdateAtInMs(newTimelineUpdateAtInMs)
-
   })
 }

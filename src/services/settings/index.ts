@@ -1,2 +1,2 @@
-export * from "./getDefaultSettingsState"
-export * from "./useSettings"
+export * from './getDefaultSettingsState'
+export * from './useSettings'

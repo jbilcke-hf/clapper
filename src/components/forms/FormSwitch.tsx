@@ -1,11 +1,18 @@
-import { MdOutlineCheckCircle, MdRadioButtonUnchecked } from "react-icons/md"
+import { MdOutlineCheckCircle, MdRadioButtonUnchecked } from 'react-icons/md'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
-import { FormField } from "./FormField"
-import { Switch } from "../ui/switch"
+import { FormField } from './FormField'
+import { Switch } from '../ui/switch'
 
-export function FormSwitch({ label, className, checked, onCheckedChange, horizontal, centered }: {
+export function FormSwitch({
+  label,
+  className,
+  checked,
+  onCheckedChange,
+  horizontal,
+  centered,
+}: {
   label?: string
   className?: string
   checked?: boolean
@@ -18,7 +25,8 @@ export function FormSwitch({ label, className, checked, onCheckedChange, horizon
       label={label}
       className={cn(`flex-row space-x-5`, className)}
       horizontal={horizontal}
-      centered={centered}>
+      centered={centered}
+    >
       <Switch
         checked={checked}
         onCheckedChange={(checked) => {

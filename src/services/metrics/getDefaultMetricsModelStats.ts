@@ -1,4 +1,4 @@
-import { ProviderMetricsModelStats } from "./types"
+import { ProviderMetricsModelStats } from './types'
 
 export function getDefaultMetricsModelStats(): ProviderMetricsModelStats {
   const stats: ProviderMetricsModelStats = {

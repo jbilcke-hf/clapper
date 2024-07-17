@@ -1,8 +1,7 @@
-import { Credentials, whoAmI } from "@huggingface/hub"
+import { Credentials, whoAmI } from '@huggingface/hub'
 
 export async function getCurrentOwner(apiKey: string): Promise<string> {
-
-  const accessToken = apiKey || ""
+  const accessToken = apiKey || ''
 
   if (!accessToken) {
     throw new Error(`cannot list spaces without a Hugging Face access token`)
@@ -10,7 +9,7 @@ export async function getCurrentOwner(apiKey: string): Promise<string> {
 
   const credentials: Credentials = { accessToken }
 
-  let username = ""
+  let username = ''
   try {
     const { name } = await whoAmI({ credentials })
     username = name

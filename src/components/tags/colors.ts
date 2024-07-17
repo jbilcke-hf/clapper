@@ -1,4 +1,4 @@
-import { TagCategory, TagColor } from "./types"
+import { TagCategory, TagColor } from './types'
 
 export const tagCategoryToTagColor: Record<TagCategory, TagColor> = {
   [TagCategory.MISC]: TagColor.STONE,
@@ -31,5 +31,5 @@ export const tagColorToTailwindClass: Record<TagColor, string> = {
   [TagColor.FUCHSIA]: `bg-fuchsia-800 border-fuchsia-600 text-fuchsia-300`,
   [TagColor.PINK]: `bg-pink-800 border-pink-600 text-pink-300`,
   [TagColor.PURPLE]: `bg-purple-800 border-purple-600 text-purple-300`,
-  [TagColor.ROSE]: `bg-rose-800 border-rose-600 text-rose-300`
+  [TagColor.ROSE]: `bg-rose-800 border-rose-600 text-rose-300`,
 }

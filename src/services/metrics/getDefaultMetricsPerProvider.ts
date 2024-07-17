@@ -1,7 +1,7 @@
-import { ComputeProvider } from "@aitube/clapper-services"
+import { ComputeProvider } from '@aitube/clapper-services'
 
-import { MetricsPerProvider } from "./types"
-import { getDefaultComputeProviderMetrics } from "./getDefaultComputeProviderMetrics"
+import { MetricsPerProvider } from './types'
+import { getDefaultComputeProviderMetrics } from './getDefaultComputeProviderMetrics'
 
 export function getDefaultMetricsPerProvider(): MetricsPerProvider {
   const metricsPerProvider: MetricsPerProvider = {

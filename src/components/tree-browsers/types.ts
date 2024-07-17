@@ -1,22 +1,19 @@
-
-
 // note: we only keep simplified representations of provider data structures
 
-import { ScreenplaySequence } from "@aitube/broadway"
-import { ClapEntity, ClapSegment } from "@aitube/clap"
-import { TreeNodeType } from "../core/tree/types"
+import { ScreenplaySequence } from '@aitube/broadway'
+import { ClapEntity, ClapSegment } from '@aitube/clap'
+import { TreeNodeType } from '../core/tree/types'
 
+// not sure if we should also sort them into data type categories,
+// as vendors like to be on multiple kind of models
 
-  // not sure if we should also sort them into data type categories,
-  // as vendors like to be on multiple kind of models
-
-  export type LibraryNodeLocalFileType =
-  | "LIB_NODE_LOCAL_USER_FILE"
-  | "LIB_NODE_LOCAL_USER_FOLDER"
+export type LibraryNodeLocalFileType =
+  | 'LIB_NODE_LOCAL_USER_FILE'
+  | 'LIB_NODE_LOCAL_USER_FOLDER'
 
 export type LibraryNodeRemoteFileType =
-  | "LIB_NODE_HUGGINGFACE_USER_FOLDER"
-  | "LIB_NODE_HUGGINGFACE_USER_FILE"
+  | 'LIB_NODE_HUGGINGFACE_USER_FOLDER'
+  | 'LIB_NODE_HUGGINGFACE_USER_FILE'
 
 export type LibraryNodeFileType =
   | LibraryNodeLocalFileType
@@ -24,46 +21,38 @@ export type LibraryNodeFileType =
 
 /**
  * a collection always correspond to the root category displayed in the tree menu
- * 
+ *
  * we could use "LIB_NODE_GENERIC_COLLECTION",
  * but I think it can also be useful to keep specific types,
  * that way we can show a custom collection UI panel on the right of the explorer
  */
 export type LibraryNodeType =
-  | "LIB_NODE_LOCAL_USER_COLLECTION"
+  | 'LIB_NODE_LOCAL_USER_COLLECTION'
   | LibraryNodeLocalFileType
-
-  | "LIB_NODE_HUGGINGFACE_USER_COLLECTION"
-  | "LIB_NODE_HUGGINGFACE_USER_DATASET"
+  | 'LIB_NODE_HUGGINGFACE_USER_COLLECTION'
+  | 'LIB_NODE_HUGGINGFACE_USER_DATASET'
   | LibraryNodeRemoteFileType
+  | 'LIB_NODE_PROJECT_COLLECTION'
+  | 'LIB_NODE_PROJECT_ARCHIVE'
+  | 'LIB_NODE_PROJECT_ASSET' // image, sound file..
+  | 'LIB_NODE_PROJECT_ENTITY_GENERIC'
+  | 'LIB_NODE_PROJECT_ENTITY_CHARACTER'
+  | 'LIB_NODE_PROJECT_ENTITY_LOCATION'
+  | 'LIB_NODE_TEAM_COLLECTION'
+  | 'LIB_NODE_TEAM_MODEL'
+  | 'LIB_NODE_COMMUNITY_COLLECTION'
+  | 'LIB_NODE_COMMUNITY_MODEL'
+  | 'LIB_NODE_HUGGINGFACE_COLLECTION'
+  | 'LIB_NODE_HUGGINGFACE_MODEL'
+  | 'LIB_NODE_REPLICATE_COLLECTION'
+  | 'LIB_NODE_REPLICATE_MODEL'
+  | 'LIB_NODE_CIVITAI_COLLECTION'
+  | 'LIB_NODE_CIVITAI_MODEL'
+  | 'LIB_NODE_GENERIC_COLLECTION'
+  | 'LIB_NODE_GENERIC_MODEL'
+  | 'LIB_NODE_GENERIC_ITEM'
+  | 'LIB_NODE_GENERIC_EMPTY'
 
-  | "LIB_NODE_PROJECT_COLLECTION"
-  | "LIB_NODE_PROJECT_ARCHIVE"
-  | "LIB_NODE_PROJECT_ASSET" // image, sound file..
-  | "LIB_NODE_PROJECT_ENTITY_GENERIC"
-  | "LIB_NODE_PROJECT_ENTITY_CHARACTER"
-  | "LIB_NODE_PROJECT_ENTITY_LOCATION"
-
-  | "LIB_NODE_TEAM_COLLECTION"
-  | "LIB_NODE_TEAM_MODEL"
-
-  | "LIB_NODE_COMMUNITY_COLLECTION"
-  | "LIB_NODE_COMMUNITY_MODEL"
-
-  | "LIB_NODE_HUGGINGFACE_COLLECTION"
-  | "LIB_NODE_HUGGINGFACE_MODEL"
-
-  | "LIB_NODE_REPLICATE_COLLECTION"
-  | "LIB_NODE_REPLICATE_MODEL"
-
-  | "LIB_NODE_CIVITAI_COLLECTION"
-  | "LIB_NODE_CIVITAI_MODEL"
-
-  | "LIB_NODE_GENERIC_COLLECTION"
-  | "LIB_NODE_GENERIC_MODEL"
-  | "LIB_NODE_GENERIC_ITEM"
-  | "LIB_NODE_GENERIC_EMPTY"
-  
 // can be a file or folder
 export type LocalUserItem = {
   id: string // can be the path for now
@@ -84,7 +73,6 @@ export type LocalUserCollection = {
   path: string // path to the root directory (eg "~/Clapper")
   items: LocalUserItem[] // files or folders
 }
-
 
 // can be a file or folder
 export type HuggingFaceUserItem = {
@@ -152,25 +140,23 @@ export type CivitaiCollection = {
   models: CivitaiModel[]
 }
 
+// TODO unify this a bit, at least in the naming scheme
+export type LibraryNodeFileItem = LocalUserItem | HuggingFaceUserItem
 
 // TODO unify this a bit, at least in the naming scheme
-export type LibraryNodeFileItem = 
-  | LocalUserItem 
-  | HuggingFaceUserItem
-
-// TODO unify this a bit, at least in the naming scheme
-export type LibraryNodeItem = 
+export type LibraryNodeItem =
   | ClapEntity
-  | ReplicateCollection | ReplicateModel
-  | CivitaiCollection | CivitaiModel
-  | LocalUserCollection | LocalUserItem 
-  | HuggingFaceUserCollection | HuggingFaceUserItem
-  | ScreenplaySequence | ClapSegment
+  | ReplicateCollection
+  | ReplicateModel
+  | CivitaiCollection
+  | CivitaiModel
+  | LocalUserCollection
+  | LocalUserItem
+  | HuggingFaceUserCollection
+  | HuggingFaceUserItem
+  | ScreenplaySequence
+  | ClapSegment
 
 // a model library is a collection of models
 // this collection can itself include sub-models
-export type LibraryTreeNode =
-  TreeNodeType<
-    LibraryNodeType,
-    LibraryNodeItem
-  >
+export type LibraryTreeNode = TreeNodeType<LibraryNodeType, LibraryNodeItem>

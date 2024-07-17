@@ -1,12 +1,22 @@
-"use client"
-import { useEffect } from "react"
-import { useTimeline } from "@aitube/timeline"
-import { useHotkeys } from "react-hotkeys-hook"
+'use client'
+import { useEffect } from 'react'
+import { useTimeline } from '@aitube/timeline'
+import { useHotkeys } from 'react-hotkeys-hook'
 
-import { MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from "@/components/ui/menubar"
-import { useOpenFilePicker, useQueryStringParams } from "@/lib/hooks"
-import { IframeWarning } from "@/components/dialogs/iframe-warning"
-import { useIO, useUI } from "@/services"
+import {
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
+} from '@/components/ui/menubar'
+import { useOpenFilePicker, useQueryStringParams } from '@/lib/hooks'
+import { IframeWarning } from '@/components/dialogs/iframe-warning'
+import { useIO, useUI } from '@/services'
 
 export function TopMenuFile() {
   const { clapUrl } = useQueryStringParams({
@@ -15,9 +25,9 @@ export function TopMenuFile() {
     clapUrl: '',
   })
 
-  const isTimelineLoading: boolean = useTimeline(s => s.isLoading)
-  const clap = useTimeline(s => s.clap)
-  const setClap = useTimeline(s => s.setClap)
+  const isTimelineLoading: boolean = useTimeline((s) => s.isLoading)
+  const clap = useTimeline((s) => s.clap)
+  const setClap = useTimeline((s) => s.setClap)
   //const saveClapAs = useTimeline(s => s.saveClapAs)
   //const setFullVideo = useTimeline(s => s.fullVideo)
 
@@ -25,19 +35,19 @@ export function TopMenuFile() {
 
   //const isLoading = isTimelineLoading || filePickerIsLoading
 
-  const openClapUrl = useIO(s => s.openClapUrl)
-  const openScreenplayUrl = useIO(s => s.openScreenplayUrl)
-  const saveClap = useIO(s => s.saveClap)
-  const saveVideoFile = useIO(s => s.saveVideoFile)
-  const saveZipFile = useIO(s => s.saveZipFile)
-  const saveKdenline = useIO(s => s.saveKdenline)
+  const openClapUrl = useIO((s) => s.openClapUrl)
+  const openScreenplayUrl = useIO((s) => s.openScreenplayUrl)
+  const saveClap = useIO((s) => s.saveClap)
+  const saveVideoFile = useIO((s) => s.saveVideoFile)
+  const saveZipFile = useIO((s) => s.saveZipFile)
+  const saveKdenline = useIO((s) => s.saveKdenline)
 
-  const hasBetaAccess = useUI(s => s.hasBetaAccess)
+  const hasBetaAccess = useUI((s) => s.hasBetaAccess)
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       if (!clapUrl) {
-        console.log("No clap URL provided")
+        console.log('No clap URL provided')
         return
       }
       await openClapUrl(clapUrl)
@@ -51,54 +61,64 @@ export function TopMenuFile() {
   // useHotkeys('meta+s', () => saveClapAs({ embedded: true }), { preventDefault: true }, [])
   useHotkeys('ctrl+s', () => saveClap(), { preventDefault: true }, [])
   useHotkeys('meta+s', () => saveClap(), { preventDefault: true }, [])
-  
 
   return (
     <>
-    <MenubarMenu>
-      <MenubarTrigger>File</MenubarTrigger>
-      <MenubarContent>
-        {hasBetaAccess &&
-          <MenubarItem onClick={() => {
-            openClapUrl('/samples/claps/empty_project.clap')
-          }}>
-            New Project<MenubarShortcut>⌘N</MenubarShortcut>
+      <MenubarMenu>
+        <MenubarTrigger>File</MenubarTrigger>
+        <MenubarContent>
+          {hasBetaAccess && (
+            <MenubarItem
+              onClick={() => {
+                openClapUrl('/samples/claps/empty_project.clap')
+              }}
+            >
+              New Project<MenubarShortcut>⌘N</MenubarShortcut>
+            </MenubarItem>
+          )}
+          <MenubarItem
+            onClick={() => {
+              openFilePicker()
+            }}
+          >
+            Open file (.clap, .txt)<MenubarShortcut>⌘O</MenubarShortcut>
           </MenubarItem>
-        }
-        <MenubarItem onClick={() => {
-          openFilePicker()
-        }}>
-          Open file (.clap, .txt)<MenubarShortcut>⌘O</MenubarShortcut>
-        </MenubarItem>
-        <MenubarItem
-        onClick={() => {
-          saveClap()
-        }}>
-          Save project (.clap)<MenubarShortcut>⌘S</MenubarShortcut>
-        </MenubarItem>
-        <MenubarSeparator />
-        <MenubarSub>
-          <MenubarSubTrigger>Examples</MenubarSubTrigger>
-          <MenubarSubContent>
-            <MenubarItem onClick={() => {
-              openClapUrl('/samples/claps/wasteland.clap')
-            }}>
-              Wasteland.clap
-            </MenubarItem>
-            <MenubarItem onClick={() => {
-              openScreenplayUrl('/samples/scripts/Citizen Kane.txt')
-            }}>
-              Citizen Kane.txt
-            </MenubarItem>
-            <MenubarItem onClick={() => {
-              openScreenplayUrl('/samples/scripts/The Wizard Of Oz.txt')
-            }}>
-              The Wizard Of Oz.txt
-            </MenubarItem>
-          </MenubarSubContent>
-        </MenubarSub>
-        <MenubarSeparator />
-        {/*
+          <MenubarItem
+            onClick={() => {
+              saveClap()
+            }}
+          >
+            Save project (.clap)<MenubarShortcut>⌘S</MenubarShortcut>
+          </MenubarItem>
+          <MenubarSeparator />
+          <MenubarSub>
+            <MenubarSubTrigger>Examples</MenubarSubTrigger>
+            <MenubarSubContent>
+              <MenubarItem
+                onClick={() => {
+                  openClapUrl('/samples/claps/wasteland.clap')
+                }}
+              >
+                Wasteland.clap
+              </MenubarItem>
+              <MenubarItem
+                onClick={() => {
+                  openScreenplayUrl('/samples/scripts/Citizen Kane.txt')
+                }}
+              >
+                Citizen Kane.txt
+              </MenubarItem>
+              <MenubarItem
+                onClick={() => {
+                  openScreenplayUrl('/samples/scripts/The Wizard Of Oz.txt')
+                }}
+              >
+                The Wizard Of Oz.txt
+              </MenubarItem>
+            </MenubarSubContent>
+          </MenubarSub>
+          <MenubarSeparator />
+          {/*
         <MenubarItem
         onClick={() => {
           saveVideoFile()
@@ -107,14 +127,15 @@ export function TopMenuFile() {
         </MenubarItem>
         <MenubarSeparator />
         */}
-        <MenubarItem
-        onClick={() => {
-          saveZipFile()
-        }}>
-          Export project to .zip
-        </MenubarItem>
-        <MenubarSeparator />
-        {/*
+          <MenubarItem
+            onClick={() => {
+              saveZipFile()
+            }}
+          >
+            Export project to .zip
+          </MenubarItem>
+          <MenubarSeparator />
+          {/*
         <MenubarItem onClick={() => {
           saveKdenline()
         }}>
@@ -122,7 +143,7 @@ export function TopMenuFile() {
         </MenubarItem>
         <MenubarSeparator />
         */}
-        {/*
+          {/*
         <MenubarItem
         disabled
         onClick={() => {
@@ -153,12 +174,12 @@ export function TopMenuFile() {
           Export .fdx (not implemented)
         </MenubarItem>
         */}
-      </MenubarContent>
-    </MenubarMenu>
-    {/*
+        </MenubarContent>
+      </MenubarMenu>
+      {/*
     deprecated, this is the old design with progress bar
     <Loader isLoading={isLoading} /> */}
-    <IframeWarning />
+      <IframeWarning />
     </>
   )
 }

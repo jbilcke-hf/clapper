@@ -1,10 +1,10 @@
-import { ChangeEvent, useMemo, useRef } from "react"
+import { ChangeEvent, useMemo, useRef } from 'react'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
-import { Input } from "../ui/input"
+import { Input } from '../ui/input'
 
-import { FormField } from "./FormField"
+import { FormField } from './FormField'
 
 export function FormFile({
   label,
@@ -15,7 +15,7 @@ export function FormFile({
   horizontal,
   accept,
   centered,
- }: {
+}: {
   label?: string
   className?: string
   placeholder?: string
@@ -24,32 +24,32 @@ export function FormFile({
   horizontal?: boolean
   accept?: string
   centered?: boolean
-  }) {
+}) {
   const ref = useRef<HTMLInputElement>(null)
 
-  const handleChange = useMemo(() => (event: ChangeEvent<HTMLInputElement>) => {
-    if (disabled) {
-      return
-    }
-    if (!onChange) {
-      return
-    }
+  const handleChange = useMemo(
+    () => (event: ChangeEvent<HTMLInputElement>) => {
+      if (disabled) {
+        return
+      }
+      if (!onChange) {
+        return
+      }
 
-    onChange(Array.from<File>(event.currentTarget.files || []))
-  }, [disabled, onChange])
+      onChange(Array.from<File>(event.currentTarget.files || []))
+    },
+    [disabled, onChange]
+  )
 
   return (
-    <FormField
-      label={
-      `${label}:`
-      }
-      horizontal={horizontal}
-      centered={centered}
-       >
+    <FormField label={`${label}:`} horizontal={horizontal} centered={centered}>
       <Input
         ref={ref}
-        placeholder={`${placeholder || ""}`}
-        className={cn(`w-full md:w-60 lg:w-64 xl:w-80 font-light text-base`, className)}
+        placeholder={`${placeholder || ''}`}
+        className={cn(
+          `w-full text-base font-light md:w-60 lg:w-64 xl:w-80`,
+          className
+        )}
         disabled={disabled}
         onChange={handleChange}
         type="file"

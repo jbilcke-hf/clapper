@@ -1,20 +1,38 @@
-"use client"
+'use client'
 
-import { create } from "zustand"
-import { Monaco } from "@monaco-editor/react"
-import MonacoEditor from "monaco-editor"
-import { ClapProject, ClapSegmentCategory } from "@aitube/clap"
-import { TimelineStore, useTimeline, leftBarTrackScaleWidth } from "@aitube/timeline"
-import { ScriptEditorStore, EditorView, ScrollData } from "@aitube/clapper-services"
+import { create } from 'zustand'
+import { Monaco } from '@monaco-editor/react'
+import MonacoEditor from 'monaco-editor'
+import { ClapProject, ClapSegmentCategory } from '@aitube/clap'
+import {
+  TimelineStore,
+  useTimeline,
+  leftBarTrackScaleWidth,
+} from '@aitube/timeline'
+import {
+  ScriptEditorStore,
+  EditorView,
+  ScrollData,
+} from '@aitube/clapper-services'
 
-import { getDefaultScriptEditorState } from "./getDefaultScriptEditorState"
+import { getDefaultScriptEditorState } from './getDefaultScriptEditorState'
 
 export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
   ...getDefaultScriptEditorState(),
-  setMonaco: (monaco?: Monaco) => { set({ monaco }) },
-  setTextModel: (textModel?: MonacoEditor.editor.ITextModel) => { set({ textModel }) },
-  setStandaloneCodeEditor: (standaloneCodeEditor?: MonacoEditor.editor.IStandaloneCodeEditor) => { set({ standaloneCodeEditor }) },
-  setMouseIsInside: (mouseIsInside: boolean) => { set({ mouseIsInside }) },
+  setMonaco: (monaco?: Monaco) => {
+    set({ monaco })
+  },
+  setTextModel: (textModel?: MonacoEditor.editor.ITextModel) => {
+    set({ textModel })
+  },
+  setStandaloneCodeEditor: (
+    standaloneCodeEditor?: MonacoEditor.editor.IStandaloneCodeEditor
+  ) => {
+    set({ standaloneCodeEditor })
+  },
+  setMouseIsInside: (mouseIsInside: boolean) => {
+    set({ mouseIsInside })
+  },
   loadDraftFromClap: (clap: ClapProject) => {
     const { setDraft } = get()
 
@@ -22,11 +40,14 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
   },
   setDraft: (draft: string) => {
     const { draft: previousDraft, highlightElements, textModel } = get()
-    if (draft === previousDraft) { return }
+    if (draft === previousDraft) {
+      return
+    }
     set({ draft })
 
-    
-    if (!textModel) { return }
+    if (!textModel) {
+      return
+    }
     // we need to update the model
     textModel?.setValue(draft)
 
@@ -43,14 +64,14 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
     scrollHeight,
     scrollLeft,
     scrollTop,
-    scrollWidth
+    scrollWidth,
   }: ScrollData) => {
-    const { 
+    const {
       scrollHeight: previousScrollHeight,
       scrollLeft: previousScrollLeft,
       scrollTop: previousScrollTop,
       scrollWidth: previousScrollWidth,
-      mouseIsInside
+      mouseIsInside,
     } = get()
 
     // skip if nothing changed
@@ -73,15 +94,18 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
     // if the scroll event happened while we where inside the editor,
     // then we need to dispatch the it
     if (mouseIsInside) {
-
       const timeline: TimelineStore = useTimeline.getState()
-      if (!timeline.timelineCamera || !timeline.timelineControls) { return }
+      if (!timeline.timelineCamera || !timeline.timelineControls) {
+        return
+      }
 
       const { standaloneCodeEditor } = get()
-    
+
       const scrollRatio = scrollTop / scrollHeight
-      const scrollX = Math.round(leftBarTrackScaleWidth + scrollRatio * timeline.contentWidth)
-      
+      const scrollX = Math.round(
+        leftBarTrackScaleWidth + scrollRatio * timeline.contentWidth
+      )
+
       /*console.log({
         scrollHeight,
         scrollLeft,
@@ -100,17 +124,20 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
     }
   },
   jumpCursorOnLineClick: (line?: number) => {
-    if (typeof line !== "number") { return }
+    if (typeof line !== 'number') {
+      return
+    }
     const timeline: TimelineStore = useTimeline.getState()
-  
+
     const { lineNumberToMentionedSegments } = timeline
 
     const mentionedSegments = lineNumberToMentionedSegments[line] || []
 
     const firstMentionedSegment = mentionedSegments.at(0)
 
-
-    if (typeof firstMentionedSegment?.startTimeInMs !== "number") { return }
+    if (typeof firstMentionedSegment?.startTimeInMs !== 'number') {
+      return
+    }
 
     const { startTimeInMs } = firstMentionedSegment
 
@@ -120,52 +147,58 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
   highlightElements: () => {
     const timeline: TimelineStore = useTimeline.getState()
     const { clap } = timeline
-    
-    const { textModel, standaloneCodeEditor, applyClassNameToKeywords } = get()
-    if (!textModel || !standaloneCodeEditor || !clap) { return }
 
-    const characters = clap.entities.filter(entity => entity.category === ClapSegmentCategory.CHARACTER).map(entity => entity.triggerName)
+    const { textModel, standaloneCodeEditor, applyClassNameToKeywords } = get()
+    if (!textModel || !standaloneCodeEditor || !clap) {
+      return
+    }
+
+    const characters = clap.entities
+      .filter((entity) => entity.category === ClapSegmentCategory.CHARACTER)
+      .map((entity) => entity.triggerName)
 
     // any character
-    applyClassNameToKeywords(
-      "entity entity-character",
-      characters
-    )
+    applyClassNameToKeywords('entity entity-character', characters)
 
     // UPPERCASE CHARACTER
     applyClassNameToKeywords(
-      "entity entity-character entity-highlight",
+      'entity entity-character entity-highlight',
       characters,
       true
     )
 
-    const locations = clap.entities.filter(entity => entity.category === ClapSegmentCategory.LOCATION).map(entity => entity.triggerName)
-    // any location 
-    applyClassNameToKeywords(
-      "entity entity-location",
-      locations
-    )
+    const locations = clap.entities
+      .filter((entity) => entity.category === ClapSegmentCategory.LOCATION)
+      .map((entity) => entity.triggerName)
+    // any location
+    applyClassNameToKeywords('entity entity-location', locations)
 
     // UPPERCASE LOCATION
     applyClassNameToKeywords(
-      "entity entity-location entity-highlight",
+      'entity entity-location entity-highlight',
       locations,
       true
     )
   },
-  applyClassNameToKeywords: (className: string = "", keywords: string[] = [], caseSensitive = false) => {
+  applyClassNameToKeywords: (
+    className: string = '',
+    keywords: string[] = [],
+    caseSensitive = false
+  ) => {
     const timeline: TimelineStore = useTimeline.getState()
     const { clap } = timeline
-    
+
     const { textModel, standaloneCodeEditor } = get()
-    if (!textModel || !standaloneCodeEditor || !clap) { return }
+    if (!textModel || !standaloneCodeEditor || !clap) {
+      return
+    }
 
     keywords.forEach((entityTriggerName: string): void => {
       const matches: MonacoEditor.editor.FindMatch[] = textModel.findMatches(
         // searchString — The string used to search. If it is a regular expression, set isRegex to true.
         // searchString: string,
         entityTriggerName,
-        
+
         // @param searchOnlyEditableRange — Limit the searching to only search inside the editable range of the model.
         // searchOnlyEditableRange: boolean,
         false,
@@ -173,7 +206,7 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
         // / @param isRegex — Used to indicate that searchString is a regular expression.
         // isRegex: boolean,
         false,
-    
+
         // @param matchCase — Force the matching to match lower/upper case exactly.
         // matchCase: boolean,
         caseSensitive,
@@ -184,7 +217,7 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
 
         // @param captureMatches — The result will contain the captured groups.
         // captureMatches: boolean,
-        false,
+        false
 
         // limitResultCount — Limit the number of results
         // limitResultCount?: number
@@ -196,14 +229,16 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
             range: match.range,
             options: {
               isWholeLine: false,
-              inlineClassName: className
-            }
+              inlineClassName: className,
+            },
           },
         ])
       })
     })
   },
-  setCurrent: (current?: string) => { set({ current }) },
+  setCurrent: (current?: string) => {
+    set({ current })
+  },
   undo: () => {},
   redo: () => {},
 }))

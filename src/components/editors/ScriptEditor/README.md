@@ -5,12 +5,11 @@ Monaco editor cheatsheet
 editor.setScrollPosition({ scrollTop: horizontalTimelineRatio })
 
 // Scroll to a specific line:
-editor.revealLine(15);
+editor.revealLine(15)
 
 // Scroll to a specific line so it ends in the center of the editor:
-editor.revealLineInCenter(15);
+editor.revealLineInCenter(15)
 
 // Move current active line:
-editor.setPosition({column: 1, lineNumber: 3});
+editor.setPosition({ column: 1, lineNumber: 3 })
 ```
-

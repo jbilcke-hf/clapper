@@ -1,16 +1,20 @@
 // adapted from joshuawootonn/react-components-from-scratch
-import React from "react"
-import { AnimatePresence, motion, MotionConfig } from "framer-motion"
+import React from 'react'
+import { AnimatePresence, motion, MotionConfig } from 'framer-motion'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
-import { Folder, File, Arrow } from "./icons"
-import { useTreeNode } from "./useTreeNode"
-import { Root } from "./root"
-import { TreeNodeType } from "./types"
+import { Folder, File, Arrow } from './icons'
+import { useTreeNode } from './useTreeNode'
+import { Root } from './root'
+import { TreeNodeType } from './types'
 
-export function Node<S,T>({ node, showArrows, indentLeaves }: {
-  node: TreeNodeType<S,T>
+export function Node<S, T>({
+  node,
+  showArrows,
+  indentLeaves,
+}: {
+  node: TreeNodeType<S, T>
 
   // show the little arrows on the left
   showArrows?: boolean
@@ -38,8 +42,8 @@ export function Node<S,T>({ node, showArrows, indentLeaves }: {
     <li
       {...getTreeNodeProps({
         className: cn(
-          'relative cursor-pointer select-none flex flex-col focus:outline-none group',
-        )
+          'relative cursor-pointer select-none flex flex-col focus:outline-none group'
+        ),
       })}
     >
       <MotionConfig
@@ -50,58 +54,61 @@ export function Node<S,T>({ node, showArrows, indentLeaves }: {
       >
         <div
           className={cn(
-            'group flex flex-row items-center border-[1.5px] border-transparent space-x-2',
+            'group flex flex-row items-center space-x-2 border-[1.5px] border-transparent',
             isFocusable &&
-              'group-focus:border-gray-900/0 focus-within:border-transparent',
+              'focus-within:border-transparent group-focus:border-gray-900/0',
             /*
               isSelected 
               ? 'bg-gray-700/100 text-gray-200'
               : 'bg-transparent text-gray-400 hover:text-gray-200',
             */
-           
-             "hover:bg-gray-700/20 text-gray-300 hover:text-gray-200 fill-gray-300 hover:fill-gray-200",
-            
-            node.className,
+
+            'fill-gray-300 text-gray-300 hover:bg-gray-700/20 hover:fill-gray-200 hover:text-gray-200',
+
+            node.className
           )}
         >
           {node.children?.length ? (
             <>
-              {showArrows ? <Arrow
-                className="h-4 w-4 flex-shrink-0"
-                open={isOpen}
-              /> : null}
-              <div className="flex flex-col items-center justify-center h-5 w-5 flex-shrink-0">
-                {node.icon
-                  ? <div className="flex flex-col items-center justify-center w-full h-full scale-125">
-                      <IconComponent />
-                    </div>
-                  : <Folder
-                  open={isOpen}
-                  className="w-full h-full"
-                />}
+              {showArrows ? (
+                <Arrow className="h-4 w-4 flex-shrink-0" open={isOpen} />
+              ) : null}
+              <div className="flex h-5 w-5 flex-shrink-0 flex-col items-center justify-center">
+                {node.icon ? (
+                  <div className="flex h-full w-full scale-125 flex-col items-center justify-center">
+                    <IconComponent />
+                  </div>
+                ) : (
+                  <Folder open={isOpen} className="h-full w-full" />
+                )}
               </div>
             </>
           ) : (
             <div
               className={cn(
-                `flex flex-col items-center justify-center h-5 w-5 flex-shrink-0`,
-                showArrows ? "ml-6" : ""
-                )}>
-              {node.icon
-                ? <div className="flex flex-col items-center justify-center w-full h-full scale-110 mt-0.5">
-                    <IconComponent />
-                  </div>
-                : <File className="w-full h-full" />}
+                `flex h-5 w-5 flex-shrink-0 flex-col items-center justify-center`,
+                showArrows ? 'ml-6' : ''
+              )}
+            >
+              {node.icon ? (
+                <div className="mt-0.5 flex h-full w-full scale-110 flex-col items-center justify-center">
+                  <IconComponent />
+                </div>
+              ) : (
+                <File className="h-full w-full" />
+              )}
             </div>
           )}
           <span
             className={cn(
-              `font-sans font-light text-base`,
-              `text-ellipsis whitespace-nowrap overflow-hidden`,
+              `font-sans text-base font-light`,
+              `overflow-hidden text-ellipsis whitespace-nowrap`,
               `flex-grow`,
-              node.className,
-            )}>
-            {node.label}{
+              node.className
+            )}
+          >
+            {node.label}
+            {
               // Array.isArray(node.children) ? `(${node.children.length ? node.children.length : "empty"})` : ""
             }
           </span>
@@ -141,9 +148,7 @@ export function Node<S,T>({ node, showArrows, indentLeaves }: {
                 },
               }}
               {...treeGroupProps}
-              className={cn(
-                'pl-3'
-              )}
+              className={cn('pl-3')}
             >
               <motion.svg
                 viewBox="0 0 3 60"
@@ -151,9 +156,8 @@ export function Node<S,T>({ node, showArrows, indentLeaves }: {
                 preserveAspectRatio="none"
                 width={2}
                 xmlns="http://www.w3.org/2000/svg"
-
-                // if you want to display vertical lines, tweak the stroke-gray-900/100 
-                className="absolute top-[31px] h-[calc(100%-30px)] bottom-0 left-3.5 transform -translate-x-1/2 stroke-gray-900/100 z-[-1]"
+                // if you want to display vertical lines, tweak the stroke-gray-900/100
+                className="absolute bottom-0 left-3.5 top-[31px] z-[-1] h-[calc(100%-30px)] -translate-x-1/2 transform stroke-gray-900/100"
                 key={node.id + 'line'}
                 stroke="currentColor"
               >
@@ -166,7 +170,7 @@ export function Node<S,T>({ node, showArrows, indentLeaves }: {
                   strokeWidth={2}
                 />
               </motion.svg>
-              {node.children.map(node => (
+              {node.children.map((node) => (
                 <Node
                   key={node.id}
                   node={node}

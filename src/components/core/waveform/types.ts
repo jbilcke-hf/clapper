@@ -1,5 +1,4 @@
-
 export enum WaveformRenderingMode {
-  MONO = "MONO",
-  STERO = "STEREO"
+  MONO = 'MONO',
+  STERO = 'STEREO',
 }

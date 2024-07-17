@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import {
   MenubarCheckboxItem,
@@ -9,14 +9,16 @@ import {
   MenubarSub,
   MenubarSubContent,
   MenubarSubTrigger,
-} from "@/components/ui/menubar"
+} from '@/components/ui/menubar'
 
-import { RenderingStrategy } from "@aitube/timeline"
-import { strategyLabels } from "../constants"
-import { Tag } from "@/components/tags/Tag"
-import { TagColor } from "@/components/tags/types"
+import { RenderingStrategy } from '@aitube/timeline'
+import { strategyLabels } from '../constants'
+import { Tag } from '@/components/tags/Tag'
+import { TagColor } from '@/components/tags/types'
 
-const defaultStrategies: RenderingStrategy[] = Object.keys(strategyLabels) as RenderingStrategy[]
+const defaultStrategies: RenderingStrategy[] = Object.keys(
+  strategyLabels
+) as RenderingStrategy[]
 
 export function RenderingStrategyList({
   strategies = defaultStrategies,
@@ -31,20 +33,23 @@ export function RenderingStrategyList({
     <MenubarSub>
       <MenubarSubTrigger>
         {/* todo display either autorender or manual render */}
-        <Tag size="lg" color={TagColor.NEUTRAL}>auto&nbsp;rendering</Tag>
-        {(strategyLabels as any)[current || ""] || "None"}
+        <Tag size="lg" color={TagColor.NEUTRAL}>
+          auto&nbsp;rendering
+        </Tag>
+        {(strategyLabels as any)[current || ''] || 'None'}
       </MenubarSubTrigger>
       <MenubarSubContent>
-      {strategies.map(strategy => (
+        {strategies.map((strategy) => (
           <MenubarCheckboxItem
-             key={strategy}
+            key={strategy}
             checked={current === strategy}
             onClick={(e) => {
               setter(strategy)
               e.stopPropagation()
               e.preventDefault()
               return false
-            }}>
+            }}
+          >
             {strategyLabels[strategy]}
           </MenubarCheckboxItem>
         ))}

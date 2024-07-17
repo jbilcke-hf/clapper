@@ -1,17 +1,26 @@
-"use client"
+'use client'
 
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
-import { getValidNumber } from "@aitube/clap"
-import { parseRenderingStrategy, RenderingStrategy } from "@aitube/timeline"
-import { ComfyIcuAccelerator, ComputeProvider, SettingsState, SettingsStore } from "@aitube/clapper-services"
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { getValidNumber } from '@aitube/clap'
+import { parseRenderingStrategy, RenderingStrategy } from '@aitube/timeline'
+import {
+  ComfyIcuAccelerator,
+  ComputeProvider,
+  SettingsState,
+  SettingsStore,
+} from '@aitube/clapper-services'
 
-import { getValidBoolean, getValidString, parseComputeProvider } from "@/lib/utils"
-import { HARD_LIMIT_NB_MAX_ASSETS_TO_GENERATE_IN_PARALLEL } from "@/lib/core/constants"
+import {
+  getValidBoolean,
+  getValidString,
+  parseComputeProvider,
+} from '@/lib/utils'
+import { HARD_LIMIT_NB_MAX_ASSETS_TO_GENERATE_IN_PARALLEL } from '@/lib/core/constants'
 
-import { getDefaultSettingsState } from "./getDefaultSettingsState"
-import { getValidComfyWorkflowTemplate } from "@/lib/utils/getValidComfyWorkflowTemplate"
-import { parseComfyIcuAccelerator } from "@/lib/utils/parseComfyIcuAccelerator"
+import { getDefaultSettingsState } from './getDefaultSettingsState'
+import { getValidComfyWorkflowTemplate } from '@/lib/utils/getValidComfyWorkflowTemplate'
+import { parseComfyIcuAccelerator } from '@/lib/utils/parseComfyIcuAccelerator'
 
 export const useSettings = create<SettingsStore>()(
   persist(
@@ -19,295 +28,755 @@ export const useSettings = create<SettingsStore>()(
       ...getDefaultSettingsState(),
 
       setAssistantProvider: (assistantProvider?: ComputeProvider) => {
-        const { videoProvider: defaultAssistantProvider } = getDefaultSettingsState()
-        set({assistantProvider: parseComputeProvider(assistantProvider, defaultAssistantProvider) })
+        const { videoProvider: defaultAssistantProvider } =
+          getDefaultSettingsState()
+        set({
+          assistantProvider: parseComputeProvider(
+            assistantProvider,
+            defaultAssistantProvider
+          ),
+        })
       },
       setImageProvider: (imageProvider?: ComputeProvider) => {
-        const { imageProvider: defaultImageProvider } = getDefaultSettingsState()
-        set({ imageProvider: parseComputeProvider(imageProvider, defaultImageProvider) })
+        const { imageProvider: defaultImageProvider } =
+          getDefaultSettingsState()
+        set({
+          imageProvider: parseComputeProvider(
+            imageProvider,
+            defaultImageProvider
+          ),
+        })
       },
       setImageDepthProvider: (imageDepthProvider?: ComputeProvider) => {
-        const { imageDepthProvider: defaultImageDepthProvider } = getDefaultSettingsState()
-        set({ imageDepthProvider: parseComputeProvider(imageDepthProvider, defaultImageDepthProvider) })
+        const { imageDepthProvider: defaultImageDepthProvider } =
+          getDefaultSettingsState()
+        set({
+          imageDepthProvider: parseComputeProvider(
+            imageDepthProvider,
+            defaultImageDepthProvider
+          ),
+        })
       },
-      setImageSegmentationProvider: (imageSegmentationProvider?: ComputeProvider) => {
-        const { imageSegmentationProvider: defaultImageSegmentationProvider } = getDefaultSettingsState()
-        set({ imageSegmentationProvider: parseComputeProvider(imageSegmentationProvider, defaultImageSegmentationProvider) })
+      setImageSegmentationProvider: (
+        imageSegmentationProvider?: ComputeProvider
+      ) => {
+        const { imageSegmentationProvider: defaultImageSegmentationProvider } =
+          getDefaultSettingsState()
+        set({
+          imageSegmentationProvider: parseComputeProvider(
+            imageSegmentationProvider,
+            defaultImageSegmentationProvider
+          ),
+        })
       },
       setImageUpscalingProvider: (imageUpscalingProvider?: ComputeProvider) => {
-        const { imageUpscalingProvider: defaultImageUpscalingProvider } = getDefaultSettingsState()
-        set({ imageUpscalingProvider: parseComputeProvider(imageUpscalingProvider, defaultImageUpscalingProvider) })
+        const { imageUpscalingProvider: defaultImageUpscalingProvider } =
+          getDefaultSettingsState()
+        set({
+          imageUpscalingProvider: parseComputeProvider(
+            imageUpscalingProvider,
+            defaultImageUpscalingProvider
+          ),
+        })
       },
       setVideoProvider: (videoProvider?: ComputeProvider) => {
-        const { videoProvider: defaultVideoProvider } = getDefaultSettingsState()
-        set({ videoProvider: parseComputeProvider(videoProvider, defaultVideoProvider) })
+        const { videoProvider: defaultVideoProvider } =
+          getDefaultSettingsState()
+        set({
+          videoProvider: parseComputeProvider(
+            videoProvider,
+            defaultVideoProvider
+          ),
+        })
       },
       setVideoDepthProvider: (videoDepthProvider?: ComputeProvider) => {
-        const { videoDepthProvider: defaultVideoDepthProvider } = getDefaultSettingsState()
-        set({ videoDepthProvider: parseComputeProvider(videoDepthProvider, defaultVideoDepthProvider) })
+        const { videoDepthProvider: defaultVideoDepthProvider } =
+          getDefaultSettingsState()
+        set({
+          videoDepthProvider: parseComputeProvider(
+            videoDepthProvider,
+            defaultVideoDepthProvider
+          ),
+        })
       },
-      setVideoSegmentationProvider: (videoSegmentationProvider?: ComputeProvider) => {
-        const { videoSegmentationProvider: defaultVideoSegmentationProvider } = getDefaultSettingsState()
-        set({ videoSegmentationProvider: parseComputeProvider(videoSegmentationProvider, defaultVideoSegmentationProvider) })
+      setVideoSegmentationProvider: (
+        videoSegmentationProvider?: ComputeProvider
+      ) => {
+        const { videoSegmentationProvider: defaultVideoSegmentationProvider } =
+          getDefaultSettingsState()
+        set({
+          videoSegmentationProvider: parseComputeProvider(
+            videoSegmentationProvider,
+            defaultVideoSegmentationProvider
+          ),
+        })
       },
       setVideoUpscalingProvider: (videoUpscalingProvider?: ComputeProvider) => {
-        const { videoUpscalingProvider: defaultVideoUpscalingProvider } = getDefaultSettingsState()
-        set({ videoUpscalingProvider: parseComputeProvider(videoUpscalingProvider, defaultVideoUpscalingProvider) })
+        const { videoUpscalingProvider: defaultVideoUpscalingProvider } =
+          getDefaultSettingsState()
+        set({
+          videoUpscalingProvider: parseComputeProvider(
+            videoUpscalingProvider,
+            defaultVideoUpscalingProvider
+          ),
+        })
       },
       setVoiceProvider: (voiceProvider?: ComputeProvider) => {
-        const { voiceProvider: defaultSpeechProvider } = getDefaultSettingsState()
-        set({ voiceProvider: parseComputeProvider(voiceProvider, defaultSpeechProvider) })
+        const { voiceProvider: defaultSpeechProvider } =
+          getDefaultSettingsState()
+        set({
+          voiceProvider: parseComputeProvider(
+            voiceProvider,
+            defaultSpeechProvider
+          ),
+        })
       },
       setSoundProvider: (soundProvider?: ComputeProvider) => {
-        const { soundProvider: defaultSoundProvider } = getDefaultSettingsState()
-        set({ soundProvider: parseComputeProvider(soundProvider, defaultSoundProvider) })
+        const { soundProvider: defaultSoundProvider } =
+          getDefaultSettingsState()
+        set({
+          soundProvider: parseComputeProvider(
+            soundProvider,
+            defaultSoundProvider
+          ),
+        })
       },
       setMusicProvider: (musicProvider?: ComputeProvider) => {
-        const { musicProvider: defaultMusicProvider } = getDefaultSettingsState()
-        set({ musicProvider: parseComputeProvider(musicProvider, defaultMusicProvider) })
+        const { musicProvider: defaultMusicProvider } =
+          getDefaultSettingsState()
+        set({
+          musicProvider: parseComputeProvider(
+            musicProvider,
+            defaultMusicProvider
+          ),
+        })
       },
       setCustomComfyUiApiKey: (customComfyUiApiKey?: string) => {
-        const { customComfyUiApiKey: defaulCustomComfyUiApiKey } = getDefaultSettingsState()
-        set({ customComfyUiApiKey: getValidString(customComfyUiApiKey, defaulCustomComfyUiApiKey) })
+        const { customComfyUiApiKey: defaulCustomComfyUiApiKey } =
+          getDefaultSettingsState()
+        set({
+          customComfyUiApiKey: getValidString(
+            customComfyUiApiKey,
+            defaulCustomComfyUiApiKey
+          ),
+        })
       },
       setReplicateApiKey: (replicateApiKey?: string) => {
-        const { replicateApiKey: defaultReplicateApiKey } = getDefaultSettingsState()
-        set({ replicateApiKey: getValidString(replicateApiKey, defaultReplicateApiKey) })
+        const { replicateApiKey: defaultReplicateApiKey } =
+          getDefaultSettingsState()
+        set({
+          replicateApiKey: getValidString(
+            replicateApiKey,
+            defaultReplicateApiKey
+          ),
+        })
       },
       setComfyIcuApiKey: (comfyIcuApiKey?: string) => {
-        const { comfyIcuApiKey: defaultComfyIcuApiKey } = getDefaultSettingsState()
-        set({ comfyIcuApiKey: getValidString(comfyIcuApiKey, defaultComfyIcuApiKey) })
+        const { comfyIcuApiKey: defaultComfyIcuApiKey } =
+          getDefaultSettingsState()
+        set({
+          comfyIcuApiKey: getValidString(comfyIcuApiKey, defaultComfyIcuApiKey),
+        })
       },
       setComfyIcuAccelerator: (comfyIcuAccelerator?: ComfyIcuAccelerator) => {
-        const { comfyIcuAccelerator: defaulComfyIcuAccelerator } = getDefaultSettingsState()
-        set({ comfyIcuAccelerator: parseComfyIcuAccelerator(comfyIcuAccelerator, defaulComfyIcuAccelerator) })
+        const { comfyIcuAccelerator: defaulComfyIcuAccelerator } =
+          getDefaultSettingsState()
+        set({
+          comfyIcuAccelerator: parseComfyIcuAccelerator(
+            comfyIcuAccelerator,
+            defaulComfyIcuAccelerator
+          ),
+        })
       },
       setHuggingFaceApiKey: (huggingFaceApiKey?: string) => {
-        const { huggingFaceApiKey: defaultHuggingFaceApiKey } = getDefaultSettingsState()
-        set({ huggingFaceApiKey: getValidString(huggingFaceApiKey, defaultHuggingFaceApiKey) })
+        const { huggingFaceApiKey: defaultHuggingFaceApiKey } =
+          getDefaultSettingsState()
+        set({
+          huggingFaceApiKey: getValidString(
+            huggingFaceApiKey,
+            defaultHuggingFaceApiKey
+          ),
+        })
       },
       setFalAiApiKey: (falAiApiKey?: string) => {
-        set({ falAiApiKey: getValidString(falAiApiKey, getDefaultSettingsState().falAiApiKey) })
+        set({
+          falAiApiKey: getValidString(
+            falAiApiKey,
+            getDefaultSettingsState().falAiApiKey
+          ),
+        })
       },
       setModelsLabApiKey: (modelsLabApiKey?: string) => {
-        set({ modelsLabApiKey: getValidString(modelsLabApiKey, getDefaultSettingsState().modelsLabApiKey) })
+        set({
+          modelsLabApiKey: getValidString(
+            modelsLabApiKey,
+            getDefaultSettingsState().modelsLabApiKey
+          ),
+        })
       },
       setOpenaiApiKey: (openaiApiKey?: string) => {
-        set({ openaiApiKey: getValidString(openaiApiKey, getDefaultSettingsState().openaiApiKey) })
+        set({
+          openaiApiKey: getValidString(
+            openaiApiKey,
+            getDefaultSettingsState().openaiApiKey
+          ),
+        })
       },
       setGroqApiKey: (groqApiKey?: string) => {
-        set({ groqApiKey: getValidString(groqApiKey, getDefaultSettingsState().groqApiKey) })
+        set({
+          groqApiKey: getValidString(
+            groqApiKey,
+            getDefaultSettingsState().groqApiKey
+          ),
+        })
       },
       setGoogleApiKey: (googleApiKey?: string) => {
-        set({ googleApiKey: getValidString(googleApiKey, getDefaultSettingsState().googleApiKey) })
+        set({
+          googleApiKey: getValidString(
+            googleApiKey,
+            getDefaultSettingsState().googleApiKey
+          ),
+        })
       },
       setAnthropicApiKey: (anthropicApiKey?: string) => {
-        set({ anthropicApiKey: getValidString(anthropicApiKey, getDefaultSettingsState().anthropicApiKey) })
+        set({
+          anthropicApiKey: getValidString(
+            anthropicApiKey,
+            getDefaultSettingsState().anthropicApiKey
+          ),
+        })
       },
       setElevenLabsApiKey: (elevenLabsApiKey?: string) => {
-        set({ elevenLabsApiKey: getValidString(elevenLabsApiKey, getDefaultSettingsState().elevenLabsApiKey) })
+        set({
+          elevenLabsApiKey: getValidString(
+            elevenLabsApiKey,
+            getDefaultSettingsState().elevenLabsApiKey
+          ),
+        })
       },
       setKitsAiApiKey: (kitsAiApiKey?: string) => {
-        set({ kitsAiApiKey: getValidString(kitsAiApiKey, getDefaultSettingsState().kitsAiApiKey) })
+        set({
+          kitsAiApiKey: getValidString(
+            kitsAiApiKey,
+            getDefaultSettingsState().kitsAiApiKey
+          ),
+        })
       },
       setCohereApiKey: (cohereApiKey?: string) => {
-        set({ cohereApiKey: getValidString(cohereApiKey, getDefaultSettingsState().cohereApiKey) })
+        set({
+          cohereApiKey: getValidString(
+            cohereApiKey,
+            getDefaultSettingsState().cohereApiKey
+          ),
+        })
       },
       setMistralAiApiKey: (mistralAiApiKey?: string) => {
-        set({ mistralAiApiKey: getValidString(mistralAiApiKey, getDefaultSettingsState().mistralAiApiKey) })
+        set({
+          mistralAiApiKey: getValidString(
+            mistralAiApiKey,
+            getDefaultSettingsState().mistralAiApiKey
+          ),
+        })
       },
       setFireworksAiApiKey: (fireworksAiApiKey?: string) => {
-        set({ fireworksAiApiKey: getValidString(fireworksAiApiKey, getDefaultSettingsState().fireworksAiApiKey) })
+        set({
+          fireworksAiApiKey: getValidString(
+            fireworksAiApiKey,
+            getDefaultSettingsState().fireworksAiApiKey
+          ),
+        })
       },
       setStabilityAiApiKey: (stabilityAiApiKey?: string) => {
-        set({ stabilityAiApiKey: getValidString(stabilityAiApiKey, getDefaultSettingsState().stabilityAiApiKey) })
+        set({
+          stabilityAiApiKey: getValidString(
+            stabilityAiApiKey,
+            getDefaultSettingsState().stabilityAiApiKey
+          ),
+        })
       },
 
-      setBroadcastObsServerHost: (broadcastObsServerHost: string) => { set({ broadcastObsServerHost }) },
-      setBroadcastObsServerPort: (broadcastObsServerPort: number) => { set({ broadcastObsServerPort }) },
-      setBroadcastObsServerPass: (broadcastObsServerPass: string) => { set({ broadcastObsServerPass }) },
+      setBroadcastObsServerHost: (broadcastObsServerHost: string) => {
+        set({ broadcastObsServerHost })
+      },
+      setBroadcastObsServerPort: (broadcastObsServerPort: number) => {
+        set({ broadcastObsServerPort })
+      },
+      setBroadcastObsServerPass: (broadcastObsServerPass: string) => {
+        set({ broadcastObsServerPass })
+      },
 
-      setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => {
-        set({ censorNotForAllAudiencesContent: getValidBoolean(censorNotForAllAudiencesContent, getDefaultSettingsState().censorNotForAllAudiencesContent) })
+      setCensorNotForAllAudiencesContent: (
+        censorNotForAllAudiencesContent?: boolean
+      ) => {
+        set({
+          censorNotForAllAudiencesContent: getValidBoolean(
+            censorNotForAllAudiencesContent,
+            getDefaultSettingsState().censorNotForAllAudiencesContent
+          ),
+        })
       },
       setImagePromptPrefix: (imagePromptPrefix?: string) => {
-        set({ imagePromptPrefix: getValidString(imagePromptPrefix, getDefaultSettingsState().imagePromptPrefix) })
+        set({
+          imagePromptPrefix: getValidString(
+            imagePromptPrefix,
+            getDefaultSettingsState().imagePromptPrefix
+          ),
+        })
       },
       setImagePromptSuffix: (imagePromptSuffix?: string) => {
-        set({ imagePromptSuffix: getValidString(imagePromptSuffix, getDefaultSettingsState().imagePromptSuffix) })
+        set({
+          imagePromptSuffix: getValidString(
+            imagePromptSuffix,
+            getDefaultSettingsState().imagePromptSuffix
+          ),
+        })
       },
       setImageNegativePrompt: (imageNegativePrompt?: string) => {
-        set({ imageNegativePrompt: getValidString(imageNegativePrompt, getDefaultSettingsState().imageNegativePrompt) })
+        set({
+          imageNegativePrompt: getValidString(
+            imageNegativePrompt,
+            getDefaultSettingsState().imageNegativePrompt
+          ),
+        })
       },
       setVideoPromptPrefix: (videoPromptPrefix?: string) => {
-        set({ videoPromptPrefix: getValidString(videoPromptPrefix, getDefaultSettingsState().videoPromptPrefix) })
+        set({
+          videoPromptPrefix: getValidString(
+            videoPromptPrefix,
+            getDefaultSettingsState().videoPromptPrefix
+          ),
+        })
       },
       setVideoPromptSuffix: (videoPromptSuffix?: string) => {
-        set({ videoPromptSuffix: getValidString(videoPromptSuffix, getDefaultSettingsState().videoPromptSuffix) })
+        set({
+          videoPromptSuffix: getValidString(
+            videoPromptSuffix,
+            getDefaultSettingsState().videoPromptSuffix
+          ),
+        })
       },
       setVideoNegativePrompt: (videoNegativePrompt?: string) => {
-        set({ videoNegativePrompt: getValidString(videoNegativePrompt, getDefaultSettingsState().videoNegativePrompt) })
+        set({
+          videoNegativePrompt: getValidString(
+            videoNegativePrompt,
+            getDefaultSettingsState().videoNegativePrompt
+          ),
+        })
       },
       setAssistantModel: (assistantModel?: string) => {
-        const { assistantModel: defaultAssistantModel } = getDefaultSettingsState()
-        set({ assistantModel: getValidString(assistantModel, defaultAssistantModel) })
+        const { assistantModel: defaultAssistantModel } =
+          getDefaultSettingsState()
+        set({
+          assistantModel: getValidString(assistantModel, defaultAssistantModel),
+        })
       },
       setAssistantTurboModel: (assistantTurboModel?: string) => {
-        const { assistantTurboModel: defaultAssistantTurboModel } = getDefaultSettingsState()
-        set({ assistantTurboModel: getValidString(assistantTurboModel, defaultAssistantTurboModel) })
+        const { assistantTurboModel: defaultAssistantTurboModel } =
+          getDefaultSettingsState()
+        set({
+          assistantTurboModel: getValidString(
+            assistantTurboModel,
+            defaultAssistantTurboModel
+          ),
+        })
       },
       setImageGenerationModel: (imageGenerationModel?: string) => {
-        const { imageGenerationModel: defaultImageGenerationModel } = getDefaultSettingsState()
-        set({ imageGenerationModel: getValidString(imageGenerationModel, defaultImageGenerationModel) })
+        const { imageGenerationModel: defaultImageGenerationModel } =
+          getDefaultSettingsState()
+        set({
+          imageGenerationModel: getValidString(
+            imageGenerationModel,
+            defaultImageGenerationModel
+          ),
+        })
       },
       setImageGenerationTurboModel: (imageGenerationTurboModel?: string) => {
-        const { imageGenerationTurboModel: defaultImageGenerationTurboModel } = getDefaultSettingsState()
-        set({ imageGenerationTurboModel: getValidString(imageGenerationTurboModel, defaultImageGenerationTurboModel) })
+        const { imageGenerationTurboModel: defaultImageGenerationTurboModel } =
+          getDefaultSettingsState()
+        set({
+          imageGenerationTurboModel: getValidString(
+            imageGenerationTurboModel,
+            defaultImageGenerationTurboModel
+          ),
+        })
       },
       setImageUpscalingModel: (imageUpscalingModel?: string) => {
-        const { imageUpscalingModel: defaultImageUpscalingModel } = getDefaultSettingsState()
-        set({ imageUpscalingModel: getValidString(imageUpscalingModel, defaultImageUpscalingModel) })
+        const { imageUpscalingModel: defaultImageUpscalingModel } =
+          getDefaultSettingsState()
+        set({
+          imageUpscalingModel: getValidString(
+            imageUpscalingModel,
+            defaultImageUpscalingModel
+          ),
+        })
       },
       setImageDepthModel: (imageDepthModel?: string) => {
-        const { imageDepthModel: defaultImageDepthModel } = getDefaultSettingsState()
-        set({ imageDepthModel: getValidString(imageDepthModel, defaultImageDepthModel) })
+        const { imageDepthModel: defaultImageDepthModel } =
+          getDefaultSettingsState()
+        set({
+          imageDepthModel: getValidString(
+            imageDepthModel,
+            defaultImageDepthModel
+          ),
+        })
       },
       setImageSegmentationModel: (imageSegmentationModel?: string) => {
-        const { imageSegmentationModel: defaultImageSegmentationModel } = getDefaultSettingsState()
-        set({ imageSegmentationModel: getValidString(imageSegmentationModel, defaultImageSegmentationModel) })
+        const { imageSegmentationModel: defaultImageSegmentationModel } =
+          getDefaultSettingsState()
+        set({
+          imageSegmentationModel: getValidString(
+            imageSegmentationModel,
+            defaultImageSegmentationModel
+          ),
+        })
       },
       setVideoGenerationModel: (videoGenerationModel?: string) => {
-        const { videoGenerationModel: defaultVideoGenerationModel } = getDefaultSettingsState()
-        set({ videoGenerationModel: getValidString(videoGenerationModel, defaultVideoGenerationModel) })
+        const { videoGenerationModel: defaultVideoGenerationModel } =
+          getDefaultSettingsState()
+        set({
+          videoGenerationModel: getValidString(
+            videoGenerationModel,
+            defaultVideoGenerationModel
+          ),
+        })
       },
       setVideoUpscalingModel: (videoUpscalingModel?: string) => {
-        const { videoUpscalingModel: defaultVideoUpscalingModel} = getDefaultSettingsState()
-        set({ videoUpscalingModel: getValidString(videoUpscalingModel, defaultVideoUpscalingModel) })
+        const { videoUpscalingModel: defaultVideoUpscalingModel } =
+          getDefaultSettingsState()
+        set({
+          videoUpscalingModel: getValidString(
+            videoUpscalingModel,
+            defaultVideoUpscalingModel
+          ),
+        })
       },
       setVideoDepthModel: (videoDepthModel?: string) => {
-        const { videoDepthModel: defaultVideoDepthModel } = getDefaultSettingsState()
-        set({ videoDepthModel: getValidString(videoDepthModel, defaultVideoDepthModel) })
+        const { videoDepthModel: defaultVideoDepthModel } =
+          getDefaultSettingsState()
+        set({
+          videoDepthModel: getValidString(
+            videoDepthModel,
+            defaultVideoDepthModel
+          ),
+        })
       },
       setVideoSegmentationModel: (videoSegmentationModel?: string) => {
-        const { videoSegmentationModel: defaultVideoSegmentationModel } = getDefaultSettingsState()
-        set({ videoSegmentationModel: getValidString(videoSegmentationModel, defaultVideoSegmentationModel) })
+        const { videoSegmentationModel: defaultVideoSegmentationModel } =
+          getDefaultSettingsState()
+        set({
+          videoSegmentationModel: getValidString(
+            videoSegmentationModel,
+            defaultVideoSegmentationModel
+          ),
+        })
       },
       setSoundGenerationModel: (soundGenerationModel?: string) => {
-        const { soundGenerationModel: defaultSoundGenerationModel } = getDefaultSettingsState()
-        set({ soundGenerationModel: getValidString(soundGenerationModel, defaultSoundGenerationModel) })
+        const { soundGenerationModel: defaultSoundGenerationModel } =
+          getDefaultSettingsState()
+        set({
+          soundGenerationModel: getValidString(
+            soundGenerationModel,
+            defaultSoundGenerationModel
+          ),
+        })
       },
       setVoiceGenerationModel: (voiceGenerationModel?: string) => {
-        const { voiceGenerationModel: defaultVoiceGenerationModel } = getDefaultSettingsState()
-        set({ voiceGenerationModel: getValidString(voiceGenerationModel, defaultVoiceGenerationModel) })
+        const { voiceGenerationModel: defaultVoiceGenerationModel } =
+          getDefaultSettingsState()
+        set({
+          voiceGenerationModel: getValidString(
+            voiceGenerationModel,
+            defaultVoiceGenerationModel
+          ),
+        })
       },
       setMusicGenerationModel: (musicGenerationModel?: string) => {
-        const { musicGenerationModel: defaultVoiceGenerationModel } = getDefaultSettingsState()
-        set({ musicGenerationModel: getValidString(musicGenerationModel, defaultVoiceGenerationModel) })
+        const { musicGenerationModel: defaultVoiceGenerationModel } =
+          getDefaultSettingsState()
+        set({
+          musicGenerationModel: getValidString(
+            musicGenerationModel,
+            defaultVoiceGenerationModel
+          ),
+        })
       },
-      setImageRenderingStrategy: (imageRenderingStrategy?: RenderingStrategy) => {
-        const { imageRenderingStrategy: defaultImageRenderingStrategy } = getDefaultSettingsState()
-        set({ imageRenderingStrategy: parseRenderingStrategy(imageRenderingStrategy, defaultImageRenderingStrategy) })
+      setImageRenderingStrategy: (
+        imageRenderingStrategy?: RenderingStrategy
+      ) => {
+        const { imageRenderingStrategy: defaultImageRenderingStrategy } =
+          getDefaultSettingsState()
+        set({
+          imageRenderingStrategy: parseRenderingStrategy(
+            imageRenderingStrategy,
+            defaultImageRenderingStrategy
+          ),
+        })
       },
-      setImageDepthRenderingStrategy: (imageDepthRenderingStrategy?: RenderingStrategy) => {
-        const { imageDepthRenderingStrategy: defaultImageDepthRenderingStrategy } = getDefaultSettingsState()
-        set({ imageDepthRenderingStrategy: parseRenderingStrategy(imageDepthRenderingStrategy, defaultImageDepthRenderingStrategy) })
+      setImageDepthRenderingStrategy: (
+        imageDepthRenderingStrategy?: RenderingStrategy
+      ) => {
+        const {
+          imageDepthRenderingStrategy: defaultImageDepthRenderingStrategy,
+        } = getDefaultSettingsState()
+        set({
+          imageDepthRenderingStrategy: parseRenderingStrategy(
+            imageDepthRenderingStrategy,
+            defaultImageDepthRenderingStrategy
+          ),
+        })
       },
-      setImageSegmentationRenderingStrategy: (imageSegmentationRenderingStrategy?: RenderingStrategy) => {
-        const { imageSegmentationRenderingStrategy: defaultImageSegmentationRenderingStrategy } = getDefaultSettingsState()
-        set({ imageSegmentationRenderingStrategy: parseRenderingStrategy(imageSegmentationRenderingStrategy, defaultImageSegmentationRenderingStrategy) })
+      setImageSegmentationRenderingStrategy: (
+        imageSegmentationRenderingStrategy?: RenderingStrategy
+      ) => {
+        const {
+          imageSegmentationRenderingStrategy:
+            defaultImageSegmentationRenderingStrategy,
+        } = getDefaultSettingsState()
+        set({
+          imageSegmentationRenderingStrategy: parseRenderingStrategy(
+            imageSegmentationRenderingStrategy,
+            defaultImageSegmentationRenderingStrategy
+          ),
+        })
       },
-      setImageUpscalingRenderingStrategy: (imageUpscalingRenderingStrategy?: RenderingStrategy) => {
-        const { imageUpscalingRenderingStrategy: defaultImageUpscalingRenderingStrategy } = getDefaultSettingsState()
-        set({ imageUpscalingRenderingStrategy: parseRenderingStrategy(imageUpscalingRenderingStrategy, defaultImageUpscalingRenderingStrategy) })
+      setImageUpscalingRenderingStrategy: (
+        imageUpscalingRenderingStrategy?: RenderingStrategy
+      ) => {
+        const {
+          imageUpscalingRenderingStrategy:
+            defaultImageUpscalingRenderingStrategy,
+        } = getDefaultSettingsState()
+        set({
+          imageUpscalingRenderingStrategy: parseRenderingStrategy(
+            imageUpscalingRenderingStrategy,
+            defaultImageUpscalingRenderingStrategy
+          ),
+        })
       },
-      setVideoRenderingStrategy: (videoRenderingStrategy?: RenderingStrategy) => {
-        const { videoRenderingStrategy: defaultVideoRenderingStrategy } = getDefaultSettingsState()
-        set({ videoRenderingStrategy: parseRenderingStrategy(videoRenderingStrategy, defaultVideoRenderingStrategy) })
+      setVideoRenderingStrategy: (
+        videoRenderingStrategy?: RenderingStrategy
+      ) => {
+        const { videoRenderingStrategy: defaultVideoRenderingStrategy } =
+          getDefaultSettingsState()
+        set({
+          videoRenderingStrategy: parseRenderingStrategy(
+            videoRenderingStrategy,
+            defaultVideoRenderingStrategy
+          ),
+        })
       },
-      setVideoDepthRenderingStrategy: (videoDepthRenderingStrategy?: RenderingStrategy) => {
-        const { videoDepthRenderingStrategy: defaultVideoDepthRenderingStrategy } = getDefaultSettingsState()
-        set({ imageDepthRenderingStrategy: parseRenderingStrategy(videoDepthRenderingStrategy, defaultVideoDepthRenderingStrategy) })
+      setVideoDepthRenderingStrategy: (
+        videoDepthRenderingStrategy?: RenderingStrategy
+      ) => {
+        const {
+          videoDepthRenderingStrategy: defaultVideoDepthRenderingStrategy,
+        } = getDefaultSettingsState()
+        set({
+          imageDepthRenderingStrategy: parseRenderingStrategy(
+            videoDepthRenderingStrategy,
+            defaultVideoDepthRenderingStrategy
+          ),
+        })
       },
-      setVideoSegmentationRenderingStrategy: (videoSegmentationRenderingStrategy?: RenderingStrategy) => {
-        const { videoSegmentationRenderingStrategy: defaultVideoSegmentationRenderingStrategy } = getDefaultSettingsState()
-        set({ videoSegmentationRenderingStrategy: parseRenderingStrategy(videoSegmentationRenderingStrategy, defaultVideoSegmentationRenderingStrategy) })
+      setVideoSegmentationRenderingStrategy: (
+        videoSegmentationRenderingStrategy?: RenderingStrategy
+      ) => {
+        const {
+          videoSegmentationRenderingStrategy:
+            defaultVideoSegmentationRenderingStrategy,
+        } = getDefaultSettingsState()
+        set({
+          videoSegmentationRenderingStrategy: parseRenderingStrategy(
+            videoSegmentationRenderingStrategy,
+            defaultVideoSegmentationRenderingStrategy
+          ),
+        })
       },
-      setVideoUpscalingRenderingStrategy: (videoUpscalingRenderingStrategy?: RenderingStrategy) => {
-        const { videoUpscalingRenderingStrategy: defaultVideoUpscalingRenderingStrategy } = getDefaultSettingsState()
-        set({ videoUpscalingRenderingStrategy: parseRenderingStrategy(videoUpscalingRenderingStrategy, defaultVideoUpscalingRenderingStrategy) })
+      setVideoUpscalingRenderingStrategy: (
+        videoUpscalingRenderingStrategy?: RenderingStrategy
+      ) => {
+        const {
+          videoUpscalingRenderingStrategy:
+            defaultVideoUpscalingRenderingStrategy,
+        } = getDefaultSettingsState()
+        set({
+          videoUpscalingRenderingStrategy: parseRenderingStrategy(
+            videoUpscalingRenderingStrategy,
+            defaultVideoUpscalingRenderingStrategy
+          ),
+        })
       },
-      setVoiceRenderingStrategy: (voiceRenderingStrategy?: RenderingStrategy) => {
-        const { voiceRenderingStrategy: defaultSpeechRenderingStrategy } = getDefaultSettingsState()
-        set({ voiceRenderingStrategy: parseRenderingStrategy(voiceRenderingStrategy, defaultSpeechRenderingStrategy) })
+      setVoiceRenderingStrategy: (
+        voiceRenderingStrategy?: RenderingStrategy
+      ) => {
+        const { voiceRenderingStrategy: defaultSpeechRenderingStrategy } =
+          getDefaultSettingsState()
+        set({
+          voiceRenderingStrategy: parseRenderingStrategy(
+            voiceRenderingStrategy,
+            defaultSpeechRenderingStrategy
+          ),
+        })
       },
-      setSoundRenderingStrategy: (soundRenderingStrategy?: RenderingStrategy) => {
-        const { soundRenderingStrategy: defaultSoundRenderingStrategy } = getDefaultSettingsState()
-        set({ soundRenderingStrategy: parseRenderingStrategy(soundRenderingStrategy, defaultSoundRenderingStrategy) })
+      setSoundRenderingStrategy: (
+        soundRenderingStrategy?: RenderingStrategy
+      ) => {
+        const { soundRenderingStrategy: defaultSoundRenderingStrategy } =
+          getDefaultSettingsState()
+        set({
+          soundRenderingStrategy: parseRenderingStrategy(
+            soundRenderingStrategy,
+            defaultSoundRenderingStrategy
+          ),
+        })
       },
-      setMusicRenderingStrategy: (musicRenderingStrategy?: RenderingStrategy) => {
-        const { musicRenderingStrategy: defaultMusicRenderingStrategy } = getDefaultSettingsState()
-        set({ musicRenderingStrategy: parseRenderingStrategy(musicRenderingStrategy, defaultMusicRenderingStrategy) })
+      setMusicRenderingStrategy: (
+        musicRenderingStrategy?: RenderingStrategy
+      ) => {
+        const { musicRenderingStrategy: defaultMusicRenderingStrategy } =
+          getDefaultSettingsState()
+        set({
+          musicRenderingStrategy: parseRenderingStrategy(
+            musicRenderingStrategy,
+            defaultMusicRenderingStrategy
+          ),
+        })
       },
-      setMaxImagesToGenerateInParallel: (maxImagesToGenerateInParallel?: number) => {
-        const { maxImagesToGenerateInParallel: defaultMaxImagesToGenerateInParallel } = getDefaultSettingsState()
+      setMaxImagesToGenerateInParallel: (
+        maxImagesToGenerateInParallel?: number
+      ) => {
+        const {
+          maxImagesToGenerateInParallel: defaultMaxImagesToGenerateInParallel,
+        } = getDefaultSettingsState()
         set({
           maxImagesToGenerateInParallel: getValidNumber(
             maxImagesToGenerateInParallel,
             1,
             HARD_LIMIT_NB_MAX_ASSETS_TO_GENERATE_IN_PARALLEL,
             defaultMaxImagesToGenerateInParallel
-          )
+          ),
         })
       },
-      setMaxVideosToGenerateInParallel: (maxVideosToGenerateInParallel?: number) => {
-        const { maxVideosToGenerateInParallel: defaultMaxVideosToGenerateInParallel } = getDefaultSettingsState()
+      setMaxVideosToGenerateInParallel: (
+        maxVideosToGenerateInParallel?: number
+      ) => {
+        const {
+          maxVideosToGenerateInParallel: defaultMaxVideosToGenerateInParallel,
+        } = getDefaultSettingsState()
         set({
           maxVideosToGenerateInParallel: getValidNumber(
             maxVideosToGenerateInParallel,
             1,
             HARD_LIMIT_NB_MAX_ASSETS_TO_GENERATE_IN_PARALLEL,
             defaultMaxVideosToGenerateInParallel
-          )
+          ),
         })
       },
       setComfyWorkflowForImage: (comfyWorkflowForImage?: string) => {
-        set({ comfyWorkflowForImage: getValidComfyWorkflowTemplate(comfyWorkflowForImage, getDefaultSettingsState().comfyWorkflowForImage) })
+        set({
+          comfyWorkflowForImage: getValidComfyWorkflowTemplate(
+            comfyWorkflowForImage,
+            getDefaultSettingsState().comfyWorkflowForImage
+          ),
+        })
       },
       setComfyWorkflowForVideo: (comfyWorkflowForVideo?: string) => {
-        set({ comfyWorkflowForVideo: getValidComfyWorkflowTemplate(comfyWorkflowForVideo, getDefaultSettingsState().comfyWorkflowForVideo) })
+        set({
+          comfyWorkflowForVideo: getValidComfyWorkflowTemplate(
+            comfyWorkflowForVideo,
+            getDefaultSettingsState().comfyWorkflowForVideo
+          ),
+        })
       },
       setComfyWorkflowForVoice: (comfyWorkflowForVoice?: string) => {
-        set({ comfyWorkflowForVoice: getValidComfyWorkflowTemplate(comfyWorkflowForVoice, getDefaultSettingsState().comfyWorkflowForVoice) })
+        set({
+          comfyWorkflowForVoice: getValidComfyWorkflowTemplate(
+            comfyWorkflowForVoice,
+            getDefaultSettingsState().comfyWorkflowForVoice
+          ),
+        })
       },
       setComfyWorkflowForSound: (comfyWorkflowForSound?: string) => {
-        set({ comfyWorkflowForSound: getValidComfyWorkflowTemplate(comfyWorkflowForSound, getDefaultSettingsState().comfyWorkflowForSound) })
+        set({
+          comfyWorkflowForSound: getValidComfyWorkflowTemplate(
+            comfyWorkflowForSound,
+            getDefaultSettingsState().comfyWorkflowForSound
+          ),
+        })
       },
       setComfyWorkflowForMusic: (comfyWorkflowForMusic?: string) => {
-        set({ comfyWorkflowForMusic: getValidComfyWorkflowTemplate(comfyWorkflowForMusic, getDefaultSettingsState().comfyWorkflowForMusic) })
+        set({
+          comfyWorkflowForMusic: getValidComfyWorkflowTemplate(
+            comfyWorkflowForMusic,
+            getDefaultSettingsState().comfyWorkflowForMusic
+          ),
+        })
       },
       setGradioApiUrlForAssistant: (gradioApiUrlForAssistant?: string) => {
-        set({ gradioApiUrlForAssistant: getValidString(gradioApiUrlForAssistant, getDefaultSettingsState().gradioApiUrlForAssistant) })
+        set({
+          gradioApiUrlForAssistant: getValidString(
+            gradioApiUrlForAssistant,
+            getDefaultSettingsState().gradioApiUrlForAssistant
+          ),
+        })
       },
       setGradioApiUrlForImage: (gradioApiUrlForImage?: string) => {
-        set({ gradioApiUrlForImage: getValidString(gradioApiUrlForImage, getDefaultSettingsState().gradioApiUrlForImage) })
+        set({
+          gradioApiUrlForImage: getValidString(
+            gradioApiUrlForImage,
+            getDefaultSettingsState().gradioApiUrlForImage
+          ),
+        })
       },
       setGradioApiUrlForVideo: (gradioApiUrlForVideo?: string) => {
-        set({ gradioApiUrlForVideo: getValidString(gradioApiUrlForVideo, getDefaultSettingsState().gradioApiUrlForVideo) })
+        set({
+          gradioApiUrlForVideo: getValidString(
+            gradioApiUrlForVideo,
+            getDefaultSettingsState().gradioApiUrlForVideo
+          ),
+        })
       },
       setGradioApiUrlForVoice: (gradioApiUrlForVoice?: string) => {
-        set({ gradioApiUrlForVoice: getValidString(gradioApiUrlForVoice, getDefaultSettingsState().gradioApiUrlForVoice) })
+        set({
+          gradioApiUrlForVoice: getValidString(
+            gradioApiUrlForVoice,
+            getDefaultSettingsState().gradioApiUrlForVoice
+          ),
+        })
       },
       setGradioApiUrlForSound: (gradioApiUrlForSound?: string) => {
-        set({ gradioApiUrlForSound: getValidString(gradioApiUrlForSound, getDefaultSettingsState().gradioApiUrlForSound) })
+        set({
+          gradioApiUrlForSound: getValidString(
+            gradioApiUrlForSound,
+            getDefaultSettingsState().gradioApiUrlForSound
+          ),
+        })
       },
       setGradioApiUrlForMusic: (gradioApiUrlForMusic?: string) => {
-        set({ gradioApiUrlForMusic: getValidString(gradioApiUrlForMusic, getDefaultSettingsState().gradioApiUrlForMusic) })
+        set({
+          gradioApiUrlForMusic: getValidString(
+            gradioApiUrlForMusic,
+            getDefaultSettingsState().gradioApiUrlForMusic
+          ),
+        })
       },
-      setScriptEditorShowLineNumbers: (scriptEditorShowLineNumbers: boolean) => {
-        set({ scriptEditorShowLineNumbers: getValidBoolean(scriptEditorShowLineNumbers, getDefaultSettingsState().scriptEditorShowLineNumbers) })
+      setScriptEditorShowLineNumbers: (
+        scriptEditorShowLineNumbers: boolean
+      ) => {
+        set({
+          scriptEditorShowLineNumbers: getValidBoolean(
+            scriptEditorShowLineNumbers,
+            getDefaultSettingsState().scriptEditorShowLineNumbers
+          ),
+        })
       },
       setScriptEditorShowMinimap: (scriptEditorShowMinimap: boolean) => {
-        set({ scriptEditorShowMinimap: getValidBoolean(scriptEditorShowMinimap, getDefaultSettingsState().scriptEditorShowMinimap) })
+        set({
+          scriptEditorShowMinimap: getValidBoolean(
+            scriptEditorShowMinimap,
+            getDefaultSettingsState().scriptEditorShowMinimap
+          ),
+        })
       },
       /*
       should we deprecate this? or rename to "default<something>"?
@@ -507,94 +976,194 @@ export const useSettings = create<SettingsStore>()(
         return {
           // why do we need those fallbacks? because some users will leave the fields empty,
           // eg. an empty model string.. basically we want to allow empty config that still works!
-          assistantProvider: state.assistantProvider || defaultSettings.assistantProvider,
+          assistantProvider:
+            state.assistantProvider || defaultSettings.assistantProvider,
           imageProvider: state.imageProvider || defaultSettings.imageProvider,
-          imageUpscalingProvider: state.imageUpscalingProvider || defaultSettings.imageUpscalingProvider,
-          imageDepthProvider: state.imageDepthProvider || defaultSettings.imageDepthProvider,
-          imageSegmentationProvider: state.imageSegmentationProvider || defaultSettings.imageSegmentationProvider,
+          imageUpscalingProvider:
+            state.imageUpscalingProvider ||
+            defaultSettings.imageUpscalingProvider,
+          imageDepthProvider:
+            state.imageDepthProvider || defaultSettings.imageDepthProvider,
+          imageSegmentationProvider:
+            state.imageSegmentationProvider ||
+            defaultSettings.imageSegmentationProvider,
           videoProvider: state.videoProvider || defaultSettings.videoProvider,
-          videoUpscalingProvider: state.videoUpscalingProvider || defaultSettings.videoUpscalingProvider,
-          videoDepthProvider: state.videoDepthProvider || defaultSettings.videoDepthProvider,
-          videoSegmentationProvider: state.videoSegmentationProvider || defaultSettings.videoSegmentationProvider,
+          videoUpscalingProvider:
+            state.videoUpscalingProvider ||
+            defaultSettings.videoUpscalingProvider,
+          videoDepthProvider:
+            state.videoDepthProvider || defaultSettings.videoDepthProvider,
+          videoSegmentationProvider:
+            state.videoSegmentationProvider ||
+            defaultSettings.videoSegmentationProvider,
           soundProvider: state.soundProvider || defaultSettings.soundProvider,
           voiceProvider: state.voiceProvider || defaultSettings.voiceProvider,
           musicProvider: state.musicProvider || defaultSettings.musicProvider,
-          customComfyUiApiKey: state.customComfyUiApiKey || defaultSettings.customComfyUiApiKey,
-          replicateApiKey: state.replicateApiKey || defaultSettings.replicateApiKey,
-          comfyIcuApiKey: state.comfyIcuApiKey || defaultSettings.comfyIcuApiKey,
-          comfyIcuAccelerator: state.comfyIcuAccelerator || defaultSettings.comfyIcuAccelerator,
-          huggingFaceApiKey: state.huggingFaceApiKey || defaultSettings.huggingFaceApiKey,
+          customComfyUiApiKey:
+            state.customComfyUiApiKey || defaultSettings.customComfyUiApiKey,
+          replicateApiKey:
+            state.replicateApiKey || defaultSettings.replicateApiKey,
+          comfyIcuApiKey:
+            state.comfyIcuApiKey || defaultSettings.comfyIcuApiKey,
+          comfyIcuAccelerator:
+            state.comfyIcuAccelerator || defaultSettings.comfyIcuAccelerator,
+          huggingFaceApiKey:
+            state.huggingFaceApiKey || defaultSettings.huggingFaceApiKey,
           falAiApiKey: state.falAiApiKey || defaultSettings.falAiApiKey,
-          modelsLabApiKey: state.modelsLabApiKey || defaultSettings.modelsLabApiKey,
+          modelsLabApiKey:
+            state.modelsLabApiKey || defaultSettings.modelsLabApiKey,
           openaiApiKey: state.openaiApiKey || defaultSettings.openaiApiKey,
           groqApiKey: state.groqApiKey || defaultSettings.groqApiKey,
           googleApiKey: state.googleApiKey || defaultSettings.googleApiKey,
-          anthropicApiKey: state.anthropicApiKey || defaultSettings.anthropicApiKey,
-          elevenLabsApiKey: state.elevenLabsApiKey || defaultSettings.elevenLabsApiKey,
+          anthropicApiKey:
+            state.anthropicApiKey || defaultSettings.anthropicApiKey,
+          elevenLabsApiKey:
+            state.elevenLabsApiKey || defaultSettings.elevenLabsApiKey,
           cohereApiKey: state.cohereApiKey || defaultSettings.cohereApiKey,
-          mistralAiApiKey: state.mistralAiApiKey || defaultSettings.mistralAiApiKey,
+          mistralAiApiKey:
+            state.mistralAiApiKey || defaultSettings.mistralAiApiKey,
           kitsAiApiKey: state.kitsAiApiKey || defaultSettings.kitsAiApiKey,
-          fireworksAiApiKey: state.fireworksAiApiKey || defaultSettings.fireworksAiApiKey,
-          stabilityAiApiKey: state.stabilityAiApiKey || defaultSettings.stabilityAiApiKey,
+          fireworksAiApiKey:
+            state.fireworksAiApiKey || defaultSettings.fireworksAiApiKey,
+          stabilityAiApiKey:
+            state.stabilityAiApiKey || defaultSettings.stabilityAiApiKey,
 
-          broadcastObsServerHost: state.broadcastObsServerHost || defaultSettings.broadcastObsServerHost,
-          broadcastObsServerPort: state.broadcastObsServerPort || defaultSettings.broadcastObsServerPort,
-          broadcastObsServerPass: state.broadcastObsServerPass || defaultSettings.broadcastObsServerPass,
-          
-          censorNotForAllAudiencesContent: state.censorNotForAllAudiencesContent || defaultSettings.censorNotForAllAudiencesContent,
-          imagePromptPrefix: state.imagePromptPrefix || defaultSettings.imagePromptPrefix,
-          imagePromptSuffix: state.imagePromptSuffix || defaultSettings.imagePromptSuffix,
-          imageNegativePrompt: state.imageNegativePrompt || defaultSettings.imageNegativePrompt,
-          videoPromptPrefix: state.videoPromptPrefix || defaultSettings.videoPromptPrefix,
-          videoPromptSuffix: state.videoPromptSuffix || defaultSettings.videoPromptSuffix,
-          videoNegativePrompt: state.videoNegativePrompt || defaultSettings.videoNegativePrompt,       
-                    
-          assistantModel: state.assistantModel || defaultSettings.assistantModel,
-          assistantTurboModel: state.assistantTurboModel || defaultSettings.assistantTurboModel,
-          
-          imageGenerationModel: state.imageGenerationModel || defaultSettings.imageGenerationModel,
-          imageGenerationTurboModel: state.imageGenerationTurboModel || defaultSettings.imageGenerationTurboModel,
-          imageUpscalingModel: state.imageUpscalingModel || defaultSettings.imageUpscalingModel,
-          imageDepthModel: state.imageDepthModel || defaultSettings.imageDepthModel,
-          imageSegmentationModel: state.imageSegmentationModel || defaultSettings.imageSegmentationModel,
+          broadcastObsServerHost:
+            state.broadcastObsServerHost ||
+            defaultSettings.broadcastObsServerHost,
+          broadcastObsServerPort:
+            state.broadcastObsServerPort ||
+            defaultSettings.broadcastObsServerPort,
+          broadcastObsServerPass:
+            state.broadcastObsServerPass ||
+            defaultSettings.broadcastObsServerPass,
 
-          videoGenerationModel: state.videoGenerationModel || defaultSettings.videoGenerationModel,
-          videoDepthModel: state.videoDepthModel || defaultSettings.videoDepthModel,
-          videoSegmentationModel: state.videoSegmentationModel || defaultSettings.videoSegmentationModel,
-          videoUpscalingModel: state.videoUpscalingModel || defaultSettings.videoUpscalingModel,
+          censorNotForAllAudiencesContent:
+            state.censorNotForAllAudiencesContent ||
+            defaultSettings.censorNotForAllAudiencesContent,
+          imagePromptPrefix:
+            state.imagePromptPrefix || defaultSettings.imagePromptPrefix,
+          imagePromptSuffix:
+            state.imagePromptSuffix || defaultSettings.imagePromptSuffix,
+          imageNegativePrompt:
+            state.imageNegativePrompt || defaultSettings.imageNegativePrompt,
+          videoPromptPrefix:
+            state.videoPromptPrefix || defaultSettings.videoPromptPrefix,
+          videoPromptSuffix:
+            state.videoPromptSuffix || defaultSettings.videoPromptSuffix,
+          videoNegativePrompt:
+            state.videoNegativePrompt || defaultSettings.videoNegativePrompt,
 
-          soundGenerationModel: state.soundGenerationModel || defaultSettings.soundGenerationModel,
-          voiceGenerationModel: state.voiceGenerationModel || defaultSettings.voiceGenerationModel,
-          musicGenerationModel: state.musicGenerationModel || defaultSettings.musicGenerationModel,
-                    
-          imageRenderingStrategy: state.imageRenderingStrategy || defaultSettings.imageRenderingStrategy,
-          imageDepthRenderingStrategy: state.imageDepthRenderingStrategy || defaultSettings.imageDepthRenderingStrategy,
-          imageSegmentationRenderingStrategy: state.imageSegmentationRenderingStrategy || defaultSettings.imageSegmentationRenderingStrategy,
-          imageUpscalingRenderingStrategy: state.imageUpscalingRenderingStrategy || defaultSettings.imageUpscalingRenderingStrategy,
-          
-          videoRenderingStrategy: state.videoRenderingStrategy || defaultSettings.videoRenderingStrategy,
-          videoDepthRenderingStrategy: state.videoDepthRenderingStrategy || defaultSettings.videoDepthRenderingStrategy,
-          videoSegmentationRenderingStrategy: state.videoSegmentationRenderingStrategy || defaultSettings.videoSegmentationRenderingStrategy,
-          videoUpscalingRenderingStrategy: state.videoUpscalingRenderingStrategy || defaultSettings.videoUpscalingRenderingStrategy,
-          
-          voiceRenderingStrategy: state.voiceRenderingStrategy || defaultSettings.voiceRenderingStrategy,
-          soundRenderingStrategy: state.soundRenderingStrategy || defaultSettings.soundRenderingStrategy,
-          musicRenderingStrategy: state.musicRenderingStrategy || defaultSettings.musicRenderingStrategy,
-          maxImagesToGenerateInParallel: state.maxImagesToGenerateInParallel || defaultSettings.maxImagesToGenerateInParallel,
-          maxVideosToGenerateInParallel: state.maxVideosToGenerateInParallel || defaultSettings.maxVideosToGenerateInParallel,
-          comfyWorkflowForImage: state.comfyWorkflowForImage || defaultSettings.comfyWorkflowForImage,
-          comfyWorkflowForVideo: state.comfyWorkflowForVideo || defaultSettings.comfyWorkflowForVideo,
-          comfyWorkflowForVoice: state.comfyWorkflowForVoice || defaultSettings.comfyWorkflowForVoice,
-          comfyWorkflowForSound: state.comfyWorkflowForSound || defaultSettings.comfyWorkflowForSound,
-          comfyWorkflowForMusic: state.comfyWorkflowForMusic || defaultSettings.comfyWorkflowForMusic,
-          gradioApiUrlForAssistant: state.gradioApiUrlForAssistant || defaultSettings.gradioApiUrlForAssistant,
-          gradioApiUrlForImage: state.gradioApiUrlForImage || defaultSettings.gradioApiUrlForImage,
-          gradioApiUrlForVideo: state.gradioApiUrlForVideo || defaultSettings.gradioApiUrlForVideo,
-          gradioApiUrlForVoice: state.gradioApiUrlForVoice || defaultSettings.gradioApiUrlForVoice,
-          gradioApiUrlForSound: state.gradioApiUrlForSound || defaultSettings.gradioApiUrlForSound,
-          gradioApiUrlForMusic: state.gradioApiUrlForMusic || defaultSettings.gradioApiUrlForMusic,
-          scriptEditorShowLineNumbers: state.scriptEditorShowLineNumbers || defaultSettings.scriptEditorShowLineNumbers,
-          scriptEditorShowMinimap: state.scriptEditorShowMinimap || defaultSettings.scriptEditorShowMinimap,
+          assistantModel:
+            state.assistantModel || defaultSettings.assistantModel,
+          assistantTurboModel:
+            state.assistantTurboModel || defaultSettings.assistantTurboModel,
+
+          imageGenerationModel:
+            state.imageGenerationModel || defaultSettings.imageGenerationModel,
+          imageGenerationTurboModel:
+            state.imageGenerationTurboModel ||
+            defaultSettings.imageGenerationTurboModel,
+          imageUpscalingModel:
+            state.imageUpscalingModel || defaultSettings.imageUpscalingModel,
+          imageDepthModel:
+            state.imageDepthModel || defaultSettings.imageDepthModel,
+          imageSegmentationModel:
+            state.imageSegmentationModel ||
+            defaultSettings.imageSegmentationModel,
+
+          videoGenerationModel:
+            state.videoGenerationModel || defaultSettings.videoGenerationModel,
+          videoDepthModel:
+            state.videoDepthModel || defaultSettings.videoDepthModel,
+          videoSegmentationModel:
+            state.videoSegmentationModel ||
+            defaultSettings.videoSegmentationModel,
+          videoUpscalingModel:
+            state.videoUpscalingModel || defaultSettings.videoUpscalingModel,
+
+          soundGenerationModel:
+            state.soundGenerationModel || defaultSettings.soundGenerationModel,
+          voiceGenerationModel:
+            state.voiceGenerationModel || defaultSettings.voiceGenerationModel,
+          musicGenerationModel:
+            state.musicGenerationModel || defaultSettings.musicGenerationModel,
+
+          imageRenderingStrategy:
+            state.imageRenderingStrategy ||
+            defaultSettings.imageRenderingStrategy,
+          imageDepthRenderingStrategy:
+            state.imageDepthRenderingStrategy ||
+            defaultSettings.imageDepthRenderingStrategy,
+          imageSegmentationRenderingStrategy:
+            state.imageSegmentationRenderingStrategy ||
+            defaultSettings.imageSegmentationRenderingStrategy,
+          imageUpscalingRenderingStrategy:
+            state.imageUpscalingRenderingStrategy ||
+            defaultSettings.imageUpscalingRenderingStrategy,
+
+          videoRenderingStrategy:
+            state.videoRenderingStrategy ||
+            defaultSettings.videoRenderingStrategy,
+          videoDepthRenderingStrategy:
+            state.videoDepthRenderingStrategy ||
+            defaultSettings.videoDepthRenderingStrategy,
+          videoSegmentationRenderingStrategy:
+            state.videoSegmentationRenderingStrategy ||
+            defaultSettings.videoSegmentationRenderingStrategy,
+          videoUpscalingRenderingStrategy:
+            state.videoUpscalingRenderingStrategy ||
+            defaultSettings.videoUpscalingRenderingStrategy,
+
+          voiceRenderingStrategy:
+            state.voiceRenderingStrategy ||
+            defaultSettings.voiceRenderingStrategy,
+          soundRenderingStrategy:
+            state.soundRenderingStrategy ||
+            defaultSettings.soundRenderingStrategy,
+          musicRenderingStrategy:
+            state.musicRenderingStrategy ||
+            defaultSettings.musicRenderingStrategy,
+          maxImagesToGenerateInParallel:
+            state.maxImagesToGenerateInParallel ||
+            defaultSettings.maxImagesToGenerateInParallel,
+          maxVideosToGenerateInParallel:
+            state.maxVideosToGenerateInParallel ||
+            defaultSettings.maxVideosToGenerateInParallel,
+          comfyWorkflowForImage:
+            state.comfyWorkflowForImage ||
+            defaultSettings.comfyWorkflowForImage,
+          comfyWorkflowForVideo:
+            state.comfyWorkflowForVideo ||
+            defaultSettings.comfyWorkflowForVideo,
+          comfyWorkflowForVoice:
+            state.comfyWorkflowForVoice ||
+            defaultSettings.comfyWorkflowForVoice,
+          comfyWorkflowForSound:
+            state.comfyWorkflowForSound ||
+            defaultSettings.comfyWorkflowForSound,
+          comfyWorkflowForMusic:
+            state.comfyWorkflowForMusic ||
+            defaultSettings.comfyWorkflowForMusic,
+          gradioApiUrlForAssistant:
+            state.gradioApiUrlForAssistant ||
+            defaultSettings.gradioApiUrlForAssistant,
+          gradioApiUrlForImage:
+            state.gradioApiUrlForImage || defaultSettings.gradioApiUrlForImage,
+          gradioApiUrlForVideo:
+            state.gradioApiUrlForVideo || defaultSettings.gradioApiUrlForVideo,
+          gradioApiUrlForVoice:
+            state.gradioApiUrlForVoice || defaultSettings.gradioApiUrlForVoice,
+          gradioApiUrlForSound:
+            state.gradioApiUrlForSound || defaultSettings.gradioApiUrlForSound,
+          gradioApiUrlForMusic:
+            state.gradioApiUrlForMusic || defaultSettings.gradioApiUrlForMusic,
+          scriptEditorShowLineNumbers:
+            state.scriptEditorShowLineNumbers ||
+            defaultSettings.scriptEditorShowLineNumbers,
+          scriptEditorShowMinimap:
+            state.scriptEditorShowMinimap ||
+            defaultSettings.scriptEditorShowMinimap,
           /*
           should we deprecate this? or rename to "default<something>"?
           huggingFaceModelForAssistant: state.huggingFaceModelForAssistant || defaultSettings.huggingFaceModelForAssistant,
@@ -665,7 +1234,7 @@ export const useSettings = create<SettingsStore>()(
       },
     }),
     {
-      name: 'CLAPPER_REVISION_0_CONTROLLERS_USE_SETTINGS'
-    },
-  ),
+      name: 'CLAPPER_REVISION_0_CONTROLLERS_USE_SETTINGS',
+    }
+  )
 )

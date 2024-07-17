@@ -1,4 +1,7 @@
-import { ProviderMetricsEstimationType, ProviderMetricsModelEstimations } from "./types"
+import {
+  ProviderMetricsEstimationType,
+  ProviderMetricsModelEstimations,
+} from './types'
 
 export function getDefaultMetricsModelEstimation(): ProviderMetricsModelEstimations {
   const defaults: ProviderMetricsModelEstimations = {

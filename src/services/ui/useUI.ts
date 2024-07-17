@@ -1,13 +1,20 @@
-"use client"
+'use client'
 
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
-import { ScriptEditorService, ScriptEditorStore, SettingsCategory, UIStore,  UITheme, UIThemeName } from "@aitube/clapper-services"
-import { getDefaultUIState } from "./getDefaultUIState"
-import { themes } from "./theme"
-import { useScriptEditor } from "../editors/script-editor/useScriptEditor"
-import { TimelineStore, useTimeline } from "@aitube/timeline"
+import {
+  ScriptEditorService,
+  ScriptEditorStore,
+  SettingsCategory,
+  UIStore,
+  UITheme,
+  UIThemeName,
+} from '@aitube/clapper-services'
+import { getDefaultUIState } from './getDefaultUIState'
+import { themes } from './theme'
+import { useScriptEditor } from '../editors/script-editor/useScriptEditor'
+import { TimelineStore, useTimeline } from '@aitube/timeline'
 
 export const useUI = create<UIStore>()(
   persist(
@@ -71,7 +78,7 @@ export const useUI = create<UIStore>()(
       },
     }),
     {
-      name: 'CLAPPER_REVISION_0_CONTROLLERS_UI'
-    },
-  ),
+      name: 'CLAPPER_REVISION_0_CONTROLLERS_UI',
+    }
+  )
 )

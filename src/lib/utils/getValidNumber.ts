@@ -1,4 +1,9 @@
-export const getValidNumber = (something: any, minValue: number, maxValue: number, defaultValue: number) => {
+export const getValidNumber = (
+  something: any,
+  minValue: number,
+  maxValue: number,
+  defaultValue: number
+) => {
   const strValue = `${something || defaultValue}`
   const numValue = Number(strValue)
   const isValid = !isNaN(numValue) && isFinite(numValue)
@@ -6,5 +11,4 @@ export const getValidNumber = (something: any, minValue: number, maxValue: numbe
     return defaultValue
   }
   return Math.max(minValue, Math.min(maxValue, numValue))
- 
 }
