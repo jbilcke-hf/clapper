@@ -1,24 +1,35 @@
-"use client"
+'use client'
 
-import { create } from "zustand"
-import { ClapperPlugin, ClapperPluginApi, ClapperPluginMeta, PluginsStore, PublicServices } from "@aitube/clapper-services"
-import { useTimeline } from "@aitube/timeline"
+import { create } from 'zustand'
+import {
+  ClapperPlugin,
+  ClapperPluginApi,
+  ClapperPluginMeta,
+  PluginsStore,
+  PublicServices,
+} from '@aitube/clapper-services'
+import { useTimeline } from '@aitube/timeline'
 
-import { getDefaultPluginsState } from "./getDefaultPluginsState"
-import { useScriptEditor } from "../editors/script-editor/useScriptEditor"
-import { useMonitor } from "../monitor/useMonitor"
-import { useTasks } from "@/components/tasks/useTasks"
-import { useRenderer } from "../renderer"
-import { useBroadcast } from "../broadcast/useBroadcast"
-import { useResolver } from "../resolver/useResolver"
-import { useAssistant } from "../assistant/useAssistant"
-import { useAudio } from "../audio/useAudio"
-import { useUI } from "../ui"
-import { fetchAndRun } from "./fetchAndRun"
-import { useEditors, useEntityEditor, useProjectEditor, useSegmentEditor } from "../editors"
-import { useSimulator } from "../simulator/useSimulator"
-import { useIO } from "../io/useIO"
-import { useMic } from "../mic/useMic"
+import { getDefaultPluginsState } from './getDefaultPluginsState'
+import { useScriptEditor } from '../editors/script-editor/useScriptEditor'
+import { useMonitor } from '../monitor/useMonitor'
+import { useTasks } from '@/components/tasks/useTasks'
+import { useRenderer } from '../renderer'
+import { useBroadcast } from '../broadcast/useBroadcast'
+import { useResolver } from '../resolver/useResolver'
+import { useAssistant } from '../assistant/useAssistant'
+import { useAudio } from '../audio/useAudio'
+import { useUI } from '../ui'
+import { fetchAndRun } from './fetchAndRun'
+import {
+  useEditors,
+  useEntityEditor,
+  useProjectEditor,
+  useSegmentEditor,
+} from '../editors'
+import { useSimulator } from '../simulator/useSimulator'
+import { useIO } from '../io/useIO'
+import { useMic } from '../mic/useMic'
 
 export const usePlugins = create<PluginsStore>((set, get) => ({
   ...getDefaultPluginsState(),
@@ -31,14 +42,16 @@ export const usePlugins = create<PluginsStore>((set, get) => ({
     set({
       availablePlugins: [
         //
-      ]
+      ],
     })
   },
 
   install: async (id: string) => {
     const { availablePlugins } = get()
-    const plugin = availablePlugins.find(p => p.id === id)
-    if (!plugin) { throw new Error(`couldn't find plugin "${id}"`) }
+    const plugin = availablePlugins.find((p) => p.id === id)
+    if (!plugin) {
+      throw new Error(`couldn't find plugin "${id}"`)
+    }
 
     await fetchAndRun(plugin.assetUrl)
   },
@@ -81,17 +94,15 @@ export const usePlugins = create<PluginsStore>((set, get) => ({
       },
     }
     return api
-  }
-}));
+  },
+}))
 
-if (typeof window !== "undefined") {
-
-  (window as any).usePlugins = usePlugins;
+if (typeof window !== 'undefined') {
+  ;(window as any).usePlugins = usePlugins
 
   // plugins will have to execute:
   // usePlugins.getState().connect(<...>)
-  (window as any).installPlugin = async (plugin: ClapperPlugin) => {
+  ;(window as any).installPlugin = async (plugin: ClapperPlugin) => {
     return usePlugins.getState().connect(plugin)
-  };
+  }
 }
-

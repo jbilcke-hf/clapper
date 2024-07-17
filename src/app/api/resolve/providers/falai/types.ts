@@ -1,4 +1,3 @@
-
 export type FalAiImageResponse = {
   prompt: string
   timings: { inference: number }

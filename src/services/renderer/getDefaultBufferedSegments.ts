@@ -1,14 +1,14 @@
-import { BufferedSegments } from "@aitube/clapper-services"
+import { BufferedSegments } from '@aitube/clapper-services'
 
 export function getDefaultBufferedSegments(): BufferedSegments {
   const result: BufferedSegments = {
-    activeSegmentsCacheKey: "",
+    activeSegmentsCacheKey: '',
     activeSegments: [],
     activeVideoSegment: undefined,
     activeStoryboardSegment: undefined,
     activeAudioSegments: [],
 
-    upcomingSegmentsCacheKey: "",
+    upcomingSegmentsCacheKey: '',
     upcomingSegments: [],
     upcomingVideoSegment: undefined,
     upcomingStoryboardSegment: undefined,

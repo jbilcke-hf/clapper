@@ -1,24 +1,18 @@
-"use client"
+'use client'
 
-import { create } from "zustand"
-import { SimulatorStore } from "@aitube/clapper-services"
+import { create } from 'zustand'
+import { SimulatorStore } from '@aitube/clapper-services'
 
-import { getDefaultSimulatorState } from "./useDefaultSimulatorState"
-
+import { getDefaultSimulatorState } from './useDefaultSimulatorState'
 
 export const useSimulator = create<SimulatorStore>((set, get) => ({
   ...getDefaultSimulatorState(),
 
-
-  startLoop: () => {
-
-  },
-  runLoop: async () => {
-
-  },
+  startLoop: () => {},
+  runLoop: async () => {},
   togglePause: (isPaused?: boolean) => {
     let isRunning = get().isRunning
-    if (typeof isPaused === "boolean") {
+    if (typeof isPaused === 'boolean') {
       isRunning = !isPaused
     } else {
       isRunning = !isRunning
@@ -26,5 +20,5 @@ export const useSimulator = create<SimulatorStore>((set, get) => ({
 
     set({ isRunning })
     return isRunning
-  }
+  },
 }))

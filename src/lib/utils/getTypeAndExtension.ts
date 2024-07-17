@@ -1,10 +1,9 @@
-import { ClapOutputType } from "@aitube/clap"
+import { ClapOutputType } from '@aitube/clap'
 
 /**
  * break a base64 string into sub-components
  */
-export function getTypeAndExtension(base64: string = ""): {
-
+export function getTypeAndExtension(base64: string = ''): {
   // category eg. video, audio, text
   category: string
 
@@ -20,24 +19,24 @@ export function getTypeAndExtension(base64: string = ""): {
   const matches = base64.match(/^data:([A-Za-z-+0-9/]+);base64,(.+)$/)
 
   if (!matches || matches.length !== 3) {
-    throw new Error("Invalid base64 string")
+    throw new Error('Invalid base64 string')
   }
-   
-  const assetFileFormat = matches[1] || ""
+
+  const assetFileFormat = matches[1] || ''
 
   // this should be enough for most media formats (jpeg, png, webp, mp4)
-  const [category, extension] = assetFileFormat.split("/")
+  const [category, extension] = assetFileFormat.split('/')
 
   let outputType = ClapOutputType.TEXT
 
-  if (category === "audio") {
+  if (category === 'audio') {
     outputType = ClapOutputType.AUDIO
-  } else if (category === "image") {
+  } else if (category === 'image') {
     outputType = ClapOutputType.IMAGE
-  } else if (category === "video") {
+  } else if (category === 'video') {
     outputType = ClapOutputType.VIDEO
   }
- 
+
   return {
     category,
     assetFileFormat,

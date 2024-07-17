@@ -5,9 +5,9 @@
 // lit_lite_inference_text2vid_v1.0
 
 enum LumaLabsPhotonGenerationState {
-  PENDING = "pending",
-  PROCESSING = "processing",
-  COMPLETED = "completed"
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  COMPLETED = 'completed',
 }
 
 type LumaLabsPhotonGenerationVideo = {
@@ -18,7 +18,7 @@ type LumaLabsPhotonGenerationVideo = {
 }
 
 type LumaLabsPhotonGenerationRequest = {
-  fspect_ratio: "16:9" | "1:1" // "16:9", "1:1" what are the others?
+  fspect_ratio: '16:9' | '1:1' // "16:9", "1:1" what are the others?
   expand_prompt: boolean
   user_prompt: string
 }
@@ -27,7 +27,7 @@ type LumaLabsPhotonGeneration = {
   id: string
   prompt: string
   state: LumaLabsPhotonGenerationState
-  created_at: string // iso date 
+  created_at: string // iso date
   video: LumaLabsPhotonGenerationVideo | null
   liked: null
   estimate_wait_seconds: null | number

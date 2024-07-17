@@ -1,4 +1,4 @@
-import { ScriptEditorState, EditorView } from "@aitube/clapper-services"
+import { ScriptEditorState, EditorView } from '@aitube/clapper-services'
 
 export function getDefaultScriptEditorState(): ScriptEditorState {
   const state: ScriptEditorState = {
@@ -6,7 +6,7 @@ export function getDefaultScriptEditorState(): ScriptEditorState {
     textModel: undefined,
     standaloneCodeEditor: undefined,
     mouseIsInside: false,
-    draft: "",
+    draft: '',
     lineNumberToMentionedSegments: {},
 
     scrollHeight: 0,

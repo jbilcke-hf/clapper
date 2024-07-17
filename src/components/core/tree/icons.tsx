@@ -1,12 +1,12 @@
-import { motion } from "framer-motion"
+import { motion } from 'framer-motion'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
 export function Folder({
   open,
-  className
+  className,
 }: {
-  open?: boolean;
+  open?: boolean
   className?: string
 }) {
   if (open) {
@@ -48,9 +48,9 @@ export function Folder({
 
 export function File({
   open,
-  className
+  className,
 }: {
-  open?: boolean;
+  open?: boolean
   className?: string
 }) {
   return (
@@ -73,9 +73,9 @@ export function File({
 
 export function Arrow({
   open,
-  className
+  className,
 }: {
-  open?: boolean;
+  open?: boolean
   className?: string
 }) {
   return (
@@ -105,9 +105,9 @@ export function Arrow({
 
 export function Ellipse({
   open,
-  className
+  className,
 }: {
-  open?: boolean;
+  open?: boolean
   className?: string
 }) {
   return (

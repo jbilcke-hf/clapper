@@ -1,31 +1,31 @@
-import { StaticImageData } from "next/image"
+import { StaticImageData } from 'next/image'
 
-import { ComputeProvider } from "@aitube/clapper-services"
+import { ComputeProvider } from '@aitube/clapper-services'
 
-import none from "./none.png"
-import anthropic from "./anthropic.png"
-import cohere from "./cohere.png"
-import elevenlabs from "./elevenlabs.png"
-import everartai from "./everartai.png"
-import falai from "./falai.png"
-import fireworks from "./fireworks.png"
-import google from "./google.png"
-import groq from "./groq.png"
-import hedra from "./hedra.png"
-import huggingface from "./huggingface.png"
-import kitsai from "./kitsai.png"
-import kuaishou from "./kuaishou.png"
-import leonardoai from "./leonardoai.png"
-import lumalabs from "./lumalabs.png"
-import midjourney from "./midjourney.png"
-import mistralai from "./mistralai.png"
-import modelslab from "./modelslab.jpeg"
-import openai from "./openai.png"
-import replicate from "./replicate.jpeg"
-import runwayml from "./runwayml.png"
-import stabilityai from "./stabilityai.png"
-import suno from "./suno.png"
-import udio from "./udio.png"
+import none from './none.png'
+import anthropic from './anthropic.png'
+import cohere from './cohere.png'
+import elevenlabs from './elevenlabs.png'
+import everartai from './everartai.png'
+import falai from './falai.png'
+import fireworks from './fireworks.png'
+import google from './google.png'
+import groq from './groq.png'
+import hedra from './hedra.png'
+import huggingface from './huggingface.png'
+import kitsai from './kitsai.png'
+import kuaishou from './kuaishou.png'
+import leonardoai from './leonardoai.png'
+import lumalabs from './lumalabs.png'
+import midjourney from './midjourney.png'
+import mistralai from './mistralai.png'
+import modelslab from './modelslab.jpeg'
+import openai from './openai.png'
+import replicate from './replicate.jpeg'
+import runwayml from './runwayml.png'
+import stabilityai from './stabilityai.png'
+import suno from './suno.png'
+import udio from './udio.png'
 
 export const computeProvidersLogos: Record<ComputeProvider, StaticImageData> = {
   [ComputeProvider.NONE]: none,

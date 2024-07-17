@@ -1,24 +1,31 @@
-import { HfInference, HfInferenceEndpoint } from "@huggingface/inference"
+import { HfInference, HfInferenceEndpoint } from '@huggingface/inference'
 
-import { decodeOutput } from "@/lib/utils/decodeOutput"
-import { ResolveRequest } from "@aitube/clapper-services"
+import { decodeOutput } from '@/lib/utils/decodeOutput'
+import { ResolveRequest } from '@aitube/clapper-services'
 
 export async function generateImage(request: ResolveRequest): Promise<string> {
-  
   if (!request.settings.imageGenerationModel) {
-    throw new Error(`HuggingFace.generateImage: cannot generate without a valid imageGenerationModel`)
+    throw new Error(
+      `HuggingFace.generateImage: cannot generate without a valid imageGenerationModel`
+    )
   }
 
   if (!request.prompts.image.positive) {
-    throw new Error(`HuggingFace.generateImage: cannot generate without a valid positive image prompt`)
+    throw new Error(
+      `HuggingFace.generateImage: cannot generate without a valid positive image prompt`
+    )
   }
 
   if (!request.settings.huggingFaceApiKey) {
-    throw new Error(`HuggingFace.generateImage: cannot generate without a valid huggingFaceApiKey`)
+    throw new Error(
+      `HuggingFace.generateImage: cannot generate without a valid huggingFaceApiKey`
+    )
   }
 
-  const hf: HfInferenceEndpoint = new HfInference(request.settings.huggingFaceApiKey)
-  
+  const hf: HfInferenceEndpoint = new HfInference(
+    request.settings.huggingFaceApiKey
+  )
+
   const blob: Blob = await hf.textToImage({
     model: request.settings.imageGenerationModel,
     inputs: request.prompts.image.positive,
@@ -33,10 +40,10 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
        * Guidance scale: Higher guidance scale encourages to generate images that are closely linked to the text `prompt`, usually at the expense of lower image quality.
        */
       // guidance_scale?: number;
-    }
+    },
   })
 
-  console.log("output from Hugging Face Inference API:", blob)
+  console.log('output from Hugging Face Inference API:', blob)
 
   throw new Error(`finish me`)
 }

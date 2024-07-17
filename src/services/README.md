@@ -6,8 +6,7 @@ They each have their own state (managed using Zustand, so it can be used in and 
 
 For instance multiple services might need to tap into the Settings service to pull parameters or default values.
 
-
-## Assistant 
+## Assistant
 
 The chatbot assistant.
 
@@ -31,7 +30,6 @@ useAudio()
 
 Input/output management, to import and export various file formats.
 
-
 Usage:
 
 ```typescript
@@ -42,7 +40,7 @@ useIO()
 
 The video monitor is the big video display component used to preview an existing (pre-generated) full video, or preview a work in progress project composed of many tiny video clips.
 
-The monitor is responsible for handling the play, pause, seek etc.. 
+The monitor is responsible for handling the play, pause, seek etc..
 functions.
 
 Usage:

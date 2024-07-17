@@ -1,10 +1,10 @@
-import { ChangeEvent, useMemo } from "react"
+import { ChangeEvent, useMemo } from 'react'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
-import { Input } from "../ui/input"
+import { Input } from '../ui/input'
 
-import { FormField } from "./FormField"
+import { FormField } from './FormField'
 
 export function FormDir({
   label,
@@ -15,7 +15,7 @@ export function FormDir({
   horizontal,
   accept,
   centered,
- }: {
+}: {
   label?: string
   className?: string
   placeholder?: string
@@ -24,34 +24,33 @@ export function FormDir({
   horizontal?: boolean
   accept?: string
   centered?: boolean
-  }) {
+}) {
+  const handleChange = useMemo(
+    () => (event: ChangeEvent<HTMLInputElement>) => {
+      if (disabled) {
+        return
+      }
+      if (!onChange) {
+        return
+      }
 
-  const handleChange = useMemo(() => (event: ChangeEvent<HTMLInputElement>) => {
-    if (disabled) {
-      return
-    }
-    if (!onChange) {
-      return
-    }
-
-    onChange(Array.from<File>(event.currentTarget.files || []))
-  }, [disabled, onChange])
+      onChange(Array.from<File>(event.currentTarget.files || []))
+    },
+    [disabled, onChange]
+  )
 
   return (
-    <FormField
-      label={
-      `${label}:`
-      }
-      horizontal={horizontal}
-      centered={centered}
-       >
+    <FormField label={`${label}:`} horizontal={horizontal} centered={centered}>
       <Input
-        placeholder={`${placeholder || ""}`}
-        className={cn(`w-full md:w-52 lg:w-56 xl:w-64 font-light text-base`, className)}
+        placeholder={`${placeholder || ''}`}
+        className={cn(
+          `w-full text-base font-light md:w-52 lg:w-56 xl:w-64`,
+          className
+        )}
         disabled={disabled}
         onChange={handleChange}
         type="file"
-        {...{directory: ""} as any} // saw it in stack overflow, but the type isn't recognized here.. hmm
+        {...({ directory: '' } as any)} // saw it in stack overflow, but the type isn't recognized here.. hmm
         webkitdirectory=""
         accept={accept}
       />

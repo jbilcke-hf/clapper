@@ -1,5 +1,5 @@
-import { ClapAssetSource, ClapSegmentCategory } from "@aitube/clap"
-import { TimelineSegment } from "@aitube/timeline"
+import { ClapAssetSource, ClapSegmentCategory } from '@aitube/clap'
+import { TimelineSegment } from '@aitube/timeline'
 
 export type ExportableSegment = {
   segment: TimelineSegment
@@ -35,28 +35,30 @@ export type ExportableSegment = {
   isExportableToFile: boolean
 }
 
-export function formatSegmentForExport(segment: TimelineSegment, index: number): ExportableSegment {
+export function formatSegmentForExport(
+  segment: TimelineSegment,
+  index: number
+): ExportableSegment {
   const directory = `${segment.category}`.toLowerCase()
   const prefix = `shot_${String(index).padStart(4, '0')}_`
-  let mimetype = `${segment.assetFileFormat || "unknown/unknown"}`
-  if (mimetype === "audio/mpeg") {
-    mimetype = "audio/mp3"
+  let mimetype = `${segment.assetFileFormat || 'unknown/unknown'}`
+  if (mimetype === 'audio/mpeg') {
+    mimetype = 'audio/mp3'
   }
-  const format = `${mimetype.split("/").pop() || "unknown"}`.toLowerCase()
+  const format = `${mimetype.split('/').pop() || 'unknown'}`.toLowerCase()
   const fileName = `${prefix}${segment.id}.${format}`
   const filePath = `${directory}/${fileName}`
-  let assetUrl = segment.assetUrl || ""
+  let assetUrl = segment.assetUrl || ''
   let assetSourceType = segment.assetSourceType || ClapAssetSource.EMPTY
 
-  const isExportableToFile = (
-      segment.category === ClapSegmentCategory.VIDEO ||
+  const isExportableToFile =
+    (segment.category === ClapSegmentCategory.VIDEO ||
       segment.category === ClapSegmentCategory.STORYBOARD ||
       segment.category === ClapSegmentCategory.DIALOGUE ||
       segment.category === ClapSegmentCategory.SOUND ||
-      segment.category === ClapSegmentCategory.MUSIC
-    ) &&
-      format !== "unknown" &&
-      segment.assetUrl.startsWith("data:")
+      segment.category === ClapSegmentCategory.MUSIC) &&
+    format !== 'unknown' &&
+    segment.assetUrl.startsWith('data:')
 
   const category = segment.category.toLocaleLowerCase()
 

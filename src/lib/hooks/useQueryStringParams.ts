@@ -1,7 +1,7 @@
-import { useSearchParams } from "next/navigation"
+import { useSearchParams } from 'next/navigation'
 
 export function useQueryStringParams({
-  clapUrl: defaultClapUrl = ""
+  clapUrl: defaultClapUrl = '',
 }: {
   clapUrl: string
 }) {

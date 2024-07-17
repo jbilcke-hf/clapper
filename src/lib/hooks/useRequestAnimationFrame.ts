@@ -14,12 +14,10 @@ type Config = {
  */
 export const useRequestAnimationFrame = (
   nextAnimationFrameHandler: (progress: number) => void,
-  {
-    duration = Number.POSITIVE_INFINITY,
-    shouldAnimate = true
-  }: Config = {
+  { duration = Number.POSITIVE_INFINITY, shouldAnimate = true }: Config = {
     duration: Number.POSITIVE_INFINITY,
-    shouldAnimate: true }
+    shouldAnimate: true,
+  }
 ) => {
   /*
   const isServerSideOrApiUnsupported =
@@ -57,7 +55,6 @@ export const useRequestAnimationFrame = (
     }
 
     return () => cancelAnimationFrame(frame.current)
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [shouldAnimate])
 }
-

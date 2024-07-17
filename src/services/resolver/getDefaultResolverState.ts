@@ -1,4 +1,4 @@
-import { ResolverState } from "@aitube/clapper-services"
+import { ResolverState } from '@aitube/clapper-services'
 
 export function getDefaultResolverState(): ResolverState {
   const state: ResolverState = {
@@ -12,14 +12,14 @@ export function getDefaultResolverState(): ResolverState {
       sound: 1,
       music: 1,
     },
-  
+
     // used for UI display, show some metrics
     currentParallelismQuotaForVideo: 1,
     currentParallelismQuotaForImage: 1,
     currentParallelismQuotaForVoice: 1,
     currentParallelismQuotaForSound: 1,
     currentParallelismQuotaForMusic: 1,
-    
+
     // just some aliases for convenience
     nbPendingRequestsForVideo: 0,
     nbPendingRequestsForImage: 0,

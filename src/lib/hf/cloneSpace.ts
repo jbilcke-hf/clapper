@@ -1,11 +1,9 @@
-import { listSpaces, Credentials, whoAmI, SpaceSdk } from "@huggingface/hub"
+import { listSpaces, Credentials, whoAmI, SpaceSdk } from '@huggingface/hub'
 
 export async function cloneSpace({
   id,
-  apiKey
+  apiKey,
 }: {
   id: string
   apiKey: string
-}) {
-
-}
+}) {}

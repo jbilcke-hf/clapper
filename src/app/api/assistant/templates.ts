@@ -1,4 +1,3 @@
-
 export const systemTemplate = `# General context
 ## Your identity
 You are a helpful movie production assistant, integrated inside a generative AI video app.

@@ -1,8 +1,8 @@
-import { SupportedFields } from "../types"
+import { SupportedFields } from '../types'
 
 export function getAdaptationScore(supportedFields: SupportedFields) {
   let score = 0
- 
+
   // TODO: rewrite this in a better way maybe
   // until then, please don't blame me if you forget to update those!
   score += supportedFields.hasPositiveTextPrompt ? 1 : 0

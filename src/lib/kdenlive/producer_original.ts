@@ -1,15 +1,15 @@
-"use server"
+'use server'
 
-import { $ } from "zx"
+import { $ } from 'zx'
 
-import { makeIDGen } from "./makeIDGen"
+import { makeIDGen } from './makeIDGen'
 
-export const producerIndexGen = makeIDGen(0);
+export const producerIndexGen = makeIDGen(0)
 
 export abstract class Producer {
-  index: number;
+  index: number
   constructor(public path: string) {
-    this.index = producerIndexGen.next().value;
+    this.index = producerIndexGen.next().value
   }
 
   async getNativeMltXml(fps: number): Promise<string> {
@@ -17,26 +17,26 @@ export abstract class Producer {
       await $`melt ${
         this.path
       } -consumer xml ${`frame_rate_num=${fps}`} | htmlq producer`
-    ).stdout;
-    return xml.replace("producer0", this.id);
+    ).stdout
+    return xml.replace('producer0', this.id)
   }
 
   async toXML(fps: number): Promise<string> {
-    return await this.getNativeMltXml(fps);
+    return await this.getNativeMltXml(fps)
   }
 
   get id() {
-    return "producer" + this.index;
+    return 'producer' + this.index
   }
 }
 
 export class ConcreteProducer extends Producer {
-  video_only: VideoOnlyProducer;
-  audio_only: AudioOnlyProducer;
+  video_only: VideoOnlyProducer
+  audio_only: AudioOnlyProducer
   constructor(path: string) {
-    super(path);
-    this.video_only = new VideoOnlyProducer(path);
-    this.audio_only = new AudioOnlyProducer(path);
+    super(path)
+    this.video_only = new VideoOnlyProducer(path)
+    this.audio_only = new AudioOnlyProducer(path)
   }
 
   async toXML(fps: number) {
@@ -46,37 +46,37 @@ export class ConcreteProducer extends Producer {
         this.video_only.toXML(fps),
         this.audio_only.toXML(fps),
       ])
-    ).join("\n");
+    ).join('\n')
   }
 }
 
 class VideoOnlyProducer extends Producer {
   async toXML(fps: number) {
-    const xml = await super.toXML(fps);
+    const xml = await super.toXML(fps)
     return xml.replace(
-      "</producer>",
+      '</producer>',
       ` <property name="set.test_audio">0</property>
         <property name="set.test_image">1</property>
        </producer>`
-    );
+    )
   }
 }
 
 class AudioOnlyProducer extends Producer {
   async toXML(fps: number) {
-    const xml = await super.toXML(fps);
+    const xml = await super.toXML(fps)
     return xml.replace(
-      "</producer>",
+      '</producer>',
       ` <property name="set.test_audio">1</property>
         <property name="set.test_image">0</property>
        </producer>`
-    );
+    )
   }
 }
 
 export class BlackTrack extends Producer {
   constructor() {
-    super("");
+    super('')
   }
 
   async toXML() {
@@ -92,10 +92,10 @@ export class BlackTrack extends Producer {
       <property name="mlt_service">color</property>
       <property name="mlt_image_format">rgb24a</property>
       <property name="set.test_audio">0</property>
-    </producer>`;
+    </producer>`
   }
 
   get id() {
-    return "black_track";
+    return 'black_track'
   }
 }

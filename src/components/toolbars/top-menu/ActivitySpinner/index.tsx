@@ -1,12 +1,11 @@
+import { CgSpinnerTwoAlt } from 'react-icons/cg'
 
-import { CgSpinnerTwoAlt } from "react-icons/cg"
-
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
 export function ActivitySpinner({
-  className = "",
+  className = '',
   isBusy = false,
-  color = "",
+  color = '',
 }: {
   className?: string
   isBusy?: boolean
@@ -15,11 +14,9 @@ export function ActivitySpinner({
   return (
     <CgSpinnerTwoAlt
       className={cn(
-        `w-2 h-2`,
+        `h-2 w-2`,
         className,
-        isBusy
-        ? 'opacity-100 animate-spin'
-        : 'opacity-0',
+        isBusy ? 'animate-spin opacity-100' : 'opacity-0'
       )}
       style={{ color }}
     />

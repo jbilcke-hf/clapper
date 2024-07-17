@@ -1,34 +1,31 @@
-import { useEffect, useState } from "react"
-import { useFilePicker } from "use-file-picker"
+import { useEffect, useState } from 'react'
+import { useFilePicker } from 'use-file-picker'
 
-import { parseFileName } from "@/services/io/parseFileName"
-import { useIO } from "@/services/io/useIO"
+import { parseFileName } from '@/services/io/parseFileName'
+import { useIO } from '@/services/io/useIO'
 
 const supportedExtensions = ['clap', 'txt']
 
 export function useOpenFilePicker() {
   const [isLoading, setIsLoading] = useState(false)
-  const openClapBlob = useIO(s => s.openClapBlob)
-  const openScreenplay = useIO(s => s.openScreenplay)
+  const openClapBlob = useIO((s) => s.openClapBlob)
+  const openScreenplay = useIO((s) => s.openScreenplay)
 
   const { openFilePicker, filesContent, loading } = useFilePicker({
-    accept: ['clap', 'txt'].map(ext => `.${ext}`),
-    readAs: "ArrayBuffer"
+    accept: ['clap', 'txt'].map((ext) => `.${ext}`),
+    readAs: 'ArrayBuffer',
   })
 
   const fileData = filesContent[0]
 
   useEffect(() => {
     const fn = async () => {
-      const input = `${fileData?.name || ""}`
-      if (!input) { return }
+      const input = `${fileData?.name || ''}`
+      if (!input) {
+        return
+      }
 
-
-      const {
-        fileName,
-        projectName,
-        extension
-      } = parseFileName(input)
+      const { fileName, projectName, extension } = parseFileName(input)
 
       if (!supportedExtensions.includes(extension)) {
         console.error(`unsupported extension "${extension}"`)
@@ -37,21 +34,21 @@ export function useOpenFilePicker() {
 
       const blob = new Blob([fileData.content])
 
-      if (extension === "clap") {
+      if (extension === 'clap') {
         try {
           setIsLoading(true)
           await openClapBlob(projectName, fileName, blob)
         } catch (err) {
-          console.error("failed to load the Clap file:", err)
+          console.error('failed to load the Clap file:', err)
         } finally {
           setIsLoading(false)
         }
-      } else if (extension === "txt") {
+      } else if (extension === 'txt') {
         try {
           setIsLoading(true)
           await openScreenplay(projectName, fileName, blob)
         } catch (err) {
-          console.error("failed to load the Clap file:", err)
+          console.error('failed to load the Clap file:', err)
         } finally {
           setIsLoading(false)
         }
@@ -60,5 +57,10 @@ export function useOpenFilePicker() {
     fn()
   }, [fileData?.name, fileData?.content, openClapBlob, openScreenplay])
 
-  return { openFilePicker, filesContent, fileData, isLoading: loading || isLoading } 
+  return {
+    openFilePicker,
+    filesContent,
+    fileData,
+    isLoading: loading || isLoading,
+  }
 }

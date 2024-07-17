@@ -1,4 +1,4 @@
-import { MonitoringMode, MonitorState } from "@aitube/clapper-services"
+import { MonitoringMode, MonitorState } from '@aitube/clapper-services'
 
 export function getDefaultMonitorState(): MonitorState {
   const state: MonitorState = {
@@ -6,7 +6,7 @@ export function getDefaultMonitorState(): MonitorState {
     mode: MonitoringMode.NONE,
     lastTimelineUpdateAtInMs: 0,
     isPlaying: false,
-    staticVideoRef: undefined
+    staticVideoRef: undefined,
   }
 
   return state

@@ -1,28 +1,32 @@
-import { ClapMediaOrientation } from "@aitube/clap"
+import { ClapMediaOrientation } from '@aitube/clap'
 
-import { ResolveRequest, StabilityAiImageSize } from "@aitube/clapper-services"
+import { ResolveRequest, StabilityAiImageSize } from '@aitube/clapper-services'
 
 export async function generateImage(request: ResolveRequest): Promise<string> {
-
   if (!request.settings.stabilityAiApiKey) {
-    throw new Error(`StabilityAI.generateImage: cannot generate without a valid stabilityAiApiKey`)
+    throw new Error(
+      `StabilityAI.generateImage: cannot generate without a valid stabilityAiApiKey`
+    )
   }
 
   if (!request.settings.imageGenerationModel) {
-    throw new Error(`StabilityAI.generateImage: cannot generate without a valid stabilityAiModelForImage`)
+    throw new Error(
+      `StabilityAI.generateImage: cannot generate without a valid stabilityAiModelForImage`
+    )
   }
 
   if (!request.prompts.image.positive) {
-    throw new Error(`StabilityAI.generateImage: cannot generate without a valid positive prompt`)
+    throw new Error(
+      `StabilityAI.generateImage: cannot generate without a valid positive prompt`
+    )
   }
 
-  const aspectRatio = 
+  const aspectRatio =
     request.meta.orientation === ClapMediaOrientation.SQUARE
-    ? StabilityAiImageSize.SQUARE
-    : request.meta.orientation === ClapMediaOrientation.PORTRAIT
-    ? StabilityAiImageSize.PORTRAIT_9_16
-    : StabilityAiImageSize.LANDSCAPE_16_9
-
+      ? StabilityAiImageSize.SQUARE
+      : request.meta.orientation === ClapMediaOrientation.PORTRAIT
+        ? StabilityAiImageSize.PORTRAIT_9_16
+        : StabilityAiImageSize.LANDSCAPE_16_9
 
   // what's cool about the ultra model is its capacity to take in
   // very large prompts, up to 10000 characters apparently?
@@ -33,22 +37,25 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
   // For example: The sky was a crisp (blue:0.3) and (green:0.8) would
   // convey a sky that was blue and green, but more green than blue.
 
-  const output_format = "jpeg"
+  const output_format = 'jpeg'
   const body = new FormData()
-  body.set("prompt", `${request.prompts.image.positive || ""}`)
-  body.set("output_format", output_format) // "png"
-  body.set("negative_prompt", `${request.prompts.image.negative || ""}`)
-  body.set("aspect_ratio", `${aspectRatio || ""}`)
+  body.set('prompt', `${request.prompts.image.positive || ''}`)
+  body.set('output_format', output_format) // "png"
+  body.set('negative_prompt', `${request.prompts.image.negative || ''}`)
+  body.set('aspect_ratio', `${aspectRatio || ''}`)
 
-  const response = await fetch(`https://api.stability.ai/v2beta/${request.settings.imageGenerationModel}`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${request.settings.stabilityAiApiKey}`,
-      Accept: "image/*",
-    },
-    body,
-    cache: "no-store"
-  })
+  const response = await fetch(
+    `https://api.stability.ai/v2beta/${request.settings.imageGenerationModel}`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${request.settings.stabilityAiApiKey}`,
+        Accept: 'image/*',
+      },
+      body,
+      cache: 'no-store',
+    }
+  )
 
   if (response.status === 200) {
     const arrayBuffer = await response.arrayBuffer()
@@ -59,5 +66,4 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
     const data = await response.json()
     throw new Error(`${response.status}: ${data.errors}`)
   }
-  
 }

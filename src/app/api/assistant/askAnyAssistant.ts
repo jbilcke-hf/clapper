@@ -1,24 +1,35 @@
-"use server"
+'use server'
 
-import { ClapSegmentCategory } from "@aitube/clap"
-import { RunnableLike } from "@langchain/core/runnables"
-import { ChatPromptValueInterface } from "@langchain/core/prompt_values"
-import { AIMessage, AIMessageChunk, HumanMessage } from "@langchain/core/messages"
-import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts"
-import { StructuredOutputParser } from "@langchain/core/output_parsers"
-import { ChatOpenAI } from "@langchain/openai"
-import { ChatGroq } from "@langchain/groq"
-import { ChatAnthropic } from "@langchain/anthropic"
-import { ChatCohere } from "@langchain/cohere"
-import { ChatMistralAI } from "@langchain/mistralai"
-import { ChatVertexAI } from "@langchain/google-vertexai"
+import { ClapSegmentCategory } from '@aitube/clap'
+import { RunnableLike } from '@langchain/core/runnables'
+import { ChatPromptValueInterface } from '@langchain/core/prompt_values'
+import {
+  AIMessage,
+  AIMessageChunk,
+  HumanMessage,
+} from '@langchain/core/messages'
+import {
+  ChatPromptTemplate,
+  MessagesPlaceholder,
+} from '@langchain/core/prompts'
+import { StructuredOutputParser } from '@langchain/core/output_parsers'
+import { ChatOpenAI } from '@langchain/openai'
+import { ChatGroq } from '@langchain/groq'
+import { ChatAnthropic } from '@langchain/anthropic'
+import { ChatCohere } from '@langchain/cohere'
+import { ChatMistralAI } from '@langchain/mistralai'
+import { ChatVertexAI } from '@langchain/google-vertexai'
 // Hugging Face will be supported once the following package becomes available
 // import { ChatHuggingFace } from "@langchain/huggingface"
 
-import { AssistantRequest, AssistantResponse, ComputeProvider } from "@aitube/clapper-services"
+import {
+  AssistantRequest,
+  AssistantResponse,
+  ComputeProvider,
+} from '@aitube/clapper-services'
 
-import { SimplifiedSegmentData, simplifiedSegmentDataZ } from "./types"
-import { examples, humanTemplate, systemTemplate } from "./templates"
+import { SimplifiedSegmentData, simplifiedSegmentDataZ } from './types'
+import { examples, humanTemplate, systemTemplate } from './templates'
 
 const parser = StructuredOutputParser.fromZodSchema(simplifiedSegmentDataZ)
 
@@ -27,9 +38,9 @@ const formatInstructions = parser.getFormatInstructions()
 /**
  * Query the preferred language model on the user prompt + the segments of the current scene
  *
- * @param userPrompt 
- * @param segments 
- * @returns 
+ * @param userPrompt
+ * @param segments
+ * @returns
  */
 export async function askAnyAssistant({
   settings,
@@ -39,78 +50,86 @@ export async function askAnyAssistant({
   // the slice to edit
   segments = [],
 
-  fullScene = "",
+  fullScene = '',
 
-  actionLine = "",
+  actionLine = '',
 
   // used to provide more context
   entities = {},
 
   // used to provide more context
-  projectInfo = "",
+  projectInfo = '',
 
   history = [],
 }: AssistantRequest): Promise<AssistantResponse> {
-
   const provider = settings.assistantProvider
 
-  if (!provider) { throw new Error(`Missing assistant provider`)}
+  if (!provider) {
+    throw new Error(`Missing assistant provider`)
+  }
 
-  let coerceable: undefined | RunnableLike<ChatPromptValueInterface, AIMessageChunk> =
+  let coerceable:
+    | undefined
+    | RunnableLike<ChatPromptValueInterface, AIMessageChunk> =
     provider === ComputeProvider.GROQ
-    ? new ChatGroq({
-      apiKey: settings.groqApiKey,
-      modelName: settings.assistantModel,
-      // temperature: 0.7,
-    })
-    : provider === ComputeProvider.OPENAI
-    ? new ChatOpenAI({
-        openAIApiKey: settings.openaiApiKey,
-        modelName: settings.assistantModel,
-       // temperature: 0.7,
-      })
-    : provider === ComputeProvider.ANTHROPIC
-    ? new ChatAnthropic({
-      anthropicApiKey: settings.anthropicApiKey,
-      modelName: settings.assistantModel,
-      // temperature: 0.7,
-    })
-    : provider === ComputeProvider.COHERE
-    ? new ChatCohere({
-      apiKey: settings.cohereApiKey,
-      model: settings.assistantModel,
-      // temperature: 0.7,
-    })
-    : provider === ComputeProvider.MISTRALAI
-    ? new ChatMistralAI({
-      apiKey: settings.mistralAiApiKey,
-      modelName: settings.assistantModel,
-      // temperature: 0.7,
-    })
-    : provider === ComputeProvider.GOOGLE
-    ? new ChatVertexAI({
-      apiKey: settings.googleApiKey,
-      modelName: settings.assistantModel,
-      // temperature: 0.7,
-    })
-    : undefined
+      ? new ChatGroq({
+          apiKey: settings.groqApiKey,
+          modelName: settings.assistantModel,
+          // temperature: 0.7,
+        })
+      : provider === ComputeProvider.OPENAI
+        ? new ChatOpenAI({
+            openAIApiKey: settings.openaiApiKey,
+            modelName: settings.assistantModel,
+            // temperature: 0.7,
+          })
+        : provider === ComputeProvider.ANTHROPIC
+          ? new ChatAnthropic({
+              anthropicApiKey: settings.anthropicApiKey,
+              modelName: settings.assistantModel,
+              // temperature: 0.7,
+            })
+          : provider === ComputeProvider.COHERE
+            ? new ChatCohere({
+                apiKey: settings.cohereApiKey,
+                model: settings.assistantModel,
+                // temperature: 0.7,
+              })
+            : provider === ComputeProvider.MISTRALAI
+              ? new ChatMistralAI({
+                  apiKey: settings.mistralAiApiKey,
+                  modelName: settings.assistantModel,
+                  // temperature: 0.7,
+                })
+              : provider === ComputeProvider.GOOGLE
+                ? new ChatVertexAI({
+                    apiKey: settings.googleApiKey,
+                    modelName: settings.assistantModel,
+                    // temperature: 0.7,
+                  })
+                : undefined
 
-  if (!coerceable) { throw new Error(`Provider ${provider} is not supported yet. If a LangChain bridge exists for this provider, then you can add it to Clapper.`)}
+  if (!coerceable) {
+    throw new Error(
+      `Provider ${provider} is not supported yet. If a LangChain bridge exists for this provider, then you can add it to Clapper.`
+    )
+  }
 
-  const chatPrompt = ChatPromptTemplate.fromMessages(
-    [
-      ["system", systemTemplate],
-      new MessagesPlaceholder("chatHistory"),
-      ["human", humanTemplate],
-    ]
-  )
+  const chatPrompt = ChatPromptTemplate.fromMessages([
+    ['system', systemTemplate],
+    new MessagesPlaceholder('chatHistory'),
+    ['human', humanTemplate],
+  ])
 
   // we don't give the whole thing to the LLM as to not confuse it,
   // and also to keep things tight and performant
-  const inputData: SimplifiedSegmentData[] = segments.map((segment) => ({
-    prompt: segment.prompt,
-    category: segment.category,
-  } as SimplifiedSegmentData))
+  const inputData: SimplifiedSegmentData[] = segments.map(
+    (segment) =>
+      ({
+        prompt: segment.prompt,
+        category: segment.category,
+      }) as SimplifiedSegmentData
+  )
 
   // console.log("INPUT:", JSON.stringify(inputData, null, 2))
 
@@ -124,22 +143,24 @@ export async function askAnyAssistant({
       fullScene,
       actionLine,
       userPrompt: prompt,
-      chatHistory: history.map(({
-        eventId,
-        senderId,
-        senderName,
-        roomId,
-        roomName,
-        sentAt,
-        message,
-        isCurrentUser,
-      }) => {
-        if (isCurrentUser) {
-          return new HumanMessage(message)
-        } else {
-          return new AIMessage(message)
+      chatHistory: history.map(
+        ({
+          eventId,
+          senderId,
+          senderName,
+          roomId,
+          roomName,
+          sentAt,
+          message,
+          isCurrentUser,
+        }) => {
+          if (isCurrentUser) {
+            return new HumanMessage(message)
+          } else {
+            return new AIMessage(message)
+          }
         }
-      }),
+      ),
       inputData: JSON.stringify(inputData),
     })
 
@@ -155,20 +176,20 @@ export async function askAnyAssistant({
       match = segments.find(s => s.category === result.category) || undefined
     }
     */
-    
+
     // let's create a new segment then!
     const categoryName: ClapSegmentCategory =
-      result?.category && Object.keys(ClapSegmentCategory).includes(result.category.toUpperCase())
-      ? (result.category as ClapSegmentCategory)
-      : ClapSegmentCategory.GENERIC
+      result?.category &&
+      Object.keys(ClapSegmentCategory).includes(result.category.toUpperCase())
+        ? (result.category as ClapSegmentCategory)
+        : ClapSegmentCategory.GENERIC
 
     return {
-      prompt: result?.prompt || "",
+      prompt: result?.prompt || '',
       categoryName,
-      llmOutput: "",
+      llmOutput: '',
     }
   } catch (err1) {
-
     // a common scenario is when the output from the LLM is just not a JSON
     // this can happen quite often, for instance if the user tried to bypass
     // our prompt, or if they are just asking generic questions
@@ -177,9 +198,9 @@ export async function askAnyAssistant({
       const keys = Object.keys(errObj)
       if (errObj.llmOutput) {
         return {
-          prompt: "",
+          prompt: '',
           categoryName: ClapSegmentCategory.GENERIC,
-          llmOutput: `${errObj.llmOutput || ""}`,
+          llmOutput: `${errObj.llmOutput || ''}`,
         }
       }
     } catch (err2) {
@@ -188,9 +209,9 @@ export async function askAnyAssistant({
     }
 
     return {
-      prompt: "",
+      prompt: '',
       categoryName: ClapSegmentCategory.GENERIC,
-      llmOutput: ""
+      llmOutput: '',
     }
   }
 }

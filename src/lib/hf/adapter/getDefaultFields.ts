@@ -1,16 +1,16 @@
-import { SupportedFields } from "../types"
+import { SupportedFields } from '../types'
 
 export function getDefaultFields(): SupportedFields {
   return {
-    inputPositiveTextPrompt:  "",
+    inputPositiveTextPrompt: '',
     hasPositiveTextPrompt: false,
-    inputNegativeTextPrompt: "",
+    inputNegativeTextPrompt: '',
     hasNegativeTextPrompt: false,
-    inputImage: "",
+    inputImage: '',
     hasInputImage: false,
-    inputAudio: "",
+    inputAudio: '',
     hasInputAudio: false,
-    inputWidth:  1024,
+    inputWidth: 1024,
     hasInputWidth: false,
     inputHeight: 574,
     hasInputHeight: false,
@@ -19,6 +19,6 @@ export function getDefaultFields(): SupportedFields {
     inputGuidance: 7,
     hasInputGuidance: false,
     inputSeed: 0,
-    hasInputSeed: false
+    hasInputSeed: false,
   }
 }

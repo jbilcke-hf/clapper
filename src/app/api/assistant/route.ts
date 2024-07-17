@@ -1,7 +1,7 @@
-import { NextResponse, NextRequest } from "next/server"
+import { NextResponse, NextRequest } from 'next/server'
 
-import { AssistantRequest, AssistantResponse } from "@aitube/clapper-services"
-import { askAnyAssistant } from "./askAnyAssistant"
+import { AssistantRequest, AssistantResponse } from '@aitube/clapper-services'
+import { askAnyAssistant } from './askAnyAssistant'
 
 export async function POST(req: NextRequest) {
   // do we really need to secure it?

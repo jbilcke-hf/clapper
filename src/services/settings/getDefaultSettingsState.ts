@@ -1,32 +1,35 @@
-import { RenderingStrategy } from "@aitube/timeline"
-import { ComfyIcuAccelerator, ComputeProvider, SettingsState } from "@aitube/clapper-services"
+import { RenderingStrategy } from '@aitube/timeline'
+import {
+  ComfyIcuAccelerator,
+  ComputeProvider,
+  SettingsState,
+} from '@aitube/clapper-services'
 
-import { defaultWorkflowForImages } from "./workflows/image"
+import { defaultWorkflowForImages } from './workflows/image'
 
 export function getDefaultSettingsState(): SettingsState {
   const state: SettingsState = {
-
-    customComfyUiApiKey: "",
-    replicateApiKey: "",
-    comfyIcuApiKey: "",
+    customComfyUiApiKey: '',
+    replicateApiKey: '',
+    comfyIcuApiKey: '',
     comfyIcuAccelerator: ComfyIcuAccelerator.L4,
-    huggingFaceApiKey: "",
-    modelsLabApiKey: "",
-    falAiApiKey: "",
-    openaiApiKey: "",
-    googleApiKey: "",
-    groqApiKey: "",
-    anthropicApiKey: "",
-    elevenLabsApiKey: "",
-    kitsAiApiKey: "",
-    cohereApiKey: "",
-    mistralAiApiKey: "",
-    stabilityAiApiKey: "",
-    fireworksAiApiKey: "",
+    huggingFaceApiKey: '',
+    modelsLabApiKey: '',
+    falAiApiKey: '',
+    openaiApiKey: '',
+    googleApiKey: '',
+    groqApiKey: '',
+    anthropicApiKey: '',
+    elevenLabsApiKey: '',
+    kitsAiApiKey: '',
+    cohereApiKey: '',
+    mistralAiApiKey: '',
+    stabilityAiApiKey: '',
+    fireworksAiApiKey: '',
 
-    broadcastObsServerHost: "192.168.1.22",
+    broadcastObsServerHost: '192.168.1.22',
     broadcastObsServerPort: 4455,
-    broadcastObsServerPass: "",
+    broadcastObsServerPass: '',
 
     assistantProvider: ComputeProvider.NONE,
     imageProvider: ComputeProvider.NONE,
@@ -43,27 +46,29 @@ export function getDefaultSettingsState(): SettingsState {
 
     censorNotForAllAudiencesContent: false,
 
-    imagePromptPrefix: "screencap",
-    imagePromptSuffix: "high quality, beautiful, amazing, intricate details",
-    imageNegativePrompt: "black banding, ugly, imperfect, cropped, low resolution",
-    videoPromptPrefix: "screencap",
-    videoPromptSuffix: "high quality, beautiful, amazing, intricate details",
-    videoNegativePrompt: "black banding, ugly, imperfect, cropped, low resolution",
+    imagePromptPrefix: 'screencap',
+    imagePromptSuffix: 'high quality, beautiful, amazing, intricate details',
+    imageNegativePrompt:
+      'black banding, ugly, imperfect, cropped, low resolution',
+    videoPromptPrefix: 'screencap',
+    videoPromptSuffix: 'high quality, beautiful, amazing, intricate details',
+    videoNegativePrompt:
+      'black banding, ugly, imperfect, cropped, low resolution',
 
-    assistantModel: "",
-    assistantTurboModel: "",
-    imageGenerationModel: "",
-    imageGenerationTurboModel: "",
-    imageUpscalingModel: "",
-    imageDepthModel: "",
-    imageSegmentationModel: "",
-    videoGenerationModel: "",
-    videoUpscalingModel: "",
-    videoDepthModel: "",
-    videoSegmentationModel: "",
-    soundGenerationModel: "",
-    voiceGenerationModel: "",
-    musicGenerationModel: "",
+    assistantModel: '',
+    assistantTurboModel: '',
+    imageGenerationModel: '',
+    imageGenerationTurboModel: '',
+    imageUpscalingModel: '',
+    imageDepthModel: '',
+    imageSegmentationModel: '',
+    videoGenerationModel: '',
+    videoUpscalingModel: '',
+    videoDepthModel: '',
+    videoSegmentationModel: '',
+    soundGenerationModel: '',
+    voiceGenerationModel: '',
+    musicGenerationModel: '',
 
     imageRenderingStrategy: RenderingStrategy.ON_DEMAND,
     imageUpscalingRenderingStrategy: RenderingStrategy.ON_DEMAND,
@@ -81,20 +86,20 @@ export function getDefaultSettingsState(): SettingsState {
     maxVideosToGenerateInParallel: 1,
 
     comfyWorkflowForImage: defaultWorkflowForImages,
-    comfyWorkflowForVideo: "{}",
-    comfyWorkflowForVoice: "{}",
-    comfyWorkflowForSound: "{}",
-    comfyWorkflowForMusic: "{}",
-  
+    comfyWorkflowForVideo: '{}',
+    comfyWorkflowForVoice: '{}',
+    comfyWorkflowForSound: '{}',
+    comfyWorkflowForMusic: '{}',
+
     // those are not designed for Hugging Face specifically,
     // but to be compatible with any Gradio API URL that the
     // user would set manually (eg. running on localhost)
-    gradioApiUrlForAssistant: "",
-    gradioApiUrlForImage: "",
-    gradioApiUrlForVideo: "",
-    gradioApiUrlForVoice: "",
-    gradioApiUrlForSound: "",
-    gradioApiUrlForMusic: "",
+    gradioApiUrlForAssistant: '',
+    gradioApiUrlForImage: '',
+    gradioApiUrlForVideo: '',
+    gradioApiUrlForVoice: '',
+    gradioApiUrlForSound: '',
+    gradioApiUrlForMusic: '',
 
     scriptEditorShowLineNumbers: true,
     scriptEditorShowMinimap: true,

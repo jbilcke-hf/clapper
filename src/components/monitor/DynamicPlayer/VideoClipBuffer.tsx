@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef } from 'react'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
 export function VideoClipBuffer({
   src,
@@ -8,16 +8,18 @@ export function VideoClipBuffer({
   muted = true,
   isPlaying = false,
 }: {
-  src?: string;
-  className?: string;
-  muted?: boolean;
-  isPlaying?: boolean;
+  src?: string
+  className?: string
+  muted?: boolean
+  isPlaying?: boolean
 }) {
   const ref = useRef<HTMLVideoElement>(null)
 
   const togglePlayVideo = (play: boolean) => {
     const player = ref.current
-    if (!player) { return }
+    if (!player) {
+      return
+    }
     if (play && player.paused) {
       player.play()
     } else if (!play && !player.paused) {
@@ -27,14 +29,18 @@ export function VideoClipBuffer({
 
   useEffect(() => {
     const player = ref.current
-    if (!player) { return }
+    if (!player) {
+      return
+    }
     togglePlayVideo(isPlaying)
   }, [isPlaying])
 
-  if (!src) { return null }
-  
+  if (!src) {
+    return null
+  }
+
   return (
-    <video    
+    <video
       ref={ref}
       autoPlay={isPlaying}
       controls={false}
@@ -43,7 +49,7 @@ export function VideoClipBuffer({
       loop
       className={cn(
         `absolute`,
-        `h-full w-full rounded-md overflow-hidden`,
+        `h-full w-full overflow-hidden rounded-md`,
 
         // iseally we could only use the ease-out and duration-150
         // to avoid a weird fade to grey,

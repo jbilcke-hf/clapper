@@ -1,4 +1,4 @@
-import { EntityEditorState } from "@aitube/clapper-services"
+import { EntityEditorState } from '@aitube/clapper-services'
 
 export function getDefaultEntityEditorState(): EntityEditorState {
   const state: EntityEditorState = {

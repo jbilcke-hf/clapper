@@ -1,4 +1,4 @@
-import { AssistantState } from "@aitube/clapper-services"
+import { AssistantState } from '@aitube/clapper-services'
 
 export function getDefaultAssistantState(): AssistantState {
   const state: AssistantState = {

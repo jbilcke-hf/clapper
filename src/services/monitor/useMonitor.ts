@@ -1,29 +1,39 @@
-"use client"
+'use client'
 
-import { create } from "zustand"
-import { ClapSegment } from "@aitube/clap"
-import { TimelineStore, useTimeline } from "@aitube/timeline"
-import { MonitoringMode, MonitorStore, RendererStore } from "@aitube/clapper-services"
+import { create } from 'zustand'
+import { ClapSegment } from '@aitube/clap'
+import { TimelineStore, useTimeline } from '@aitube/timeline'
+import {
+  MonitoringMode,
+  MonitorStore,
+  RendererStore,
+} from '@aitube/clapper-services'
 
-import { useAudio } from "../audio/useAudio"
-import { getDefaultMonitorState } from "./getDefaultMonitorState"
-import { useRenderer } from "../renderer"
+import { useAudio } from '../audio/useAudio'
+import { getDefaultMonitorState } from './getDefaultMonitorState'
+import { useRenderer } from '../renderer'
 
 export const useMonitor = create<MonitorStore>((set, get) => ({
   ...getDefaultMonitorState(),
-  
-  bindShortcuts: () => {
-    if (get().shortcutsAreBound) { return }
 
-    document.addEventListener("keydown", (event) => {
+  bindShortcuts: () => {
+    if (get().shortcutsAreBound) {
+      return
+    }
+
+    document.addEventListener('keydown', (event) => {
       const element = event.target as unknown as HTMLElement
 
-      if (event.code === "Space" &&
+      if (
+        event.code === 'Space' &&
         // those exception are important, otherwise we won't be able to add spaces
         // in the search boxes, edit fields, or even the script editor
-        element.nodeName !== "INPUT" &&
-        element.nodeName !== "TEXTAREA") {
-        console.log("[SHORTCUT DETECTED] User pressed space key outside a text input: toggling video playback")
+        element.nodeName !== 'INPUT' &&
+        element.nodeName !== 'TEXTAREA'
+      ) {
+        console.log(
+          '[SHORTCUT DETECTED] User pressed space key outside a text input: toggling video playback'
+        )
 
         // prevent the default behavior, which is strange (automatic scroll to the buttom)
         // https://www.jankollars.com/posts/preventing-space-scrolling/
@@ -34,7 +44,7 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
     })
 
     set({
-      shortcutsAreBound: true
+      shortcutsAreBound: true,
     })
   },
   setMonitoringMode: (mode: MonitoringMode) => {
@@ -55,9 +65,11 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
   /**
    * Used to play/pause the project timeline (video and audio)
    * @param forceValue
-   * @returns 
+   * @returns
    */
-  togglePlayback: (forcePlaying?: boolean): {
+  togglePlayback: (
+    forcePlaying?: boolean
+  ): {
     wasPlaying: boolean
     isPlaying: boolean
   } => {
@@ -67,16 +79,16 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
     if (mode === MonitoringMode.NONE) {
       set({
         isPlaying: false,
-        lastTimelineUpdateAtInMs: performance.now()
+        lastTimelineUpdateAtInMs: performance.now(),
       })
       return {
         wasPlaying: false,
-        isPlaying: false
+        isPlaying: false,
       }
     }
 
-    const isPlaying = typeof forcePlaying === "boolean" ? forcePlaying : !wasPlaying
-
+    const isPlaying =
+      typeof forcePlaying === 'boolean' ? forcePlaying : !wasPlaying
 
     if (mode === MonitoringMode.STATIC && staticVideoRef) {
       if (isPlaying) {
@@ -94,15 +106,15 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
         stop()
       }
     }
-        
+
     set({
       isPlaying,
-      lastTimelineUpdateAtInMs: performance.now()
+      lastTimelineUpdateAtInMs: performance.now(),
     })
 
     return {
-       wasPlaying,
-       isPlaying
+      wasPlaying,
+      isPlaying,
     }
   },
   jumpAt: (timeInMs: number = 0) => {
@@ -139,11 +151,10 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
   setLastTimelineUpdateAtInMs: (lastTimelineUpdateAtInMs: number) => {
     set({ lastTimelineUpdateAtInMs })
   },
-
 }))
 
 setTimeout(() => {
-  if (typeof document !== "undefined") {
+  if (typeof document !== 'undefined') {
     useMonitor.getState().bindShortcuts()
   }
 }, 0)

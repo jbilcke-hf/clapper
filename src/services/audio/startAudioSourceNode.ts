@@ -1,19 +1,19 @@
-import { UUID } from "@aitube/clap"
-import { CurrentlyPlayingAudioSource } from "@aitube/clapper-services"
-import { TimelineSegment } from "@aitube/timeline"
+import { UUID } from '@aitube/clap'
+import { CurrentlyPlayingAudioSource } from '@aitube/clapper-services'
+import { TimelineSegment } from '@aitube/timeline'
 
 /**
  * Create an audio source node from a segment
- * 
+ *
  * This will instantly play the node, at the given position
- * 
+ *
  * This means we can play a segment "late" eg. if the segment is 3 min long, we can play it at 1 min 2 min etc
  */
 export function startAudioSourceNode({
   audioContext,
   segment,
   cursorTimestampAtInMs,
-  onEnded
+  onEnded,
 }: {
   /**
    * The AudioContext to use
@@ -27,14 +27,14 @@ export function startAudioSourceNode({
 
   /**
    * The current elapsed playback time
-   * 
+   *
    * This is the position of the playback cursor in the project, in milliseconds (eg. 20000ms)
    */
   cursorTimestampAtInMs: number
 
   /**
    * Called whenever the audio source will finish playing
-   * 
+   *
    * Be careful, this callback may be called in a long time,
    * So make sure it uses fresh data when it is finally executed
    */
@@ -47,12 +47,18 @@ export function startAudioSourceNode({
   }
 
   // well, we can't play the segment if the playback cursor is out of its range
-  if (cursorTimestampAtInMs < segment.startTimeInMs || segment.endTimeInMs < cursorTimestampAtInMs) {
+  if (
+    cursorTimestampAtInMs < segment.startTimeInMs ||
+    segment.endTimeInMs < cursorTimestampAtInMs
+  ) {
     // onsole.error(`startAudioSourceNode: cannot play a segment which is nto crossing the current cursor`)
     return
   }
 
-  const startTimeInMs = Math.max(0, cursorTimestampAtInMs - segment.startTimeInMs)
+  const startTimeInMs = Math.max(
+    0,
+    cursorTimestampAtInMs - segment.startTimeInMs
+  )
 
   // console.log(`startAudioSourceNode: ${startTimeInMs}ms`)
 

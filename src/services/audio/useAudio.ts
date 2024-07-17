@@ -1,12 +1,15 @@
-"use client"
+'use client'
 
-import { create } from "zustand"
-import { TimelineStore, useTimeline, TimelineSegment } from "@aitube/timeline"
-import { AudioStore, CurrentlyPlayingAudioSource } from "@aitube/clapper-services"
+import { create } from 'zustand'
+import { TimelineStore, useTimeline, TimelineSegment } from '@aitube/timeline'
+import {
+  AudioStore,
+  CurrentlyPlayingAudioSource,
+} from '@aitube/clapper-services'
 
-import { getDefaultAudioState } from "./getDefaultAudioState"
-import { startAudioSourceNode } from "./startAudioSourceNode"
-import { useRenderer } from "../renderer"
+import { getDefaultAudioState } from './getDefaultAudioState'
+import { startAudioSourceNode } from './startAudioSourceNode'
+import { useRenderer } from '../renderer'
 
 export const useAudio = create<AudioStore>((set, get) => ({
   ...getDefaultAudioState(),
@@ -14,14 +17,20 @@ export const useAudio = create<AudioStore>((set, get) => ({
   play: () => {
     // console.log("useAudio: play()")
     const { isPlaying, currentlyPlaying } = get()
-    if (isPlaying) { return }
-    currentlyPlaying.forEach(p => p.sourceNode.start())
+    if (isPlaying) {
+      return
+    }
+    currentlyPlaying.forEach((p) => p.sourceNode.start())
   },
   stop: () => {
     // console.log("useAudio: stop()")
     const { isPlaying, currentlyPlaying } = get()
-    if (isPlaying) { return }
-    currentlyPlaying.forEach(p => { p.sourceNode.stop() })
+    if (isPlaying) {
+      return
+    }
+    currentlyPlaying.forEach((p) => {
+      p.sourceNode.stop()
+    })
     // no need to update currentlyPlaying, it will be automatic
     // see function playAudioSegment(), below the "source.sourceNode.onended = () => {"
   },
@@ -37,7 +46,7 @@ export const useAudio = create<AudioStore>((set, get) => ({
     // console.log(`useAudio: setCurrentGain(${currentGain})`)
     const { currentlyPlaying } = get()
     set({ currentGain, isMuted: currentGain === 0 })
-    currentlyPlaying.forEach(p => {
+    currentlyPlaying.forEach((p) => {
       p.gainNode.gain.value = p.originalGain * currentGain
     })
   },
@@ -56,18 +65,19 @@ export const useAudio = create<AudioStore>((set, get) => ({
 
   /**
    * This makes sure we are playing what should be played
-   * 
-   * @returns 
+   *
+   * @returns
    */
-  syncAudioToCurrentCursorPosition: (activeAudioSegments: TimelineSegment[]) => {
-
+  syncAudioToCurrentCursorPosition: (
+    activeAudioSegments: TimelineSegment[]
+  ) => {
     const { audioContext, currentlyPlaying } = get()
 
     const timelineStore: TimelineStore = useTimeline.getState()
     const { cursorTimestampAtInMs } = timelineStore
 
-    const segments: TimelineSegment[] = activeAudioSegments.filter(s =>
-      !currentlyPlaying.some(p => p.segmentId === s.id)
+    const segments: TimelineSegment[] = activeAudioSegments.filter(
+      (s) => !currentlyPlaying.some((p) => p.segmentId === s.id)
     )
 
     if (!segments.length) {
@@ -75,29 +85,33 @@ export const useAudio = create<AudioStore>((set, get) => ({
     }
     // console.log("useAudio: found audio segments that should be playing")
 
-    const newlyStartedAudioSourceNodes = segments.map((segment: TimelineSegment) =>
-      startAudioSourceNode({
-        audioContext,
-        segment,
-        cursorTimestampAtInMs,
-        onEnded: (sourceId) => {
-          // console.log("useAudio: removing the old source node from the list of playing")
-          // since this callback might be called 30 sec, 3 min, 60 min later,
-          //it is vital to import a fresh store state using useAudio.getState()
-          set({
-            // then we can finally we remove the source from the list, synchronously
-            currentlyPlaying: get().currentlyPlaying.filter(p => p.sourceId !== sourceId)
-          })
-        }
-      })
-    ).filter(s => s) as CurrentlyPlayingAudioSource[]
+    const newlyStartedAudioSourceNodes = segments
+      .map((segment: TimelineSegment) =>
+        startAudioSourceNode({
+          audioContext,
+          segment,
+          cursorTimestampAtInMs,
+          onEnded: (sourceId) => {
+            // console.log("useAudio: removing the old source node from the list of playing")
+            // since this callback might be called 30 sec, 3 min, 60 min later,
+            //it is vital to import a fresh store state using useAudio.getState()
+            set({
+              // then we can finally we remove the source from the list, synchronously
+              currentlyPlaying: get().currentlyPlaying.filter(
+                (p) => p.sourceId !== sourceId
+              ),
+            })
+          },
+        })
+      )
+      .filter((s) => s) as CurrentlyPlayingAudioSource[]
 
     set({
       currentlyPlaying: [
-         // let's not forget to keep the current samples!
+        // let's not forget to keep the current samples!
         ...currentlyPlaying,
-        ...newlyStartedAudioSourceNodes
-      ]
+        ...newlyStartedAudioSourceNodes,
+      ],
     })
   },
 }))

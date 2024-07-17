@@ -1,9 +1,9 @@
-import { SpaceEntry, SpaceRuntime } from "@huggingface/hub"
-import { ApiSpaceInfo } from "@huggingface/hub/dist/src/types/api/api-space"
-import { ApiInfo, EndpointInfo, JsApiData } from "@gradio/client/dist/types"
+import { SpaceEntry, SpaceRuntime } from '@huggingface/hub'
+import { ApiSpaceInfo } from '@huggingface/hub/dist/src/types/api/api-space'
+import { ApiInfo, EndpointInfo, JsApiData } from '@gradio/client/dist/types'
 
-export type HFSpace =
-  SpaceEntry & Pick<ApiSpaceInfo, "cardData" | "runtime" | "tags" | "models">
+export type HFSpace = SpaceEntry &
+  Pick<ApiSpaceInfo, 'cardData' | 'runtime' | 'tags' | 'models'>
 
 export interface HFSpaceStatus {
   _id: string
@@ -23,7 +23,7 @@ export interface HFSpaceStatus {
   createdAt: string
 }
 
-export type HFHubCategory = "spaces" | "models"
+export type HFHubCategory = 'spaces' | 'models'
 
 export type GradioApiInfo = ApiInfo<JsApiData>
 

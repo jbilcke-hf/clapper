@@ -1,34 +1,42 @@
-import { SupportedFields } from "../types"
+import { SupportedFields } from '../types'
 
-export function identifyField(key: string, value?: any, index?: number): Partial<SupportedFields> {
-  const normalizedKey =
-    key
-      .toLowerCase()
-      .replaceAll("_uri", "")
-      .replaceAll("_url", "")
-      .replaceAll("_b64", "")
-      .replaceAll("_base64", "")
-      .trim()
+export function identifyField(
+  key: string,
+  value?: any,
+  index?: number
+): Partial<SupportedFields> {
+  const normalizedKey = key
+    .toLowerCase()
+    .replaceAll('_uri', '')
+    .replaceAll('_url', '')
+    .replaceAll('_b64', '')
+    .replaceAll('_base64', '')
+    .trim()
   console.log(`normalizedKey: ${normalizedKey}`)
-  
+
   switch (normalizedKey) {
-    case "width":
-      let strWidth = ""
+    case 'width':
+      let strWidth = ''
       let numWidth = 0
-      if (typeof value === "string" && value.length) {
+      if (typeof value === 'string' && value.length) {
         strWidth = value
       }
       let maybeNumWidth = Number(strWidth)
-      if (typeof maybeNumWidth === "number" && isFinite(maybeNumWidth) && !isNaN(maybeNumWidth) && maybeNumWidth) {
+      if (
+        typeof maybeNumWidth === 'number' &&
+        isFinite(maybeNumWidth) &&
+        !isNaN(maybeNumWidth) &&
+        maybeNumWidth
+      ) {
         numWidth = maybeNumWidth
         return {
           hasInputWidth: true,
-          inputWidth: numWidth
+          inputWidth: numWidth,
         }
       } else if (strWidth) {
         return {
           hasInputWidth: true,
-          inputWidth: strWidth
+          inputWidth: strWidth,
         }
       } else {
         return {
@@ -37,23 +45,28 @@ export function identifyField(key: string, value?: any, index?: number): Partial
         }
       }
 
-    case "height":
-      let strHeight = ""
+    case 'height':
+      let strHeight = ''
       let numHeight = 0
-      if (typeof value === "string" && value.length) {
+      if (typeof value === 'string' && value.length) {
         strHeight = value
       }
       let maybeNumHeight = Number(strHeight)
-      if (typeof maybeNumHeight === "number" && isFinite(maybeNumHeight) && !isNaN(maybeNumHeight) && maybeNumHeight) {
+      if (
+        typeof maybeNumHeight === 'number' &&
+        isFinite(maybeNumHeight) &&
+        !isNaN(maybeNumHeight) &&
+        maybeNumHeight
+      ) {
         numHeight = maybeNumHeight
         return {
           hasInputHeight: true,
-          inputHeight: numHeight
+          inputHeight: numHeight,
         }
       } else if (strHeight) {
         return {
           hasInputHeight: true,
-          inputHeight: strHeight
+          inputHeight: strHeight,
         }
       } else {
         return {
@@ -62,23 +75,28 @@ export function identifyField(key: string, value?: any, index?: number): Partial
         }
       }
 
-    case "seed":
-      let strSeed = ""
+    case 'seed':
+      let strSeed = ''
       let numSeed = 0
-      if (typeof value === "string" && value.length) {
+      if (typeof value === 'string' && value.length) {
         strSeed = value
       }
       let maybeNumSeed = Number(strSeed)
-      if (typeof maybeNumSeed === "number" && isFinite(maybeNumSeed) && !isNaN(maybeNumSeed) && maybeNumSeed) {
+      if (
+        typeof maybeNumSeed === 'number' &&
+        isFinite(maybeNumSeed) &&
+        !isNaN(maybeNumSeed) &&
+        maybeNumSeed
+      ) {
         numSeed = maybeNumSeed
         return {
           hasInputSeed: true,
-          inputSeed: numSeed
+          inputSeed: numSeed,
         }
       } else if (strSeed) {
         return {
           hasInputSeed: true,
-          inputSeed: strSeed
+          inputSeed: strSeed,
         }
       } else {
         return {
@@ -86,32 +104,37 @@ export function identifyField(key: string, value?: any, index?: number): Partial
           // indexInputSeed: index,
         }
       }
-      
-    case "steps":
-    case "n_steps":
-    case "nb_steps":
-    case "num_steps":
-    case "step_count":
-    case "inference_steps":
-    case "n_inference_steps":
-    case "nb_inference_steps":
-    case "num_inference_steps":
-      let strSteps = ""
+
+    case 'steps':
+    case 'n_steps':
+    case 'nb_steps':
+    case 'num_steps':
+    case 'step_count':
+    case 'inference_steps':
+    case 'n_inference_steps':
+    case 'nb_inference_steps':
+    case 'num_inference_steps':
+      let strSteps = ''
       let numSteps = 0
-      if (typeof value === "string" && value.length) {
+      if (typeof value === 'string' && value.length) {
         strSteps = value
       }
       let maybeNumSteps = Number(strSteps)
-      if (typeof maybeNumSteps === "number" && isFinite(maybeNumSteps) && !isNaN(maybeNumSteps) && maybeNumSteps) {
+      if (
+        typeof maybeNumSteps === 'number' &&
+        isFinite(maybeNumSteps) &&
+        !isNaN(maybeNumSteps) &&
+        maybeNumSteps
+      ) {
         numSteps = maybeNumSteps
         return {
           hasInputSteps: true,
-          inputSteps: numSteps
+          inputSteps: numSteps,
         }
       } else if (strSteps) {
         return {
           hasInputSteps: true,
-          inputSteps: strSteps
+          inputSteps: strSteps,
         }
       } else {
         return {
@@ -122,39 +145,44 @@ export function identifyField(key: string, value?: any, index?: number): Partial
 
       // note: what we have to choose depends on what Gradio expects
       // steps = numSteps
-      break;
+      break
 
-      case "guidance":
-      case "guidance_scale":
-      case "guidancescale":
-        let strGuidanceScale = ""
-        let numGuidanceScale = 0
-        if (typeof value === "string" && value.length) {
-          strGuidanceScale = value
+    case 'guidance':
+    case 'guidance_scale':
+    case 'guidancescale':
+      let strGuidanceScale = ''
+      let numGuidanceScale = 0
+      if (typeof value === 'string' && value.length) {
+        strGuidanceScale = value
+      }
+      let maybeNumGuidanceScale = Number(strGuidanceScale)
+      if (
+        typeof maybeNumGuidanceScale === 'number' &&
+        isFinite(maybeNumGuidanceScale) &&
+        !isNaN(maybeNumGuidanceScale) &&
+        maybeNumGuidanceScale
+      ) {
+        numGuidanceScale = maybeNumGuidanceScale
+        return {
+          hasInputGuidance: true,
+          inputGuidance: numGuidanceScale,
         }
-        let maybeNumGuidanceScale = Number(strGuidanceScale)
-        if (typeof maybeNumGuidanceScale === "number" && isFinite(maybeNumGuidanceScale) && !isNaN(maybeNumGuidanceScale) && maybeNumGuidanceScale) {
-          numGuidanceScale = maybeNumGuidanceScale
-          return {
-            hasInputGuidance: true,
-            inputGuidance: numGuidanceScale
-          }
-        } else if (strGuidanceScale) {
-          return {
-            hasInputGuidance: true,
-            inputGuidance: strGuidanceScale
-          }
-        } else {
-          return {
-            hasInputGuidance: true,
-            // indexInputGuidance: index,
-          }
+      } else if (strGuidanceScale) {
+        return {
+          hasInputGuidance: true,
+          inputGuidance: strGuidanceScale,
         }
-        
-    case "negative":
-    case "negativeprompt":
-    case "negative_prompt":
-      if (typeof value === "string" && value.length) {
+      } else {
+        return {
+          hasInputGuidance: true,
+          // indexInputGuidance: index,
+        }
+      }
+
+    case 'negative':
+    case 'negativeprompt':
+    case 'negative_prompt':
+      if (typeof value === 'string' && value.length) {
         return {
           hasNegativeTextPrompt: true,
           inputNegativeTextPrompt: value,
@@ -165,16 +193,16 @@ export function identifyField(key: string, value?: any, index?: number): Partial
           // indexNegativeTextPrompt: index,
         }
       }
-      
-    case "source_image":
-    case "input_image":
-    case "image_input":
-    case "image":
-    case "image":
-      if (typeof value === "string" && value.length) {
+
+    case 'source_image':
+    case 'input_image':
+    case 'image_input':
+    case 'image':
+    case 'image':
+      if (typeof value === 'string' && value.length) {
         return {
           hasInputImage: true,
-          inputImage: value
+          inputImage: value,
         }
       } else {
         return {
@@ -183,16 +211,16 @@ export function identifyField(key: string, value?: any, index?: number): Partial
         }
       }
 
-    case "source_audio":
-    case "input_audio":
-    case "audio_input":
-    case "driving_audio":
-    case "voice":
-    case "audio":
-      if (typeof value === "string" && value.length) {
+    case 'source_audio':
+    case 'input_audio':
+    case 'audio_input':
+    case 'driving_audio':
+    case 'voice':
+    case 'audio':
+      if (typeof value === 'string' && value.length) {
         return {
           hasInputAudio: true,
-          inputAudio: value
+          inputAudio: value,
         }
       } else {
         return {
@@ -201,19 +229,19 @@ export function identifyField(key: string, value?: any, index?: number): Partial
         }
       }
 
-    case "prompt":
-    case "positive":
-    case "positiveprompt":
-    case "positive_prompt":
-    case "input_prompt":
-    case "input_text":
-    case "prompt_text":
-    case "text_prompt":
-    case "text":
-      if (typeof value === "string" && value.length) {
+    case 'prompt':
+    case 'positive':
+    case 'positiveprompt':
+    case 'positive_prompt':
+    case 'input_prompt':
+    case 'input_text':
+    case 'prompt_text':
+    case 'text_prompt':
+    case 'text':
+      if (typeof value === 'string' && value.length) {
         return {
           hasPositiveTextPrompt: true,
-          inputPositiveTextPrompt: value
+          inputPositiveTextPrompt: value,
         }
       } else {
         return {

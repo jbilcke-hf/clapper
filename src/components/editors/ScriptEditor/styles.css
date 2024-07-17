@@ -3,16 +3,15 @@
 }
 
 .entity {
-
   /*
   padding and rounded corners only make sense if we use a background:
   @apply rounded-xl px-1.5 py-1 font-semibold;
   */
-} 
+}
 
 .entity.entity-location {
   @apply text-green-300/90 !important;
-} 
+}
 
 .entity.entity-character {
   @apply text-orange-300/90 !important;
@@ -20,4 +19,4 @@
 
 .entity.entity-highlight {
   @apply font-semibold;
-} 
+}

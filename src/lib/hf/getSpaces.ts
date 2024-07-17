@@ -1,15 +1,14 @@
-import { listSpaces, Credentials, whoAmI, SpaceSdk } from "@huggingface/hub"
-import {  HFSpace } from "./types"
+import { listSpaces, Credentials, whoAmI, SpaceSdk } from '@huggingface/hub'
+import { HFSpace } from './types'
 
 export async function getSpaces({
   apiKey,
-  sdk = "gradio"
+  sdk = 'gradio',
 }: {
   apiKey: string
   sdk?: SpaceSdk
 }): Promise<HFSpace[]> {
-
-  const accessToken = apiKey || ""
+  const accessToken = apiKey || ''
 
   if (!accessToken) {
     throw new Error(`cannot list spaces without a Hugging Face access token`)
@@ -17,7 +16,7 @@ export async function getSpaces({
 
   const credentials: Credentials = { accessToken }
 
-  let username = ""
+  let username = ''
   try {
     const { name } = await whoAmI({ credentials })
     username = name
@@ -32,18 +31,14 @@ export async function getSpaces({
 
   for await (const space of listSpaces({
     search: {
-      owner: username
+      owner: username,
     },
-    additionalFields: [
-     "cardData",
-     "runtime",
-     "tags",
-     "models"
-    ],
-    credentials
+    additionalFields: ['cardData', 'runtime', 'tags', 'models'],
+    credentials,
   })) {
-
-    if (sdk && space.sdk != sdk) { continue }
+    if (sdk && space.sdk != sdk) {
+      continue
+    }
 
     results.push(space)
   }

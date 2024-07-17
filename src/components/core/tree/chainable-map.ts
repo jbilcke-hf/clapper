@@ -2,8 +2,13 @@ export class ChainableMap<K, V> {
   map: Map<K, V>
   constructor(map?: ChainableMap<K, V> | null)
   constructor(entries?: readonly (readonly [K, V])[] | null)
-  constructor(mapOrEntries?: ChainableMap<K, V> | readonly (readonly [K, V])[] | null) {
-    this.map = mapOrEntries instanceof ChainableMap ? new Map(mapOrEntries.map) : new Map(mapOrEntries)
+  constructor(
+    mapOrEntries?: ChainableMap<K, V> | readonly (readonly [K, V])[] | null
+  ) {
+    this.map =
+      mapOrEntries instanceof ChainableMap
+        ? new Map(mapOrEntries.map)
+        : new Map(mapOrEntries)
   }
   toMap = (): Map<K, V> => {
     return new Map(Array.from(this.map.entries()))

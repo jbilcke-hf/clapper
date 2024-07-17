@@ -1,8 +1,7 @@
-"use client"
+'use client'
 
-import { useEffect, useState, useTransition } from "react"
-import { CivitaiCollection } from "../types"
-
+import { useEffect, useState, useTransition } from 'react'
+import { CivitaiCollection } from '../types'
 
 export function useCivitaiCollections(): CivitaiCollection[] {
   const [_pending, startTransition] = useTransition()
@@ -17,7 +16,7 @@ export function useCivitaiCollections(): CivitaiCollection[] {
       // const collections = await listCollections()
       const collections: CivitaiCollection[] = []
       setCollections(collections)
-     //  setModels(models)
+      //  setModels(models)
     })
   }, [])
 

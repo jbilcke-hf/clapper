@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import {
   MenubarCheckboxItem,
@@ -9,36 +9,49 @@ import {
   MenubarSub,
   MenubarSubContent,
   MenubarSubTrigger,
-  MenubarTrigger
-} from "@/components/ui/menubar"
-import { useSettings } from "@/services/settings"
-import { useUI } from "@/services/ui"
+  MenubarTrigger,
+} from '@/components/ui/menubar'
+import { useSettings } from '@/services/settings'
+import { useUI } from '@/services/ui'
 
-
-import { RenderingStrategyList } from "../lists/RenderingStrategyList"
-import { VoiceGenerationModelList } from "../lists/VoiceGenerationModelList"
-import { SettingsCategory } from "@aitube/clapper-services"
-import { useResolver } from "@/services/resolver/useResolver"
-import { IsBusy } from "../IsBusy"
+import { RenderingStrategyList } from '../lists/RenderingStrategyList'
+import { VoiceGenerationModelList } from '../lists/VoiceGenerationModelList'
+import { SettingsCategory } from '@aitube/clapper-services'
+import { useResolver } from '@/services/resolver/useResolver'
+import { IsBusy } from '../IsBusy'
 
 export function TopMenuVoice() {
-  const nbPendingRequestsForVoice = useResolver(s => s.nbPendingRequestsForVoice)
-  const setShowSettings = useUI(s => s.setShowSettings)
+  const nbPendingRequestsForVoice = useResolver(
+    (s) => s.nbPendingRequestsForVoice
+  )
+  const setShowSettings = useUI((s) => s.setShowSettings)
   const voiceRenderingStrategy = useSettings((s) => s.voiceRenderingStrategy)
-  const setVoiceRenderingStrategy = useSettings((s) => s.setVoiceRenderingStrategy)
+  const setVoiceRenderingStrategy = useSettings(
+    (s) => s.setVoiceRenderingStrategy
+  )
   return (
     <MenubarMenu>
-      <MenubarTrigger><span>Voice</span><IsBusy nbPendingTasks={nbPendingRequestsForVoice} /></MenubarTrigger>
+      <MenubarTrigger>
+        <span>Voice</span>
+        <IsBusy nbPendingTasks={nbPendingRequestsForVoice} />
+      </MenubarTrigger>
       <MenubarContent>
         <MenubarSub>
-          <MenubarItem onClick={() => { setShowSettings(SettingsCategory.VOICE) }}>Show advanced settings</MenubarItem>
+          <MenubarItem
+            onClick={() => {
+              setShowSettings(SettingsCategory.VOICE)
+            }}
+          >
+            Show advanced settings
+          </MenubarItem>
           <MenubarSeparator />
           <VoiceGenerationModelList />
-          <RenderingStrategyList current={voiceRenderingStrategy} setter={setVoiceRenderingStrategy} />
+          <RenderingStrategyList
+            current={voiceRenderingStrategy}
+            setter={setVoiceRenderingStrategy}
+          />
           <MenubarSeparator />
-          <MenubarItem
-             disabled
-            >Usage and costs: not implemented</MenubarItem>
+          <MenubarItem disabled>Usage and costs: not implemented</MenubarItem>
         </MenubarSub>
       </MenubarContent>
     </MenubarMenu>

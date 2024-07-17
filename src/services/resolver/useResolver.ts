@@ -1,29 +1,42 @@
-"use client"
+'use client'
 
-import { create } from "zustand"
-import { ClapEntity, ClapOutputType, ClapSegmentCategory, ClapSegmentFilteringMode, ClapSegmentStatus, filterSegments } from "@aitube/clap"
-import { RenderingStrategy, TimelineStore, useTimeline, getAudioBuffer, SegmentVisibility, segmentVisibilityPriority, TimelineSegment } from "@aitube/timeline"
-import { getVideoPrompt } from "@aitube/engine"
-import { ResolverStore } from "@aitube/clapper-services"
+import { create } from 'zustand'
+import {
+  ClapEntity,
+  ClapOutputType,
+  ClapSegmentCategory,
+  ClapSegmentFilteringMode,
+  ClapSegmentStatus,
+  filterSegments,
+} from '@aitube/clap'
+import {
+  RenderingStrategy,
+  TimelineStore,
+  useTimeline,
+  getAudioBuffer,
+  SegmentVisibility,
+  segmentVisibilityPriority,
+  TimelineSegment,
+} from '@aitube/timeline'
+import { getVideoPrompt } from '@aitube/engine'
+import { ResolverStore } from '@aitube/clapper-services'
 
-import { getDefaultResolverState } from "./getDefaultResolverState"
-import { useSettings } from "../settings"
-import { DEFAULT_WAIT_TIME_IF_NOTHING_TO_DO_IN_MS } from "./constants"
-import { ResolveRequest, ResolveRequestPrompts } from "@aitube/clapper-services"
-
+import { getDefaultResolverState } from './getDefaultResolverState'
+import { useSettings } from '../settings'
+import { DEFAULT_WAIT_TIME_IF_NOTHING_TO_DO_IN_MS } from './constants'
+import { ResolveRequest, ResolveRequestPrompts } from '@aitube/clapper-services'
 
 export const useResolver = create<ResolverStore>((set, get) => ({
   ...getDefaultResolverState(),
 
   startLoop: () => {
-    const {
-      isRunning,
-      runLoop
-    } = get()
+    const { isRunning, runLoop } = get()
 
     console.log(`useResolver.startLoop() isRunning: ${isRunning}`)
 
-    if (isRunning) { return }
+    if (isRunning) {
+      return
+    }
 
     set({ isRunning: true })
 
@@ -34,22 +47,23 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
   /**
    * A loop which reconstruct a queue at each cycle
-   * 
-   * this has to be dynamic since the user might be moving around 
+   *
+   * this has to be dynamic since the user might be moving around
    * inside the timeline
-   * @returns 
+   * @returns
    */
   runLoop: async (): Promise<void> => {
-
-    const { 
+    const {
       imageRenderingStrategy,
       videoRenderingStrategy,
       soundRenderingStrategy,
       voiceRenderingStrategy,
       musicRenderingStrategy,
     } = useSettings.getState()
-    
-    const runLoopAgain = (waitTimeIfNothingToDoInMs = DEFAULT_WAIT_TIME_IF_NOTHING_TO_DO_IN_MS) => {
+
+    const runLoopAgain = (
+      waitTimeIfNothingToDoInMs = DEFAULT_WAIT_TIME_IF_NOTHING_TO_DO_IN_MS
+    ) => {
       setTimeout(() => {
         get().runLoop()
       }, waitTimeIfNothingToDoInMs)
@@ -60,24 +74,41 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
     // console.log(`useResolver.runLoop()`)
     const timelineState: TimelineStore = useTimeline.getState()
-    const { visibleSegments, loadedSegments, segments: allSegments, resolveSegment } = timelineState
+    const {
+      visibleSegments,
+      loadedSegments,
+      segments: allSegments,
+      resolveSegment,
+    } = timelineState
 
     // ------------------------------------------------------------------------------------------------
     //
     // - we modify the original object in-line to add the visibility setting
     // - there is a priority order: the info that a segment is "visible" (on screen),
     //   is more important, which is why it is done after processing the "loaded" segments (the ones that are buffered, because near the sliding window)
-  
-    for (const s of loadedSegments) { (s as TimelineSegment).visibility = SegmentVisibility.BUFFERED }
-    for (const s of visibleSegments) { (s as TimelineSegment).visibility = SegmentVisibility.VISIBLE }
+
+    for (const s of loadedSegments) {
+      ;(s as TimelineSegment).visibility = SegmentVisibility.BUFFERED
+    }
+    for (const s of visibleSegments) {
+      ;(s as TimelineSegment).visibility = SegmentVisibility.VISIBLE
+    }
 
     // sort segments by visibility:
     // segments visible on screen are show first,
     // then those nearby, then the hidden ones
-    const segments: TimelineSegment[] = ([...allSegments] as TimelineSegment[]).sort((segment1, segment2) => {
-      const priority1 = (segmentVisibilityPriority as any)[segment1.visibility || SegmentVisibility.HIDDEN] || 0
-      const priority2 = (segmentVisibilityPriority as any)[segment2.visibility || SegmentVisibility.HIDDEN] || 0
-      
+    const segments: TimelineSegment[] = (
+      [...allSegments] as TimelineSegment[]
+    ).sort((segment1, segment2) => {
+      const priority1 =
+        (segmentVisibilityPriority as any)[
+          segment1.visibility || SegmentVisibility.HIDDEN
+        ] || 0
+      const priority2 =
+        (segmentVisibilityPriority as any)[
+          segment2.visibility || SegmentVisibility.HIDDEN
+        ] || 0
+
       return priority2 - priority1
     })
     //
@@ -95,54 +126,57 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
     // we do not need ot get currentParallelismQuotas,
     // as we are going to re-compute it
-    // (currentParallelismQuotas is only used in the UI 
+    // (currentParallelismQuotas is only used in the UI
     // to display of the parallel request counter)
 
     const segmentsToRender: TimelineSegment[] = []
-    
+
     // the following loop isn't the prettiest, but I think it presents
     // the dynamic generation logic in a clear way, so let's keep it for now
     for (const s of segments) {
-
       if (s.category === ClapSegmentCategory.VIDEO) {
-
         if (s.status !== ClapSegmentStatus.TO_GENERATE) {
-
           // this is important: we found an in-progress task!
           // it is thus vital to deduct it from the parallelism quota,
           // to avoir triggering quota limit on the providers side
           if (s.status === ClapSegmentStatus.IN_PROGRESS) {
-            currentParallelismQuotaForVideo = Math.max(0, currentParallelismQuotaForVideo - 1)
+            currentParallelismQuotaForVideo = Math.max(
+              0,
+              currentParallelismQuotaForVideo - 1
+            )
           }
           continue
         }
 
-        if (isPaused) { continue }
+        if (isPaused) {
+          continue
+        }
 
         if (videoRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
         }
-             
+
         if (
-          s.visibility === SegmentVisibility.HIDDEN
-          && 
+          s.visibility === SegmentVisibility.HIDDEN &&
           videoRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
         ) {
           continue
         } else if (
-          s.visibility === SegmentVisibility.BUFFERED
-          && 
-          videoRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
+          s.visibility === SegmentVisibility.BUFFERED &&
+          videoRenderingStrategy !==
+            RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
         ) {
           continue
         }
 
         if (currentParallelismQuotaForVideo > 0) {
-          currentParallelismQuotaForVideo = Math.max(0, currentParallelismQuotaForVideo - 1)
+          currentParallelismQuotaForVideo = Math.max(
+            0,
+            currentParallelismQuotaForVideo - 1
+          )
           segmentsToRender.push(s)
         }
       } else if (s.category === ClapSegmentCategory.STORYBOARD) {
-
         // console.log(`useResolver.runLoop(): found a storyboard segment`)
 
         if (s.status !== ClapSegmentStatus.TO_GENERATE) {
@@ -152,29 +186,33 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           // it is thus vital to deduct it from the parallelism quota,
           // to avoir triggering quoote limit on the providers side
           if (s.status === ClapSegmentStatus.IN_PROGRESS) {
-            currentParallelismQuotaForImage = Math.max(0, currentParallelismQuotaForImage - 1)
+            currentParallelismQuotaForImage = Math.max(
+              0,
+              currentParallelismQuotaForImage - 1
+            )
           }
-          
+
           continue
         }
         // console.log(`useResolver.runLoop(): found a storyboard segment that has to be generated`)
-        
-        if (isPaused) { continue }
+
+        if (isPaused) {
+          continue
+        }
 
         if (imageRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
         }
 
         if (
-          s.visibility === SegmentVisibility.HIDDEN
-          && 
+          s.visibility === SegmentVisibility.HIDDEN &&
           imageRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
         ) {
           continue
         } else if (
-          s.visibility === SegmentVisibility.BUFFERED
-          && 
-          imageRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
+          s.visibility === SegmentVisibility.BUFFERED &&
+          imageRenderingStrategy !==
+            RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
         ) {
           continue
         }
@@ -183,126 +221,143 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
         if (currentParallelismQuotaForImage > 0) {
           // console.log(`useResolver.runLoop(): quota is good to go`)
-          currentParallelismQuotaForImage = Math.max(0, currentParallelismQuotaForImage - 1)
+          currentParallelismQuotaForImage = Math.max(
+            0,
+            currentParallelismQuotaForImage - 1
+          )
           segmentsToRender.push(s)
         }
       } else if (s.category === ClapSegmentCategory.DIALOGUE) {
-
         if (s.status !== ClapSegmentStatus.TO_GENERATE) {
-
           // this is important: we found an in-progress task!
           // it is thus vital to deduct it from the parallelism quota,
           // to avoir triggering quoote limit on the providers side
           if (s.status === ClapSegmentStatus.IN_PROGRESS) {
-            currentParallelismQuotaForVoice = Math.max(0, currentParallelismQuotaForVoice - 1)
+            currentParallelismQuotaForVoice = Math.max(
+              0,
+              currentParallelismQuotaForVoice - 1
+            )
           }
-          
+
           continue
         }
 
-        if (isPaused) { continue }
+        if (isPaused) {
+          continue
+        }
 
         if (voiceRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
         }
 
         if (
-          s.visibility === SegmentVisibility.HIDDEN
-          && 
+          s.visibility === SegmentVisibility.HIDDEN &&
           voiceRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
         ) {
           continue
         } else if (
-          s.visibility === SegmentVisibility.BUFFERED
-          && 
-          voiceRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
+          s.visibility === SegmentVisibility.BUFFERED &&
+          voiceRenderingStrategy !==
+            RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
         ) {
           continue
         }
 
         if (currentParallelismQuotaForVoice > 0) {
-          currentParallelismQuotaForVoice = Math.max(0, currentParallelismQuotaForVoice - 1)
+          currentParallelismQuotaForVoice = Math.max(
+            0,
+            currentParallelismQuotaForVoice - 1
+          )
           segmentsToRender.push(s)
         }
       } else if (s.category === ClapSegmentCategory.SOUND) {
-
         if (s.status !== ClapSegmentStatus.TO_GENERATE) {
-
           // this is important: we found an in-progress task!
           // it is thus vital to deduct it from the parallelism quota,
           // to avoir triggering quoote limit on the providers side
           if (s.status === ClapSegmentStatus.IN_PROGRESS) {
-            currentParallelismQuotaForSound = Math.max(0, currentParallelismQuotaForSound - 1)
+            currentParallelismQuotaForSound = Math.max(
+              0,
+              currentParallelismQuotaForSound - 1
+            )
           }
-          
+
           continue
         }
 
-        if (isPaused) { continue }
+        if (isPaused) {
+          continue
+        }
 
         if (soundRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
         }
 
         if (
-          s.visibility === SegmentVisibility.HIDDEN
-          && 
+          s.visibility === SegmentVisibility.HIDDEN &&
           soundRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
         ) {
           continue
         } else if (
-          s.visibility === SegmentVisibility.BUFFERED
-          && 
-          soundRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
+          s.visibility === SegmentVisibility.BUFFERED &&
+          soundRenderingStrategy !==
+            RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
         ) {
           continue
         }
 
         if (currentParallelismQuotaForSound > 0) {
-          currentParallelismQuotaForSound = Math.max(0, currentParallelismQuotaForSound - 1)
+          currentParallelismQuotaForSound = Math.max(
+            0,
+            currentParallelismQuotaForSound - 1
+          )
           segmentsToRender.push(s)
         }
       } else if (s.category === ClapSegmentCategory.MUSIC) {
-
         if (s.status !== ClapSegmentStatus.TO_GENERATE) {
-
           // this is important: we found an in-progress task!
           // it is thus vital to deduct it from the parallelism quota,
           // to avoir triggering quoote limit on the providers side
           if (s.status === ClapSegmentStatus.IN_PROGRESS) {
-            currentParallelismQuotaForMusic = Math.max(0, currentParallelismQuotaForMusic - 1)
+            currentParallelismQuotaForMusic = Math.max(
+              0,
+              currentParallelismQuotaForMusic - 1
+            )
           }
-          
+
           continue
         }
 
-        if (isPaused) { continue }
+        if (isPaused) {
+          continue
+        }
 
         if (musicRenderingStrategy === RenderingStrategy.ON_DEMAND) {
           continue
         }
 
         if (
-          s.visibility === SegmentVisibility.HIDDEN
-          && 
+          s.visibility === SegmentVisibility.HIDDEN &&
           musicRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
         ) {
           continue
         } else if (
-          s.visibility === SegmentVisibility.BUFFERED
-          && 
-          musicRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
+          s.visibility === SegmentVisibility.BUFFERED &&
+          musicRenderingStrategy !==
+            RenderingStrategy.ON_SCREEN_THEN_SURROUNDING
         ) {
           continue
         }
 
         if (currentParallelismQuotaForMusic > 0) {
-          currentParallelismQuotaForMusic = Math.max(0, currentParallelismQuotaForMusic - 1)
+          currentParallelismQuotaForMusic = Math.max(
+            0,
+            currentParallelismQuotaForMusic - 1
+          )
           segmentsToRender.push(s)
         }
       } // else continue
     }
-
 
     // we don't want to do something like this:
     // await Promise.allSettled(segmentsRenderingPromises)
@@ -311,21 +366,26 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     // the idea here is that we don't want to wait for all segments
     // to finish before starting new ones.
 
-    const nbPendingRequestsForVideo = defaultParallelismQuotas.video - currentParallelismQuotaForVideo
-    const nbPendingRequestsForImage = defaultParallelismQuotas.image - currentParallelismQuotaForImage
-    const nbPendingRequestsForVoice = defaultParallelismQuotas.voice - currentParallelismQuotaForVoice
-    const nbPendingRequestsForSound = defaultParallelismQuotas.sound - currentParallelismQuotaForSound
-    const nbPendingRequestsForMusic = defaultParallelismQuotas.music - currentParallelismQuotaForMusic
+    const nbPendingRequestsForVideo =
+      defaultParallelismQuotas.video - currentParallelismQuotaForVideo
+    const nbPendingRequestsForImage =
+      defaultParallelismQuotas.image - currentParallelismQuotaForImage
+    const nbPendingRequestsForVoice =
+      defaultParallelismQuotas.voice - currentParallelismQuotaForVoice
+    const nbPendingRequestsForSound =
+      defaultParallelismQuotas.sound - currentParallelismQuotaForSound
+    const nbPendingRequestsForMusic =
+      defaultParallelismQuotas.music - currentParallelismQuotaForMusic
 
     const nbRequestsRunningInParallel =
-      nbPendingRequestsForVideo
-      + nbPendingRequestsForImage
-      + nbPendingRequestsForVoice
-      + nbPendingRequestsForSound
-      + nbPendingRequestsForMusic
-    
+      nbPendingRequestsForVideo +
+      nbPendingRequestsForImage +
+      nbPendingRequestsForVoice +
+      nbPendingRequestsForSound +
+      nbPendingRequestsForMusic
+
     const isBusyResolving = nbRequestsRunningInParallel > 0
-    
+
     set({
       currentParallelismQuotaForVideo,
       currentParallelismQuotaForImage,
@@ -339,59 +399,59 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       nbPendingRequestsForSound,
       nbPendingRequestsForMusic,
       nbRequestsRunningInParallel,
-      isBusyResolving
+      isBusyResolving,
     })
 
     // console.log(`useResolver.runLoop(): firing and forgetting ${segmentsToRender.length} new resolveSegment promises`)
     // we fire and forget
-    segmentsToRender.forEach(segment => resolveSegment(segment))
+    segmentsToRender.forEach((segment) => resolveSegment(segment))
 
     return runLoopAgain()
   },
 
-  
   togglePause: (isPaused?: boolean): boolean => {
     const { isPaused: previouslyPaused } = get()
-    if (typeof isPaused === "boolean") {
+    if (typeof isPaused === 'boolean') {
       set({ isPaused })
       return isPaused
     } else {
       set({ isPaused: !previouslyPaused })
-      return  !previouslyPaused
+      return !previouslyPaused
     }
   },
 
   /**
    * This resolve an entity (eg. a character or a location)
-   * 
-   * This will generate for instance an image and a voice 
+   *
+   * This will generate for instance an image and a voice
    * for the entity, based on the entity description.
-   * 
-   * @param segment 
-   * @returns 
+   *
+   * @param segment
+   * @returns
    */
   resolveEntity: async (entity: ClapEntity): Promise<ClapEntity> => {
-    throw new Error("Not implemented (TODO by @Julian)")
+    throw new Error('Not implemented (TODO by @Julian)')
   },
 
   /**
    * This resolve a segment.
-   * 
+   *
    * Resolving means taking input parameters and generating an output (changes in the
    * segment settings, typically the assetUrl but this can have other implications
    * and changes as well)
-   * 
+   *
    * This function returns the original segment, modified in-line.
-   * 
+   *
    * Side-effects are propagated by using useTimeline.trackSilentChangeInSegment()
-   * 
-   * @param segment 
-   * @returns 
+   *
+   * @param segment
+   * @returns
    */
-  resolveSegment: async (segment: TimelineSegment): Promise<TimelineSegment> => {
-
+  resolveSegment: async (
+    segment: TimelineSegment
+  ): Promise<TimelineSegment> => {
     const settings = useSettings.getState().getSettings()
-  
+
     const timeline: TimelineStore = useTimeline.getState()
 
     // note: do NOT use the visibleSegments here
@@ -414,72 +474,84 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       // console.log(`useResolver.resolveSegment(): warning: this segment is already being generated!`)
       return segment
     }
-  
+
     segment.status = ClapSegmentStatus.IN_PROGRESS
 
     const entities = clap.entityIndex || {}
-  
-    const speakingCharactersIds = segments.map(s =>
-      s.category === ClapSegmentCategory.DIALOGUE ? s.entityId : null
-    ).filter(id => id) as string[]
-  
-    const generalCharactersIds = segments.map(s =>
-      s.category === ClapSegmentCategory.CHARACTER ? s.entityId : null
-    ).filter(id => id) as string[]
-  
-    const mainCharacterId: string | undefined = speakingCharactersIds.at(0) || generalCharactersIds.at(0) || undefined
-  
-    const mainCharacterEntity: ClapEntity | undefined = mainCharacterId ? (entities[mainCharacterId] || undefined) : undefined
 
-    const storyboard = segments.find(s => s.category === ClapSegmentCategory.STORYBOARD)
-    
-    const dialogue = segments.find(s => s.category === ClapSegmentCategory.DIALOGUE)
+    const speakingCharactersIds = segments
+      .map((s) =>
+        s.category === ClapSegmentCategory.DIALOGUE ? s.entityId : null
+      )
+      .filter((id) => id) as string[]
 
-    const imagePrompt = getVideoPrompt(
-      segments,
-      entities
+    const generalCharactersIds = segments
+      .map((s) =>
+        s.category === ClapSegmentCategory.CHARACTER ? s.entityId : null
+      )
+      .filter((id) => id) as string[]
+
+    const mainCharacterId: string | undefined =
+      speakingCharactersIds.at(0) || generalCharactersIds.at(0) || undefined
+
+    const mainCharacterEntity: ClapEntity | undefined = mainCharacterId
+      ? entities[mainCharacterId] || undefined
+      : undefined
+
+    const storyboard = segments.find(
+      (s) => s.category === ClapSegmentCategory.STORYBOARD
     )
-  
+
+    const dialogue = segments.find(
+      (s) => s.category === ClapSegmentCategory.DIALOGUE
+    )
+
+    const imagePrompt = getVideoPrompt(segments, entities)
+
     const positiveImagePrompt = [
       settings.imagePromptPrefix,
       imagePrompt,
       settings.imagePromptSuffix,
-    ].map(x => x.trim()).filter(x => x).join(", ")
-  
-    const negativeImagePrompt =  [
-      settings.imageNegativePrompt
-    ].map(x => x.trim()).filter(x => x).join(", ")
+    ]
+      .map((x) => x.trim())
+      .filter((x) => x)
+      .join(', ')
+
+    const negativeImagePrompt = [settings.imageNegativePrompt]
+      .map((x) => x.trim())
+      .filter((x) => x)
+      .join(', ')
 
     // note: not all AI models will support those parameters.
-    // in 2024, even the "best" proprietary video models like Sora, Veo, Kling, Gen-3, Dream Machine etc.. 
+    // in 2024, even the "best" proprietary video models like Sora, Veo, Kling, Gen-3, Dream Machine etc..
     // don't support voice input for lip syncing, for instance.
     const prompts: ResolveRequestPrompts = {
       image: {
         // the "identification picture" of the character, if available
-        identity: `${mainCharacterEntity?.imageId || ""}`,
+        identity: `${mainCharacterEntity?.imageId || ''}`,
         positive: positiveImagePrompt,
-        negative: negativeImagePrompt
+        negative: negativeImagePrompt,
       },
       video: {
         // image to animate
-        image: `${storyboard?.assetUrl || ""}`,
+        image: `${storyboard?.assetUrl || ''}`,
 
         // dialogue line to lip-sync
-        voice: `${dialogue?.assetUrl || ""}`,
+        voice: `${dialogue?.assetUrl || ''}`,
       },
       voice: {
-        identity: `${mainCharacterEntity?.audioId || ""}`,
-        positive: "",
-        negative: ""
-      }
+        identity: `${mainCharacterEntity?.audioId || ''}`,
+        positive: '',
+        negative: '',
+      },
     }
 
     const serializableSegment = { ...segment }
-      // we delete things that cannot be serialized properly
-    delete serializableSegment.scene;
-    delete serializableSegment.audioBuffer;
-    serializableSegment.textures = {};
-  
+    // we delete things that cannot be serialized properly
+    delete serializableSegment.scene
+    delete serializableSegment.audioBuffer
+    serializableSegment.textures = {}
+
     const request: ResolveRequest = {
       settings,
       segment: serializableSegment,
@@ -494,12 +566,12 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     }
 
     try {
-      const res = await fetch("/api/resolve", {
-        method: "POST",
+      const res = await fetch('/api/resolve', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(request)
+        body: JSON.stringify(request),
       })
       // console.log(`useResolver.resolveSegment(): result from /api.render:`, res)
 
@@ -535,7 +607,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       // after a segment has ben resolved, it is possible that the size
       // of its asset changed (eg. a dialogue line longer than the segment's length)
       //
-      // there are multiple ways to solve this, one approach could be to 
+      // there are multiple ways to solve this, one approach could be to
       // just add some more B-roll (more shots)
       //
       // or we can also extend it, which is the current simple solution
@@ -550,29 +622,29 @@ export const useResolver = create<ResolverStore>((set, get) => ({
         // which can be weird to hear.. so let's add a little delay
 
         // that is assuming that our dialogue lines have been properly cut,
-        // 
+        //
         await timeline.fitSegmentToAssetDuration(
           newSegment,
-          typeof newSegment.assetDurationInMs === "number"
-          // this delay is arbitrary, could be another value (200, 500, 1200..)
-          ? newSegment.assetDurationInMs + 700
-          : 2000
+          typeof newSegment.assetDurationInMs === 'number'
+            ? // this delay is arbitrary, could be another value (200, 500, 1200..)
+              newSegment.assetDurationInMs + 700
+            : 2000
         )
       } else if (newSegment.category === ClapSegmentCategory.SOUND) {
         await timeline.fitSegmentToAssetDuration(
           newSegment,
-          typeof newSegment.assetDurationInMs === "number"
-          // this delay is arbitrary, could be another value (200, 500, 1200..)
-          ? newSegment.assetDurationInMs
-          : 2000
+          typeof newSegment.assetDurationInMs === 'number'
+            ? // this delay is arbitrary, could be another value (200, 500, 1200..)
+              newSegment.assetDurationInMs
+            : 2000
         )
       } else if (newSegment.category === ClapSegmentCategory.MUSIC) {
         await timeline.fitSegmentToAssetDuration(
           newSegment,
-          typeof newSegment.assetDurationInMs === "number"
-          // this delay is arbitrary, could be another value (200, 500, 1200..)
-          ? newSegment.assetDurationInMs
-          : 2000
+          typeof newSegment.assetDurationInMs === 'number'
+            ? // this delay is arbitrary, could be another value (200, 500, 1200..)
+              newSegment.assetDurationInMs
+            : 2000
         )
       } else if (newSegment.category === ClapSegmentCategory.VIDEO) {
         await timeline.fitSegmentToAssetDuration(newSegment)
@@ -589,5 +661,5 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       // segment.status = ClapSegmentStatus.ERROR
     }
     return segment
-  }
+  },
 }))

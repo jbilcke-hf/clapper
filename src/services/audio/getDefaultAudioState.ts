@@ -1,15 +1,17 @@
-import { AudioState } from "@aitube/clapper-services"
+import { AudioState } from '@aitube/clapper-services'
 
 export function getDefaultAudioState(): AudioState {
-
-  const audioContext = typeof AudioContext !== "undefined"
-    ? (new AudioContext())
-    : undefined as unknown as AudioContext
+  const audioContext =
+    typeof AudioContext !== 'undefined'
+      ? new AudioContext()
+      : (undefined as unknown as AudioContext)
 
   if (!audioContext) {
-    console.log("Note: the audio context isn't available in the current environment")
+    console.log(
+      "Note: the audio context isn't available in the current environment"
+    )
   }
-  
+
   const state: AudioState = {
     isPlaying: false,
     isMuted: false,

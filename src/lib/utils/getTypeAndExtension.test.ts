@@ -10,22 +10,21 @@ const mp4Uri = `data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wND
 
 test('getTypeAndExtension', () => {
   expect(getTypeAndExtension(gifUri)).toStrictEqual({
-    assetFileFormat: "image/gif",
-    category: "image",
-    extension: "gif",
-    outputType: "image",
+    assetFileFormat: 'image/gif',
+    category: 'image',
+    extension: 'gif',
+    outputType: 'image',
   })
   expect(getTypeAndExtension(pngUri)).toStrictEqual({
-    assetFileFormat: "image/png",
-    category: "image",
-    extension: "png",
-    outputType: "image",
+    assetFileFormat: 'image/png',
+    category: 'image',
+    extension: 'png',
+    outputType: 'image',
   })
   expect(getTypeAndExtension(mp4Uri)).toStrictEqual({
-    assetFileFormat: "video/mp4",
-    category: "video",
-    extension: "mp4",
-    outputType: "video",
+    assetFileFormat: 'video/mp4',
+    category: 'video',
+    extension: 'mp4',
+    outputType: 'video',
   })
 })
-

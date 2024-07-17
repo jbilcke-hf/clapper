@@ -2,7 +2,7 @@
 // import { analyze } from "web-audio-beat-detector"
 
 // but this one works
-import { analyze } from "web-audio-beat-detector/build/es2019/module"
+import { analyze } from 'web-audio-beat-detector/build/es2019/module'
 
 export async function detectBPM(audioBuffer: AudioBuffer): Promise<number> {
   try {

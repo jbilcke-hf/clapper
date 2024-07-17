@@ -1,9 +1,9 @@
-import { SettingsCategory, UIState } from "@aitube/clapper-services"
+import { SettingsCategory, UIState } from '@aitube/clapper-services'
 
 export function getDefaultUIState(): UIState {
   const state: UIState = {
     hasBetaAccess: false,
-    themeName: "backstage",
+    themeName: 'backstage',
     showApiKeys: false,
     showSettings: SettingsCategory.NONE,
     showImporter: false,

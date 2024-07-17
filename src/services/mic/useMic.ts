@@ -1,25 +1,36 @@
-"use client"
+'use client'
 
-import { create } from "zustand"
-import { MicStore } from "@aitube/clapper-services"
+import { create } from 'zustand'
+import { MicStore } from '@aitube/clapper-services'
 
-import { getDefaultMicState } from "./getDefaultMicState"
+import { getDefaultMicState } from './getDefaultMicState'
 
 export const useMic = create<MicStore>((set, get) => ({
   ...getDefaultMicState(),
 
   init: () => {
-    const { isSupported, interimResults, lang, continuous, grammar, grammarWeight } = get()
+    const {
+      isSupported,
+      interimResults,
+      lang,
+      continuous,
+      grammar,
+      grammarWeight,
+    } = get()
 
     if (!isSupported) {
       return
     }
-    
+
     // Initialize webkitSpeechRecognition
-    const recognition: SpeechRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)()
+    const recognition: SpeechRecognition = new (window.SpeechRecognition ||
+      window.webkitSpeechRecognition)()
 
     if (!recognition) {
-      set({ isSupported: false, error: 'this browser doesn\'t support speech recognition' })
+      set({
+        isSupported: false,
+        error: "this browser doesn't support speech recognition",
+      })
       return
     }
 
@@ -32,12 +43,12 @@ export const useMic = create<MicStore>((set, get) => ({
     recognition.grammars = speechRecognitionList
 
     const handleResult = (event: SpeechRecognitionEvent) => {
-      let transcript = '';
+      let transcript = ''
       for (let i = 0; i < event.results.length; i++) {
-        transcript += event.results?.[i]?.[0]?.transcript || '';
+        transcript += event.results?.[i]?.[0]?.transcript || ''
       }
-      set({ transcript });
-    };
+      set({ transcript })
+    }
 
     const handleError = (event: SpeechRecognitionErrorEvent) => {
       let error = `${event.error} ${event.message})`
@@ -46,27 +57,31 @@ export const useMic = create<MicStore>((set, get) => ({
         error = 'speech recognition aborted'
       }
       set({ isListening: false, error })
-    };
+    }
 
     const handleEnd = () => {
       set({ isListening: false, transcript: '' })
-    };
+    }
 
-    recognition.addEventListener('result', handleResult);
-    recognition.addEventListener('error', handleError);
-    recognition.addEventListener('end', handleEnd);
+    recognition.addEventListener('result', handleResult)
+    recognition.addEventListener('error', handleError)
+    recognition.addEventListener('end', handleEnd)
 
     set({ recognition })
   },
   start: () => {
     const { isSupported, recognition, isListening } = get()
-    if (!isSupported || !recognition || isListening) { return }
+    if (!isSupported || !recognition || isListening) {
+      return
+    }
     recognition.start()
     set({ isListening: true, error: '' })
   },
   stop: () => {
     const { isSupported, recognition, isListening } = get()
-    if (!isSupported || !recognition || !isListening) { return }
+    if (!isSupported || !recognition || !isListening) {
+      return
+    }
     recognition.stop()
     set({ isListening: false, error: '' })
   },
