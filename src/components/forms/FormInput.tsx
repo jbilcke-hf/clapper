@@ -83,7 +83,7 @@ export function FormInput<T>({
     } else {
       onChange(rawStringValue as T)
     }
-  }, [isNumberInput, isTextInput, minValue, maxValue, defaultValue])
+  }, [isNumberInput, minValue, maxValue, defaultValue, disabled, onChange])
 
   return (
     <FormField

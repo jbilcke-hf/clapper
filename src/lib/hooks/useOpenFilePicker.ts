@@ -1,18 +1,18 @@
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useState } from "react"
 import { useFilePicker } from "use-file-picker"
 
 import { parseFileName } from "@/services/io/parseFileName"
 import { useIO } from "@/services/io/useIO"
+
+const supportedExtensions = ['clap', 'txt']
 
 export function useOpenFilePicker() {
   const [isLoading, setIsLoading] = useState(false)
   const openClapBlob = useIO(s => s.openClapBlob)
   const openScreenplay = useIO(s => s.openScreenplay)
 
-  const supportedExtensions = ['clap', 'txt']
-
   const { openFilePicker, filesContent, loading } = useFilePicker({
-    accept: supportedExtensions.map(ext => `.${ext}`),
+    accept: ['clap', 'txt'].map(ext => `.${ext}`),
     readAs: "ArrayBuffer"
   })
 
@@ -58,7 +58,7 @@ export function useOpenFilePicker() {
       }
     }
     fn()
-  }, [fileData?.name])
+  }, [fileData?.name, fileData?.content, openClapBlob, openScreenplay])
 
   return { openFilePicker, filesContent, fileData, isLoading: loading || isLoading } 
 }

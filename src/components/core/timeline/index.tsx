@@ -34,7 +34,7 @@ export function Timeline() {
     // we need to apply theme to it
     useUI.getState().applyThemeToComponents()
     startLoop()
-  }, [isReady])
+  }, [isReady, setSegmentResolver, setJumpAt, setIsPlaying, setTogglePlayback, startLoop, checkIfPlaying, jumpAt, resolveSegment, togglePlayback])
   
   
   return (

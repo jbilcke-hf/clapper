@@ -25,18 +25,15 @@ export function ModelTreeBrowser() {
   const newReplicateCollections = useReplicateCollections()
   useEffect(() => {
     setReplicateCollections(newReplicateCollections)
-  }, [
-    JSON.stringify(newReplicateCollections) // ... yeah, I know, I know..
-  ])
+  // eslint-disable-next-line
+  }, [JSON.stringify(newReplicateCollections)]) // ... yeah, I know, I know..
   
   const newCivitaiCollections = useCivitaiCollections()
   useEffect(() => {
     setCivitaiCollections(newCivitaiCollections)
-  }, [
-    JSON.stringify(newCivitaiCollections) // ... yeah, I know, I know..
-  ])
+  // eslint-disable-next-line
+  }, [JSON.stringify(newCivitaiCollections)]) // ... yeah, I know, I know..
   
-
   /**
    * handle click on tree node
    * yes, this is where the magic happens!

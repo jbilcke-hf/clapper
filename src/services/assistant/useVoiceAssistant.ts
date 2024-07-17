@@ -9,5 +9,5 @@ export function useVoiceAssistant() {
 
   useEffect(() =>  {
     processMessage(transcript)
-  }, [transcript])
+  }, [transcript, processMessage])
 }

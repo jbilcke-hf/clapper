@@ -29,6 +29,7 @@ export function StoryboardBuffer({
         className
       )}
       src={src}
+      alt="storyboard"
     />
   )
 }

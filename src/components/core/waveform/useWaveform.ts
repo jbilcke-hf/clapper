@@ -58,7 +58,10 @@ export function useWaveform({
 
   const debounceSize = useDebounce(cacheKey, 300)
 
-  const redraw = () => {
+
+  useLayoutEffect(() => {
+    if (error) { return }
+
     const cachedImage = cache[cacheKey]
 
     console.log(`redraw() for cache key "${cacheKey}"`)
@@ -100,12 +103,8 @@ export function useWaveform({
     } else {
       console.error("redraw(): no canvasRenderingContext")
     }
-  }
 
-  useLayoutEffect(() => {
-    if (error) { return }
-    redraw()
-  }, [id, debounceSize, zoom, color, onDone, gain, error])
+  }, [id, debounceSize, zoom, color, onDone, gain, error, height, width, mode, cacheKey])
 
   return {
     canvas,

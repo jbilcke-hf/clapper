@@ -55,7 +55,7 @@ function MainContent() {
 
   const searchParams = useSearchParams()
   const hasBetaAccess = searchParams.get("beta") === "true"
-  useEffect(() => { setHasBetaAccess(hasBetaAccess) }, [hasBetaAccess])
+  useEffect(() => { setHasBetaAccess(hasBetaAccess) }, [hasBetaAccess, setHasBetaAccess])
 
   return (
     <div

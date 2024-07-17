@@ -22,22 +22,22 @@ export function TopMenuView() {
     if (typeof window !== "undefined") {
       ref.current = document.body
     }
-  }, [])
+  }, [ref])
 
-  const showTimeline = useUI((s) => s.showTimeline)
-  const setShowTimeline = useUI((s) => s.setShowTimeline)
+  const showTimeline = useUI(s => s.showTimeline)
+  const setShowTimeline = useUI(s => s.setShowTimeline)
 
-  const showExplorer = useUI((s) => s.showExplorer)
-  const setShowExplorer = useUI((s) => s.setShowExplorer)
+  const showExplorer = useUI(s => s.showExplorer)
+  const setShowExplorer = useUI(s => s.setShowExplorer)
 
-  const showAssistant = useUI((s) => s.showAssistant)
-  const setShowAssistant = useUI((s) => s.setShowAssistant)
+  const showAssistant = useUI(s => s.showAssistant)
+  const setShowAssistant = useUI(s => s.setShowAssistant)
 
-  const showVideoPlayer = useUI((s) => s.showVideoPlayer)
-  const setShowVideoPlayer = useUI((s) => s.setShowVideoPlayer)
+  const showVideoPlayer = useUI(s => s.showVideoPlayer)
+  const setShowVideoPlayer = useUI(s => s.setShowVideoPlayer)
 
-  const followCursor = useUI((s) => s.followCursor)
-  const setFollowCursor = useUI((s) => s.setFollowCursor)
+  const followCursor = useUI(s => s.followCursor)
+  const setFollowCursor = useUI(s => s.setFollowCursor)
 
   const hasBetaAccess = useUI(s => s.hasBetaAccess)
 
