@@ -8,6 +8,7 @@ import { useUI } from "@/services"
 
 import { SettingsSectionProvider } from "./provider"
 import { SettingsSectionAssistant } from "./assistant"
+import { SettingsSectionEditors } from "./editors"
 import { SettingsSectionImage } from "./image"
 import { SettingsSectionVideo } from "./video"
 import { SettingsSectionSound } from "./sound"
@@ -19,6 +20,7 @@ const panels: Record<SettingsCategory, JSX.Element> = {
   [SettingsCategory.NONE]: <></>,
   [SettingsCategory.PROVIDER]: <SettingsSectionProvider />,
   [SettingsCategory.ASSISTANT]: <SettingsSectionAssistant />,
+  [SettingsCategory.EDITORS]: <SettingsSectionEditors />,
   [SettingsCategory.IMAGE]: <SettingsSectionImage />,
   [SettingsCategory.VIDEO]: <SettingsSectionVideo />,
   [SettingsCategory.VOICE]: <SettingsSectionVoice />,
@@ -30,6 +32,7 @@ const panelLabels = {
   [SettingsCategory.NONE]: "",
   [SettingsCategory.PROVIDER]: "Providers",
   [SettingsCategory.ASSISTANT]: "Assistant",
+  [SettingsCategory.EDITORS]: "Editors",
   [SettingsCategory.IMAGE]: "Image",
   [SettingsCategory.VIDEO]: "Video",
   [SettingsCategory.VOICE]: "Voice",

@@ -96,6 +96,9 @@ export function getDefaultSettingsState(): SettingsState {
     gradioApiUrlForSound: "",
     gradioApiUrlForMusic: "",
 
+    scriptEditorShowLineNumbers: true,
+    scriptEditorShowMinimap: true,
+
     /******** should we deprecated all of those? or convert to defaults? ******
      * 
     // now how we prefix everything with "models"
