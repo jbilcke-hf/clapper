@@ -103,6 +103,41 @@ export function TopMenuFile() {
               </MenubarItem>
               <MenubarItem
                 onClick={() => {
+                  openScreenplayUrl('/samples/scripts/The Apery.txt')
+                }}
+              >
+                The Apery.txt [by GPT-4]
+              </MenubarItem>
+              <MenubarItem
+                onClick={() => {
+                  openScreenplayUrl('/samples/scripts/Star Wars A New Hope.txt')
+                }}
+              >
+                Star Wars A New Hope.txt
+              </MenubarItem>
+              <MenubarItem
+                onClick={() => {
+                  openScreenplayUrl('/samples/scripts/Rear Window.txt')
+                }}
+              >
+                 Rear Window
+              </MenubarItem>
+              <MenubarItem
+                onClick={() => {
+                  openScreenplayUrl('/samples/scripts/Raiders of the Lost Ark.txt')
+                }}
+              >
+                Raiders of the Lost Ark.txt
+              </MenubarItem>
+              <MenubarItem
+                onClick={() => {
+                  openScreenplayUrl('/samples/scripts/The Goonies.txt')
+                }}
+              >
+                The Goonies.txt
+              </MenubarItem>
+              <MenubarItem
+                onClick={() => {
                   openScreenplayUrl('/samples/scripts/Citizen Kane.txt')
                 }}
               >
@@ -118,15 +153,14 @@ export function TopMenuFile() {
             </MenubarSubContent>
           </MenubarSub>
           <MenubarSeparator />
-          {/*
-        <MenubarItem
-        onClick={() => {
-          saveVideoFile()
-        }}>
-          Export project to MP4
-        </MenubarItem>
-        <MenubarSeparator />
-        */}
+          <MenubarItem
+            onClick={() => {
+              saveVideoFile()
+            }}
+          >
+            Export project to MP4
+          </MenubarItem>
+          <MenubarSeparator />
           <MenubarItem
             onClick={() => {
               saveZipFile()
