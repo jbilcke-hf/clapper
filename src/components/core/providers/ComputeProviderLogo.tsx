@@ -25,17 +25,6 @@ export function ComputeProviderLogo({
       height={height as any}
       alt={formatProvider(provider)}
       className={cn(className)}
-
-      // there is currently a bug when we build on GitHub Actions
-      // the .png files are not recognized:
-      //
-      //   Creating an optimized production build ...
-      //   Failed to compile.
-      //   ./logos:2
-      //   Error: Image import "./anthropic.png" is not a valid image file. The image may be corrupted or an unsupported format.
-      //
-      // So as a workaround, we do this:
-      unoptimized
     />
   )
 }

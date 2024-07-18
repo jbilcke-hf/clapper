@@ -50,9 +50,7 @@ COPY --chown=user . /app
 
 RUN npm ci --force
 
-# expose our secrets during the static build
-# otherwise Upstash becomes unhappy
-RUN npm run build
+RUN npm run build:ci
 
 EXPOSE 3000
 
