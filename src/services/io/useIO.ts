@@ -441,7 +441,7 @@ export const useIO = create<IOStore>((set, get) => ({
       totalDurationInMs,
       (progress, message) => {
         task.setProgress({
-          message,
+          message: `Rendering video (${Math.round(progress)}%)`,
           value: progress * 0.9,
         })
       }
@@ -481,6 +481,8 @@ export const useIO = create<IOStore>((set, get) => ({
         })
       )
     }
+
+    task.success()
 
     saveAnyFile(videoBlob, 'my_project.mp4')
   },
