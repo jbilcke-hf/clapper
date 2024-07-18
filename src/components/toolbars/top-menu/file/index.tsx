@@ -99,14 +99,14 @@ export function TopMenuFile() {
                   openClapUrl('/samples/claps/wasteland.clap')
                 }}
               >
-                Wasteland.clap
+                 [demo] Wasteland.clap
               </MenubarItem>
               <MenubarItem
                 onClick={() => {
                   openScreenplayUrl('/samples/scripts/The Apery.txt')
                 }}
               >
-                The Apery.txt [by GPT-4]
+                 [demo] The Apery.txt
               </MenubarItem>
               <MenubarItem
                 onClick={() => {
@@ -120,11 +120,13 @@ export function TopMenuFile() {
                   openScreenplayUrl('/samples/scripts/Rear Window.txt')
                 }}
               >
-                 Rear Window
+                Rear Window.txt
               </MenubarItem>
               <MenubarItem
                 onClick={() => {
-                  openScreenplayUrl('/samples/scripts/Raiders of the Lost Ark.txt')
+                  openScreenplayUrl(
+                    '/samples/scripts/Raiders of the Lost Ark.txt'
+                  )
                 }}
               >
                 Raiders of the Lost Ark.txt
