@@ -376,28 +376,82 @@ export const useIO = create<IOStore>((set, get) => ({
     const { saveAnyFile } = get()
     console.log(`rendering project using the free community server..`)
 
-    const clap: ClapProject = useTimeline.getState().clap
+    const timeline: TimelineStore = useTimeline.getState()
 
-    const segments: TimelineSegment[] = useTimeline.getState().segments
+    const { clap, totalDurationInMs, segments: timelineSegments } = timeline
 
-    // note: I didn't put it inside the clapper's own API,
-    // because this is something a bit fragile
-    // (it uses ffmpeg and puppeteer, sometimes it crashes etc)
-    const result = await fetch(
-      // TODO: put this into a variable
-      // also rename this to so cool-sounding module
-      `https://jbilcke-hf-ai-tube-clap-exporter.hf.space?f=mp4`,
-      {
-        method: 'POST',
-        body: await serializeClap(clap),
+    const task = useTasks.getState().add({
+      category: TaskCategory.EXPORT,
+      visibility: TaskVisibility.BLOCKER,
+      initialMessage: `Rendering the project to MP4..`,
+      successMessage: `Successfully exported the MP4 video!`,
+      value: 0,
+    })
+
+    const segments: ExportableSegment[] = timelineSegments
+      .map((segment, i) => formatSegmentForExport(segment, i))
+      .filter(({ isExportableToFile }) => isExportableToFile)
+
+    const videos: FFMPegVideoInput[] = []
+    const audios: FFMPegAudioInput[] = []
+
+    segments.forEach(
+      ({
+        segment,
+        prefix,
+        filePath,
+        assetUrl,
+        assetSourceType,
+        isExportableToFile,
+      }) => {
+        // we extract the base64 files
+        if (isExportableToFile) {
+          assetUrl = filePath
+          assetSourceType = ClapAssetSource.PATH
+
+          if (filePath.startsWith('video/')) {
+            videos.push({
+              data: base64DataUriToUint8Array(segment.assetUrl),
+              startTimeInMs: segment.startTimeInMs,
+              endTimeInMs: segment.endTimeInMs,
+              durationInSecs: segment.assetDurationInMs / 1000,
+            })
+          }
+
+          if (
+            filePath.startsWith('music/') ||
+            filePath.startsWith('dialogue/')
+          ) {
+            audios.push({
+              data: base64DataUriToUint8Array(segment.assetUrl),
+              startTimeInMs: segment.startTimeInMs,
+              endTimeInMs: segment.endTimeInMs,
+              durationInSecs: segment.assetDurationInMs / 1000,
+            })
+          }
+        }
       }
     )
 
-    const videoBlob = await result.blob()
+    const fullVideo = await createFullVideo(
+      videos,
+      audios,
+      1024,
+      576,
+      totalDurationInMs,
+      (progress, message) => {
+        task.setProgress({
+          message,
+          value: progress * 0.9,
+        })
+      }
+    )
+
+    const videoBlob = new Blob([fullVideo], { type: 'video/mp4' })
 
     const videoDataUrl = await blobToBase64DataUri(videoBlob)
 
-    const alreadyAnEmbeddedFinalVideo = segments
+    const alreadyAnEmbeddedFinalVideo = timelineSegments
       .filter(
         (s) =>
           s.category === ClapSegmentCategory.VIDEO &&
@@ -427,10 +481,6 @@ export const useIO = create<IOStore>((set, get) => ({
         })
       )
     }
-
-    console.log(
-      `The free community server responded: ${result.status} ${result.statusText}`
-    )
 
     saveAnyFile(videoBlob, 'my_project.mp4')
   },
@@ -466,6 +516,8 @@ export const useIO = create<IOStore>((set, get) => ({
       const videos: FFMPegVideoInput[] = []
       const audios: FFMPegAudioInput[] = []
 
+      const includeFullVideo = false
+
       segments.forEach(
         ({
           segment,
@@ -486,25 +538,27 @@ export const useIO = create<IOStore>((set, get) => ({
             assetUrl = filePath
             assetSourceType = ClapAssetSource.PATH
 
-            if (filePath.startsWith('video/')) {
-              videos.push({
-                data: base64DataUriToUint8Array(segment.assetUrl),
-                startTimeInMs: segment.startTimeInMs,
-                endTimeInMs: segment.endTimeInMs,
-                durationInSecs: segment.assetDurationInMs / 1000,
-              })
-            }
+            if (includeFullVideo) {
+              if (filePath.startsWith('video/')) {
+                videos.push({
+                  data: base64DataUriToUint8Array(segment.assetUrl),
+                  startTimeInMs: segment.startTimeInMs,
+                  endTimeInMs: segment.endTimeInMs,
+                  durationInSecs: segment.assetDurationInMs / 1000,
+                })
+              }
 
-            if (
-              filePath.startsWith('music/') ||
-              filePath.startsWith('dialogue/')
-            ) {
-              audios.push({
-                data: base64DataUriToUint8Array(segment.assetUrl),
-                startTimeInMs: segment.startTimeInMs,
-                endTimeInMs: segment.endTimeInMs,
-                durationInSecs: segment.assetDurationInMs / 1000,
-              })
+              if (
+                filePath.startsWith('music/') ||
+                filePath.startsWith('dialogue/')
+              ) {
+                audios.push({
+                  data: base64DataUriToUint8Array(segment.assetUrl),
+                  startTimeInMs: segment.startTimeInMs,
+                  endTimeInMs: segment.endTimeInMs,
+                  durationInSecs: segment.assetDurationInMs / 1000,
+                })
+              }
             }
           }
 
@@ -523,26 +577,28 @@ export const useIO = create<IOStore>((set, get) => ({
         }
       )
 
-      const fullVideo = await createFullVideo(
-        videos,
-        audios,
-        1024,
-        576,
-        timeline.totalDurationInMs,
-        (progress, message) => {
-          task.setProgress({
-            message,
-            value: progress * 0.9,
-          })
-        }
-      )
+      if (includeFullVideo) {
+        const fullVideo = await createFullVideo(
+          videos,
+          audios,
+          clap.meta.width,
+          clap.meta.height,
+          timeline.totalDurationInMs,
+          (progress, message) => {
+            task.setProgress({
+              message,
+              value: progress * 0.9,
+            })
+          }
+        )
 
-      files['video/full.mp4'] = [
-        // we don't compress assets since normally they already use
-        // some form of compression (PNG, JPEG, MP3, MP4 etc..)
-        fullVideo as Uint8Array,
-        { level: 0 },
-      ]
+        files['video/full.mp4'] = [
+          // we don't compress assets since normally they already use
+          // some form of compression (PNG, JPEG, MP3, MP4 etc..)
+          fullVideo as Uint8Array,
+          { level: 0 },
+        ]
+      }
 
       fflate.zip(
         files,
