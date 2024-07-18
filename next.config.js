@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    formats: ['image/avif', 'image/webp']
+  },
   experimental: {
     serverActions: {
       // a clap file can be quite large - but that's OK
