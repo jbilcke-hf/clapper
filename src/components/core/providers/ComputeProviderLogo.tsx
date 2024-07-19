@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { cn } from '@aitube/timeline'
 
 import { ComputeProvider } from '@aitube/clapper-services'
@@ -15,13 +14,13 @@ export function ComputeProviderLogo({
   height?: number | string
   className?: string
 }) {
-  const staticImageData =
+  const src =
     computeProvidersLogos[provider || ComputeProvider.NONE] ||
     computeProvidersLogos.NONE
 
   return (
     <img
-      src={staticImageData.src}
+      src={src}
       height={height as any}
       alt={formatProvider(provider)}
       className={cn(className)}
