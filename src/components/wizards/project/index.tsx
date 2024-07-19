@@ -13,7 +13,6 @@ export function StepChooseCategory() {
   )
 }
 
-
 export function StepCreateFromPrompt() {
   return (
     <>
@@ -31,19 +30,23 @@ const stepPanels: Record<ProjectCreationWizardStep, JSX.Element> = {
 const stepLabels = {
   [ProjectCreationWizardStep.NONE]: '',
   [ProjectCreationWizardStep.CHOOSE_CATEGORY]: 'Choose category',
-  [ProjectCreationWizardStep.CREATE_FROM_PROMPT]: 'Create from prompt'
+  [ProjectCreationWizardStep.CREATE_FROM_PROMPT]: 'Create from prompt',
 } as any
 
 export function ProjectCreationWizard() {
   const projectCreationWizardStep = useUI((s) => s.projectCreationWizardStep)
-  const setProjectCreationWizardStep = useUI((s) => s.setProjectCreationWizardStep)
+  const setProjectCreationWizardStep = useUI(
+    (s) => s.setProjectCreationWizardStep
+  )
 
   return (
     <Dialog
       open={projectCreationWizardStep !== ProjectCreationWizardStep.NONE}
       onOpenChange={(open) =>
         setProjectCreationWizardStep(
-          open ? ProjectCreationWizardStep.CHOOSE_CATEGORY : ProjectCreationWizardStep.NONE
+          open
+            ? ProjectCreationWizardStep.CHOOSE_CATEGORY
+            : ProjectCreationWizardStep.NONE
         )
       }
     >
@@ -62,7 +65,9 @@ export function ProjectCreationWizard() {
                 key={key}
                 variant="ghost"
                 className="flex w-full flex-col items-end text-right text-lg font-thin capitalize text-stone-300"
-                onClick={() => setProjectCreationWizardStep(key as ProjectCreationWizardStep)}
+                onClick={() =>
+                  setProjectCreationWizardStep(key as ProjectCreationWizardStep)
+                }
               >
                 {stepLabels[key]}
               </Button>

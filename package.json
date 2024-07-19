@@ -24,7 +24,7 @@
     "@aitube/clapper-services": "0.0.28",
     "@aitube/engine": "0.0.26",
     "@aitube/timeline": "0.0.42",
-    "@fal-ai/serverless-client": "^0.11.0",
+    "@fal-ai/serverless-client": "^0.13.0",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@ffmpeg/util": "^0.12.1",
     "@gradio/client": "^1.1.1",
