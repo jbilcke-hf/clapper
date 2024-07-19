@@ -12,7 +12,11 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version: 20
+        cache: 'npm'
+        # the day we use a monorepo we should do this:
+        # cache-dependency-path: subdir/package-lock.json
+        # see https://github.com/actions/setup-node#caching-global-packages-data
     - name: Install dependencies
       run: npm ci --force
     - name: Install Playwright Browsers
