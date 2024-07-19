@@ -16,6 +16,7 @@ test('formatSegmentForExport', () => {
       0
     )
   ).toStrictEqual({
+    id: '301a3e6f-cb59-4a85-afd6-4737eeeee356',
     assetSourceType: 'EMPTY',
     assetUrl: '',
     category: 'generic',

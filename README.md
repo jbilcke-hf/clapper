@@ -28,7 +28,9 @@ A public instance of Clapper is currently hosted on [Hugging Face](https://huggi
 
 # Badges
 
-![Boss Bounty Badge](https://img.shields.io/endpoint.svg?url=https://api.boss.dev/badge/enabled/jbilcke-hf/clapper)
+- Build and tests status: [![E2E & Unit Tests](https://github.com/jbilcke-hf/clapper/actions/workflows/tests.yml/badge.svg)](https://github.com/jbilcke-hf/clapper/actions/workflows/tests.yml)
+
+- Sponsor a feature: ![Boss Bounty Badge](https://img.shields.io/endpoint.svg?url=https://api.boss.dev/badge/enabled/jbilcke-hf/clapper)
 
 
 # Bounty Sponsors
