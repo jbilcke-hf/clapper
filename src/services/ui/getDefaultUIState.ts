@@ -1,4 +1,8 @@
-import { ProjectCreationWizardStep, SettingsCategory, UIState } from '@aitube/clapper-services'
+import {
+  ProjectCreationWizardStep,
+  SettingsCategory,
+  UIState,
+} from '@aitube/clapper-services'
 
 export function getDefaultUIState(): UIState {
   const state: UIState = {
