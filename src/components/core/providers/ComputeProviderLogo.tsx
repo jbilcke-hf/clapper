@@ -20,8 +20,8 @@ export function ComputeProviderLogo({
     computeProvidersLogos.NONE
 
   return (
-    <Image
-      src={staticImageData}
+    <img
+      src={staticImageData.src}
       height={height as any}
       alt={formatProvider(provider)}
       className={cn(className)}
