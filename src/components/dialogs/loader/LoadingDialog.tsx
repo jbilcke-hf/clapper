@@ -18,11 +18,6 @@ export function LoadingDialog({ className = '' }: { className?: string }) {
   const currentMessage = runningBlockerTasks[0]?.currentMessage || ''
   const progress = runningBlockerTasks[0]?.progress || 0
 
-  console.log(`LoadingDialog:`, {
-    runningBlockerTasks,
-    isLoading,
-    tasks,
-  })
   return (
     <Dialog open={isLoading}>
       <DialogContent className="h-44">
