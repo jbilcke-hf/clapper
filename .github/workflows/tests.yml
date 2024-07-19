@@ -17,11 +17,19 @@ jobs:
         # the day we use a monorepo we should do this:
         # cache-dependency-path: subdir/package-lock.json
         # see https://github.com/actions/setup-node#caching-global-packages-data
-    - name: Install dependencies
-      run: npm ci --force
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - uses: actions/cache@v4
+   
+    - name: Get installed Playwright version
+      id: playwright-version
+      run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+    - name: Cache playwright binaries
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: |
+          ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+    - name: Cache NextJS dependencies
+      uses: actions/cache@v4
       with:
         # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
         path: |
@@ -31,7 +39,15 @@ jobs:
         key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
         # If source files changed but packages didn't, rebuild from a prior cache.
         restore-keys: |
-          ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-    
+          ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-   
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+    #- name: Install Playwright Browsers
+    #  run: npx playwright install-deps
+    #  if: steps.playwright-cache.outputs.cache-hit != 'true' 
     - name: Run build
       run: npm run build:ci
     - name: Run unit tests

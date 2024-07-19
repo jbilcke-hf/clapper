@@ -1,4 +1,4 @@
-import { SettingsCategory, UIState } from '@aitube/clapper-services'
+import { ProjectCreationWizardStep, SettingsCategory, UIState } from '@aitube/clapper-services'
 
 export function getDefaultUIState(): UIState {
   const state: UIState = {
@@ -14,6 +14,7 @@ export function getDefaultUIState(): UIState {
     showFPS: false,
     followCursor: false,
     editorFontSize: 12,
+    projectCreationWizardStep: ProjectCreationWizardStep.NONE,
   }
 
   return state
