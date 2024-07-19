@@ -77,9 +77,11 @@ export const useUI = create<UIStore>()(
       setEditorFontSize: (editorFontSize: number) => {
         set({ editorFontSize })
       },
-      setProjectCreationWizardStep: (projectCreationWizardStep: ProjectCreationWizardStep) => {
+      setProjectCreationWizardStep: (
+        projectCreationWizardStep: ProjectCreationWizardStep
+      ) => {
         set({ projectCreationWizardStep })
-      }
+      },
     }),
     {
       name: 'CLAPPER_REVISION_0_CONTROLLERS_UI',
