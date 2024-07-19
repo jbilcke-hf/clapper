@@ -4,6 +4,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 import {
+  ProjectCreationWizardStep,
   ScriptEditorService,
   ScriptEditorStore,
   SettingsCategory,
@@ -76,6 +77,9 @@ export const useUI = create<UIStore>()(
       setEditorFontSize: (editorFontSize: number) => {
         set({ editorFontSize })
       },
+      setProjectCreationWizardStep: (projectCreationWizardStep: ProjectCreationWizardStep) => {
+        set({ projectCreationWizardStep })
+      }
     }),
     {
       name: 'CLAPPER_REVISION_0_CONTROLLERS_UI',

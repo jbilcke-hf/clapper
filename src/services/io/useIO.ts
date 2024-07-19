@@ -403,7 +403,7 @@ export const useIO = create<IOStore>((set, get) => ({
           isExportableToFile && id !== ignoreThisVideoSegmentId
       )
 
-    console.log("segments:", segments)
+    console.log('segments:', segments)
 
     const videos: FFMPegVideoInput[] = []
     const audios: FFMPegAudioInput[] = []
