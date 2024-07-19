@@ -47,3 +47,9 @@ export type AssistantRequest = {
 
   history: ChatEvent[]
 }
+
+export enum ProjectCreationWizardStep {
+  NONE = "NONE",
+  CHOOSE_CATEGORY = "CHOOSE_CATEGORY",
+  CREATE_FROM_PROMPT = "CREATE_FROM_PROMPT",
+}

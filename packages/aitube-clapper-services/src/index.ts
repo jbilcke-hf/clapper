@@ -173,6 +173,7 @@ export {
 export {
   ResolveRequest,
   AssistantRequest,
+  ProjectCreationWizardStep,
 } from "./types"
 
 export {

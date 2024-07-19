@@ -1,5 +1,7 @@
 import { ClapTimelineTheme } from "@aitube/timeline"
 import { SettingsCategory } from "./base-types"
+import { ProjectCreationWizardStep } from "./types"
+
 
 export type UIThemeName = "lavender" | "backstage" | "midnight" | "mythril" | "flix" | "lore" | "mocha" | string
 
@@ -62,6 +64,8 @@ export type UIState = {
   showFPS: boolean
   followCursor: boolean
   editorFontSize: number
+
+  projectCreationWizardStep: ProjectCreationWizardStep
 }
 
 export type UIControls = {
@@ -79,7 +83,7 @@ export type UIControls = {
   setShowFPS: (showFPS: boolean) => void
   setFollowCursor: (followCursor: boolean) => void
   setEditorFontSize: (editorFontSize: number) => void
-  
+  setProjectCreationWizardStep: (projectCreationWizardStep: ProjectCreationWizardStep) => void
 }
 
 export type UIStore =

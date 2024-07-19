@@ -192,7 +192,6 @@ export type SettingsControls = {
   setScriptEditorShowLineNumbers: (scriptEditorShowLineNumbers: boolean) => void
   setScriptEditorShowMinimap: (scriptEditorShowMinimap: boolean) => void
 
-
   getSettings: () => SettingsState
 }
 
