@@ -6,6 +6,15 @@ const nextConfig = {
       bodySizeLimit: '32mb'
     }
   },
+  images: {
+    // temporary fix for:
+    //
+    //   Error: Image import
+    //   "next-metadata-image-loader?type=icon&segment=&basePath=&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js!/home/runner/work/clapper/clapper/src/app/icon.png?__next_metadata__"
+    //   is not a valid image file.
+    //   The image may be corrupted or an unsupported format.
+    unoptimized: true,
+  },
   async headers() {
     return [
       {
