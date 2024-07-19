@@ -99,14 +99,14 @@ export function TopMenuFile() {
                   openClapUrl('/samples/claps/wasteland.clap')
                 }}
               >
-                 [demo] Wasteland.clap
+                [demo] Wasteland.clap
               </MenubarItem>
               <MenubarItem
                 onClick={() => {
                   openScreenplayUrl('/samples/scripts/The Apery.txt')
                 }}
               >
-                 [demo] The Apery.txt
+                [demo] The Apery.txt
               </MenubarItem>
               <MenubarItem
                 onClick={() => {

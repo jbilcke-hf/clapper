@@ -12,7 +12,13 @@ import {
   parseClap,
   serializeClap,
 } from '@aitube/clap'
-import { TimelineStore, useTimeline, TimelineSegment } from '@aitube/timeline'
+import {
+  TimelineStore,
+  useTimeline,
+  TimelineSegment,
+  removeFinalVideosAndConvertToTimelineSegments,
+  getFinalVideo,
+} from '@aitube/timeline'
 import { ParseScriptProgressUpdate, parseScriptToClap } from '@aitube/broadway'
 import { IOStore, TaskCategory, TaskVisibility } from '@aitube/clapper-services'
 import { create } from 'zustand'
@@ -388,9 +394,16 @@ export const useIO = create<IOStore>((set, get) => ({
       value: 0,
     })
 
+    const ignoreThisVideoSegmentId = (await getFinalVideo(clap))?.id || ''
+
     const segments: ExportableSegment[] = timelineSegments
       .map((segment, i) => formatSegmentForExport(segment, i))
-      .filter(({ isExportableToFile }) => isExportableToFile)
+      .filter(
+        ({ id, isExportableToFile }) =>
+          isExportableToFile && id !== ignoreThisVideoSegmentId
+      )
+
+    console.log("segments:", segments)
 
     const videos: FFMPegVideoInput[] = []
     const audios: FFMPegAudioInput[] = []
@@ -410,6 +423,7 @@ export const useIO = create<IOStore>((set, get) => ({
           assetSourceType = ClapAssetSource.PATH
 
           if (filePath.startsWith('video/')) {
+            console.log('adding video')
             videos.push({
               data: base64DataUriToUint8Array(segment.assetUrl),
               startTimeInMs: segment.startTimeInMs,
@@ -420,8 +434,10 @@ export const useIO = create<IOStore>((set, get) => ({
 
           if (
             filePath.startsWith('music/') ||
+            filePath.startsWith('sound/') ||
             filePath.startsWith('dialogue/')
           ) {
+            console.log('adding audio')
             audios.push({
               data: base64DataUriToUint8Array(segment.assetUrl),
               startTimeInMs: segment.startTimeInMs,

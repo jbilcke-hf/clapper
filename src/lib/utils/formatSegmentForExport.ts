@@ -2,6 +2,8 @@ import { ClapAssetSource, ClapSegmentCategory } from '@aitube/clap'
 import { TimelineSegment } from '@aitube/timeline'
 
 export type ExportableSegment = {
+  id: string
+
   segment: TimelineSegment
 
   // lowercase category name
@@ -41,7 +43,19 @@ export function formatSegmentForExport(
 ): ExportableSegment {
   const directory = `${segment.category}`.toLowerCase()
   const prefix = `shot_${String(index).padStart(4, '0')}_`
-  let mimetype = `${segment.assetFileFormat || 'unknown/unknown'}`
+
+
+  const notFoundFileFormat = 'unknown/unknown'
+  let fallbackFileFormat = notFoundFileFormat
+
+  if (segment.assetUrl.startsWith('data:')) {
+    const reg = new RegExp(/data:(.*);base64/gi)
+    fallbackFileFormat = `${reg.exec(segment.assetUrl)?.[1] || notFoundFileFormat}`
+  }
+
+  // old .clap files might not have the `assetFileFormat`
+  // which is why we perform a fallback check
+  let mimetype = `${segment.assetFileFormat || fallbackFileFormat}`
   if (mimetype === 'audio/mpeg') {
     mimetype = 'audio/mp3'
   }
@@ -61,8 +75,9 @@ export function formatSegmentForExport(
     segment.assetUrl.startsWith('data:')
 
   const category = segment.category.toLocaleLowerCase()
-
+  
   return {
+    id: segment.id,
     segment,
     category,
     shortId: `${category}${index}`,
