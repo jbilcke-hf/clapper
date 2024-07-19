@@ -44,7 +44,6 @@ export function formatSegmentForExport(
   const directory = `${segment.category}`.toLowerCase()
   const prefix = `shot_${String(index).padStart(4, '0')}_`
 
-
   const notFoundFileFormat = 'unknown/unknown'
   let fallbackFileFormat = notFoundFileFormat
 
@@ -75,7 +74,7 @@ export function formatSegmentForExport(
     segment.assetUrl.startsWith('data:')
 
   const category = segment.category.toLocaleLowerCase()
-  
+
   return {
     id: segment.id,
     segment,
