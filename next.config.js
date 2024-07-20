@@ -15,6 +15,15 @@ const nextConfig = {
     //   The image may be corrupted or an unsupported format.
     unoptimized: true,
   },
+  // workaround for transformers.js issues
+  webpack: (config) => {
+    config.resolve.alias = {
+        ...config.resolve.alias,
+        "sharp$": false,
+        "onnxruntime-node$": false,
+    }
+    return config;
+},
   async headers() {
     return [
       {
