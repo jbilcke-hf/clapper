@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // output: 'standalone',
+
   experimental: {
     serverActions: {
       // a clap file can be quite large - but that's OK
@@ -40,7 +42,7 @@ const nextConfig = {
         // matching ALL routes
         source: "/:path*",
         headers: [
-          // for security reasons, performance.now() not performant unless we disable some CORS stuff
+          // for security reasons, performance.now() is not performant unless we disable some CORS stuff
           //  more context about why, please check the Security paragraph here:
           // https://developer.mozilla.org/en-US/docs/Web/API/Performance/now#security_requirements
           { key: "Cross-Origin-Opener-Policy", value: "same-origin" },

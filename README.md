@@ -70,11 +70,12 @@ As a prerequisite you need to have [git lfs](https://git-lfs.com/) installed (se
 git lfs install
 ```
 
-Clapper has been tested with Node `20.9.*`.
+Clapper has been tested with Node `20.15.1`.
 
 To make sure you use this version, you can use [NVM](https://github.com/nvm-sh/nvm) to activate it:
 
 ```bash
+nvm install
 nvm use
 ```
 
