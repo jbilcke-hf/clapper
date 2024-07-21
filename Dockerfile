@@ -48,7 +48,7 @@ RUN ffmpeg -version
 # Copy the current directory contents into the container at /app setting the owner to the user
 COPY --chown=user . /app
 
-RUN npm ci --force
+RUN npm ci
 
 RUN npm run build:ci
 
@@ -56,4 +56,4 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:prod"]
