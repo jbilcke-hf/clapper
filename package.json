@@ -9,7 +9,7 @@
     "dev": "npm i && npm run checks && next dev",
     "build": "npm i && npm run checks && next build && npm run build:copyassets",
     "build:copyassets": "cp -R public .next/standalone/public && cp -R .next/static .next/standalone/.next/static",
-    "build:ci": "next build @@ npm run build:copyassets",
+    "build:ci": "next build && npm run build:copyassets",
     "start": "next start",
     "start:prod": "node .next/standalone/server.js",
     "checks": "npm run format:fix && npm run lint",
