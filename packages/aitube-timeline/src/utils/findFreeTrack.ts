@@ -15,9 +15,9 @@ export function findFreeTrack({
   // identify any occurence of a segment being in our desired range
   const collisions: ClapSegment[] = segments.filter(segment => {
     if (
-      ((startTimeInMs <= segment.startTimeInMs) || (startTimeInMs < segment.endTimeInMs))
+      ((startTimeInMs <= segment.startTimeInMs) || (startTimeInMs <= segment.endTimeInMs))
       &&
-      ((endTimeInMs < segment.startTimeInMs) || (endTimeInMs <= segment.endTimeInMs))
+      ((endTimeInMs <= segment.startTimeInMs) || (endTimeInMs <= segment.endTimeInMs))
     ) return false
     return true
   })
