@@ -25,9 +25,8 @@ jobs:
       uses: actions/cache@v4
       id: playwright-cache
       with:
-        path: |
-          ~/.cache/ms-playwright
-        key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+        path: /home/runner/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}-${{ inputs.browser }}
     - name: Cache NextJS dependencies
       uses: actions/cache@v4
       with:
@@ -42,12 +41,16 @@ jobs:
           ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-   
     - name: Install dependencies
       run: npm ci
+
+    - name: Install Playwright
+      run: npm install @playwright/test@${{ env.PLAYWRIGHT_VERSION }}
     - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      run: npx playwright install --with-deps ${{ inputs.browser }}
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-    #- name: Install Playwright Browsers
-    #  run: npx playwright install-deps
-    #  if: steps.playwright-cache.outputs.cache-hit != 'true' 
+    - name: Install system dependencies for WebKit
+      # Some WebKit dependencies seem to lay outside the cache and will need to be installed separately
+      if: ${{ inputs.browser == 'webkit' && steps.playwright-cache.outputs.cache-hit == 'true' }}
+      run: npx playwright install-deps webkit
     - name: Run build
       run: npm run build:ci
     - name: Run unit tests
