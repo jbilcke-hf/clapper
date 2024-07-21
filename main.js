@@ -27,11 +27,9 @@ const mainServerPath = path.join(currentDir, '.next/standalone/server.js')
 // now we load the main server
 require(mainServerPath)
 
-const voiceServerPath = path.join(currentDir, '.next/standalone/voice-server.js')
-
-// now we load the voice server
-require(voiceServerPath)
-
+// TODO: load the proxy server (for AI providers that refuse browser-side clients)
+// const proxyServerPath = path.join(currentDir, '.next/standalone/proxy-server.js')
+// require(proxyServerPath)
 
 const createWindow = () => {
   const mainScreen = screen.getPrimaryDisplay()
@@ -45,7 +43,7 @@ const createWindow = () => {
     // copy the width and height
     ...mainScreen.workAreaSize,
 
-    icon: './public/icon.png'
+    icon: './public/logos/clapper.png'
   })
 
   mainWindow.loadURL('http://0.0.0.0:3000/')
