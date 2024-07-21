@@ -97,6 +97,30 @@ but until then you can run the following command to make sure all the types are 
 npm run build
 ```
 
+### Running the app with Electron
+
+An Electron build is in progress.
+
+There are still some things to debug and figure out, but if you are a developer you can try it out by starting Clapper through Electron like this:
+
+```bash
+npm run electron:start
+```
+
+If that doesn't work for you (issue with node-gyp, setuptools, distutils etc) you might have to run:
+
+```bash
+python3 -m pip install --break-system-packages setuptools
+```
+
+You can also build Clapper for your operating system by typing:
+
+```bash
+npm run electron:make
+```
+
+You might see a DeprecationWarning message written in red at the end but that's only a warning, just open `./out/make` to check if the build worked.
+
 ### Code conventions
 
 I haven't setup Prettier or a Linter yet.
