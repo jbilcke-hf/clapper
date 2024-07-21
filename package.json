@@ -1,5 +1,5 @@
 {
-  "name": "@aitube/clapper",
+  "name": "clapper",
   "version": "0.0.5",
   "private": true,
   "description": "🎬 Clapper",
@@ -22,7 +22,7 @@
     "test:unit:watch": "vitest",
     "test:e2e": "npx playwright test",
     "electron": "npm run build && electron .",
-    "electron:start": "electron-forge start",
+    "electron:start": "npm run build && electron-forge start",
     "electron:package": "electron-forge package",
     "electron:make": "electron-forge make"
   },
@@ -142,6 +142,7 @@
     "eslint-config-next": "14.2.5",
     "eslint-config-prettier": "^9.1.0",
     "jsdom": "^24.1.0",
+    "node-gyp": "^10.2.0",
     "postcss": "^8",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.5",
