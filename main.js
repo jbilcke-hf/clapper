@@ -1,6 +1,16 @@
 const fs = require('fs')
 const path = require('path')
+
+// -----------------------------------------------------------
+//
+// attention: if you add dependencies here, you might have to edit
+// forge.config.js, , the part about:
+// '^\\/node_modules/(?!dotenv)$',
+//
+// if you have an idea  to do that automatically, let me know
 const dotenv = require('dotenv')
+//
+// -----------------------------------------------------------
 
 dotenv.config()
 
@@ -20,12 +30,14 @@ try {
 
 const { app, BrowserWindow, screen } = require('electron')
 
-const currentDir = process.cwd()
 
-const mainServerPath = path.join(currentDir, '.next/standalone/server.js')
-
-// now we load the main server
-require(mainServerPath)
+try {
+  // used when the app is built with `npm run electron:make`
+  require(path.join(process.resourcesPath, 'standalone/server.js'))
+} catch (err) {
+  // used when the app is started with `npm run electron:start`
+  require(path.join(process.cwd(), '.next/standalone/server.js'))
+}
 
 // TODO: load the proxy server (for AI providers that refuse browser-side clients)
 // const proxyServerPath = path.join(currentDir, '.next/standalone/proxy-server.js')

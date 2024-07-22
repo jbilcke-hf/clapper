@@ -46,10 +46,12 @@ jobs:
       run: npm install @playwright/test@${{ env.PLAYWRIGHT_VERSION }}
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps ${{ inputs.browser }}
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      # disabled for now as we have caching issues:
+      #_if: steps.playwright-cache.outputs.cache-hit != 'true'
     - name: Install system dependencies for WebKit
       # Some WebKit dependencies seem to lay outside the cache and will need to be installed separately
-      if: ${{ inputs.browser == 'webkit' && steps.playwright-cache.outputs.cache-hit == 'true' }}
+      # disabled for now as we have caching issues:
+      #_if: ${{ inputs.browser == 'webkit' && steps.playwright-cache.outputs.cache-hit == 'true' }}
       run: npx playwright install-deps webkit
     - name: Run build
       run: npm run build:ci

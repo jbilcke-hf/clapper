@@ -5,11 +5,19 @@
   "description": "🎬 Clapper",
   "license": "GPL-3.0-only",
   "main": "main.js",
+  "files": [
+    "./main.js"
+  ],
+  "directories": {
+    "src:": "./src",
+    "public:": "./public"
+  },
   "scripts": {
     "dev": "npm i && npm run checks && next dev",
-    "build": "npm i && npm run checks && next build && npm run build:copyassets",
+    "build": "npm i && npm run prepare && npm run checks && rm -Rf out && next build && npm run build:copyassets",
+    "build:ci": "rm -Rf out && npm run prepare && next build && npm run build:copyassets",
     "build:copyassets": "cp -R public .next/standalone/public && cp -R .next/static .next/standalone/.next/static",
-    "build:ci": "next build && npm run build:copyassets",
+    "prepare": "cp -R node_modules/mediainfo.js/dist/MediaInfoModule.wasm public/wasm/",
     "start": "next start",
     "start:prod": "node .next/standalone/server.js",
     "checks": "npm run format:fix && npm run lint",
@@ -23,15 +31,15 @@
     "test:e2e": "npx playwright test",
     "electron": "npm run build && electron .",
     "electron:start": "npm run build && electron-forge start",
-    "electron:package": "electron-forge package",
-    "electron:make": "electron-forge make"
+    "electron:package": "npm run build && electron-forge package",
+    "electron:make": "npm run build && electron-forge make"
   },
   "dependencies": {
     "@aitube/broadway": "0.0.22",
     "@aitube/clap": "0.0.30",
-    "@aitube/clapper-services": "0.0.28",
+    "@aitube/clapper-services": "0.0.29",
     "@aitube/engine": "0.0.26",
-    "@aitube/timeline": "0.0.42",
+    "@aitube/timeline": "0.0.43",
     "@fal-ai/serverless-client": "^0.13.0",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@ffmpeg/util": "^0.12.1",
@@ -128,6 +136,7 @@
     "@electron-forge/maker-squirrel": "^7.4.0",
     "@electron-forge/maker-zip": "^7.4.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
+    "@electron-forge/publisher-github": "^7.4.0",
     "@playwright/test": "^1.45.1",
     "@testing-library/react": "^16.0.0",
     "@types/fluent-ffmpeg": "^2.1.24",

@@ -5,7 +5,7 @@ import {
   RawImage,
 } from '@xenova/transformers'
 
-export async function extractCaptionFromFrame(
+export async function extractCaptionFromFrameMoondream(
   imageInBase64DataUri: string
 ): Promise<string> {
   if (!(navigator as any).gpu) {
@@ -16,7 +16,8 @@ export async function extractCaptionFromFrame(
 2. You need to enable WebGPU (depends on your browser, see below)
 
 2.1 For Chrome: Perform the following operations in the Chrome / Microsoft Edge address bar
-The chrome://flags/#enable-unsafe-webgpu flag must be enabled (not enable-webgpu-developer-features). Linux experimental support also requires launching the browser with --enable-features=Vulkan.
+The chrome://flags/#enable-unsafe-webgpu flag must be enabled (not enable-webgpu-developer-features).
+Linux experimental support also requires launching the browser with --enable-features=Vulkan.
 
 2.2 For Safari 18 (macOS 15): WebGPU is enabled by default
 
