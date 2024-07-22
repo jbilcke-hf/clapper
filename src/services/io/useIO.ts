@@ -131,7 +131,7 @@ export const useIO = create<IOStore>((set, get) => ({
         })
 
         // optional: reset the project
-        await timeline.setClap(newClap())
+        // await timeline.setClap(newClap())
 
         const track = 1
         let i = 0
