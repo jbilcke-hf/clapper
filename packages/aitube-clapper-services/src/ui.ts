@@ -70,7 +70,7 @@ export type UIState = {
 }
 
 export type UIControls = {
-  setShowWelcomeScreen: () => void
+  setShowWelcomeScreen: (showWelcomeScreen: boolean) => void
   setHasBetaAccess: (hasBetaAccess: boolean) => void
   setThemeName: (themeName: UIThemeName) => void
   applyThemeToComponents: () => void
