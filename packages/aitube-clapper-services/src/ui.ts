@@ -2,7 +2,6 @@ import { ClapTimelineTheme } from "@aitube/timeline"
 import { SettingsCategory } from "./base-types"
 import { ProjectCreationWizardStep } from "./types"
 
-
 export type UIThemeName = "lavender" | "backstage" | "midnight" | "mythril" | "flix" | "lore" | "mocha" | string
 
 /**
@@ -52,6 +51,7 @@ export type UITheme = {
 }
 
 export type UIState = {
+  isTopMenuOpen: boolean
   showWelcomeScreen: boolean
   hasBetaAccess: boolean
   themeName: UIThemeName
@@ -70,7 +70,10 @@ export type UIState = {
 }
 
 export type UIControls = {
+  setIsTopMenuOpen: (isTopMenuOpen: boolean) => void
   setShowWelcomeScreen: (showWelcomeScreen: boolean) => void
+  // TODO @Julian: can be used to control the onboarding process
+  // setOnboardingStep: (onboardingStep?: OnboardingStep) => void
   setHasBetaAccess: (hasBetaAccess: boolean) => void
   setThemeName: (themeName: UIThemeName) => void
   applyThemeToComponents: () => void
