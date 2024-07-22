@@ -3,7 +3,10 @@
 import {
   ClapAssetSource,
   ClapEntity,
+  ClapMediaOrientation,
+  ClapOutputType,
   ClapProject,
+  ClapSegment,
   ClapSegmentCategory,
   ClapSegmentStatus,
   getClapAssetSourceType,
@@ -11,6 +14,7 @@ import {
   newSegment,
   parseClap,
   serializeClap,
+  UUID,
 } from '@aitube/clap'
 import {
   TimelineStore,
@@ -19,6 +23,7 @@ import {
   removeFinalVideosAndConvertToTimelineSegments,
   getFinalVideo,
   DEFAULT_DURATION_IN_MS_PER_STEP,
+  clapSegmentToTimelineSegment,
 } from '@aitube/timeline'
 import { ParseScriptProgressUpdate, parseScriptToClap } from '@aitube/broadway'
 import { IOStore, TaskCategory, TaskVisibility } from '@aitube/clapper-services'
@@ -43,9 +48,11 @@ import {
 import { sleep } from '@/lib/utils/sleep'
 import { FFMPegAudioInput, FFMPegVideoInput } from './ffmpegUtils'
 import { createFullVideo } from './createFullVideo'
-import { extractFramesFromVideo } from './extractFramesFromVideo'
+import { extractScenesFromVideo } from './extractScenesFromVideo'
 import { extractCaptionsFromFrames } from './extractCaptionsFromFrames'
 import { base64DataUriToFile } from '@/lib/utils/base64DataUriToFile'
+import { useUI } from '../ui'
+import { getTypeAndExtension } from '@/lib/utils/getTypeAndExtension'
 
 export const useIO = create<IOStore>((set, get) => ({
   ...getDefaultIOState(),
@@ -59,7 +66,7 @@ export const useIO = create<IOStore>((set, get) => ({
     timeline.clear()
   },
   openFiles: async (files: File[]) => {
-    const { openClapBlob, openScreenplay } = get()
+    const { openClapBlob, openScreenplay, openVideo } = get()
     const timeline: TimelineStore = useTimeline.getState()
     const { segments, addSegments } = timeline
 
@@ -101,101 +108,166 @@ export const useIO = create<IOStore>((set, get) => ({
         const newSegments = await parseFileIntoSegments({ file })
 
         console.log('calling  timeline.addSegments with:', newSegments)
-        await timeline.addSegments({
-          segments: newSegments,
-        })
+        await timeline.addSegments({ segments: newSegments })
+
         return
       }
 
       const isVideoFile = fileType.startsWith('video/')
       if (isVideoFile) {
-        const storyboardExtractionTask = useTasks.getState().add({
-          category: TaskCategory.IMPORT,
-          visibility: TaskVisibility.BLOCKER,
-          initialMessage: `Extracting storyboards..`,
-          successMessage: `Extracting storyboards.. 100% done`,
-          value: 0,
-        })
-
-        const frames = await extractFramesFromVideo(file, {
-          format: 'png', // in theory we could also use 'jpg', but this freezes FFmpeg
-          maxWidth: 1024,
-          maxHeight: 576,
-          sceneSamplingRate: 100,
-          onProgress: (progress: number) => {
-            storyboardExtractionTask.setProgress({
-              message: `Extracting storyboards.. ${progress}% done`,
-              value: progress,
-            })
-          },
-        })
-
-        // optional: reset the project
-        // await timeline.setClap(newClap())
-
-        const track = 1
-        let i = 0
-        let startTimeInMs = 0
-        const durationInSteps = 4
-        const durationInMs = durationInSteps * DEFAULT_DURATION_IN_MS_PER_STEP
-        let endTimeInMs = startTimeInMs + durationInMs
-
-        for (const frame of frames) {
-          const frameFile = base64DataUriToFile(frame, `storyboard_${i++}.png`)
-          const newSegments = await parseFileIntoSegments({
-            file: frameFile,
-            startTimeInMs,
-            endTimeInMs,
-            track,
-          })
-
-          startTimeInMs += durationInMs
-          endTimeInMs += durationInMs
-
-          console.log('calling timeline.addSegments with:', newSegments)
-          await timeline.addSegments({
-            segments: newSegments,
-            track,
-          })
-        }
-
-        storyboardExtractionTask.success()
-
-        const enableCaptioning = false
-
-        if (enableCaptioning) {
-          const captioningTask = useTasks.getState().add({
-            category: TaskCategory.IMPORT,
-            // visibility: TaskVisibility.BLOCKER,
-
-            // since this is very long task, we can run it in the background
-            visibility: TaskVisibility.BACKGROUND,
-            initialMessage: `Analyzing storyboards..`,
-            successMessage: `Analyzing storyboards.. 100% done`,
-            value: 0,
-          })
-
-          console.log('calling extractCaptionsFromFrames() with:', frames)
-          const captions = await extractCaptionsFromFrames(
-            frames,
-            (
-              progress: number,
-              storyboardIndex: number,
-              nbStoryboards: number
-            ) => {
-              captioningTask.setProgress({
-                message: `Analyzing storyboards (${progress}%)`,
-                value: progress,
-              })
-            }
-          )
-          console.log('captions:', captions)
-          // TODO: add
-
-          captioningTask.success()
-        }
+        await openVideo(projectName, fileName, file)
+        return
       }
     }
+    useUI.getState().setShowWelcomeScreen(false)
+  },
+  openVideo: async (
+    projectName: string,
+    fileName: string,
+    fileContent: string | Blob
+  ): Promise<void> => {
+    const timeline: TimelineStore = useTimeline.getState()
+
+    const sceneExtractionTask = useTasks.getState().add({
+      category: TaskCategory.IMPORT,
+      visibility: TaskVisibility.BLOCKER,
+      initialMessage: `Starting up, can take a few minutes..`,
+      successMessage: `Extracting scenes.. 100%`,
+      value: 0,
+    })
+
+    const file =
+      typeof fileContent === 'string'
+        ? base64DataUriToFile(fileContent, fileName)
+        : fileContent
+
+    const scenes = await extractScenesFromVideo(file, {
+      frameFormat: 'png', // in theory we could also use 'jpg', but this freezes FFmpeg
+      maxWidth: 1024,
+      maxHeight: 576,
+      framesPerScene: 1,
+      autoCrop: true,
+      sceneThreshold: 0.1,
+      minSceneDuration: 1,
+      debug: true,
+      onProgress: (progress: number) => {
+        sceneExtractionTask.setProgress({
+          message: `Extracting scenes.. ${progress}%`,
+          value: progress,
+        })
+      },
+    })
+
+    // optional: reset the project
+    // await timeline.setClap(newClap())
+
+    let currentStoryboardIndex = 0
+    let startTimeInMs = 0
+    const durationInSteps = 4
+    const durationInMs = durationInSteps * DEFAULT_DURATION_IN_MS_PER_STEP
+    let endTimeInMs = startTimeInMs + durationInMs
+
+    // TODO: extract info from the original video to determine things like
+    // the orientation, duration..
+    timeline.setClap(
+      newClap({
+        meta: {
+          id: UUID(),
+          title: projectName,
+          description: `${projectName} (${fileName})`,
+          synopsis: '',
+          licence:
+            "This OpenClap file is just a conversion from the original screenplay and doesn't claim any copyright or intellectual property. All rights reserved to the original intellectual property and copyright holders. Using OpenClap isn't piracy.",
+
+          orientation: ClapMediaOrientation.LANDSCAPE,
+          durationInMs: frames.length * durationInMs,
+
+          // TODO: those should come from the Clapper user settings
+
+          width: 1024,
+          height: 576,
+
+          defaultVideoModel: '', // <-- we should deprecate this no?
+          extraPositivePrompt: '',
+          screenplay: '',
+          isLoop: false,
+          isInteractive: false,
+        },
+      })
+    )
+
+    for (const scene of scenes) {
+      console.log('parsing scene:', scene)
+      try {
+        const frameFile = base64DataUriToFile(
+          scene.frames[0],
+          `storyboard_${++currentStoryboardIndex}.png`
+        )
+
+        const assetDurationInMs = scene.endTimeInMs - scene.startTimeInMs
+
+        // this returns multiple segments (video, image..)
+        const newSegments = await parseFileIntoSegments({
+          file: frameFile,
+          startTimeInMs: scene.startTimeInMs,
+          endTimeInMs: scene.endTimeInMs,
+        })
+
+        for (const newSegment of newSegments) {
+          newSegment.assetDurationInMs = assetDurationInMs
+          if (newSegment.category === ClapSegmentCategory.VIDEO) {
+            const { assetFileFormat, outputType } = getTypeAndExtension(
+              scene.video
+            )
+            newSegment.assetFileFormat = assetFileFormat
+            newSegment.assetUrl = scene.video
+            newSegment.status = ClapSegmentStatus.COMPLETED
+            newSegment.outputType = outputType
+          }
+        }
+        await timeline.addSegments({ segments: newSegments })
+      } catch (err) {
+        console.error(`failed to process scene:`, scene)
+        console.error(err)
+      }
+    }
+
+    sceneExtractionTask.success()
+
+    const enableCaptioning = false
+
+    if (enableCaptioning) {
+      const captioningTask = useTasks.getState().add({
+        category: TaskCategory.IMPORT,
+        // visibility: TaskVisibility.BLOCKER,
+
+        // since this is very long task, we can run it in the background
+        visibility: TaskVisibility.BACKGROUND,
+        initialMessage: `Analyzing storyboards..`,
+        successMessage: `Analyzing storyboards.. 100% done`,
+        value: 0,
+      })
+
+      console.log('calling extractCaptionsFromFrames() with:', frames)
+      /*
+      const captions = await extractCaptionsFromFrames(
+        frames,
+        (progress: number, storyboardIndex: number, nbStoryboards: number) => {
+          captioningTask.setProgress({
+            message: `Analyzing storyboards (${progress}%)`,
+            value: progress,
+          })
+        }
+      )
+  
+      console.log('captions:', captions)
+      */
+      // TODO: add
+
+      captioningTask.success()
+    }
+
+    useUI.getState().setShowWelcomeScreen(false)
   },
   openScreenplay: async (
     projectName: string,
@@ -270,6 +342,7 @@ export const useIO = create<IOStore>((set, get) => ({
       task.fail(`${err || 'unknown screenplay import error'}`)
     } finally {
     }
+    useUI.getState().setShowWelcomeScreen(false)
   },
   openScreenplayUrl: async (url: string) => {
     const timeline: TimelineStore = useTimeline.getState()
@@ -326,6 +399,7 @@ export const useIO = create<IOStore>((set, get) => ({
     } catch (err) {
       task.fail(`${err || 'unknown error'}`)
     }
+    useUI.getState().setShowWelcomeScreen(false)
   },
   saveAnyFile: (blob: Blob, fileName: string) => {
     // Create an object URL for the compressed clap blob
@@ -391,6 +465,7 @@ export const useIO = create<IOStore>((set, get) => ({
     } catch (err) {
       task.fail(`${err || 'unknown error'}`)
     }
+    useUI.getState().setShowWelcomeScreen(false)
   },
   openClapBlob: async (projectName: string, fileName: string, blob: Blob) => {
     const timeline: TimelineStore = useTimeline.getState()
@@ -423,6 +498,7 @@ export const useIO = create<IOStore>((set, get) => ({
     } catch (err) {
       task.fail(`${err || 'unknown error'}`)
     }
+    useUI.getState().setShowWelcomeScreen(false)
   },
   saveClap: async () => {
     const { saveAnyFile } = get()
@@ -726,7 +802,9 @@ export const useIO = create<IOStore>((set, get) => ({
     }
   },
 
-  openMLT: async (file: File) => {},
+  openMLT: async (file: File) => {
+    useUI.getState().setShowWelcomeScreen(false)
+  },
   saveMLT: async () => {},
   generateMLT: async (): Promise<string> => {
     const timeline: TimelineStore = useTimeline.getState()
@@ -1001,7 +1079,9 @@ export const useIO = create<IOStore>((set, get) => ({
 </mlt>`
   },
 
-  openKdenline: async (file: File) => {},
+  openKdenline: async (file: File) => {
+    useUI.getState().setShowWelcomeScreen(false)
+  },
 
   saveKdenline: async () => {
     const { saveAnyFile } = get()
@@ -1062,7 +1142,9 @@ export const useIO = create<IOStore>((set, get) => ({
     */
   },
 
-  openOpenTimelineIO: async (file: File) => {},
+  openOpenTimelineIO: async (file: File) => {
+    useUI.getState().setShowWelcomeScreen(false)
+  },
 
   saveOpenTimelineIO: async () => {},
 
@@ -1086,6 +1168,9 @@ export const useIO = create<IOStore>((set, get) => ({
     }
 
     const { entities } = await parseClap(file)
+
+    useUI.getState().setShowWelcomeScreen(false)
+
     return entities
   },
 }))

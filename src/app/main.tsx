@@ -5,7 +5,6 @@ import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
 import { useSearchParams } from 'next/navigation'
 import { DndProvider, useDrop } from 'react-dnd'
 import { HTML5Backend, NativeTypes } from 'react-dnd-html5-backend'
-import { useTimeline } from '@aitube/timeline'
 
 import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/lib/utils'
@@ -14,22 +13,23 @@ import { Monitor } from '@/components/monitor'
 
 import { SettingsDialog } from '@/components/settings'
 import { LoadingDialog } from '@/components/dialogs/loader/LoadingDialog'
-import { useUI } from '@/services/ui'
+import { useUI, useIO } from '@/services'
 import { TopBar } from '@/components/toolbars/top-bar'
 import { Timeline } from '@/components/core/timeline'
-import { useIO } from '@/services/io/useIO'
 import { ChatView } from '@/components/assistant/ChatView'
 import { Editors } from '@/components/editors/Editors'
+import { useTheme } from '@/services/ui/useTheme'
 
 type DroppableThing = { files: File[] }
 
 function MainContent() {
   const ref = useRef<HTMLDivElement>(null)
-  const isEmpty = useTimeline((s) => s.isEmpty)
+  const showWelcomeScreen = useUI((s) => s.showWelcomeScreen)
   const showTimeline = useUI((s) => s.showTimeline)
   const showAssistant = useUI((s) => s.showAssistant)
-
+  const theme = useTheme()
   const openFiles = useIO((s) => s.openFiles)
+  const isTopMenuOpen = useUI((s) => s.isTopMenuOpen)
 
   const [{ isOver, canDrop }, connectFileDrop] = useDrop({
     accept: [NativeTypes.FILE],
@@ -67,8 +67,7 @@ function MainContent() {
       <TopBar />
       <div
         className={cn(
-          `flex h-[calc(100vh-40px)] w-screen flex-row overflow-hidden`,
-          isEmpty ? 'opacity-0' : 'opacity-100'
+          `flex h-[calc(100vh-40px)] w-screen flex-row overflow-hidden`
         )}
       >
         <ReflexContainer orientation="vertical">
@@ -107,6 +106,60 @@ function MainContent() {
             </ReflexElement>
           )}
         </ReflexContainer>
+      </div>
+
+      <div
+        className={cn(
+          showWelcomeScreen
+            ? 'pointer-events-auto z-[101] flex'
+            : 'pointer-events-none hidden',
+          `fixed top-[40px] h-[calc(100vh-40px)] w-screen flex-row overflow-hidden`,
+          `items-center justify-center`,
+          `bg-stone-950`
+        )}
+      >
+        <div
+          className="flex h-full w-full items-center justify-center"
+          style={{
+            backgroundImage:
+              'repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #37353455, #373534 )',
+          }}
+        >
+          <div
+            className={cn(
+              `pointer-events-none absolute left-[100px] top-[20px]`,
+              `opacity-90`
+            )}
+          >
+            <img
+              src="/images/onboarding/get-started.png"
+              width="180"
+              className=""
+            ></img>
+          </div>
+          <div
+            className={cn(
+              `pointer-events-none absolute left-[305px] top-[140px]`,
+              `transition-all duration-200 ease-out`,
+              isTopMenuOpen ? 'scale-100 opacity-90' : 'scale-90 opacity-0'
+            )}
+          >
+            <img src="/images/onboarding/pick-an-example.png" width="140"></img>
+          </div>
+          <div className="flex flex-col items-center justify-center space-y-6">
+            <h1 className="text-6xl font-bold">
+              Welcome to{' '}
+              <span className="" style={{ color: theme.defaultPrimaryColor }}>
+                Clapper
+              </span>
+              .
+            </h1>
+            <div className="flex flex-col items-center justify-center space-y-2 text-center text-2xl font-semibold">
+              <p>A free and open-source AI video editor,</p>
+              <p>designed for the age of generative filmmaking.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <SettingsDialog />

@@ -1,5 +1,5 @@
 export function base64DataUriToFile(dataUrl: string, fileName: string) {
-  var arr = dataUrl.split(',')
+  var arr = `${dataUrl || ''}`.split(',')
   const st = `${arr[0] || ''}`
   const mime = `${st.match(/:(.*?);/)?.[1] || ''}`
   const bstr = atob(arr[arr.length - 1])

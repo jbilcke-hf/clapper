@@ -19,10 +19,17 @@ import { TopMenuPlugins } from './plugins'
 export function TopMenu() {
   const isBusyResolving = useResolver((s) => s.isBusyResolving)
 
+  const setIsTopMenuOpen = useUI((s) => s.setIsTopMenuOpen)
+
   const hasBetaAccess = useUI((s) => s.hasBetaAccess)
 
   return (
-    <Menubar className="ml-1 w-full">
+    <Menubar
+      className="ml-1 w-full"
+      onValueChange={(value) => {
+        setIsTopMenuOpen(!!value)
+      }}
+    >
       <TopMenuLogo />
       <TopMenuFile />
       {hasBetaAccess && <TopMenuEdit />}
