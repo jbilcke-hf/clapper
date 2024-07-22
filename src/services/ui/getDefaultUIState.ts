@@ -6,6 +6,8 @@ import {
 
 export function getDefaultUIState(): UIState {
   const state: UIState = {
+    isTopMenuOpen: false,
+    showWelcomeScreen: true,
     hasBetaAccess: false,
     themeName: 'backstage',
     showApiKeys: false,

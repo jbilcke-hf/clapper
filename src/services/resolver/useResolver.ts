@@ -597,10 +597,12 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       ) as TimelineSegment
 
       if (newSegment.outputType === ClapOutputType.AUDIO) {
-        try {
-          newSegment.audioBuffer = await getAudioBuffer(newSegment.assetUrl)
-        } catch (err) {
-          console.error(`failed to load the audio file: ${err}`)
+        if (newSegment.assetUrl) {
+          try {
+            newSegment.audioBuffer = await getAudioBuffer(newSegment.assetUrl)
+          } catch (err) {
+            console.error(`failed to load the audio file: ${err}`)
+          }
         }
       }
 

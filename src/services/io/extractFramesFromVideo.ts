@@ -1,6 +1,7 @@
 'use client'
 
 import { FFmpeg } from '@ffmpeg/ffmpeg'
+import { FileData } from '@ffmpeg/ffmpeg/dist/esm/types'
 import { toBlobURL } from '@ffmpeg/util'
 import mediaInfoFactory, {
   Track,
@@ -12,6 +13,7 @@ import mediaInfoFactory, {
   MenuTrack,
   OtherTrack,
 } from 'mediainfo.js'
+import { fileDataToBase64 } from './fileDataToBase64'
 
 interface FrameExtractorOptions {
   format: 'png' | 'jpg'
@@ -20,6 +22,7 @@ interface FrameExtractorOptions {
   sceneSamplingRate: number // Percentage of additional frames between scene changes (0-100)
   onProgress?: (progress: number) => void // Callback function for progress updates
   debug?: boolean
+  autoCrop?: boolean // New option to enable automatic cropping
 }
 
 export async function extractFramesFromVideo(
@@ -114,10 +117,79 @@ export async function extractFramesFromVideo(
   if (options.debug) {
     console.log('input.mp4 written!')
   }
-  // Prepare FFmpeg command
-  const sceneFilter = `select='gt(scene,0.4)'`
+
+  let cropParams = ''
+
+  if (options.autoCrop) {
+    // First pass: Detect crop parameters
+    const cropDetectCommand = [
+      '-i',
+      'input.mp4',
+      '-vf',
+      'cropdetect=limit=0.1:round=2:reset=0',
+      '-f',
+      'null',
+      '-t',
+      '10', // Analyze first 10 seconds
+      '-',
+    ]
+
+    if (options.debug) {
+      console.log(
+        'Executing crop detection command:',
+        cropDetectCommand.join(' ')
+      )
+    }
+
+    ffmpeg.on('log', ({ message }) => {
+      const cropMatch = message.match(/crop=(\d+:\d+:\d+:\d+)/)
+      if (cropMatch) {
+        cropParams = cropMatch[1]
+      }
+    })
+
+    await ffmpeg.exec(cropDetectCommand)
+
+    if (options.debug) {
+      console.log('Detected crop parameters:', cropParams)
+    }
+
+    if (!cropParams) {
+      console.warn('No crop parameters detected. Proceeding without cropping.')
+    }
+  }
+
+  // Main processing command
+  const sceneFilter = `select='gt(scene,0.2)'`
   const additionalFramesFilter = `select='not(mod(n,${Math.floor(100 / options.sceneSamplingRate)}))'`
   const scaleFilter = `scale='min(${options.maxWidth},iw)':min'(${options.maxHeight},ih)':force_original_aspect_ratio=decrease`
+
+  let filterChain = `${sceneFilter},${additionalFramesFilter},${scaleFilter}`
+  if (options.autoCrop && cropParams) {
+    filterChain = `crop=${cropParams},${filterChain}`
+  }
+
+  const ffmpegCommand = [
+    '-i',
+    'input.mp4',
+    '-loglevel',
+    'verbose',
+    '-vf',
+    filterChain,
+    '-vsync',
+    '2',
+    '-q:v',
+    '2',
+    '-f',
+    'image2',
+    '-frames:v',
+    '1000', // Limit the number of frames to extract
+    `frames_%03d.${options.format}`,
+  ]
+
+  if (options.debug) {
+    console.log('Executing main FFmpeg command:', ffmpegCommand.join(' '))
+  }
 
   let lastProgress = 0
   ffmpeg.on('log', ({ message }) => {
@@ -137,28 +209,9 @@ export async function extractFramesFromVideo(
     }
   })
 
-  const ffmpegCommand = [
-    '-i',
-    'input.mp4',
-    '-loglevel',
-    'verbose',
-    '-vf',
-    `${sceneFilter},${additionalFramesFilter},${scaleFilter}`,
-    '-vsync',
-    '2',
-    '-q:v',
-    '2',
-    '-f',
-    'image2',
-    '-frames:v',
-    '1000', // Limit the number of frames to extract
-    `frames_%03d.${options.format}`,
-  ]
-
   if (options.debug) {
     console.log('Executing FFmpeg command:', ffmpegCommand.join(' '))
   }
-
   try {
     await ffmpeg.exec(ffmpegCommand)
   } catch (error) {
@@ -189,16 +242,9 @@ export async function extractFramesFromVideo(
       console.log(`Processing frame file: ${file.name}`)
     }
     try {
-      const frameData = await ffmpeg.readFile(file.name)
+      const frameData: FileData = await ffmpeg.readFile(file.name)
 
-      // Convert Uint8Array to Base64 string without using btoa
-      let binary = ''
-      const bytes = new Uint8Array(frameData as any)
-      const len = bytes.byteLength
-      for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i])
-      }
-      const base64Frame = window.btoa(binary)
+      const base64Frame = fileDataToBase64(frameData)
 
       frames.push(`data:image/${options.format};base64,${base64Frame}`)
 

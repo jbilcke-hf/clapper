@@ -17,6 +17,7 @@ import {
 import { useOpenFilePicker, useQueryStringParams } from '@/lib/hooks'
 import { IframeWarning } from '@/components/dialogs/iframe-warning'
 import { useIO, useUI } from '@/services'
+import { newClap } from '@aitube/clap'
 
 export function TopMenuFile() {
   const { clapUrl } = useQueryStringParams({
@@ -44,6 +45,9 @@ export function TopMenuFile() {
 
   const hasBetaAccess = useUI((s) => s.hasBetaAccess)
 
+  const showWelcomeScreen = useUI((s) => s.showWelcomeScreen)
+  const setShowWelcomeScreen = useUI((s) => s.setShowWelcomeScreen)
+
   useEffect(() => {
     ;(async () => {
       if (!clapUrl) {
@@ -67,21 +71,21 @@ export function TopMenuFile() {
       <MenubarMenu>
         <MenubarTrigger>File</MenubarTrigger>
         <MenubarContent>
-          {hasBetaAccess && (
-            <MenubarItem
-              onClick={() => {
-                openClapUrl('/samples/claps/empty_project.clap')
-              }}
-            >
-              New Project<MenubarShortcut>⌘N</MenubarShortcut>
-            </MenubarItem>
-          )}
+          <MenubarItem
+            onClick={() => {
+              setClap(newClap())
+              setShowWelcomeScreen(false)
+            }}
+          >
+            New Project<MenubarShortcut>⌘N</MenubarShortcut>
+          </MenubarItem>
+          <MenubarSeparator />
           <MenubarItem
             onClick={() => {
               openFilePicker()
             }}
           >
-            Open file (.clap, .txt)<MenubarShortcut>⌘O</MenubarShortcut>
+            Open project (.clap)<MenubarShortcut>⌘O</MenubarShortcut>
           </MenubarItem>
           <MenubarItem
             onClick={() => {
@@ -92,7 +96,7 @@ export function TopMenuFile() {
           </MenubarItem>
           <MenubarSeparator />
           <MenubarSub>
-            <MenubarSubTrigger>Examples</MenubarSubTrigger>
+            <MenubarSubTrigger>Import an example</MenubarSubTrigger>
             <MenubarSubContent>
               <MenubarItem
                 onClick={() => {
@@ -157,20 +161,46 @@ export function TopMenuFile() {
           <MenubarSeparator />
           <MenubarItem
             onClick={() => {
+              openFilePicker()
+            }}
+          >
+            Import screenplay (.txt)
+          </MenubarItem>
+          <MenubarItem
+            onClick={() => {
+              openFilePicker()
+            }}
+          >
+            Import video (.mp4)
+          </MenubarItem>
+          {/*
+          In case we want to show a video import wizard UI:
+
+          <MenubarItem
+            onClick={() => {
+              openFilePicker()
+            }}
+          >
+            Import video (.mp4)
+          </MenubarItem>
+          <MenubarSeparator />
+          */}
+
+          <MenubarSeparator />
+          <MenubarItem
+            onClick={() => {
               saveVideoFile()
             }}
           >
-            Export project to MP4
+            Export full video (.mp4)
           </MenubarItem>
-          <MenubarSeparator />
           <MenubarItem
             onClick={() => {
               saveZipFile()
             }}
           >
-            Export project to .zip
+            Export all assets (.zip)
           </MenubarItem>
-          <MenubarSeparator />
           {/*
         <MenubarItem onClick={() => {
           saveKdenline()

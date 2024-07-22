@@ -37,9 +37,9 @@
   "dependencies": {
     "@aitube/broadway": "0.0.22",
     "@aitube/clap": "0.0.30",
-    "@aitube/clapper-services": "0.0.29",
+    "@aitube/clapper-services": "0.0.34",
     "@aitube/engine": "0.0.26",
-    "@aitube/timeline": "0.0.43",
+    "@aitube/timeline": "0.0.44",
     "@fal-ai/serverless-client": "^0.13.0",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@ffmpeg/util": "^0.12.1",

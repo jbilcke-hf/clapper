@@ -21,6 +21,13 @@ export const useUI = create<UIStore>()(
   persist(
     (set, get) => ({
       ...getDefaultUIState(),
+      setIsTopMenuOpen: (isTopMenuOpen: boolean) => {
+        set({ isTopMenuOpen })
+      },
+      setShowWelcomeScreen: (showWelcomeScreen: boolean) => {
+        console.log('setShowWelcomeScreen called with:', showWelcomeScreen)
+        set({ showWelcomeScreen: showWelcomeScreen })
+      },
       setHasBetaAccess: (hasBetaAccess: boolean) => {
         set({ hasBetaAccess })
       },

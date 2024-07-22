@@ -81,7 +81,41 @@ export async function parseFileIntoSegments({
         ? maybeEndTimeInMs!
         : startTimeInMs + durationInMs
 
-      const newSegmentData: Partial<TimelineSegment> = {
+      const partialVideo: Partial<TimelineSegment> = {
+        category: ClapSegmentCategory.VIDEO,
+        startTimeInMs,
+        endTimeInMs,
+
+        prompt: 'movie',
+        label: 'movie', // `${file.name.split(".")[0] || "Untitled"}`, // a short label to name the segment (optional, can be human or LLM-defined)
+
+        outputType: ClapOutputType.VIDEO,
+        status: ClapSegmentStatus.TO_GENERATE,
+
+        assetUrl: '',
+        assetDurationInMs: durationInMs,
+        assetSourceType: ClapAssetSource.EMPTY,
+        assetFileFormat: undefined,
+        track: track ? track : undefined,
+      }
+
+      const video = await clapSegmentToTimelineSegment(newSegment(partialVideo))
+
+      if (isValidNumber(track)) {
+        video.track = track
+      }
+
+      video.outputType = ClapOutputType.VIDEO
+
+      // we assume we want it to be immediately visible
+      video.visibility = SegmentVisibility.VISIBLE
+
+      // console.log("newSegment:", audioSegment)
+
+      // poof! type disappears.. it's magic
+      newSegments.push(video)
+
+      const partialStoryboard: Partial<TimelineSegment> = {
         prompt: 'Storyboard', // note: this can be set later with an automatic captioning worker
         startTimeInMs, // start time of the segment
         endTimeInMs, // end time of the segment (startTimeInMs + durationInMs)
@@ -90,28 +124,31 @@ export async function parseFileIntoSegments({
         label: `${file.name}`, // a short label to name the segment (optional, can be human or LLM-defined)
         category,
         assetUrl,
-        assetDurationInMs: endTimeInMs,
+        assetDurationInMs: durationInMs,
         assetSourceType: ClapAssetSource.DATA,
         assetFileFormat: `${file.type}`,
+
+        // important: we try to go below
+        track: track ? track + 1 : undefined,
       }
 
-      const timelineSegment = await clapSegmentToTimelineSegment(
-        newSegment(newSegmentData)
+      const storyboard = await clapSegmentToTimelineSegment(
+        newSegment(partialStoryboard)
       )
 
       if (isValidNumber(track)) {
-        timelineSegment.track = track
+        storyboard.track = track
       }
 
-      timelineSegment.outputType = ClapOutputType.IMAGE
+      storyboard.outputType = ClapOutputType.IMAGE
 
       // we assume we want it to be immediately visible
-      timelineSegment.visibility = SegmentVisibility.VISIBLE
+      storyboard.visibility = SegmentVisibility.VISIBLE
 
       // console.log("newSegment:", audioSegment)
 
       // poof! type disappears.. it's magic
-      newSegments.push(timelineSegment)
+      newSegments.push(storyboard)
       break
     }
 
