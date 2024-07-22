@@ -174,7 +174,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     // console.log("totalNumberOfLines = " + totalNumberOfLines)
 
-    const isEmpty = segments.length === 0
+    const isEmpty = tracks.length === 0
 
     // ---------- REPAIR THE LINE-2-SEGMENT DICTIONARY ---------------
     let previousValue: TimelineSegment[] = []
@@ -705,11 +705,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   }): Promise<void> => {
     if (segments?.length) {
       const { addSegment } = get()
-      Promise.allSettled(segments.map(segment => addSegment({
-        segment,
-        startTimeInMs,
-        track,
-      })))
+      for (const segment of segments) {
+        await addSegment({
+          segment,
+          startTimeInMs,
+          track
+        })
+      }
     }
   },
   assignTrack: async ({
@@ -772,7 +774,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   },
   addSegment: async ({
     segment,
-    startTimeInMs,
+    startTimeInMs: requestedStartTimeInMs,
     track: requestedTrack
   }: {
     segment: TimelineSegment
@@ -795,10 +797,28 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       assignTrack,
     } = get()
 
+
     // note: the requestedTrack might not be empty
+    const segmentDuration = segment.endTimeInMs - segment.startTimeInMs
+
+    const startTimeInMs = isValidNumber(requestedStartTimeInMs) ? requestedStartTimeInMs! : segment.startTimeInMs
+
+    const endTimeInMs = startTimeInMs + segmentDuration
 
     // for now let's do something simple: to always search for an available track
-    const availableTrack = findFreeTrack({ startTimeInMs })
+    const availableTrack = isValidNumber(requestedTrack) ? requestedTrack! : findFreeTrack({
+      startTimeInMs,
+      endTimeInMs
+    })
+
+    console.log("availableTrack:", {
+      requestedStartTimeInMs,
+      segmentDuration,
+      availableTrack,
+      requestedTrack,
+      startTimeInMs,
+      endTimeInMs
+    })
 
     // we just make sure to sanitize it before adding it
     segment = await clapSegmentToTimelineSegment(segment)

@@ -1,4 +1,4 @@
-import { ClapSegment, isValidNumber } from "@aitube/clap"
+import { ClapSegment, ClapSegmentFilteringMode, filterSegmentsWithinRange } from "@aitube/clap"
 
 import { DEFAULT_NB_TRACKS } from "@/constants"
 
@@ -12,15 +12,17 @@ export function findFreeTrack({
   startTimeInMs?: number
   endTimeInMs?: number
 }): number {
+  // console.log("findFreeTrack(): segments:", segments)
+
   // identify any occurence of a segment being in our desired range
-  const collisions: ClapSegment[] = segments.filter(segment => {
-    if (
-      ((startTimeInMs <= segment.startTimeInMs) || (startTimeInMs <= segment.endTimeInMs))
-      &&
-      ((endTimeInMs <= segment.startTimeInMs) || (endTimeInMs <= segment.endTimeInMs))
-    ) return false
-    return true
-  })
+  const collisions: ClapSegment[] = filterSegmentsWithinRange(
+    ClapSegmentFilteringMode.ANY,
+    startTimeInMs,
+    endTimeInMs,
+    segments
+  )
+
+  // console.log("findFreeTrack(): collisions:", collisions)
 
   const MIN_TRACK_NUMBER = 1
 
