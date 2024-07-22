@@ -52,6 +52,7 @@ export type UITheme = {
 }
 
 export type UIState = {
+  showWelcomeScreen: boolean
   hasBetaAccess: boolean
   themeName: UIThemeName
   showApiKeys: boolean
@@ -69,6 +70,7 @@ export type UIState = {
 }
 
 export type UIControls = {
+  setShowWelcomeScreen: () => void
   setHasBetaAccess: (hasBetaAccess: boolean) => void
   setThemeName: (themeName: UIThemeName) => void
   applyThemeToComponents: () => void
