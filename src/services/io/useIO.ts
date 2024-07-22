@@ -18,6 +18,7 @@ import {
   TimelineSegment,
   removeFinalVideosAndConvertToTimelineSegments,
   getFinalVideo,
+  DEFAULT_DURATION_IN_MS_PER_STEP,
 } from '@aitube/timeline'
 import { ParseScriptProgressUpdate, parseScriptToClap } from '@aitube/broadway'
 import { IOStore, TaskCategory, TaskVisibility } from '@aitube/clapper-services'
@@ -40,11 +41,11 @@ import {
   formatSegmentForExport,
 } from '@/lib/utils/formatSegmentForExport'
 import { sleep } from '@/lib/utils/sleep'
-import {
-  FFMPegAudioInput,
-  FFMPegVideoInput,
-  createFullVideo,
-} from './createFullVideo'
+import { FFMPegAudioInput, FFMPegVideoInput } from './ffmpegUtils'
+import { createFullVideo } from './createFullVideo'
+import { extractFramesFromVideo } from './extractFramesFromVideo'
+import { extractCaptionsFromFrames } from './extractCaptionsFromFrames'
+import { base64DataUriToFile } from '@/lib/utils/base64DataUriToFile'
 
 export const useIO = create<IOStore>((set, get) => ({
   ...getDefaultIOState(),
@@ -107,6 +108,93 @@ export const useIO = create<IOStore>((set, get) => ({
       }
 
       const isVideoFile = fileType.startsWith('video/')
+      if (isVideoFile) {
+        const storyboardExtractionTask = useTasks.getState().add({
+          category: TaskCategory.IMPORT,
+          visibility: TaskVisibility.BLOCKER,
+          initialMessage: `Extracting storyboards..`,
+          successMessage: `Extracting storyboards.. 100% done`,
+          value: 0,
+        })
+
+        const frames = await extractFramesFromVideo(file, {
+          format: 'png', // in theory we could also use 'jpg', but this freezes FFmpeg
+          maxWidth: 1024,
+          maxHeight: 576,
+          sceneSamplingRate: 100,
+          onProgress: (progress: number) => {
+            storyboardExtractionTask.setProgress({
+              message: `Extracting storyboards.. ${progress}% done`,
+              value: progress,
+            })
+          },
+        })
+
+        // optional: reset the project
+        await timeline.setClap(newClap())
+
+        const track = 1
+        let i = 0
+        let startTimeInMs = 0
+        const durationInSteps = 4
+        const durationInMs = durationInSteps * DEFAULT_DURATION_IN_MS_PER_STEP
+        let endTimeInMs = startTimeInMs + durationInMs
+
+        for (const frame of frames) {
+          const frameFile = base64DataUriToFile(frame, `storyboard_${i++}.png`)
+          const newSegments = await parseFileIntoSegments({
+            file: frameFile,
+            startTimeInMs,
+            endTimeInMs,
+            track,
+          })
+
+          startTimeInMs += durationInMs
+          endTimeInMs += durationInMs
+
+          console.log('calling timeline.addSegments with:', newSegments)
+          await timeline.addSegments({
+            segments: newSegments,
+            track,
+          })
+        }
+
+        storyboardExtractionTask.success()
+
+        const enableCaptioning = false
+
+        if (enableCaptioning) {
+          const captioningTask = useTasks.getState().add({
+            category: TaskCategory.IMPORT,
+            // visibility: TaskVisibility.BLOCKER,
+
+            // since this is very long task, we can run it in the background
+            visibility: TaskVisibility.BACKGROUND,
+            initialMessage: `Analyzing storyboards..`,
+            successMessage: `Analyzing storyboards.. 100% done`,
+            value: 0,
+          })
+
+          console.log('calling extractCaptionsFromFrames() with:', frames)
+          const captions = await extractCaptionsFromFrames(
+            frames,
+            (
+              progress: number,
+              storyboardIndex: number,
+              nbStoryboards: number
+            ) => {
+              captioningTask.setProgress({
+                message: `Analyzing storyboards (${progress}%)`,
+                value: progress,
+              })
+            }
+          )
+          console.log('captions:', captions)
+          // TODO: add
+
+          captioningTask.success()
+        }
+      }
     }
   },
   openScreenplay: async (
