@@ -4,7 +4,7 @@ import { ClapOutputType, ClapProject, ClapSceneEvent, ClapSegment, ClapSegmentCa
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
-import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
+import { DEFAULT_DURATION_IN_MS_PER_STEP, DEFAULT_NB_TRACKS } from "@/constants"
 import { hslToHex, findFreeTrack, getAudioBuffer, getFinalVideo, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment } from "@/utils"
 import { ClapSegmentCategoryColors, ClapSegmentColorScheme, ClapTimelineTheme, SegmentResolver } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -153,9 +153,12 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     }
 
+    // note that we measure the empty ness here, but right after
+    // we run some code to fill-in the missing tracks
+    const isEmpty = tracks.length === 0
 
-   // ---------- REPAIR THE TRACKS ---------------
-    for (let id = 0; id < tracks.length; id++) {
+   // ---------- FILL-IN THE TRACKS ---------------
+    for (let id = 0; id < DEFAULT_NB_TRACKS; id++) {
       if (!tracks[id]) {
         tracks[id] = {
           id,
@@ -173,8 +176,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     let totalNumberOfLines = clap.meta.screenplay.split('\n').length
 
     // console.log("totalNumberOfLines = " + totalNumberOfLines)
-
-    const isEmpty = tracks.length === 0
 
     // ---------- REPAIR THE LINE-2-SEGMENT DICTIONARY ---------------
     let previousValue: TimelineSegment[] = []
