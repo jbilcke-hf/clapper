@@ -19,6 +19,7 @@ import { Timeline } from '@/components/core/timeline'
 import { ChatView } from '@/components/assistant/ChatView'
 import { Editors } from '@/components/editors/Editors'
 import { useTheme } from '@/services/ui/useTheme'
+import { BottomToolbar } from '@/components/toolbars/bottom-bar'
 
 type DroppableThing = { files: File[] }
 
@@ -76,9 +77,9 @@ function MainContent() {
               <ReflexElement minSize={showTimeline ? 100 : 1}>
                 <ReflexContainer orientation="vertical">
                   <ReflexElement
-                    size={showTimeline ? 400 : 1}
+                    size={showTimeline ? 700 : 1}
                     minSize={showTimeline ? 100 : 1}
-                    maxSize={showTimeline ? 1600 : 1}
+                    maxSize={showTimeline ? 2000 : 1}
                   >
                     <Editors />
                   </ReflexElement>
@@ -95,6 +96,7 @@ function MainContent() {
                 maxSize={showTimeline ? 1600 : 1}
               >
                 <Timeline />
+                <BottomToolbar />
               </ReflexElement>
             </ReflexContainer>
           </ReflexElement>

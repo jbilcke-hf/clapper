@@ -108,7 +108,7 @@ export const backstage: UITheme = {
       lineColor: '#B3B3B3',
     },
     grid: {
-      backgroundColor: '#27272A',
+      backgroundColor: '#292524',
     },
     cell: {
       categoryColors: baseClapSegmentCategoryColors,
@@ -172,7 +172,7 @@ export const midnight: UITheme = {
       lineColor: '#B3B3B3',
     },
     grid: {
-      backgroundColor: '#27372A',
+      backgroundColor: '#101e2d',
     },
     cell: {
       categoryColors: baseClapSegmentCategoryColors,
@@ -235,7 +235,7 @@ export const lavender: UITheme = {
       lineColor: '#B3B3B3',
     },
     grid: {
-      backgroundColor: '#27272A',
+      backgroundColor: '#211b32',
     },
     cell: {
       categoryColors: baseClapSegmentCategoryColors,
@@ -288,17 +288,17 @@ export const flix: UITheme = {
   assistantRobotTextColor: '#e0e7ff',
   timeline: {
     topBarTimeScale: {
-      backgroundColor: 'rgb(90,80,80)',
+      backgroundColor: 'rgb(80,80,80)',
       textColor: '#ffffff',
       lineColor: '#E6E6E6',
     },
     leftBarTrackScale: {
-      backgroundColor: 'rgb(90,80,80)',
+      backgroundColor: 'rgb(80,80,80)',
       textColor: '#ffffff',
       lineColor: '#B3B3B3',
     },
     grid: {
-      backgroundColor: '#27272A',
+      backgroundColor: '#000000',
     },
     cell: {
       categoryColors: baseClapSegmentCategoryColors,
@@ -362,7 +362,7 @@ export const lore: UITheme = {
       lineColor: '#B3B3B3',
     },
     grid: {
-      backgroundColor: '#27272A',
+      backgroundColor: '#151520',
     },
     cell: {
       categoryColors: baseClapSegmentCategoryColors,
@@ -394,18 +394,18 @@ export const gordon: UITheme = {
   label: 'Gordon',
   author: 'Clapper',
   description: '',
-  defaultBgColor: '#424242',
+  defaultBgColor: '#323232',
   defaultTextColor: '#e0e0e0',
   defaultPrimaryColor: '#ff8400',
   defaultBorderColor: '#2e2e2e',
   logoColor: '#ff8400',
-  editorBgColor: '#535353',
+  editorBgColor: '#434343',
   editorCursorColor: '#ffffff',
   editorTextColor: '#e0e0e0',
-  editorMenuBgColor: '#424242',
+  editorMenuBgColor: '#323232',
   editorMenuTextColor: 'e0e0e0',
   editorBorderColor: '#2e2e2e',
-  monitorBgColor: '#424242',
+  monitorBgColor: '#323232',
   monitorSecondaryTextColor: '#e0e0e0',
   monitorPrimaryTextColor: '#ff8400',
 
@@ -417,17 +417,17 @@ export const gordon: UITheme = {
 
   timeline: {
     topBarTimeScale: {
-      backgroundColor: '#6b6b6b',
+      backgroundColor: '#7b7b7b',
       textColor: '#ffffff',
       lineColor: '#808080',
     },
     leftBarTrackScale: {
-      backgroundColor: '#6b6b6b',
+      backgroundColor: '#7b7b7b',
       textColor: '#ffffff',
       lineColor: '#808080',
     },
     grid: {
-      backgroundColor: '#535353',
+      backgroundColor: '#434343',
     },
     cell: {
       categoryColors: baseClapSegmentCategoryColors,
@@ -716,11 +716,11 @@ export const themes: Record<UIThemeName, UITheme> = {
   backstage,
   midnight,
   lavender,
-  sandy,
+  // sandy,
   flix,
   lore,
   gordon,
-  system360,
+  // system360,
   silent,
 }
 

@@ -49,7 +49,6 @@ export function TopMenu() {
         {
           // clap?.meta?.title || "Untitled"
         }
-        <span className="text-stone-500">{APP_REVISION}</span>
       </div>
     </Menubar>
   )
