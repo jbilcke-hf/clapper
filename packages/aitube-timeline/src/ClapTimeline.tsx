@@ -60,12 +60,18 @@ export function ClapTimeline({
   }) {
   const ref = useRef<HTMLCanvasElement>(null)
 
+  const theme = useTimeline(s => s.theme)
+
   const handleIsCreated = () => {
     useTimeline.setState({ isReady: true })
   }
 
   return (
-    <div className={cn(`w-full h-full`, className)}>
+    <div
+      className={cn(`w-full h-full`, className)}
+      style={{
+        backgroundColor: theme.grid.backgroundColor
+      }}>
       <AutoSizer style={{
         height: "100%", // <-- mandatory otherwise the timeline won't show up
         width: "100%" // <-- mandatory otherwise the horizontal scroller won't show up

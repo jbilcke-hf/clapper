@@ -36,7 +36,7 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     nbMaxShots: NB_MAX_SHOTS,
     nbMaxTracks: DEFAULT_NB_TRACKS,
     nbIdentifiedTracks: 0,
-    contentWidth: 1024,
+    contentWidth: 4096,
     contentHeight: 800,
     cellWidth: PROMPT_STEP_HEIGHT_IN_PX,
     tracks: [],
@@ -79,7 +79,7 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
 export function getDefaultPreferencesState(): TimelineStorePreferencesState {
   return {
     isReady: false,
-    width: 1024,
+    width: 1800,
     height: 800,
     theme: pastel,
     timelineControls: undefined,
