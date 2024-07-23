@@ -18,6 +18,7 @@ import { useOpenFilePicker, useQueryStringParams } from '@/lib/hooks'
 import { IframeWarning } from '@/components/dialogs/iframe-warning'
 import { useIO, useUI } from '@/services'
 import { newClap } from '@aitube/clap'
+import { getDemoGame } from '@/experiments/samples/demo'
 
 export function TopMenuFile() {
   const { clapUrl } = useQueryStringParams({
@@ -98,6 +99,15 @@ export function TopMenuFile() {
           <MenubarSub>
             <MenubarSubTrigger>Import an example</MenubarSubTrigger>
             <MenubarSubContent>
+              {hasBetaAccess && (
+                <MenubarItem
+                  onClick={() => {
+                    setClap(getDemoGame())
+                  }}
+                >
+                  (secret demo)
+                </MenubarItem>
+              )}
               <MenubarItem
                 onClick={() => {
                   openClapUrl('/samples/claps/wasteland.clap')

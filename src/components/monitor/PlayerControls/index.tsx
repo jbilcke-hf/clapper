@@ -41,7 +41,7 @@ export function PlayerControls({ className }: { className?: string }) {
     >
       <Counter
         valueInMs={cursorTimestampAtInMs}
-        color={theme.monitorSecondaryTextColor || theme.defaultTextColor || ''}
+        color={theme.monitorPrimaryTextColor || theme.defaultPrimaryColor || ''}
       />
       <div
         className={cn(
@@ -78,7 +78,7 @@ export function PlayerControls({ className }: { className?: string }) {
       </div>
       <Counter
         valueInMs={totalDurationInMs}
-        color={theme.monitorPrimaryTextColor || theme.defaultPrimaryColor || ''}
+        color={theme.monitorSecondaryTextColor || theme.defaultTextColor || ''}
       />
     </div>
   )
