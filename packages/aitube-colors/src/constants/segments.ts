@@ -154,7 +154,14 @@ const event: ClapSegmentCategorySettings = {
   id: ClapSegmentCategory.EVENT,
   title: "Event",
   description: "Event",
-  color: "cyan",
+  color: "purple",
+}
+
+const effect: ClapSegmentCategorySettings = {
+  id: ClapSegmentCategory.EFFECT,
+  title: "Effect",
+  description: "Effect, transformation..",
+  color: "pink",
 }
 
 // (visible) an Interface (UI) element
@@ -170,38 +177,39 @@ const phenomenon: ClapSegmentCategorySettings = {
   id: ClapSegmentCategory.PHENOMENON,
   title: "Phenomenon",
   description: "Phenomenon",
-  color: "cyan",
+  color: "pink",
 }
 
-export const segmentCategories = {
-  splat,
-  mesh,
-  depth,
-  event, // (invisible) an event localized in time
-  interface: interface_, // (visible)
-  phenomenon, // (invisible) a prompt which defines new event(s) to fire based on event(s)
-  video,
-  storyboard,
-  character,
-  location,
-  time,
-  era,
-  lighting,
-  weather,
-  action,
-  music,
-  sound,
-  dialogue,
-  style,
-  camera,
-  transition,
-  generic,
+export const segmentCategories: Record<ClapSegmentCategory, ClapSegmentCategorySettings> = {
+  SPLAT: splat,
+  MESH: mesh,
+  DEPTH: depth,
+  EVENT: event, // (invisible) an event localized in time
+  EFFECT: effect,
+  INTERFACE: interface_, // (visible)
+  PHENOMENON: phenomenon, // (invisible) a prompt which defines new event(s) to fire based on event(s)
+  VIDEO: video,
+  STORYBOARD: storyboard,
+  CHARACTER: character,
+  LOCATION: location,
+  TIME: time,
+  ERA: era,
+  LIGHTING: lighting,
+  WEATHER: weather,
+  ACTION: action,
+  MUSIC: music,
+  SOUND: sound,
+  DIALOGUE: dialogue,
+  STYLE: style,
+  CAMERA: camera,
+  TRANSITION: transition,
+  GENERIC: generic,
 }
 
 export const categoryNames = Object.keys(segmentCategories)
 
 export function getSegment(category?: ClapSegmentCategory): ClapSegmentCategorySettings {
-  return segmentCategories[category || "generic"] || segmentCategories.generic
+  return segmentCategories[category || ClapSegmentCategory.GENERIC] || segmentCategories.GENERIC
 }
 
 export function getSegmentColor(input?: ClapSegmentCategorySettings | ClapSegmentCategory): SegmentColor {
