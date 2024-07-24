@@ -58,6 +58,7 @@ test('formatSegmentForExport', () => {
       startTimeInMs: 0,
       status: ClapSegmentStatus.TO_GENERATE,
       track: 0,
+      workflowId: '',
     },
     shortId: 'generic0',
   })
