@@ -1,11 +1,12 @@
 import YAML from "yaml"
 
-import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment, ClapFormat, ParseClapProgressUpdate } from "../types"
-import { getValidNumber } from "../utils/getValidNumber"
+import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment, ClapFormat, ParseClapProgressUpdate, ClapWorkflow } from "../types"
 import { dataUriToBlob } from "../converters/dataUriToBlob"
-import { UUID } from "@/utils/uuid"
 import { buildEntityIndex } from "@/helpers/buildEntityIndex"
-import { parseMediaOrientation } from "@/utils"
+import { sanitizeWorkflows } from "@/sanitizers/sanitizeWorkflows"
+import { sanitizeEntities } from "@/sanitizers/sanitizeEntities"
+import { sanitizeSegment } from "@/sanitizers/sanitizeSegment"
+import { sanitizeMeta } from "@/sanitizers/sanitizeMeta"
 
 type StringOrBlob = string | Blob
 
@@ -175,22 +176,7 @@ export async function parseClap(
 
   const maybeClapMeta = maybeArray[1] as ClapMeta
 
-  const clapMeta: ClapMeta = {
-    id: typeof maybeClapMeta.title === "string" ? maybeClapMeta.id : UUID(),
-    title: typeof maybeClapMeta.title === "string" ? maybeClapMeta.title : "",
-    description: typeof maybeClapMeta.description === "string" ? maybeClapMeta.description : "",
-    synopsis: typeof maybeClapMeta.synopsis === "string" ? maybeClapMeta.synopsis : "",
-    licence: typeof maybeClapMeta.licence === "string" ? maybeClapMeta.licence : "",
-    orientation: parseMediaOrientation(maybeClapMeta.orientation),
-    durationInMs: getValidNumber(maybeClapMeta.durationInMs, 1000, Number.MAX_SAFE_INTEGER, 4000),
-    width: getValidNumber(maybeClapMeta.width, 128, 8192, 1024),
-    height: getValidNumber(maybeClapMeta.height, 128, 8192, 576),
-    defaultVideoModel: typeof maybeClapMeta.defaultVideoModel === "string" ? maybeClapMeta.defaultVideoModel : "SVD",
-    extraPositivePrompt: Array.isArray(maybeClapMeta.extraPositivePrompt) ? maybeClapMeta.extraPositivePrompt : [],
-    screenplay: typeof maybeClapMeta.screenplay === "string" ? maybeClapMeta.screenplay : "",
-    isLoop: typeof maybeClapMeta.isLoop === "boolean" ? maybeClapMeta.isLoop : false,
-    isInteractive: typeof maybeClapMeta.isInteractive === "boolean" ? maybeClapMeta.isInteractive : false,
-  }
+  const clapMeta = sanitizeMeta(maybeClapMeta)
 
   /*
   in case we want to support streaming (mix of entities and segments etc), we could do it this way:
@@ -205,74 +191,42 @@ export async function parseClap(
   })
   */
 
-
+  const expectedNumberOfWorkflows = maybeClapHeader.numberOfWorkflows || 0
   const expectedNumberOfEntities = maybeClapHeader.numberOfEntities || 0
   const expectedNumberOfScenes = maybeClapHeader.numberOfScenes || 0
+
+  // unused for now, but this can of information can be used by lower-level languages eg. C
   const expectedNumberOfSegments = maybeClapHeader.numberOfSegments || 0
 
   // note: we assume the order is strictly enforced!
   // if you implement streaming (mix of entities and segments) you will have to rewrite this!
 
   const afterTheHeaders = 2
-  const afterTheEntities = afterTheHeaders + expectedNumberOfEntities
+
+  const afterTheWorkflows = afterTheHeaders + expectedNumberOfWorkflows
+
+  const afterTheEntities = afterTheWorkflows + expectedNumberOfEntities
 
   const afterTheScenes = afterTheEntities + expectedNumberOfScenes
 
+  // note: if there are no expected workflows, maybeWorkflows will be empty
+  const maybeWorkflows = maybeArray.slice(afterTheHeaders, afterTheWorkflows) as ClapWorkflow[]
+
   // note: if there are no expected entities, maybeEntities will be empty
-  const maybeEntities = maybeArray.slice(afterTheHeaders, afterTheEntities) as ClapEntity[]
+  const maybeEntities = maybeArray.slice(afterTheWorkflows, afterTheEntities) as ClapEntity[]
 
   // note: if there are no expected scenes, maybeScenes will be empty
   const maybeScenes = maybeArray.slice(afterTheEntities, afterTheScenes) as ClapScene[]
 
   const maybeSegments = maybeArray.slice(afterTheScenes) as ClapSegment[]
 
-  await onProgressUpdate({ value: 60, message: "Importing entities from .clap file.." })
+  await onProgressUpdate({ value: 60, message: "Importing workflows from .clap file.." })
+  const clapWorkflows = sanitizeWorkflows(maybeWorkflows)
 
-  const clapEntities: ClapEntity[] = maybeEntities.map(({
-    id,
-    category,
-    triggerName,
-    label,
-    description,
-    author,
-    thumbnailUrl,
-    seed,
-    imagePrompt,
-    imageSourceType,
-    imageEngine,
-    imageId,
-    audioPrompt,
-    audioSourceType,
-    audioEngine,
-    audioId,
-    age,
-    gender,
-    region,
-    appearance,
-  }) => ({
-    // TODO: we should verify each of those, probably
-    id,
-    category,
-    triggerName,
-    label,
-    description,
-    author,
-    thumbnailUrl,
-    seed,
-    imagePrompt,
-    imageSourceType,
-    imageEngine,
-    imageId,
-    audioPrompt,
-    audioSourceType,
-    audioEngine,
-    audioId,
-    age,
-    gender,
-    region,
-    appearance,
-  }))
-  await onProgressUpdate({ value: 70, message: "Importing scenes from .clap file.." })
+  await onProgressUpdate({ value: 70, message: "Importing entities from .clap file.." })
+  const clapEntities = sanitizeEntities(maybeEntities)
+
+  await onProgressUpdate({ value: 80, message: "Importing scenes from .clap file.." })
 
   const clapScenes: ClapScene[] = maybeScenes.map(({
     id,
@@ -297,74 +251,25 @@ export async function parseClap(
     endAtLine,
     events: events.map(e => e)
   }))
-  await onProgressUpdate({ value: 80, message: "Importing segments from .clap file.." })
+  await onProgressUpdate({ value: 90, message: "Importing segments from .clap file.." })
 
-  const clapSegments: ClapSegment[] = maybeSegments.map(({
-    id,
-    track,
-    startTimeInMs,
-    endTimeInMs,
-    category,
-    entityId,
-    sceneId,
-    startTimeInLines,
-    endTimeInLines,
-    prompt,
-    label,
-    outputType,
-    renderId,
-    status,
-    assetUrl,
-    assetDurationInMs,
-    assetSourceType,
-    assetFileFormat,
-    revision,
-    createdAt,
-    createdBy,
-    editedBy,
-    outputGain,
-    seed,
-  }) => {
-    if (endTimeInMs > clapMeta.durationInMs) {
-      clapMeta.durationInMs = endTimeInMs
+  const clapSegments: ClapSegment[] = maybeSegments.map(maybeSegment => {
+    const segment = sanitizeSegment(maybeSegment)
+    if (segment.endTimeInMs > clapMeta.durationInMs) {
+      clapMeta.durationInMs = segment.endTimeInMs
     }
-    return {
-      // TODO: we should verify each of those, probably
-      id,
-      track,
-      startTimeInMs,
-      endTimeInMs,
-      category,
-      entityId,
-      sceneId,
-      startTimeInLines,
-      endTimeInLines,
-      prompt,
-      label,
-      outputType,
-      renderId,
-      status,
-      assetUrl,
-      assetDurationInMs,
-      assetSourceType,
-      assetFileFormat,
-      revision,
-      createdAt,
-      createdBy,
-      editedBy,
-      outputGain,
-      seed,
-    }
+    return segment
   })
 
   if (debug) {
-    console.log(`parseClap: successfully parsed ${clapEntities.length} entities, ${clapScenes.length} scenes and ${clapSegments.length} segments`)
+    console.log(`parseClap: successfully parsed ${clapWorkflows.length} workflows, ${clapEntities.length} entities, ${clapScenes.length} scenes and ${clapSegments.length} segments`)
   }
 
   await onProgressUpdate({ value: 100, message: "Buiding entity index.." })
 
   return {
     meta: clapMeta,
+    workflows: clapWorkflows,
     entities: clapEntities,
     entityIndex: buildEntityIndex(clapEntities),
     scenes: clapScenes,

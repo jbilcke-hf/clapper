@@ -23,7 +23,17 @@ export {
   ClapTrack,
   ClapTracks,
   ClapVoice,
-  ClapCompletionMode
+  ClapCompletionMode,
+
+  ClapInputFieldNumber,
+  ClapInputFieldString,
+  ClapInputFieldBoolean,
+  ClapInputFieldAny,
+  ClapInputFields,
+  ClapInputValue,
+  ClapInputValues,
+  ClapWorkflowEngine,
+  ClapWorkflow
 } from './types'
 export {
   defaultMediaOrientation
@@ -31,7 +41,8 @@ export {
 export {
   newClap,
   newEntity,
-  newSegment
+  newSegment,
+  newWorkflow
 } from './factories'
 export {
   parseClap,
@@ -48,6 +59,7 @@ export {
   isValidNumber,
   parseMediaOrientation,
   parseOutputType,
+  parseWorkflowEngine,
   parseSegmentCategory,
   parseSegmentStatus,
   UUID
@@ -65,3 +77,12 @@ export {
   getEmptyClap,
   removeGeneratedAssetUrls,
 } from './helpers'
+export {
+  sanitizeEntities,
+  sanitizeEntity,
+  sanitizeMeta,
+  sanitizeSegment,
+  sanitizeSegments,
+  sanitizeWorkflow,
+  sanitizeWorkflows,
+} from './sanitizers'

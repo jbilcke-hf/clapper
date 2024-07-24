@@ -12,6 +12,7 @@ export function newEntity(maybeEntity?: Partial<ClapEntity>) {
     triggerName: typeof maybeEntity?.triggerName === "string" ? maybeEntity.triggerName : "",
     label: typeof maybeEntity?.label === "string" ? maybeEntity.label : "",
     description: typeof maybeEntity?.description === "string" ? maybeEntity.description : "",
+    tags: Array.isArray(maybeEntity?.tags) ? maybeEntity?.tags : [],
     author: typeof maybeEntity?.author === "string" ? maybeEntity.author : "",
     thumbnailUrl: typeof maybeEntity?.thumbnailUrl === "string" ? maybeEntity.thumbnailUrl : "",
     seed: isValidNumber(maybeEntity?.seed) ? (maybeEntity?.seed || 0) : generateSeed(),

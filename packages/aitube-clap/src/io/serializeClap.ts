@@ -2,62 +2,25 @@ import YAML from "yaml"
 
 import { getValidNumber } from "@/utils/getValidNumber"
 
-import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment, ClapFormat } from "@/types"
+import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment, ClapFormat, ClapWorkflow, ClapWorkflowEngine } from "@/types"
 import { UUID } from "@/utils/uuid"
 import { parseMediaOrientation } from "@/utils/parseMediaOrientation"
+import { isValidNumber, parseWorkflowEngine } from "@/utils"
+import { sanitizeWorkflows } from "@/sanitizers/sanitizeWorkflows"
+import { sanitizeEntities } from "@/sanitizers/sanitizeEntities"
+import { sanitizeSegments } from "@/sanitizers/sanitizeSegments"
+import { sanitizeMeta } from "@/sanitizers/sanitizeMeta"
 
 export async function serializeClap({
   meta, // ClapMeta
+  workflows, // ClapWorkflow[]
   entities, // ClapEntity[]
   scenes, // ClapScene[]
   segments, // ClapSegment[]
 }: ClapProject): Promise<Blob> {
   
-  // we play it safe, and we verify the structure of the parameters,
-  // to make sure we generate a valid clap file
-  const clapEntities: ClapEntity[] = entities.map(({
-    id,
-    category,
-    triggerName,
-    label,
-    description,
-    author,
-    thumbnailUrl,
-    seed,
-    imagePrompt,
-    imageSourceType,
-    imageEngine,
-    imageId,
-    audioPrompt,
-    audioSourceType,
-    audioEngine,
-    audioId,
-    age,
-    gender,
-    region,
-    appearance,
-  }) => ({
-    id,
-    category,
-    triggerName,
-    label,
-    description,
-    author,
-    thumbnailUrl,
-    seed,
-    imagePrompt,
-    imageSourceType,
-    imageEngine,
-    imageId,
-    audioPrompt,
-    audioSourceType,
-    audioEngine,
-    audioId,
-    age,
-    gender,
-    region,
-    appearance,
-  }))
+  const clapWorkflows = sanitizeWorkflows(workflows)
+  const clapEntities = sanitizeEntities(entities)
 
   const clapScenes: ClapScene[] = scenes.map(({
     id,
@@ -83,81 +46,17 @@ export async function serializeClap({
     events: events.map(e => e)
   }))
 
-  const clapSegments: ClapSegment[] = segments.map(({
-    id,
-    track,
-    startTimeInMs,
-    endTimeInMs,
-    category,
-    entityId,
-    sceneId,
-    startTimeInLines,
-    endTimeInLines,
-    prompt,
-    label,
-    outputType,
-    renderId,
-    status,
-    assetUrl,
-    assetDurationInMs,
-    assetSourceType,
-    assetFileFormat,
-    revision,
-    createdAt,
-    createdBy,
-    editedBy,
-    outputGain,
-    seed,
-  }) => ({
-    id,
-    track,
-    startTimeInMs,
-    endTimeInMs,
-    category,
-    entityId,
-    sceneId,
-    startTimeInLines,
-    endTimeInLines,
-    prompt,
-    label,
-    outputType,
-    renderId,
-    status,
-    assetUrl,
-    assetDurationInMs,
-    assetSourceType,
-    assetFileFormat,
-    revision,
-    createdAt,
-    createdBy,
-    editedBy,
-    outputGain,
-    seed,
-  }))
+  const clapSegments = sanitizeSegments(segments)
 
   const clapHeader: ClapHeader = {
     format: ClapFormat.CLAP_0,
-    numberOfEntities: clapEntities.length,
-    numberOfScenes: clapScenes.length,
-    numberOfSegments: clapSegments.length,
+    numberOfWorkflows: isValidNumber(clapWorkflows?.length) ? clapWorkflows.length : 0,
+    numberOfEntities: isValidNumber(clapEntities.length) ? clapEntities.length : 0,
+    numberOfScenes: isValidNumber(clapScenes.length) ? clapScenes.length : 0,
+    numberOfSegments: isValidNumber(clapSegments.length) ? clapSegments.length : 0,
   }
 
-  const clapMeta: ClapMeta = {
-    id: meta.id || UUID(),
-    title: typeof meta.title === "string" ? meta.title : "Untitled",
-    description: typeof meta.description === "string" ? meta.description : "",
-    synopsis: typeof meta.synopsis === "string" ? meta.synopsis : "",
-    licence: typeof meta.licence === "string" ? meta.licence : "",
-    orientation: parseMediaOrientation(meta.orientation),
-    durationInMs: getValidNumber(meta.durationInMs, 1000, Number.MAX_SAFE_INTEGER, 4000),
-    width: getValidNumber(meta.width, 256, 8192, 1024),
-    height: getValidNumber(meta.height, 256, 8192, 576),
-    defaultVideoModel:  typeof meta.defaultVideoModel === "string" ? meta.defaultVideoModel : "SVD",
-    extraPositivePrompt: Array.isArray(meta.extraPositivePrompt) ? meta.extraPositivePrompt : [],
-    screenplay: typeof meta.screenplay === "string" ? meta.screenplay : "",
-    isLoop: typeof meta.screenplay === "boolean" ? meta.screenplay : false,
-    isInteractive: typeof meta.isInteractive === "boolean" ? meta.isInteractive : false,
-  }
+  const clapMeta = sanitizeMeta(meta)
 
   const entries = [
     clapHeader,

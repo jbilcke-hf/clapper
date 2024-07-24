@@ -27,6 +27,9 @@ export function parseSegmentCategory(input: any, defaultCategory?: ClapSegmentCa
   else if (unknownString === "depth" || unknownString === "depthmap" || unknownString === "depth map") {
     category = ClapSegmentCategory.DEPTH
   }
+  else if (unknownString === "effect") {
+    category = ClapSegmentCategory.EFFECT
+  }
   else if (unknownString === "event" || unknownString === "events") {
     category = ClapSegmentCategory.EVENT
   }
