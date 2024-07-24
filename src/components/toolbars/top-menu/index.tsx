@@ -1,7 +1,8 @@
 import { cn } from '@aitube/timeline'
+import { TbBrandDiscord } from 'react-icons/tb'
+import { FaGithubAlt } from 'react-icons/fa'
 
 import { Menubar } from '@/components/ui/menubar'
-import { APP_REVISION } from '@/lib/core/constants'
 import { useUI, useResolver } from '@/services'
 
 import { TopMenuFile } from './file'
@@ -15,6 +16,11 @@ import { TopMenuAssistant } from './assistant'
 import { TopMenuView } from './view'
 import { TopMenuLogo } from './TopMenuLogo'
 import { TopMenuPlugins } from './plugins'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 export function TopMenu() {
   const isBusyResolving = useResolver((s) => s.isBusyResolving)
@@ -43,12 +49,37 @@ export function TopMenu() {
       <TopMenuView />
       <div
         className={cn(
-          `pointer-events-none flex flex-grow flex-row items-center justify-end px-2 text-xs text-stone-300`
+          `flex flex-grow flex-row items-center justify-end space-x-3 px-2 text-xs`
         )}
       >
         {
           // clap?.meta?.title || "Untitled"
         }
+        <Tooltip>
+          <TooltipTrigger className="">
+            <div className="scale-100 cursor-pointer text-stone-300/70 transition-all duration-200 ease-in-out hover:scale-110 hover:text-stone-100/90">
+              <a href="https://discord.gg/AEruz9B92B" target='"_blank'>
+                <TbBrandDiscord className="h-4 w-4" />
+              </a>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className="mr-4 mt-2 text-xs font-light">
+            Community
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger className="">
+            <div className="scale-100 cursor-pointer text-stone-300/70 transition-all duration-200 ease-in-out hover:scale-110 hover:text-stone-100/90">
+              <a href="https://discord.gg/AEruz9B92B" target='"_blank'>
+                <FaGithubAlt className="h-4 w-4" />
+              </a>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className="mr-4 mt-2 text-xs font-light">
+            Code
+          </TooltipContent>
+        </Tooltip>
       </div>
     </Menubar>
   )

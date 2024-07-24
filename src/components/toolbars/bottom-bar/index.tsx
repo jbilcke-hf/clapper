@@ -31,7 +31,7 @@ export function BottomToolbar() {
           <span className="text-stone-300/70">{APP_REVISION}</span>
         </div>
 
-        <Metrics />
+        {/* <Metrics /> */}
       </div>
       <div className="flex flex-row space-x-6">
         <Tasks />

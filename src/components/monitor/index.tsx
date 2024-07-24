@@ -24,7 +24,7 @@ export function Monitor() {
     >
       <UniversalPlayer />
       <PlayerControls />
-      <div className="absolute right-0 top-8 z-20">
+      <div className="absolute right-0 top-0 z-20">
         <div
           onClick={() => setFullscreen()}
           className={cn(

@@ -1,4 +1,5 @@
 import { expect, test } from 'vitest'
+import { ClapOutputType } from '@aitube/clap'
 
 import { getTypeAndExtension } from './getTypeAndExtension'
 
@@ -13,18 +14,18 @@ test('getTypeAndExtension', () => {
     assetFileFormat: 'image/gif',
     category: 'image',
     extension: 'gif',
-    outputType: 'image',
+    outputType: ClapOutputType.IMAGE,
   })
   expect(getTypeAndExtension(pngUri)).toStrictEqual({
     assetFileFormat: 'image/png',
     category: 'image',
     extension: 'png',
-    outputType: 'image',
+    outputType: ClapOutputType.IMAGE,
   })
   expect(getTypeAndExtension(mp4Uri)).toStrictEqual({
     assetFileFormat: 'video/mp4',
     category: 'video',
     extension: 'mp4',
-    outputType: 'video',
+    outputType: ClapOutputType.VIDEO,
   })
 })
