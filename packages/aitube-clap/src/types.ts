@@ -314,16 +314,98 @@ export type ClapSegment = {
   startTimeInMs: number
   endTimeInMs: number
   category: ClapSegmentCategory
+
+  /**
+   * ID of the entity attached to the segment
+   * 
+   * This allows segments of different nature (image, voice) to be attached to the same or different entities.
+   * 
+   * Eg. video of character A but voice of character B
+   * 
+   * If you want multiple entities, you can add multiple segments.
+   */
   entityId: string
+
+  /**
+   * ID of the workflow to use for the segment
+   * 
+   * This is optional (empty string by default)
+   * 
+   * If unspecified, a default workflow will be used
+   */
+  workflowId: string
+
+  /**
+   * Id of the scene to which the segment is attached
+   *
+   * This is optional (empty string by default)
+   */
   sceneId: string
+
+  /**
+   * Statring line number to which the segment is attached
+   *
+   * This is optional (empty string by default)
+   */
   startTimeInLines: number
+
+  /**
+   * Ending line number to which the segment is attached
+   *
+   * This is optional (empty string by default)
+   */
   endTimeInLines: number
+
+  /**
+   * 
+   */
   prompt: string
+
+  /**
+   * Human-readable label to showfor this segment.
+   * 
+   * Should be kept short.
+   */
   label: string
+
   outputType: ClapOutputType
+
+  /**
+   * Id of an external rendering job to which this segment could be attached.
+   * 
+   * This is optional (empty string by default)
+   * 
+   * It is possible that this field gets removed in the future,
+   * and instead moved to TimelineSegment
+   */
   renderId: string
+
+  /**
+   * Status of the segment (is it generated, to generate etc)
+   */
   status: ClapSegmentStatus
+
+  /**
+   * The value of the segment, ie. the data
+   * 
+   * It can come from the output of a workflow.
+   * 
+   * This can be either a link to a remotely hosted resource,
+   * a file path or a data URI (base64)
+   * 
+   * I recommend the data URI for small projects,
+   * as the other modes create additional complexity
+   * (manage a cloud, access rights, deletes, downloads etc)
+   */
   assetUrl: string
+
+  /**
+   * The duration of the asset itself.
+   * 
+   * This might be different from the segment itself,
+   * for instance if the asset has a zero length (a storyboard),
+   * or if the asset is longer (eg. a cropped audio file)
+   */
   assetDurationInMs: number
   assetSourceType: ClapAssetSource
   assetFileFormat: string 
@@ -338,7 +420,17 @@ export type ClapSegment = {
 
   editedBy: ClapAuthor
 
+  /**
+   * The volume of the segment
+   */
   outputGain: number
+
+  /**
+   * The seed used to generate the asset data/value.
+   * 
+   * This is mostly used fo tracking changes,
+   * and reproduce result
+   */
   seed: number
 }
 
