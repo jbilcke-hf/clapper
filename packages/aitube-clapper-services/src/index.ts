@@ -50,6 +50,7 @@ export {
   SegmentEditorService,
   EntityEditorService,
   ScriptEditorService,
+  WorkflowEditorService,
   EditorsService,
   MonitorService,
   RendererService,
@@ -90,6 +91,12 @@ export {
   SegmentEditorControls,
   SegmentEditorStore
 } from "./segment-editor"
+
+export {
+  WorkflowEditorState,
+  WorkflowEditorControls,
+  WorkflowEditorStore
+} from "./workflow-editor"
 
 export {
   EditorView,
