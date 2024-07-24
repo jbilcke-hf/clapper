@@ -3,7 +3,8 @@ export enum EditorView {
   SCRIPT = "SCRIPT",
   ENTITY = "ENTITY",
   SEGMENT = "SEGMENT",
-  HISTORY = "HISTORY"
+  HISTORY = "HISTORY",
+  WORKFLOW = "WORKFLOW",
 }
 
 export type EditorsState = {

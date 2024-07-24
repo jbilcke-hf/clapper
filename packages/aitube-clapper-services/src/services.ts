@@ -8,6 +8,7 @@ import { SegmentEditorStore } from "./segment-editor"
 import { EntityEditorStore } from "./entity-editor"
 import { ProjectEditorStore } from "./project-editor"
 import { ScriptEditorStore } from "./script-editor"
+import { WorkflowEditorStore } from "./workflow-editor"
 import { EditorsStore } from "./editors"
 import { MonitorStore } from "./monitor"
 import { RendererStore } from "./renderer"
@@ -28,6 +29,7 @@ export type SegmentEditorService = UseBoundStore<StoreApi<SegmentEditorStore>>
 export type EntityEditorService = UseBoundStore<StoreApi<EntityEditorStore>>
 export type ProjectEditorService = UseBoundStore<StoreApi<ProjectEditorStore>>
 export type ScriptEditorService = UseBoundStore<StoreApi<ScriptEditorStore>>
+export type WorkflowEditorService = UseBoundStore<StoreApi<WorkflowEditorStore>>
 export type EditorsService = UseBoundStore<StoreApi<EditorsStore>>
 export type MonitorService = UseBoundStore<StoreApi<MonitorStore>>
 export type RendererService = UseBoundStore<StoreApi<RendererStore>>
@@ -56,6 +58,7 @@ export type PublicServices = {
   entityEditor: EntityEditorService
   projectEditor: ProjectEditorService
   scriptEditor: ScriptEditorService
+  workflowEditor: WorkflowEditorService
   editors: EditorsService
   monitor: MonitorService
   timeline: TimelineService
