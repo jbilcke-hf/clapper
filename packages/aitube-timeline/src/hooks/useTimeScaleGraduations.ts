@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import * as THREE from "three"
 
+import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
+
 import { useTimeline } from "./useTimeline"
 
 // note: those big for-loop just to render graduations are not efficient
@@ -15,22 +17,30 @@ export const useTimeScaleGraduations = ({
 }) => {
   const cellWidth = useTimeline(s => s.cellWidth)
   const nbMaxShots = useTimeline(s => s.nbMaxShots)
+  const contentWidth = useTimeline((s) => s.contentWidth)
 
   const [timeScaleGraduations, setTimeScaleGraduations] = useState([] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[]);
 
   const bigTickHeight = 12
   const smallTickHeight = 8
 
+  const maxWidth = contentWidth
+
   useEffect(() => {
 
     const lines = [] as THREE.BufferGeometry<THREE.NormalBufferAttributes>[];
 
+    let x = 0
     if (cellWidth > 32) {
       for (let i = 0; i < nbMaxShots * 2; i++) {
+        x = i * (cellWidth / 2)
+        if (x > maxWidth) {
+          break
+        }
         const verticalLinePoints = [
-          new THREE.Vector3(i * (cellWidth / 2), 2, 1),
+          new THREE.Vector3(x, 2, 1),
           new THREE.Vector3(
-            i * (cellWidth / 2),
+            x,
             i % unit === 0 ? bigTickHeight : smallTickHeight,
             1
           )
@@ -40,10 +50,14 @@ export const useTimeScaleGraduations = ({
       }
     } else if (cellWidth > 16) {
       for (let i = 0; i < nbMaxShots; i++) {
+        x = i * (cellWidth)
+        if (x > maxWidth) {
+          break
+        }
         const verticalLinePoints = [
-          new THREE.Vector3(i * cellWidth, 2, 1),
+          new THREE.Vector3(x, 2, 1),
           new THREE.Vector3(
-            i * (cellWidth),
+            x,
             i % unit === 0 ? bigTickHeight : smallTickHeight,
             1
           )
@@ -54,10 +68,14 @@ export const useTimeScaleGraduations = ({
     } else if (cellWidth > 8) {
       for (let i = 0; i < nbMaxShots; i++) {
         if (i % 10 !== 0) { continue }
+        x = i * (cellWidth)
+        if (x > maxWidth) {
+          break
+        }
         const verticalLinePoints = [
-          new THREE.Vector3(i * cellWidth, 2, 1),
+          new THREE.Vector3(x, 2, 1),
           new THREE.Vector3(
-            i * cellWidth,
+            x,
             smallTickHeight,
             1
           )
@@ -69,10 +87,14 @@ export const useTimeScaleGraduations = ({
     } else {
       for (let i = 0; i < nbMaxShots; i++) {
         if (i % 10 !== 0) { continue }
+        x = i * (cellWidth)
+        if (x > maxWidth) {
+          break
+        }
         const verticalLinePoints = [
-          new THREE.Vector3(i * cellWidth, 2, 1),
+          new THREE.Vector3(x, 2, 1),
           new THREE.Vector3(
-            i * cellWidth,
+            x,
             smallTickHeight,
             1
           )
@@ -84,7 +106,7 @@ export const useTimeScaleGraduations = ({
     }
 
     setTimeScaleGraduations(lines);
-  }, [cellWidth, nbMaxShots]);
+  }, [cellWidth, nbMaxShots, leftBarTrackScaleWidth, contentWidth]);
 
   return timeScaleGraduations;
 };

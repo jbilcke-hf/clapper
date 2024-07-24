@@ -39,7 +39,7 @@ const MemoizedTextCell = React.memo(function TextCell({
 
   // const label = clampWebGLTextNaive(s.label, durationInSteps * cellWidth)
 
-  const padding = 1.2
+  const padding = 1.5
   const fontSize = 13
   const lineHeight = 1.2
 
@@ -56,7 +56,7 @@ const MemoizedTextCell = React.memo(function TextCell({
         cellHeight - padding, // tiny padding
         1
       ]} // Width, height, depth. Default is [1, 1, 1]
-      radius={6} // Radius of the rounded corners. Default is 0.05
+      radius={8} // Radius of the rounded corners. Default is 0.05
       smoothness={2} // The number of curve segments. Default is 4
       bevelSegments={1} // The number of bevel segments. Default is 4, setting it to 0 removes the bevel, as a result the texture is applied to the whole geometry.
       creaseAngle={0.4} // Smooth normals everywhere except faces that meet at an angle greater than the crease angle
