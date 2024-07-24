@@ -278,8 +278,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     let baseHue = 0
 
-    let baseSaturation = theme.cell.categoryColors.generic.saturation
-    let baseLightness = theme.cell.categoryColors.generic.lightness
+    let baseSaturation = theme.cell.categoryColors.GENERIC.saturation
+    let baseLightness = theme.cell.categoryColors.GENERIC.lightness
     
     let backgroundColorSaturation = (segment.isSelected ? 2.2 : 1.4) * baseSaturation
     let backgroundColorHoverSaturation = (segment.isSelected ? 2.2 : 1.8) * baseSaturation

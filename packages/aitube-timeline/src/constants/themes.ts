@@ -11,6 +11,7 @@ export const baseClapSegmentCategoryColors: ClapSegmentCategoryColors = {
   [ClapSegmentCategory.MESH]: { hue: 32, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.DEPTH]: { hue: 242, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.EVENT]: { hue: 270, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.EFFECT]: { hue: 270, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.INTERFACE]: { hue: 216, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.PHENOMENON]: { hue: 270, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.VIDEO]: { hue: 70, saturation: 30, lightness: 78.6 },
