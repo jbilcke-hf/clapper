@@ -1,4 +1,4 @@
-import { ClapProject, ClapSegment, ClapSegmentCategory } from "@aitube/clap"
+import { ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentStatus } from "@aitube/clap"
 
 import { TimelineSegment } from "@/types"
 import { clapSegmentToTimelineSegment } from "./clapSegmentToTimelineSegment"
@@ -6,7 +6,7 @@ import { clapSegmentToTimelineSegment } from "./clapSegmentToTimelineSegment"
 export async function getFinalVideo(clap: ClapProject): Promise<TimelineSegment | undefined> {
   const alreadyAnEmbeddedFinalVideo: ClapSegment | undefined = clap.segments.filter(s =>
     s.category === ClapSegmentCategory.VIDEO &&
-    s.status === "completed" &&
+    s.status === ClapSegmentStatus.COMPLETED &&
     s.startTimeInMs === 0 &&
     s.endTimeInMs === clap.meta.durationInMs &&
     s.assetUrl).at(0)
