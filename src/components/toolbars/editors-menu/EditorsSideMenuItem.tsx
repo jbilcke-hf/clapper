@@ -61,17 +61,17 @@ export function EditorsSideMenuItem({
             `transition-all duration-200 ease-out`,
             `items-center justify-center`,
             unmanaged || isActive ? '' : `cursor-pointer`,
-            `border-l-[3px]`,
+            `border-l-[2px]`,
             isActive
               ? 'fill-gray-50 text-gray-50 hover:fill-gray-50 hover:text-gray-50'
-              : 'hover:tefillxt-gray-200 fill-gray-400 text-gray-400 hover:text-gray-200',
+              : 'fill-gray-400 text-gray-400 hover:fill-gray-200 hover:text-gray-200',
             `group`
           )}
           style={{
             // background: theme.editorMenuBgColor || theme.defaultBgColor || "#eeeeee",
             borderColor: isActive
               ? theme.defaultPrimaryColor || '#ffffff'
-              : '#111827',
+              : 'rgba(0,0,0,0)',
           }}
           onClick={handleClick}
         >

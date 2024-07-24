@@ -1,7 +1,7 @@
 'use client'
 
 import { create } from 'zustand'
-import { ClapEntity, UUID } from '@aitube/clap'
+import { ClapEntity, ClapSegmentCategory, UUID } from '@aitube/clap'
 import {
   CivitaiCollection,
   LibraryNodeItem,
@@ -191,10 +191,10 @@ export const useEntityLibrary = create<{
         icon: icons.misc,
         className: itemClassName,
       }
-      if (entity.category === 'character') {
+      if (entity.category === ClapSegmentCategory.CHARACTER) {
         node.icon = icons.character
         characters.children!.push(node)
-      } else if (entity.category === 'location') {
+      } else if (entity.category === ClapSegmentCategory.LOCATION) {
         node.icon = icons.location
         locations.children!.push(node)
       } else {

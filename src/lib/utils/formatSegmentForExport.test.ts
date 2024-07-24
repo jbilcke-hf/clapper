@@ -1,7 +1,12 @@
 import { expect, test } from 'vitest'
+import {
+  ClapOutputType,
+  ClapSegmentCategory,
+  ClapSegmentStatus,
+  newSegment,
+} from '@aitube/clap'
 
 import { formatSegmentForExport } from './formatSegmentForExport'
-import { newSegment } from '@aitube/clap'
 
 test('formatSegmentForExport', () => {
   expect(
@@ -33,7 +38,7 @@ test('formatSegmentForExport', () => {
       assetFileFormat: '',
       assetSourceType: 'EMPTY',
       assetUrl: '',
-      category: 'generic',
+      category: ClapSegmentCategory.GENERIC,
       createdAt: '2024-07-13T19:30:13.387Z',
       createdBy: 'ai',
       editedBy: 'ai',
@@ -43,7 +48,7 @@ test('formatSegmentForExport', () => {
       id: '301a3e6f-cb59-4a85-afd6-4737eeeee356',
       label: '',
       outputGain: 0,
-      outputType: 'text',
+      outputType: ClapOutputType.TEXT,
       prompt: '',
       renderId: '',
       revision: 0,
@@ -51,7 +56,7 @@ test('formatSegmentForExport', () => {
       seed: 7549327,
       startTimeInLines: 0,
       startTimeInMs: 0,
-      status: 'to_generate',
+      status: ClapSegmentStatus.TO_GENERATE,
       track: 0,
     },
     shortId: 'generic0',

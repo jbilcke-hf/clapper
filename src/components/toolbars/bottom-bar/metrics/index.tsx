@@ -4,14 +4,8 @@ import { cn } from '@/lib/utils'
 export function Metrics() {
   const { isAvailable, isMeasuring, bytes, humanReadableString } =
     usePerformanceMeter({
-      delayBetweenMeasures: 20,
+      delayBetweenMeasures: 40,
     })
-  console.log('debug:', {
-    isAvailable,
-    isMeasuring,
-    bytes,
-    humanReadableString,
-  })
 
   if (!isAvailable) {
     return null

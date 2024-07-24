@@ -1,7 +1,7 @@
 'use client'
 
 import { create } from 'zustand'
-import { ClapEntity, UUID } from '@aitube/clap'
+import { ClapEntity, ClapSegmentCategory, UUID } from '@aitube/clap'
 
 import { icons } from '@/components/icons'
 
@@ -85,11 +85,11 @@ export const useProjectLibrary = create<{
         icon: icons.misc,
         className: collectionClassName,
       }
-      if (entity.category === 'character') {
+      if (entity.category === ClapSegmentCategory.CHARACTER) {
         node.icon = icons.character
         node.nodeType = 'LIB_NODE_PROJECT_ENTITY_CHARACTER'
         characters.children!.push(node)
-      } else if (entity.category === 'location') {
+      } else if (entity.category === ClapSegmentCategory.LOCATION) {
         node.icon = icons.location
         node.nodeType = 'LIB_NODE_PROJECT_ENTITY_LOCATION'
         locations.children!.push(node)
