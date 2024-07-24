@@ -61,6 +61,7 @@ export async function serializeClap({
   const entries = [
     clapHeader,
     clapMeta,
+    ...clapWorkflows,
     ...clapEntities,
     ...clapScenes,
     ...clapSegments
