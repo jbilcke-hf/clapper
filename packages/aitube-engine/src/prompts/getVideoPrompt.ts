@@ -50,8 +50,8 @@ export function getVideoPrompt(
 
   // this step is *SUPER* important, it determines the order of the prompt!
   tmp.sort((segment1, segment2) => {
-    const priority1 = segmentCategoryPromptPriority[segment1.category || segmentCategoryPromptPriority.generic] || 0
-    const priority2 = segmentCategoryPromptPriority[segment2.category || segmentCategoryPromptPriority.generic] || 0
+    const priority1 = segmentCategoryPromptPriority[segment1.category || segmentCategoryPromptPriority.GENERIC] || 0
+    const priority2 = segmentCategoryPromptPriority[segment2.category || segmentCategoryPromptPriority.GENERIC] || 0
     
     return priority2 - priority1
   })

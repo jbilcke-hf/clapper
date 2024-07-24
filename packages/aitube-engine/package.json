@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.26",
+  "version": "0.1.1",
   "description": "The engine powering AiTube.at",
   "scripts": {
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap && bun run build:declaration",
@@ -14,18 +14,19 @@
   },
   "devDependencies": {
     "bun-types": "latest",
-    "prettier": "^3.3.2",
-    "rimraf": "^5.0.7",
-    "typescript": "^5.5.2"
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.0.30"
+    "@aitube/clap": "0.1.1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/jbilcke-hf/aitube-engine.git"
   },
   "keywords": [
+    "Clapper.app",
     "OpenClap",
     "AI cinema",
     "AiTube"

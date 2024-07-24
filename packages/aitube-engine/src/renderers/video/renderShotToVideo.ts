@@ -191,7 +191,7 @@ export async function renderShotToVideo({
   //----------
   if (
     shotStoryboardSegment && 
-    (!shotStoryboardSegment.assetUrl || shotStoryboardSegment.status === "to_generate")
+    (!shotStoryboardSegment.assetUrl || shotStoryboardSegment.status === ClapSegmentStatus.TO_GENERATE)
   ) {
     if (debug) { console.log(`[@aitube-engine/renderShotToVideo] generating a missing storyboard asset`) }
 
