@@ -29,6 +29,7 @@ export function newSegment(maybeSegment?: Partial<ClapSegment>) {
     endTimeInMs,
     category: parseSegmentCategory(maybeSegment?.category),
     entityId: typeof maybeSegment?.entityId === "string" ? maybeSegment.entityId : "",
+    workflowId: typeof maybeSegment?.workflowId === "string" ? maybeSegment.workflowId : "",
     sceneId: typeof maybeSegment?.sceneId === "string" ? maybeSegment.sceneId : "",
     startTimeInLines: isValidNumber(maybeSegment?.startTimeInLines) ? (maybeSegment?.startTimeInLines || 0) : 0,
     endTimeInLines: isValidNumber(maybeSegment?.endTimeInLines) ? (maybeSegment?.endTimeInLines || 0) : 0,
