@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.22",
+  "version": "0.1.1",
   "description": "Convert a script to a clap file",
   "scripts": {
     "test": "bun test --preload ./src/tests/setup.js",
@@ -16,13 +16,13 @@
   "devDependencies": {
     "@aitube/io": "0.0.1",
     "bun-types": "latest",
-    "prettier": "^3.3.2",
-    "rimraf": "^5.0.7",
-    "typescript": "^5.5.2"
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.0.30",
-    "@aitube/colors": "0.0.9"
+    "@aitube/clap": "0.1.1",
+    "@aitube/colors": "0.1.1"
   },
   "repository": {
     "type": "git",

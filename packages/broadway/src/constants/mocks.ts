@@ -3,7 +3,7 @@ import { ClapSegmentCategory } from "@aitube/clap"
 // those are very random categories, so we don't use this as an example
 // as this will looks unrealistic to potential customers
 export const mockCategoryPrompts_misc: Record<ClapSegmentCategory, string[]> = {
-  action: [
+  ACTION: [
     "eating a dinner",
     "looking at cellphones",
     "enjoying the view",
@@ -12,22 +12,22 @@ export const mockCategoryPrompts_misc: Record<ClapSegmentCategory, string[]> = {
     "tense",
     "mysterious",
   ],
-  character: [
+  CHARACTER: [
     "James",
     "Anna",
     "Alice",
     "Bob"
   ],
-  location: [
+  LOCATION: [
     "train station in NYC",
     "inside a building",
     "below the Eiffel Tower",
     "in a fancy restaurant"
   ],
-  transition: [
+  TRANSITION: [
     "CUT TO"
   ],
-  camera: [
+  CAMERA: [
     "long wide establishing shot",
     "full shot",
     "medium-long shot",
@@ -40,25 +40,25 @@ export const mockCategoryPrompts_misc: Record<ClapSegmentCategory, string[]> = {
     "Italian shot",
     "trolley shot"
   ],
-  lighting: [
+  LIGHTING: [
     "strong light",
     "soft light",
     "candlelit",
   ],
-  time: [
+  TIME: [
     "in the morning, golden hour",
     "at noon",
     "during the day, sunlit",
     "in the evening, golden hour",
     "at night, moonlit"
   ],
-  era: [
+  ERA: [
     "in the 60s",
     "in the 70s",
     "in the 80s",
     "modern era"
   ],
-  weather: [
+  WEATHER: [
     "cloudy, soft mist",
     "cloudy, in the fog",
     "sunny",
@@ -69,7 +69,7 @@ export const mockCategoryPrompts_misc: Record<ClapSegmentCategory, string[]> = {
     "clouds with strong wind",
     // "storm"
   ],
-  sound: [
+  SOUND: [
     "street noise",
     "wind sound",
     "cafe noise",
@@ -82,7 +82,7 @@ export const mockCategoryPrompts_misc: Record<ClapSegmentCategory, string[]> = {
     "steps sounds",
     "bag opening"
   ],
-  music: [
+  MUSIC: [
     "soft electronic ambient",
     "energic electronic beat",
     "instrumental orchestra",
@@ -93,14 +93,14 @@ export const mockCategoryPrompts_misc: Record<ClapSegmentCategory, string[]> = {
     "lofi instrumental hiphop"
   ],
   
-  dialogue: [
+  DIALOGUE: [
     "saying hello",
     "asking for directions",
     "disagreeing",
     "threatening"
   ],
 
-  style: [
+  STYLE: [
     "Mickael Bay",
     "Wes Anderson",
     "Studio Ghibli",
@@ -119,23 +119,24 @@ export const mockCategoryPrompts_misc: Record<ClapSegmentCategory, string[]> = {
   ],
   */
 
-  splat: [],
-  mesh: [],
-  depth: [],
-  event: [],
-  interface: [],
-  phenomenon: [],
-  video: [],
-  storyboard: [],
+  SPLAT: [],
+  MESH: [],
+  DEPTH: [],
+  EVENT: [],
+  EFFECT: [],
+  INTERFACE: [],
+  PHENOMENON: [],
+  VIDEO: [],
+  STORYBOARD: [],
 
-  generic: [
+  GENERIC: [
     "Custom"
   ]
 }
 
 
 export const mockCategoryPrompts: Record<ClapSegmentCategory, string[]> = {
-  action: [
+  ACTION: [
     "peaceful",
     "tense",
     "mysterious",
@@ -146,7 +147,7 @@ export const mockCategoryPrompts: Record<ClapSegmentCategory, string[]> = {
     "tense",
     "mysterious",
   ],
-  character: [
+  CHARACTER: [
     "Henry",
     "Margaret",
     "Eleanor",
@@ -158,13 +159,13 @@ export const mockCategoryPrompts: Record<ClapSegmentCategory, string[]> = {
     "Gideon",
     "Isaac"
   ],
-  location: [
+  LOCATION: [
     "on the beach in the caribbean",
     "on the deck of a pirate ship",
     "in the captain's quarters of a pirate ship",
     "in a tropical forest",
   ],
-  camera: [
+  CAMERA: [
     "long wide establishing shot",
     "full shot",
     "medium-long shot",
@@ -177,23 +178,23 @@ export const mockCategoryPrompts: Record<ClapSegmentCategory, string[]> = {
     "Italian shot",
     "trolley shot"
   ],
-  lighting: [
+  LIGHTING: [
     "strong light",
     "soft light",
     "candlelit",
   ],
-  time: [
+  TIME: [
     "in the morning, golden hour",
     "at noon",
     "during the day, sunlit",
     "in the evening, golden hour",
     "at night, moonlit"
   ],
-  era: [
+  ERA: [
     // "in 1700",
     // "during piracy times"
   ],
-  weather: [
+  WEATHER: [
     "cloudy, soft mist",
     "cloudy, in the fog",
     "sunny",
@@ -204,13 +205,13 @@ export const mockCategoryPrompts: Record<ClapSegmentCategory, string[]> = {
     "clouds with strong wind",
     // "storm"
   ],
-  sound: [
+  SOUND: [
     "animal noise",
     "wind sound",
     "tropical sounds",
     "sea noises",
   ],
-  music: [
+  MUSIC: [
     "cinematic music",
     "adventurous instrumental orchestra",
     "epic orchestral with strings",
@@ -220,17 +221,17 @@ export const mockCategoryPrompts: Record<ClapSegmentCategory, string[]> = {
     // "epic orchestral with strings, 1800",
     // "suspensful instrumental orchestra, 1700",
   ],
-  transition: [
+  TRANSITION: [
     "cut to"
   ],
-  dialogue: [
+  DIALOGUE: [
     "saying hello",
     "asking for directions",
     "disagreeing",
     "threatening"
   ],
 
-  style: [
+  STYLE: [
     "movie screencap, film grain"
   ],
 
@@ -241,16 +242,17 @@ export const mockCategoryPrompts: Record<ClapSegmentCategory, string[]> = {
     ""
   ],
   */
-  splat: [],
-  mesh: [],
-  depth: [],
-  event: [],
-  interface: [],
-  phenomenon: [],
-  video: [],
-  storyboard: [],
+  SPLAT: [],
+  MESH: [],
+  DEPTH: [],
+  EVENT: [],
+  EFFECT: [],
+  INTERFACE: [],
+  PHENOMENON: [],
+  VIDEO: [],
+  STORYBOARD: [],
 
-  generic: [
+  GENERIC: [
     "Lorem ipsum"
   ]
 }

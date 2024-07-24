@@ -8,19 +8,19 @@ export const data: NamedEntity[] = [
       ]
     },
     prompts: {
-      character: [],
-      location: [],
-      transition: [],
-      time: [],
-      era: [],
-      lighting: [],
-      weather: [],
-      action: [],
-      music: [],
-      sound: [],
-      dialogue: [],
-      style: [],
-      camera: [],
+      CHARACTER: [],
+      LOCATION: [],
+      TRANSITION: [],
+      TIME: [],
+      ERA: [],
+      LIGHTING: [],
+      WEATHER: [],
+      ACTION: [],
+      MUSIC: [],
+      SOUND: [],
+      DIALOGUE: [],
+      STYLE: [],
+      CAMERA: [],
     }
   }
 ]

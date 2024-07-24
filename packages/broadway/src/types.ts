@@ -8,7 +8,7 @@ export type NamedEntity = {
   }
   prompts: Omit<
     Record<ClapSegmentCategory, string[]>,
-    "splat" | "interface" | "event" | "phenomenon" | "mesh" | "depth" | "video" | "storyboard" | "generic"
+    "SPLAT" | "INTERFACE" | "EVENT" | "EFFECT" | "PHENOMENON" | "MESH" | "DEPTH" | "VIDEO" | "STORYBOARD" | "GENERIC"
   >
 }
 
@@ -91,34 +91,6 @@ export type Screenplay = {
   fullText: string
   sequences: ScreenplaySequence[]
 }
-
-export type RenderedSceneStatus =
-| "pending" // for retro-compatibility only, but this is deprecated
-| "to_generate"
-| "to_interpolate"
-| "to_upscale"
-| "completed"
-| "error"
-
-export interface ImageSegment {
-  id: number
-  box: number[]
-  color: number[]
-  label: string
-  score: number 
-}
-
-export type RenderedScene = {
-  renderId: string
-  status: RenderedSceneStatus
-  assetUrl: string
-  durationInMs: number
-  alt: string
-  error: string
-  maskUrl: string
-  segments: ImageSegment[]
-}
-
 
 // --- what is below is only used during analysis, but I think we this is obsolete ---
 

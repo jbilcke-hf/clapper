@@ -2,7 +2,6 @@
 import { getSegment, segmentCategories, ClapSegmentCategorySettings } from "@aitube/colors"
 
 import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants/general"
-import { RenderedScene } from "@/types"
 import { pick } from "@/utils"
 import { generateSeed, parseOutputType, ClapOutputType, ClapSegmentCategory, ClapSegment, UUID, newSegment } from "@aitube/clap"
 

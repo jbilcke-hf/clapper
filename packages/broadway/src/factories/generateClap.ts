@@ -1,6 +1,6 @@
 import YAML from "yaml"
 
-import { ClapFormat, ClapHeader, ClapMeta, ClapEntity, ClapScene, ClapSegment, ClapMediaOrientation, getValidNumber, UUID } from "@aitube/clap"
+import { ClapFormat, ClapHeader, ClapMeta, ClapEntity, ClapScene, ClapSegment, ClapMediaOrientation, getValidNumber, UUID, ClapWorkflow, sanitizeEntities, sanitizeSegment, sanitizeWorkflows } from "@aitube/clap"
 import { MovieScript, Screenplay } from "@/types"
 
 /**
@@ -17,6 +17,7 @@ export async function generateClap({
   script,
   screenplay,
   projectInfo = "",
+  workflows = [],
   segments = [],
   entities = [],
   embedded = false,
@@ -24,6 +25,7 @@ export async function generateClap({
   script: MovieScript
   screenplay: Screenplay
   projectInfo: string
+  workflows: ClapWorkflow[]
   segments: ClapSegment[]
   entities: ClapEntity[]
 
@@ -35,49 +37,9 @@ export async function generateClap({
 
   const clapScenes: ClapScene[] = screenplay.sequences.flatMap(sequence => sequence.scenes)
 
-  const clapEntities: ClapEntity[] = entities.map(({
-    id,
-    category,
-    triggerName,
-    label,
-    description,
-    author,
-    thumbnailUrl,
-    seed,
-    imagePrompt,
-    imageSourceType,
-    imageEngine,
-    imageId,
-    audioPrompt,
-    audioSourceType,
-    audioEngine,
-    audioId,
-    age,
-    gender,
-    region,
-    appearance,
-  }) => ({
-    id,
-    category,
-    triggerName,
-    label,
-    description,
-    author,
-    thumbnailUrl,
-    seed,
-    imagePrompt,
-    imageSourceType,
-    imageEngine,
-    imageId,
-    audioPrompt,
-    audioSourceType,
-    audioEngine,
-    audioId,
-    age,
-    gender,
-    region,
-    appearance,
-  }))
+  const clapWorkflows = sanitizeWorkflows(workflows)
+
+  const clapEntities = sanitizeEntities(entities)
 
   const useCompactMode = !embedded
 
@@ -86,17 +48,17 @@ export async function generateClap({
 
   let highestEndTimeInMs = 0
 
-  const clapSegments: ClapSegment[] = segments.map(segmentData => {
-
-    if (segmentData.endTimeInMs > highestEndTimeInMs) {
-      highestEndTimeInMs = segmentData.endTimeInMs
+  const clapSegments: ClapSegment[] = segments.map(maybeSegment => {
+    const segment = sanitizeSegment(maybeSegment)
+    if (segment.endTimeInMs > highestEndTimeInMs) {
+      highestEndTimeInMs = segment.endTimeInMs
     }
-
-    return segmentData
+    return segment
   })
 
   const clapHeader: ClapHeader = {
     format: ClapFormat.CLAP_0,
+    numberOfWorkflows: clapWorkflows.length,
     numberOfEntities: clapEntities.length,
     numberOfScenes: clapScenes.length,
     numberOfSegments: clapSegments.length,
@@ -108,6 +70,8 @@ export async function generateClap({
     description: "",
     synopsis: "",
     licence: "",
+    tags: [],
+    thumbnailUrl: "",
     orientation: ClapMediaOrientation.LANDSCAPE,
     durationInMs: highestEndTimeInMs,
     isLoop: false,
@@ -123,6 +87,7 @@ export async function generateClap({
   const entries = [
     clapHeader,
     clapMeta,
+    ...clapWorkflows,
     ...clapEntities,
     ...clapScenes,
     ...clapSegments
