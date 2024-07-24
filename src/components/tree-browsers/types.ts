@@ -1,11 +1,15 @@
 // note: we only keep simplified representations of provider data structures
 
 import { ScreenplaySequence } from '@aitube/broadway'
-import { ClapEntity, ClapSegment } from '@aitube/clap'
+import { ClapEntity, ClapSegment, ClapWorkflow } from '@aitube/clap'
 import { TreeNodeType } from '../core/tree/types'
 
 // not sure if we should also sort them into data type categories,
 // as vendors like to be on multiple kind of models
+
+export type LibraryNodeHuggingFaceType =
+  | 'LIB_NODE_HUGGINGFACE_USER_COLLECTION'
+  | 'LIB_NODE_HUGGINGFACE_USER_DATASET'
 
 export type LibraryNodeLocalFileType =
   | 'LIB_NODE_LOCAL_USER_FILE'
@@ -19,9 +23,23 @@ export type LibraryNodeFileType =
   | LibraryNodeLocalFileType
   | LibraryNodeRemoteFileType
 
+export type LibraryNodeWorkflowType = 'LIB_NODE_WORKFLOWS' | 'LIB_NODE_WORKFLOW'
+
+export type LibraryNodeProjectType =
+  | 'LIB_NODE_PROJECT_COLLECTION'
+  | 'LIB_NODE_PROJECT_ARCHIVE'
+  | 'LIB_NODE_PROJECT_ASSET' // image, sound file..
+  | 'LIB_NODE_PROJECT_ENTITY_GENERIC'
+  | 'LIB_NODE_PROJECT_ENTITY_CHARACTER'
+  | 'LIB_NODE_PROJECT_ENTITY_LOCATION'
+
+export type LibraryNodeGenericType =
+  | 'LIB_NODE_GENERIC_COLLECTION'
+  | 'LIB_NODE_GENERIC_MODEL'
+  | 'LIB_NODE_GENERIC_ITEM'
+  | 'LIB_NODE_GENERIC_EMPTY'
+
 /**
- * a collection always correspond to the root category displayed in the tree menu
- *
  * we could use "LIB_NODE_GENERIC_COLLECTION",
  * but I think it can also be useful to keep specific types,
  * that way we can show a custom collection UI panel on the right of the explorer
@@ -29,15 +47,10 @@ export type LibraryNodeFileType =
 export type LibraryNodeType =
   | 'LIB_NODE_LOCAL_USER_COLLECTION'
   | LibraryNodeLocalFileType
-  | 'LIB_NODE_HUGGINGFACE_USER_COLLECTION'
-  | 'LIB_NODE_HUGGINGFACE_USER_DATASET'
+  | LibraryNodeHuggingFaceType
   | LibraryNodeRemoteFileType
-  | 'LIB_NODE_PROJECT_COLLECTION'
-  | 'LIB_NODE_PROJECT_ARCHIVE'
-  | 'LIB_NODE_PROJECT_ASSET' // image, sound file..
-  | 'LIB_NODE_PROJECT_ENTITY_GENERIC'
-  | 'LIB_NODE_PROJECT_ENTITY_CHARACTER'
-  | 'LIB_NODE_PROJECT_ENTITY_LOCATION'
+  | LibraryNodeWorkflowType
+  | LibraryNodeProjectType
   | 'LIB_NODE_TEAM_COLLECTION'
   | 'LIB_NODE_TEAM_MODEL'
   | 'LIB_NODE_COMMUNITY_COLLECTION'
@@ -48,10 +61,7 @@ export type LibraryNodeType =
   | 'LIB_NODE_REPLICATE_MODEL'
   | 'LIB_NODE_CIVITAI_COLLECTION'
   | 'LIB_NODE_CIVITAI_MODEL'
-  | 'LIB_NODE_GENERIC_COLLECTION'
-  | 'LIB_NODE_GENERIC_MODEL'
-  | 'LIB_NODE_GENERIC_ITEM'
-  | 'LIB_NODE_GENERIC_EMPTY'
+  | LibraryNodeGenericType
 
 // can be a file or folder
 export type LocalUserItem = {
@@ -140,6 +150,13 @@ export type CivitaiCollection = {
   models: CivitaiModel[]
 }
 
+export type WorkflowCollection = {
+  id: string
+  name: string
+  description: string
+  workflows: ClapWorkflow[]
+}
+
 // TODO unify this a bit, at least in the naming scheme
 export type LibraryNodeFileItem = LocalUserItem | HuggingFaceUserItem
 
@@ -156,6 +173,8 @@ export type LibraryNodeItem =
   | HuggingFaceUserItem
   | ScreenplaySequence
   | ClapSegment
+  | WorkflowCollection
+  | ClapWorkflow
 
 // a model library is a collection of models
 // this collection can itself include sub-models

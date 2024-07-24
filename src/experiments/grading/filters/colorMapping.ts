@@ -5,7 +5,8 @@ export const colorMapping: ColorGradingFilter = {
   name: 'Color Mapping',
   parameters: [
     {
-      name: 'redMultiplier',
+      id: 'redMultiplier',
+      label: 'Red multiplier',
       description: 'Red channel multiplier',
       type: 'number',
       minValue: 0,
@@ -13,7 +14,8 @@ export const colorMapping: ColorGradingFilter = {
       defaultValue: 1,
     },
     {
-      name: 'greenMultiplier',
+      id: 'greenMultiplier',
+      label: 'Green multiplier',
       description: 'Green channel multiplier',
       type: 'number',
       minValue: 0,
@@ -21,7 +23,8 @@ export const colorMapping: ColorGradingFilter = {
       defaultValue: 1,
     },
     {
-      name: 'blueMultiplier',
+      id: 'blueMultiplier',
+      label: 'Blue multiplier',
       description: 'Blue channel multiplier',
       type: 'number',
       minValue: 0,

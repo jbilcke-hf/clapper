@@ -6,15 +6,11 @@ import { ClapEntity, ClapSegmentCategory, UUID } from '@aitube/clap'
 import { icons } from '@/components/icons'
 
 import { LibraryNodeItem, LibraryNodeType, LibraryTreeNode } from '../types'
-
-// TODO: this isn't the best place for this as this is style,
-// and we are in a state manager
-const libraryClassName = 'text-base font-semibold'
-
-const collectionClassName = `text-base font-normal`
-
-const itemClassName =
-  'text-sm font-light text-gray-200/60 hover:text-gray-200/100'
+import {
+  collectionClassName,
+  itemClassName,
+  libraryClassName,
+} from './treeNodeStyles'
 
 export const useProjectLibrary = create<{
   libraryTreeRoot: LibraryTreeNode[]

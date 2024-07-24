@@ -124,12 +124,10 @@ async function applyFilter(
   const uniformData: number[] = []
   filter.parameters.forEach((param) => {
     if (param.type === 'number') {
-      uniformData.push(
-        (parameters?.[param.name] as number) ?? param.defaultValue
-      )
+      uniformData.push((parameters?.[param.id] as number) ?? param.defaultValue)
     } else if (param.type === 'string') {
       // For string parameters, we'll use the index of the value in allowedValues
-      const value = (parameters?.[param.name] as string) ?? param.defaultValue
+      const value = (parameters?.[param.id] as string) ?? param.defaultValue
       const index = param.allowedValues.indexOf(value)
       uniformData.push(index)
     }

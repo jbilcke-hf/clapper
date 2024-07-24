@@ -4,7 +4,8 @@ export const crossProcessing: ColorGradingFilter = {
   name: 'Cross-Processing',
   parameters: [
     {
-      name: 'intensity',
+      id: 'intensity',
+      label: 'Intensity',
       description: 'Intensity of the cross-processing effect',
       type: 'number',
       minValue: 0,
@@ -12,7 +13,8 @@ export const crossProcessing: ColorGradingFilter = {
       defaultValue: 0.5,
     },
     {
-      name: 'contrastBoost',
+      id: 'contrastBoost',
+      label: 'Contrast boost',
       description: 'Amount of contrast boost',
       type: 'number',
       minValue: 0,
@@ -20,7 +22,8 @@ export const crossProcessing: ColorGradingFilter = {
       defaultValue: 0.3,
     },
     {
-      name: 'colorShift',
+      id: 'colorShift',
+      label: 'Color shift',
       description: 'Direction of color shift',
       type: 'string',
       allowedValues: ['Cool', 'Warm'],

@@ -4,7 +4,8 @@ export const infraredBlackAndWhite: ColorGradingFilter = {
   name: 'Infrared Black and White',
   parameters: [
     {
-      name: 'contrast',
+      id: 'contrast',
+      label: 'Contrast',
       description: 'Image contrast',
       type: 'number',
       minValue: 0.5,
@@ -12,7 +13,8 @@ export const infraredBlackAndWhite: ColorGradingFilter = {
       defaultValue: 1.2,
     },
     {
-      name: 'grain',
+      id: 'grain',
+      label: 'Grain',
       description: 'Film grain intensity',
       type: 'number',
       minValue: 0,
@@ -20,7 +22,8 @@ export const infraredBlackAndWhite: ColorGradingFilter = {
       defaultValue: 0.2,
     },
     {
-      name: 'glow',
+      id: 'glow',
+      label: 'Glow',
       description: 'Infrared glow effect',
       type: 'number',
       minValue: 0,

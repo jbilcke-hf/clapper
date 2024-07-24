@@ -9,6 +9,7 @@ import { useTheme } from '@/services/ui/useTheme'
 import { EntityEditor } from './EntityEditor'
 import { ProjectEditor } from './ProjectEditor'
 import { SegmentEditor } from './SegmentEditor'
+import { WorkflowEditor } from './WorkflowEditor'
 
 export function Editors() {
   const theme = useTheme()
@@ -31,6 +32,8 @@ export function Editors() {
           <EntityEditor />
         ) : view === EditorView.SEGMENT ? (
           <SegmentEditor />
+        ) : view === EditorView.WORKFLOW ? (
+          <WorkflowEditor />
         ) : (
           <div>TODO</div>
         )}

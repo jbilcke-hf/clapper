@@ -4,7 +4,8 @@ export const lomography: ColorGradingFilter = {
   name: 'Lomography',
   parameters: [
     {
-      name: 'saturation',
+      id: 'saturation',
+      label: 'Saturation',
       description: 'Color saturation',
       type: 'number',
       minValue: 0,
@@ -12,7 +13,8 @@ export const lomography: ColorGradingFilter = {
       defaultValue: 1.3,
     },
     {
-      name: 'contrast',
+      id: 'contrast',
+      label: 'Contrast',
       description: 'Image contrast',
       type: 'number',
       minValue: 0.5,
@@ -20,7 +22,8 @@ export const lomography: ColorGradingFilter = {
       defaultValue: 1.2,
     },
     {
-      name: 'vignetteIntensity',
+      id: 'vignetteIntensity',
+      label: 'Vignette intensity',
       description: 'Intensity of vignette effect',
       type: 'number',
       minValue: 0,
@@ -28,7 +31,8 @@ export const lomography: ColorGradingFilter = {
       defaultValue: 0.5,
     },
     {
-      name: 'lightLeakIntensity',
+      id: 'lightLeakIntensity',
+      label: 'Light leak intensity',
       description: 'Intensity of light leak effect',
       type: 'number',
       minValue: 0,

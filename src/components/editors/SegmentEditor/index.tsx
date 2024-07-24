@@ -23,7 +23,11 @@ export function SegmentEditor() {
   }, [setCurrent, selectedSegments.map((s) => s.id).join(',')])
 
   if (!current) {
-    return <div>No segment selected</div>
+    return (
+      <FormSection label={'Segment Editor'} className="p-4">
+        No segment selected.
+      </FormSection>
+    )
   }
 
   return (

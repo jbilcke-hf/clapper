@@ -8,6 +8,7 @@ import {
   MdOutlineHistoryEdu,
 } from 'react-icons/md'
 import { LuClapperboard } from 'react-icons/lu'
+import { PiTreeStructureBold } from 'react-icons/pi'
 import { IoFilmOutline } from 'react-icons/io5'
 import { EditorView } from '@aitube/clapper-services'
 
@@ -39,15 +40,9 @@ export function EditorsSideMenu() {
         <EditorsSideMenuItem view={EditorView.SEGMENT} label="Segment editor">
           <IoFilmOutline />
         </EditorsSideMenuItem>
-
-        {/*<EditorSideMenuItem name="Characters"><LiaTheaterMasksSolid /></EditorSideMenuItem>*/}
-        {/*<EditorSideMenuItem name="Project"><MdLocalMovies /></EditorSideMenuItem>*/}
-        {/*<EditorSideMenuItem name="Locations"><TbMapSearch /></EditorSideMenuItem> */}
-
-        {/*<EditorSideMenuItem name="Assistant" label="Movie assistant"><MdAutoFixHigh /></EditorSideMenuItem>*}
-        {/*<EditorSideMenuItem name="Rendering"><IoFilmOutline /></EditorSideMenuItem>*/}
-        {/*<EditorSideMenuItem name="Export"><HiOutlineCloudArrowDown /></EditorSideMenuItem>*/}
-        {/*<EditorSideMenuItem name="Broadcast"><BsBroadcastPin /></EditorSideMenuItem>*/}
+        <EditorsSideMenuItem view={EditorView.WORKFLOW} label="Workflow editor">
+          <PiTreeStructureBold />
+        </EditorsSideMenuItem>
       </div>
     </div>
   )

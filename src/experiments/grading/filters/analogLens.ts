@@ -4,7 +4,8 @@ export const analogLensSimulator: ColorGradingFilter = {
   name: 'Analog Lens Simulator',
   parameters: [
     {
-      name: 'chromaticAberration',
+      id: 'chromaticAberration',
+      label: 'Chromatic aberration',
       description: 'Chromatic aberration strength',
       type: 'number',
       minValue: 0,
@@ -12,7 +13,8 @@ export const analogLensSimulator: ColorGradingFilter = {
       defaultValue: 0.002,
     },
     {
-      name: 'vignetteStrength',
+      id: 'vignetteStrength',
+      label: 'Vignette strength',
       description: 'Vignette strength',
       type: 'number',
       minValue: 0,
@@ -20,7 +22,8 @@ export const analogLensSimulator: ColorGradingFilter = {
       defaultValue: 0.3,
     },
     {
-      name: 'vignetteRadius',
+      id: 'vignetteRadius',
+      label: 'Vignette radius',
       description: 'Vignette radius',
       type: 'number',
       minValue: 0,
@@ -28,7 +31,8 @@ export const analogLensSimulator: ColorGradingFilter = {
       defaultValue: 0.75,
     },
     {
-      name: 'distortion',
+      id: 'distortion',
+      label: 'Distortion',
       description: 'Lens distortion',
       type: 'number',
       minValue: -1,
@@ -36,7 +40,8 @@ export const analogLensSimulator: ColorGradingFilter = {
       defaultValue: 0.1,
     },
     {
-      name: 'bloomStrength',
+      id: 'bloomStrength',
+      label: 'Bloom strength',
       description: 'Bloom strength',
       type: 'number',
       minValue: 0,
@@ -44,7 +49,8 @@ export const analogLensSimulator: ColorGradingFilter = {
       defaultValue: 0.1,
     },
     {
-      name: 'bloomRadius',
+      id: 'bloomRadius',
+      label: 'Bloom radius',
       description: 'Bloom radius',
       type: 'number',
       minValue: 1,
@@ -52,7 +58,8 @@ export const analogLensSimulator: ColorGradingFilter = {
       defaultValue: 3,
     },
     {
-      name: 'dofFocusDistance',
+      id: 'dofFocusDistance',
+      label: 'DOF focus distance',
       description: 'Depth of field focus distance',
       type: 'number',
       minValue: 0,
@@ -60,7 +67,8 @@ export const analogLensSimulator: ColorGradingFilter = {
       defaultValue: 0.5,
     },
     {
-      name: 'dofFocusRange',
+      id: 'dofFocusRange',
+      label: 'DOF focus range',
       description: 'Depth of field focus range',
       type: 'number',
       minValue: 0.01,
@@ -68,7 +76,8 @@ export const analogLensSimulator: ColorGradingFilter = {
       defaultValue: 0.1,
     },
     {
-      name: 'dofBlurStrength',
+      id: 'dofBlurStrength',
+      label: 'DOF blur strength',
       description: 'Depth of field blur strength',
       type: 'number',
       minValue: 0,

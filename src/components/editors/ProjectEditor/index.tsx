@@ -21,7 +21,11 @@ export function ProjectEditor() {
   }, [clap?.meta, setCurrent])
 
   if (!current) {
-    return <div>Loading..</div>
+    return (
+      <FormSection label={'Project Settings'} className="p-4">
+        Loading project..
+      </FormSection>
+    )
   }
 
   // TODO: adapt the editor based on the kind of
