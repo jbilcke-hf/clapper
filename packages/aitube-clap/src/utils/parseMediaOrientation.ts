@@ -12,25 +12,25 @@ export function parseMediaOrientation(input: any, defaultToUse?: ClapMediaOrient
 
   let orientation: ClapMediaOrientation = defaultToUse || defaultMediaOrientation
 
-  unknownString = unknownString.toLowerCase()
+  unknownString = unknownString.toUpperCase()
 
   if (
-    unknownString === "landscape" || 
-    unknownString === "horizontal"
+    unknownString === "LANDSCAPE" || 
+    unknownString === "HORIZONTAL"
   ) {
     orientation = ClapMediaOrientation.LANDSCAPE
   }
 
   if (
-    unknownString === "portrait" || 
-    unknownString === "vertical" ||
-    unknownString === "mobile"
+    unknownString === "PORTRAIT" || 
+    unknownString === "VERTICAL" ||
+    unknownString === "MOBILE"
   ) {
     orientation = ClapMediaOrientation.PORTRAIT
   }
 
   if (
-    unknownString === "square"
+    unknownString === "SQUARE"
   ) {
     orientation = ClapMediaOrientation.PORTRAIT
   }

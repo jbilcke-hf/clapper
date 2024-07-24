@@ -42,6 +42,16 @@ import {
   ClapProject, 
   ClapMediaOrientation,
 
+  ClapInputFieldNumber,
+  ClapInputFieldString,
+  ClapInputFieldBoolean,
+  ClapInputFieldAny,
+  ClapInputFields,
+  ClapInputValue,
+  ClapInputValues,
+  ClapWorkflowEngine,
+  ClapWorkflow,
+
 // defaults
   defaultMediaOrientation,
 
@@ -49,6 +59,7 @@ import {
   newClap,
   newEntity,
   newSegment,
+  newWorkflow,
 
   // main input/output handlers
   parseClap,
@@ -65,6 +76,7 @@ import {
   isValidNumber,
   parseMediaOrientation,
   parseOutputType,
+  parseWorkflowEngine,
   parseSegmentCategory,
   parseSegmentStatus,
   UUID,
@@ -81,6 +93,15 @@ import {
   generateClapFromSimpleStory,
   getEmptyClap,
   removeGeneratedAssetUrls,
+
+  // sanitizers
+  sanitizeEntities,
+  sanitizeEntity,
+  sanitizeMeta,
+  sanitizeSegment,
+  sanitizeSegments,
+  sanitizeWorkflow,
+  sanitizeWorkflows,
 } from "@aitube/clap"
 
 

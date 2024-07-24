@@ -1,136 +1,150 @@
 export enum ClapFormat {
-  // the current active version
-  // as long as the Clap format is not "standardized"
-  // we will stay in clap-0
   CLAP_0 = "clap-0",
 
-  // reserved for future use
-  // CLAP_1 = "clap-1"
+  // current active version, where some enums have uppercased,
+  // and some extract things added
+  CLAP_0b = "clap-0b",
 }
 
 export enum ClapSegmentCategory {
   // a 3D Gaussian Splatting object (eg. a .splatv)
-  SPLAT = "splat",
+  SPLAT = "SPLAT",
 
   // a 3D mesh object
-  MESH = "mesh",
+  MESH = "MESH",
 
   // a depth map
-  DEPTH = "depth",
+  DEPTH = "DEPTH",
+
+  // a transformative effect and/or filter to apply to an input
+  // eg. upscaling, face swap..
+  EFFECT = "EFFECT",
 
   // a event happening in the scene
-  EVENT = "event",
+  EVENT = "EVENT",
   
   // a user interface element, such as an overlay or caption, or HTML content
-  INTERFACE = "interface",
+  INTERFACE = "INTERFACE",
 
   // a phenomenom triggering changes in the scene
-  PHENOMENON = "phenomenon",
+  PHENOMENON = "PHENOMENON",
 
   // a video clip, eg. mp4 or webm
   // it is strongly recommended to use an open and royalty-free codec such as VP9,
   // otherwise some web browsers might not be able to display it
-  VIDEO = "video",
+  VIDEO = "VIDEO",
 
   // a storyboard image, eg. jpg, png, webp, heic (note: most of the apps compatible with .clap prefer to work with jpg and png)
-  STORYBOARD = "storyboard",
+  STORYBOARD = "STORYBOARD",
 
   // a transition between two shots (eg. a cross-fade)
-  TRANSITION = "transition",
+  TRANSITION = "TRANSITION",
 
   // a character (person, animal, alien, robot, walking skeleton..)
-  CHARACTER = "character",
+  CHARACTER = "CHARACTER",
 
   // a location (indoor or outdoor eg. a house, castle, garden..)
-  LOCATION = "location",
+  LOCATION = "LOCATION",
   
   // the absolute time where the action takes place
   //
   // this can be anything that a language model or stable diffusion model can interpret, eg:
-  // eg. "today at 12am", "2024-01-01", "contemporary times", "14th century", 1960, "AB 31", "20 BC"
+  // eg. "today at 12am", "2024-01-01", "contemporary times, in the morning", "14th century, in the afternoon", 1960, "AB 31, 11pm", "20 BC"
   //
   // ideally you should use a date formatting indicating the hour and timezone (if your LLM can understand those)
   // that way it will be possible to automatically determine if it's day or night!
-  TIME = "time",
+  TIME = "TIME",
 
   // @deprecated - we should use TIME instead
-  ERA = "era",
+  ERA = "ERA",
 
   // how to lit the scene, colors, angles etc
-  LIGHTING = "lighting",
+  LIGHTING = "LIGHTING",
 
   // weather conditions in the scene (raining, sunny, cloudy, morning mist..)
-  WEATHER = "weather",
+  WEATHER = "WEATHER",
 
   // direct description of what is happening in the scene ("people talking", "bus passing by", "putting down the glass")
-  ACTION = "action",
+  ACTION = "ACTION",
 
   // some music
   // like for all segments you can either give a prompt and/or work with an actual file (in the case mp3 or wav)
-  MUSIC = "music",
+  MUSIC = "MUSIC",
 
   // some sound
   // eg. "dog barking", "foot steps", "crowded bar"
-  SOUND = "sound",
+  SOUND = "SOUND",
 
   // a dialogue line
   // either the transcript and/or the generated TTS line
-  DIALOGUE = "dialogue",
+  DIALOGUE = "DIALOGUE",
 
   // a specific style to apply
   // "cinematic", "1950s comic book", "Panavision 70 mm"
-  STYLE = "style",
+  STYLE = "STYLE",
 
   // type of shot eg "medium-shot", aperture, ISO..
-  CAMERA = "camera",
+  CAMERA = "CAMERA",
 
   // ..anything else, from prompt to arbitrary/custom/obscure file format
   // 
   // however if you have a special demand, something that could be popular and not too niche,
   // we can turn it into its own category
-  GENERIC = "generic"
+  GENERIC = "GENERIC"
 }
 
 export enum ClapMediaOrientation {
-  LANDSCAPE = "landscape",
-  PORTRAIT = "portrait",
-  SQUARE = "square"
+  LANDSCAPE = "LANDSCAPE",
+  PORTRAIT = "PORTRAIT",
+  SQUARE = "SQUARE"
 }
 
 export enum ClapOutputType {
   // a plain text
-  TEXT = "text",
+  TEXT = "TEXT",
 
-  // an animation (not used)
-  ANIMATION = "animation",
+  // an animation
+  ANIMATION = "ANIMATION",
 
   // UI element
-  INTERFACE = "interface",
+  INTERFACE = "INTERFACE",
 
   // event
-  EVENT = "event",
+  EVENT = "EVENT",
 
-  PHENOMENON = "phenomenon",
+  PHENOMENON = "PHENOMENON",
 
-  TRANSITION = "transition",
+  TRANSITION = "TRANSITION",
 
   // image asset
-  IMAGE = "image",
+  IMAGE = "IMAGE",
+
+  // image segmentation layer
+  IMAGE_SEGMENTATION = "IMAGE_SEGMENTATION",
+
+  // image depthmap layer
+  IMAGE_DEPTH = "IMAGE_DEPTH",
 
   // video asset
-  VIDEO = "video",
+  VIDEO = "VIDEO",
+
+  // video segmentation layer
+  VIDEO_SEGMENTATION = "VIDEO_SEGMENTATION",
+
+  // image depthmap layer
+  VIDEO_DEPTH = "VIDEO_DEPTH",
 
   // audio asset
-  AUDIO = "audio"
+  AUDIO = "AUDIO"
 }
 
 export enum ClapSegmentStatus {
-  TO_GENERATE = "to_generate",
-  IN_PROGRESS = "in_progress",
-  TO_INTERPOLATE = "to_interpolate",
-  TO_UPSCALE = "to_upscale",
-  COMPLETED = "completed",
-  ERROR = "error",
+  TO_GENERATE = "TO_GENERATE",
+  IN_PROGRESS = "IN_PROGRESS",
+  TO_INTERPOLATE = "TO_INTERPOLATE",
+  TO_UPSCALE = "TO_UPSCALE",
+  COMPLETED = "COMPLETED",
+  ERROR = "ERROR",
 }
 
 export type ClapAuthor =
@@ -229,6 +243,7 @@ export type ClapVoice = {
 
 export type ClapHeader = {
   format: ClapFormat
+  numberOfWorkflows: number
   numberOfEntities: number
   numberOfScenes: number
   numberOfSegments: number
@@ -240,6 +255,20 @@ export type ClapMeta = {
   description: string
   synopsis: string
   licence: string
+  
+  /**
+   * List of keywords used to describe the project.
+   * 
+   * Examples: action, sci-fi, romance, advert, music video,
+   */
+  tags: string[]
+  
+  /**
+   * A thumbnail representing the project.
+   * 
+   * Can be hosted on a remote server or in base64
+   */
+  thumbnailUrl: string
 
   orientation: ClapMediaOrientation
 
@@ -313,26 +342,240 @@ export type ClapSegment = {
   seed: number
 }
 
-// TODO: this class name is too confusing,
-// we should rename it to ClapEntity
+export type ClapInputFieldNumber = {
+  type: 'number'
+  minValue: number
+  maxValue: number
+  defaultValue: number
+}
+
+export type ClapInputFieldString = {
+  type: 'string'
+  allowedValues: string[]
+  defaultValue: string
+}
+
+export type ClapInputFieldBoolean = {
+  type: 'boolean'
+  defaultValue: boolean
+}
+
+export type ClapInputFieldAny = {
+  type: 'any'
+  defaultValue: any
+}
+
+export type ClapInputField = {
+  /**
+   * Machine readable input field name or identifier
+   */
+  id: string
+
+  /**
+   * Human-readable input field name
+   */
+  label: string
+
+  /**
+   * Description of what the input field does
+   */
+  description: string
+} & (
+  | ClapInputFieldNumber
+  | ClapInputFieldString
+  | ClapInputFieldBoolean
+  | ClapInputFieldAny
+)
+
+export type ClapInputFields = ClapInputField[]
+
+export type ClapInputValue =
+  number | string | boolean | string[] | number[] | null | undefined
+
+export type ClapInputValues =
+  Record<string, ClapInputValue>
+
+export enum ClapWorkflowEngine {
+  // the default pipeline (can be anything, this is left to the app developer)
+  DEFAULT = "DEFAULT",
+
+  // the JSON format used by ComfyUI
+  COMFYUI_WORKFLOW = "COMFYUI_WORKFLOW",
+
+  // the proprietary format used by Fal.ai
+  // Fal.ai also supports ComfyUI workflows, but this is separate
+  FALAI_WORKFLOW = "FALAI_WORKFLOW",
+
+  // the proprietary format used by Glif
+  // Glif also supports ComfyUI workflows, but as part of a Glif workflow
+  GLIF_WORKFLOW = "GLIF_WORKFLOW",
+
+  // the format used by Google Visual Blocks
+  // this is a new and experimental tool, usage is limited for now,
+  // I think it can be used in a Colab only and there are now API
+  VISUALBLOCKS_WORKFLOW = "VISUALBLOCKS_WORKFLOW"
+}
+
+export type ClapWorkflow = {
+  id: string
+
+  /**
+   * Human-readable label (this is the name or title of the workflow)
+   */
+  label: string
+
+  /**
+   * Long description of what the workflow is about.
+   */
+  description: string
+
+  /**
+   * List of keywords used to describe the workflow.
+   * 
+   * Examples: upscaling, lip-sync, body animation, text-to-video..
+   */
+  tags: string[]
+
+  /**
+   * The original author of the workflow
+   * 
+   * Can be a name, email, social media handle..
+   */
+  author: string
+
+  /**
+   * A thumbnail representing the workflow.
+   * 
+   * Can be hosted on a remote server or in base64
+   * (we could use a "ClapAssetSource" here too, but the thumbnail is not
+   * used within a workflow so there is no need to do any kind of precise optimization or verification here)
+   */
+  thumbnailUrl: string
+
+  engine: ClapWorkflowEngine
+
+  /**
+   * The workflow data itself
+   * 
+   * This is typically a serialized JSON, although this can be other things
+   * depending on which engine is used (YAML, base64, or even an ID to a proprietary commercial platform)
+   */
+  data: string
+
+  /**
+   * Inputs of the workflow (this is used to build an UI for the automatically)
+   */
+  inputFields: ClapInputFields 
+
+  /**
+   * Default values (this is used to initialize the workflow automatically)
+   */
+  inputValues: ClapInputValues
+}
+
 export type ClapEntity = {
   id: string
   category: ClapSegmentCategory
+
+  /**
+   * keyword referencing the entity within a screenplay
+   * 
+   * Typically in UPPERCASE
+   */
   triggerName: string
+
+  /**
+   * Human-readable label (this is the name or title of the entity)
+   */
   label: string
+
+  /**
+   * Long description of what the entity is about.
+   * 
+   * This can be for instance a short history or biography of the entity.
+   */
   description: string
+
+  /**
+   * List of keywords used to describe the entity.
+   * 
+   * Examples: location, character, male, female, car..
+   */
+  tags: string[]
+
+  /**
+   * The original author of the entity
+   * 
+   * Can be a name, email, social media handle..
+   */
   author: string
+
+  /**
+   * A thumbnail representing the entity.
+   * 
+   * Can be hosted on a remote server or in base64
+   * (we could use a "ClapAssetSource" here too, but the thumbnail is not
+   * used within a workflow so there is no need to do any kind of precise optimization or verification here)
+   */
   thumbnailUrl: string
+
+  /**
+   * The seed associated with the entity.
+   * 
+   * This can be used to reproduce the settings (eg. reproduce the image
+   * from the image prompt, by re-using the same seed)
+   */
   seed: number
 
+  /**
+   * Text prompt describing the appearance of the entity
+   */
   imagePrompt: string
+
+  /**
+   * Where the image is hosted (remote, local file etc)
+   */
   imageSourceType: ClapAssetSource
+
+  /**
+   * Can be used to tell the model used to generate the engine (eg. SDXL, Dalle-3)
+   */
   imageEngine: string
+
+  /**
+   * The "identity picture" of the entity
+   * 
+   * if this is too confusing to people, we can rename it
+   * 
+   * this is a regular URI so, it can be a file path, a remote url, a base64..
+   */
   imageId: string
+
   
+  /**
+   * Text prompt describing the voice
+   * 
+   * Eg. "low quality phone recording of an old man"
+   */
   audioPrompt: string
+
+  /**
+   * Where the audio is hosted (remote, local file etc)
+   */
   audioSourceType: ClapAssetSource
+
+  /**
+   * The engine used to generate the audio
+   * 
+   * This is important as this impacts what is the vendor and type audioId
+   */
   audioEngine: ClapEntityAudioEngine
+
+  /**
+   * The voice identity (the "identity picture" equivalent of the voice)
+   * 
+   * Depending on the engine, this can be a voice sample or an ID to a 3rd party proprietary platform
+   */
   audioId: string
 
   // could be replaced by an inceptionDate, so it can be used to compute the absolute "age" of anything:
@@ -370,6 +613,7 @@ export type ClapTracks = ClapTrack[]
 
 export type ClapProject = {
   meta: ClapMeta
+  workflows: ClapWorkflow[]
   entities: ClapEntity[]
   entityIndex: Record<string, ClapEntity>
   scenes: ClapScene[]
@@ -383,27 +627,27 @@ export enum ClapCompletionMode {
    * This is a very convenient and simple mode, but it is also very ineficient,
    * so it should not be used for intensive applications.
    */
-  FULL = "full",
+  FULL = "FULL",
 
   /**
    * the API and the client will return a partial clap file containing only the changes,
    * containing only the new values and changes.
    * This is useful for real-time applications and streaming.
    */
-  PARTIAL = "partial",
+  PARTIAL = "PARTIAL",
 
   /**
    * the API will return a partial clap file containing only the changes,
    * and the client will return a merge of the original with the new values.
    * This is safe to run, there are no side-effects.
    */
-  MERGE = "merge",
+  MERGE = "MERGE",
 
   /**
    * the API will return a partial clap file, and the client will replace the original.
    * This is the most efficient mode, but it relies on side-effects and inline object updates.
    */
-  REPLACE = "replace"
+  REPLACE = "REPLACE"
 }
 
 export type ParseClapProgressUpdate = ({
