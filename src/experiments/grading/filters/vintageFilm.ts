@@ -4,7 +4,8 @@ export const vintageFilm: ColorGradingFilter = {
   name: 'Enhanced Vintage Film Stocks',
   parameters: [
     {
-      name: 'preset',
+      id: 'preset',
+      label: 'Preset',
       description: 'Vintage film stock preset',
       type: 'string',
       allowedValues: [
@@ -49,7 +50,8 @@ export const vintageFilm: ColorGradingFilter = {
       defaultValue: 'Kodachrome 64',
     },
     {
-      name: 'intensity',
+      id: 'intensity',
+      label: 'Intensity',
       description: 'Intensity of the film stock effect',
       type: 'number',
       minValue: 0,
@@ -57,7 +59,8 @@ export const vintageFilm: ColorGradingFilter = {
       defaultValue: 0.8,
     },
     {
-      name: 'grain',
+      id: 'grain',
+      label: 'Grain',
       description: 'Film grain intensity',
       type: 'number',
       minValue: 0,
@@ -65,7 +68,8 @@ export const vintageFilm: ColorGradingFilter = {
       defaultValue: 0.2,
     },
     {
-      name: 'ageEffect',
+      id: 'ageEffect',
+      label: 'Age effect',
       description: 'Simulated age of the film',
       type: 'number',
       minValue: 0,
@@ -73,7 +77,8 @@ export const vintageFilm: ColorGradingFilter = {
       defaultValue: 0,
     },
     {
-      name: 'colorShift',
+      id: 'colorShift',
+      label: 'Color shift',
       description: 'Color shift adjustment',
       type: 'number',
       minValue: -1,
@@ -81,7 +86,8 @@ export const vintageFilm: ColorGradingFilter = {
       defaultValue: 0,
     },
     {
-      name: 'contrast',
+      id: 'contrast',
+      label: 'Contrast',
       description: 'Contrast adjustment',
       type: 'number',
       minValue: 0.5,
@@ -89,7 +95,8 @@ export const vintageFilm: ColorGradingFilter = {
       defaultValue: 1,
     },
     {
-      name: 'saturation',
+      id: 'saturation',
+      label: 'Saturation',
       description: 'Saturation adjustment',
       type: 'number',
       minValue: 0,

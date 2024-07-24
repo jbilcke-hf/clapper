@@ -11,7 +11,6 @@ import {
 import { useTimeline } from '@aitube/timeline'
 
 import { getDefaultPluginsState } from './getDefaultPluginsState'
-import { useScriptEditor } from '../editors/script-editor/useScriptEditor'
 import { useMonitor } from '../monitor/useMonitor'
 import { useTasks } from '@/components/tasks/useTasks'
 import { useRenderer } from '../renderer'
@@ -26,6 +25,8 @@ import {
   useEntityEditor,
   useProjectEditor,
   useSegmentEditor,
+  useScriptEditor,
+  useWorkflowEditor,
 } from '../editors'
 import { useSimulator } from '../simulator/useSimulator'
 import { useIO } from '../io/useIO'
@@ -68,6 +69,7 @@ export const usePlugins = create<PluginsStore>((set, get) => ({
       entityEditor: useEntityEditor,
       projectEditor: useProjectEditor,
       scriptEditor: useScriptEditor,
+      workflowEditor: useWorkflowEditor,
       editors: useEditors,
       monitor: useMonitor,
       tasks: useTasks,

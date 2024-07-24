@@ -4,7 +4,8 @@ export const hdrToneMapping: ColorGradingFilter = {
   name: 'HDR Tone Mapping',
   parameters: [
     {
-      name: 'exposure',
+      id: 'exposure',
+      label: 'Exposure',
       description: 'Exposure adjustment',
       type: 'number',
       minValue: -2,
@@ -12,7 +13,8 @@ export const hdrToneMapping: ColorGradingFilter = {
       defaultValue: 0,
     },
     {
-      name: 'contrast',
+      id: 'contrast',
+      label: 'Contrast',
       description: 'Contrast adjustment',
       type: 'number',
       minValue: 0.5,
@@ -20,7 +22,8 @@ export const hdrToneMapping: ColorGradingFilter = {
       defaultValue: 1,
     },
     {
-      name: 'saturation',
+      id: 'saturation',
+      label: 'Saturation',
       description: 'Color saturation',
       type: 'number',
       minValue: 0,
@@ -28,7 +31,8 @@ export const hdrToneMapping: ColorGradingFilter = {
       defaultValue: 1,
     },
     {
-      name: 'highlights',
+      id: 'highlights',
+      label: 'Highlights',
       description: 'Highlight adjustment',
       type: 'number',
       minValue: -1,
@@ -36,7 +40,8 @@ export const hdrToneMapping: ColorGradingFilter = {
       defaultValue: 0,
     },
     {
-      name: 'shadows',
+      id: 'Shadows',
+      label: 'shadows',
       description: 'Shadow adjustment',
       type: 'number',
       minValue: -1,

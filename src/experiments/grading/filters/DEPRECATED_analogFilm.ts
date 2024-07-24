@@ -4,7 +4,8 @@ export const analogFilmSimulator: ColorGradingFilter = {
   name: 'Analog Film Simulator',
   parameters: [
     {
-      name: 'preset',
+      id: 'preset',
+      label: 'Preset',
       description: 'Film preset',
       type: 'string',
       allowedValues: [
@@ -15,7 +16,8 @@ export const analogFilmSimulator: ColorGradingFilter = {
       defaultValue: 'Konica Centuria 200',
     },
     {
-      name: 'saturation',
+      id: 'saturation',
+      label: 'Saturation',
       description: 'Color saturation',
       type: 'number',
       minValue: 0,
@@ -23,7 +25,8 @@ export const analogFilmSimulator: ColorGradingFilter = {
       defaultValue: 1,
     },
     {
-      name: 'noise',
+      id: 'noise',
+      label: 'Noise',
       description: 'Film grain intensity',
       type: 'number',
       minValue: 0,

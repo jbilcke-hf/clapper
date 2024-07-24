@@ -4,21 +4,24 @@ export const splitToning: ColorGradingFilter = {
   name: 'Split Toning',
   parameters: [
     {
-      name: 'highlightColor',
+      id: 'highlightColor',
+      label: 'Highlight color',
       description: 'Color for highlights',
       type: 'string',
       allowedValues: ['Red', 'Green', 'Blue', 'Yellow', 'Cyan', 'Magenta'],
       defaultValue: 'Yellow',
     },
     {
-      name: 'shadowColor',
+      id: 'shadowColor',
+      label: 'Shadow color',
       description: 'Color for shadows',
       type: 'string',
       allowedValues: ['Red', 'Green', 'Blue', 'Yellow', 'Cyan', 'Magenta'],
       defaultValue: 'Blue',
     },
     {
-      name: 'balance',
+      id: 'balance',
+      label: 'Balance',
       description: 'Balance between highlights and shadows',
       type: 'number',
       minValue: -1,
@@ -26,7 +29,8 @@ export const splitToning: ColorGradingFilter = {
       defaultValue: 0,
     },
     {
-      name: 'intensity',
+      id: 'intensity',
+      label: 'Intensity',
       description: 'Intensity of the split toning effect',
       type: 'number',
       minValue: 0,

@@ -1,22 +1,7 @@
-export type ColorGradingParameter =
-  | {
-      name: string
-      description: string
-      type: 'number'
-      minValue: number
-      maxValue: number
-      defaultValue: number
-    }
-  | {
-      name: string
-      description: string
-      type: 'string'
-      allowedValues: string[]
-      defaultValue: string
-    }
+import { ClapInputField } from '@aitube/clap/dist/types'
 
 export type ColorGradingFilter = {
   name: string
-  parameters: Array<ColorGradingParameter>
+  parameters: Array<ClapInputField>
   shader: string // WGSL shader code for the filter
 }

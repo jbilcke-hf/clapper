@@ -4,7 +4,8 @@ export const cinematic: ColorGradingFilter = {
   name: 'Cinematic Color Grading',
   parameters: [
     {
-      name: 'preset',
+      id: 'preset',
+      label: 'Preset',
       description: 'Cinematic color preset',
       type: 'string',
       allowedValues: [
@@ -17,7 +18,8 @@ export const cinematic: ColorGradingFilter = {
       defaultValue: 'Blade Runner',
     },
     {
-      name: 'intensity',
+      id: 'intensity',
+      label: 'Intensity',
       description: 'Intensity of the cinematic effect',
       type: 'number',
       minValue: 0,
@@ -25,7 +27,8 @@ export const cinematic: ColorGradingFilter = {
       defaultValue: 0.5,
     },
     {
-      name: 'contrast',
+      id: 'contrast',
+      label: 'Contrast',
       description: 'Image contrast',
       type: 'number',
       minValue: 0.5,

@@ -4,7 +4,8 @@ export const filmDegradation: ColorGradingFilter = {
   name: 'Film Degradation',
   parameters: [
     {
-      name: 'scratchesIntensity',
+      id: 'scratchesIntensity',
+      label: 'Scratches intensity',
       description: 'Intensity of film scratches',
       type: 'number',
       minValue: 0,
@@ -12,7 +13,8 @@ export const filmDegradation: ColorGradingFilter = {
       defaultValue: 0.3,
     },
     {
-      name: 'dustIntensity',
+      id: 'dustIntensity',
+      label: 'Dust intensity',
       description: 'Intensity of dust and spots',
       type: 'number',
       minValue: 0,
@@ -20,7 +22,8 @@ export const filmDegradation: ColorGradingFilter = {
       defaultValue: 0.2,
     },
     {
-      name: 'colorFading',
+      id: 'colorFading',
+      label: 'Color fading',
       description: 'Color fading effect',
       type: 'number',
       minValue: 0,
@@ -28,7 +31,8 @@ export const filmDegradation: ColorGradingFilter = {
       defaultValue: 0.3,
     },
     {
-      name: 'lightLeakIntensity',
+      id: 'lightLeakIntensity',
+      label: 'Light leak intensity',
       description: 'Intensity of light leaks',
       type: 'number',
       minValue: 0,

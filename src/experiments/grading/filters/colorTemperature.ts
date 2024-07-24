@@ -4,7 +4,8 @@ export const colorTemperature: ColorGradingFilter = {
   name: 'Color Temperature Adjustment',
   parameters: [
     {
-      name: 'temperature',
+      id: 'temperature',
+      label: 'Temperature',
       description: 'Color temperature in Kelvin',
       type: 'number',
       minValue: 1000,
@@ -12,7 +13,8 @@ export const colorTemperature: ColorGradingFilter = {
       defaultValue: 6500,
     },
     {
-      name: 'tint',
+      id: 'tint',
+      label: 'Tint',
       description: 'Green-Magenta tint',
       type: 'number',
       minValue: -100,
