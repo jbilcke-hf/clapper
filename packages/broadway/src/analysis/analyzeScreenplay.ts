@@ -333,10 +333,10 @@ export async function analyzeScreenplay(
             endTimeInLines: event.endAtLine,
             sceneId: scene.id,
             prompt: [
-              ...sequenceGenre.prompts.style,
+              ...sequenceGenre.prompts.STYLE,
               "cinematic photo",
               "movie screencap",
-              ...movieEra.prompts.style
+              ...movieEra.prompts.STYLE
             ],
             categoryName: ClapSegmentCategory.STYLE,
           }))
@@ -419,8 +419,8 @@ export async function analyzeScreenplay(
               prompt: [
                 currentTime,
                 currentLighting,
-                ...sequenceGenre.prompts.lighting,
-                ...movieEra.prompts.lighting,
+                ...sequenceGenre.prompts.LIGHTING,
+                ...movieEra.prompts.LIGHTING,
               ],
               categoryName: ClapSegmentCategory.LIGHTING,
             }))
@@ -436,7 +436,7 @@ export async function analyzeScreenplay(
               sceneId: scene.id,
               prompt: [
                 currentWeather,
-                ...sequenceGenre.prompts.weather,
+                ...sequenceGenre.prompts.WEATHER,
               ],
               categoryName: ClapSegmentCategory.WEATHER,
             }))
@@ -489,8 +489,8 @@ export async function analyzeScreenplay(
               sceneId: scene.id,
               prompt: [
                 currentShotType,
-                ...sequenceGenre.prompts.camera,
-                ...movieEra.prompts.camera
+                ...sequenceGenre.prompts.CAMERA,
+                ...movieEra.prompts.CAMERA
               ],
               categoryName: ClapSegmentCategory.CAMERA,
             }))
@@ -510,7 +510,7 @@ export async function analyzeScreenplay(
             assetsByLabel[characterName] = {
               id: UUID(), // unique identifier of the assets (UUID)
               type: "Description",
-              category: ClapSegmentCategory.CHARACTER,
+              category: "character",
               label: characterName, // the asset name (eg. in the script)
               content: characterName, // url to the resource, or content string
               occurrences: 1 + existingOccurrences,
@@ -588,7 +588,7 @@ export async function analyzeScreenplay(
 
           const dialogueLine = parseDialogueLine(event.description)
             
-          if (event.type === ClapSegmentCategory.DIALOGUE && dialogueLine) {
+          if (event.type === "dialogue" && dialogueLine) {
             // console.log("found a dialogue! currentSliceEntities:", currentSliceEntities)
             segmentCandidates.push(createSegment({    
               startTimeInSteps,
@@ -639,13 +639,13 @@ export async function analyzeScreenplay(
               //...sequenceGenre.prompts.era,
 
               // note: here we use the *ERA* parser, and on the FULL MOVIE
-              ...movieEra.prompts.era,
+              ...movieEra.prompts.ERA,
             ],
             categoryName: ClapSegmentCategory.ERA,
           }))
 
           const defaultSoundPrompt =
-            event.type === ClapSegmentCategory.DIALOGUE
+            event.type === "dialogue"
 
             // a generic "people talking" sound isn't very interesting
             ? []
@@ -671,16 +671,16 @@ export async function analyzeScreenplay(
               prompt: [
                 currentSound,
                 // note: here we use the *GENRE* parser, and on the FULL MOVIE
-                ...sequenceGenre.prompts.sound,
+                ...sequenceGenre.prompts.SOUND,
                 
-                ...movieEra.prompts.sound,
+                ...movieEra.prompts.SOUND,
               ],
               entityId: currentSliceEntities[0]?.id || undefined,
               categoryName: ClapSegmentCategory.SOUND,
             }))
           }
 
-          currentMusic = pick(mockCategoryPrompts.music) || currentMusic
+          currentMusic = pick(mockCategoryPrompts.MUSIC) || currentMusic
 
           if (currentMusic) {
             segmentCandidates.push(createSegment({    
@@ -691,9 +691,9 @@ export async function analyzeScreenplay(
               prompt: [
                 currentMusic,
                 // note: here we use the *GENRE* parser, and on the FULL MOVIE
-                ...sequenceGenre.prompts.music,
+                ...sequenceGenre.prompts.MUSIC,
 
-                ...movieEra.prompts.music
+                ...movieEra.prompts.MUSIC
               ],
               categoryName: ClapSegmentCategory.MUSIC,
             }))
