@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useMemo, useRef } from "react"
 
 import { Plane, Text } from "@react-three/drei"
 
@@ -91,6 +91,123 @@ export function TopBarTimeScale() {
     }
   }, [])
 
+  // console.log("contentWidth:", contentWidth)
+  // console.log("NB_MAX_SHOTS * cellWidth:",  NB_MAX_SHOTS * cellWidth)
+  
+  const maxWidth = contentWidth
+  
+  const graduationGroup = useMemo(() => (
+    <>
+      <group
+        position={[0, 0, -1]}>
+        <Plane
+           args={[
+            contentWidth,
+            topBarTimeScaleHeight
+          ]}
+           position={[
+            (contentWidth) / 2,
+            (topBarTimeScaleHeight / 2) + 2,
+            1
+          ]}
+
+        >
+
+          <meshBasicMaterial
+            // we need to set the color here to create a sticky overlay
+              attach="material"
+              color={theme.topBarTimeScale.backgroundColor}
+            />
+        </Plane>
+      </group>
+      <group position={[
+        0,
+        0,
+        0
+        ]}>
+        {timeScaleGraduations.map((lineGeometry, idx) => (
+          <line
+            // @ts-ignore
+            geometry={lineGeometry}
+            key={idx}>
+            <lineBasicMaterial
+              attach="material"
+              color={theme.topBarTimeScale.lineColor}
+              opacity={idx % unit === 0 ? 1.0 : 0.7777}
+              linewidth={1}
+            />
+          </line>
+        ))}
+      </group>
+      <group position={[0, 0, 0]} visible={!isResizing}>
+        {timeScaleGraduations.filter((_, idx) => (idx * cellWidth) < maxWidth).map((lineGeometry, idx) => (
+          <Text
+            key={idx}
+            position={[
+              idx * cellWidth,
+              // idx % unit === 0 ? topBarTimeScaleHeight : 25,
+              24,
+              1
+            ]}
+
+            scale={[
+              idx % unit === 0 ? 12 : 10,
+              idx % unit === 0 ? 12 : 10,
+              1
+            ]}
+
+            lineHeight={1.0}
+            color={theme.topBarTimeScale.textColor}
+            // fillOpacity={0.7}
+            anchorX="center" // default
+            anchorY="middle" // default
+
+            // keep in mind this will impact the font width
+            // so you will have to change the "Arial" or "bold Arial"
+            // in the function which computes a character's width
+            fontWeight={200}
+            visible={
+              // always hide the 0
+              idx === 0
+              ? false
+
+              // always show the text if we have enough room
+              : cellWidth > 40
+              ? true
+
+              // if this is too tight, we only display the coarse time ticks
+              : cellWidth > 4
+              ? idx % unit === 0
+
+              : false
+            }
+          >
+            {
+            formatTimestamp(
+              timestampInMs += DEFAULT_DURATION_IN_MS_PER_STEP, {
+                hours: false, // idx % unit === 0,
+                minutes: idx % unit === 0,
+                seconds: true,
+                milliseconds: cellWidth > 20,
+            })}
+          </Text>
+        ))}
+      </group>
+    </>
+  ), [
+    isResizing,
+    timeScaleGraduations.length,
+    leftBarTrackScaleWidth,
+    topBarTimeScaleHeight,
+    contentWidth,
+    cellWidth,
+    unit,
+    formatTimestamp,
+    theme.topBarTimeScale.backgroundColor,
+    theme.topBarTimeScale.lineColor,
+    theme.topBarTimeScale.textColor,
+  ])
+
   return (
     <group
       ref={r => {
@@ -98,7 +215,8 @@ export function TopBarTimeScale() {
           setTopBarTimeScale(r)
         }
       }}
-      position={[-leftBarTrackScaleWidth, 0, -3]}
+      // just a trick
+      position={[0, 0, -3]}
       onWheel={(e) => {
         if (e.offsetY > topBarTimeScaleHeight) { return }
 
@@ -156,99 +274,7 @@ export function TopBarTimeScale() {
         return false
       }}
       >
-      <group
-
-        position={[0, 0, -1]}>
-        <Plane
-           args={[leftBarTrackScaleWidth + contentWidth, topBarTimeScaleHeight]}
-           position={[
-            contentWidth / 2,
-            (topBarTimeScaleHeight / 2) + 2,
-            1
-          ]}
-
-        >
-
-          <meshBasicMaterial
-            // we need to set the color here to create a sticky overlay
-              attach="material"
-              color={theme.topBarTimeScale.backgroundColor}
-            />
-        </Plane>
-      </group>
-      <group position={[
-        leftBarTrackScaleWidth,
-        0,
-        0
-        ]}>
-        {timeScaleGraduations.map((lineGeometry, idx) => (
-          <line
-            // @ts-ignore
-            geometry={lineGeometry}
-            key={idx}>
-            <lineBasicMaterial
-              attach="material"
-              color={theme.topBarTimeScale.lineColor}
-              opacity={idx % unit === 0 ? 1.0 : 0.7777}
-              linewidth={1}
-            />
-          </line>
-        ))}
-      </group>
-      <group position={[leftBarTrackScaleWidth, 0, 0]} visible={!isResizing}>
-        {isResizing ? [] : timeScaleGraduations.map((lineGeometry, idx) => (
-          <Text
-            key={idx}
-            position={[
-              idx * cellWidth,
-              // idx % unit === 0 ? topBarTimeScaleHeight : 25,
-              24,
-              1
-            ]}
-
-            scale={[
-              idx % unit === 0 ? 12 : 10,
-              idx % unit === 0 ? 12 : 10,
-              1
-            ]}
-
-            lineHeight={1.0}
-            color={theme.topBarTimeScale.textColor}
-            // fillOpacity={0.7}
-            anchorX="center" // default
-            anchorY="middle" // default
-
-            // keep in mind this will impact the font width
-            // so you will have to change the "Arial" or "bold Arial"
-            // in the function which computes a character's width
-            fontWeight={200}
-            visible={
-              // always hide the 0
-              idx === 0
-              ? false
-
-              // always show the text if we have enough room
-              : cellWidth > 40
-              ? true
-
-              // if this is too tight, we only display the coarse time ticks
-              : cellWidth > 4
-              ? idx % unit === 0
-
-              : false
-            }
-          >
-            {
-            formatTimestamp(
-              timestampInMs += DEFAULT_DURATION_IN_MS_PER_STEP, {
-                hours: false, // idx % unit === 0,
-                minutes: idx % unit === 0,
-                seconds: true,
-                milliseconds: cellWidth > 20,
-            })}
-          </Text>
-        ))}
-      </group>
+      {graduationGroup}
     </group>
   )
 }

@@ -812,6 +812,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       endTimeInMs
     })
 
+    /*
     console.log("availableTrack:", {
       requestedStartTimeInMs,
       segmentDuration,
@@ -820,6 +821,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       startTimeInMs,
       endTimeInMs
     })
+      */
 
     // we just make sure to sanitize it before adding it
     segment = await clapSegmentToTimelineSegment(segment)
@@ -991,7 +993,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           // if we have a collision, there is currently no way around it we need to create a new track
           if (!(s.endTimeInMs <= startTimeInMs || s.startTimeInMs >= endTimeInMs)) {
             const newTrack = findFreeTrack({ startTimeInMs, endTimeInMs })
-            console.log(`ASSIGN NEW TRACK (${newTrack}) TO SEGMENT`, s)
+            //console.log(`ASSIGN NEW TRACK (${newTrack}) TO SEGMENT`, s)
      
             assignTrack({
               segment,
@@ -1019,7 +1021,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         }
       }
     }
-    console.log(`TODO Julian: stretched segments (overlapping segments) should be re-generated`)
+    //console.log(`TODO Julian: stretched segments (overlapping segments) should be re-generated`)
 
     set({
       segments,
