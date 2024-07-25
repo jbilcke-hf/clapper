@@ -4,6 +4,7 @@ import { FormInput } from '@/components/forms/FormInput'
 import { FormSection } from '@/components/forms/FormSection'
 import { useWorkflowEditor } from '@/services/editors'
 import { useUI } from '@/services'
+import { WorkflowView } from './viewer/WorkflowView'
 
 export function WorkflowEditor() {
   const current = useWorkflowEditor((s) => s.current)
@@ -14,6 +15,9 @@ export function WorkflowEditor() {
 
   const hasBetaAccess = useUI((s) => s.hasBetaAccess)
 
+  if (hasBetaAccess) {
+    return <WorkflowView />
+  }
   if (!current) {
     return (
       <FormSection label={'Workflow Editor'} className="p-4">
