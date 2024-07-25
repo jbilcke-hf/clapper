@@ -5,8 +5,8 @@ import { clapSegmentToTimelineSegment } from "./clapSegmentToTimelineSegment"
 
 export async function getFinalVideo(clap: ClapProject): Promise<TimelineSegment | undefined> {
   const alreadyAnEmbeddedFinalVideo: ClapSegment | undefined = clap.segments.filter(s =>
-    s.category === ClapSegmentCategory.VIDEO &&
-    s.status === ClapSegmentStatus.COMPLETED &&
+    s.category.toUpperCase() === ClapSegmentCategory.VIDEO &&
+    s.status.toUpperCase() === ClapSegmentStatus.COMPLETED &&
     s.startTimeInMs === 0 &&
     s.endTimeInMs === clap.meta.durationInMs &&
     s.assetUrl).at(0)
