@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { FormInput } from '@/components/forms/FormInput'
 import { FormSection } from '@/components/forms/FormSection'
 import { useWorkflowEditor } from '@/services/editors'
+import { useUI } from '@/services'
 
 export function WorkflowEditor() {
   const current = useWorkflowEditor((s) => s.current)
@@ -10,6 +11,8 @@ export function WorkflowEditor() {
   const history = useWorkflowEditor((s) => s.history)
   const undo = useWorkflowEditor((s) => s.undo)
   const redo = useWorkflowEditor((s) => s.redo)
+
+  const hasBetaAccess = useUI((s) => s.hasBetaAccess)
 
   if (!current) {
     return (

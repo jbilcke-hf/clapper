@@ -26,6 +26,8 @@ type DroppableThing = { files: File[] }
 function MainContent() {
   const ref = useRef<HTMLDivElement>(null)
   const showWelcomeScreen = useUI((s) => s.showWelcomeScreen)
+  const showExplorer = useUI((s) => s.showExplorer)
+  const showVideoPlayer = useUI((s) => s.showVideoPlayer)
   const showTimeline = useUI((s) => s.showTimeline)
   const showAssistant = useUI((s) => s.showAssistant)
   const theme = useTheme()
@@ -58,7 +60,7 @@ function MainContent() {
     <div
       ref={ref}
       className={cn(
-        `dark fixed flex h-screen w-screen select-none flex-col justify-between overflow-hidden font-light text-stone-900/90 dark:text-stone-100/90`
+        `dark fixed flex h-screen w-screen select-none flex-col overflow-hidden font-light text-stone-900/90 dark:text-stone-100/90`
       )}
       style={{
         backgroundImage:
@@ -68,35 +70,43 @@ function MainContent() {
       <TopBar />
       <div
         className={cn(
-          `flex h-[calc(100vh-40px)] w-screen flex-row overflow-hidden`
+          `flex h-[calc(100vh-68px)] w-screen flex-row overflow-hidden`
         )}
       >
         <ReflexContainer orientation="vertical">
           <ReflexElement>
             <ReflexContainer orientation="horizontal">
-              <ReflexElement minSize={showTimeline ? 100 : 1}>
+              <ReflexElement
+                // minSize={showTimeline ? 1 : 100}
+                // maxSize={2000}
+                size={showTimeline ? 1200 : 400}
+              >
                 <ReflexContainer orientation="vertical">
                   <ReflexElement
-                    size={showTimeline ? 700 : 1}
-                    minSize={showTimeline ? 100 : 1}
-                    maxSize={showTimeline ? 2000 : 1}
+                    size={showExplorer ? undefined : 1}
+                    minSize={showExplorer ? 100 : 1}
+                    maxSize={showExplorer ? 2000 : 1}
                   >
                     <Editors />
                   </ReflexElement>
-                  <ReflexSplitter />
-                  <ReflexElement minSize={showTimeline ? 100 : 1}>
-                    <Monitor />
-                  </ReflexElement>
+                  {showVideoPlayer && <ReflexSplitter />}
+                  {showVideoPlayer && (
+                    <ReflexElement
+                      minSize={showVideoPlayer ? 200 : 1}
+                      size={showVideoPlayer ? undefined : 1}
+                    >
+                      <Monitor />
+                    </ReflexElement>
+                  )}
                 </ReflexContainer>
               </ReflexElement>
               <ReflexSplitter />
               <ReflexElement
                 size={showTimeline ? 400 : 1}
-                minSize={showTimeline ? 100 : 1}
+                minSize={showTimeline ? 200 : 1}
                 maxSize={showTimeline ? 1600 : 1}
               >
                 <Timeline />
-                <BottomToolbar />
               </ReflexElement>
             </ReflexContainer>
           </ReflexElement>
@@ -167,6 +177,7 @@ function MainContent() {
       <SettingsDialog />
       <LoadingDialog />
       <Toaster />
+      <BottomToolbar />
     </div>
   )
 }
