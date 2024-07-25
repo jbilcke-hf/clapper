@@ -21,10 +21,19 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { ToggleView } from './ToggleView'
 
 export function TopMenu() {
   const isBusyResolving = useResolver((s) => s.isBusyResolving)
 
+  const showTimeline = useUI((s) => s.showTimeline)
+  const setShowTimeline = useUI((s) => s.setShowTimeline)
+  const showExplorer = useUI((s) => s.showExplorer)
+  const setShowExplorer = useUI((s) => s.setShowExplorer)
+  const showVideoPlayer = useUI((s) => s.showVideoPlayer)
+  const setShowVideoPlayer = useUI((s) => s.setShowVideoPlayer)
+  const showAssistant = useUI((s) => s.showAssistant)
+  const setShowAssistant = useUI((s) => s.setShowAssistant)
   const setIsTopMenuOpen = useUI((s) => s.setIsTopMenuOpen)
 
   const hasBetaAccess = useUI((s) => s.hasBetaAccess)
@@ -55,9 +64,42 @@ export function TopMenu() {
         {
           // clap?.meta?.title || "Untitled"
         }
+
+        {/*
+        <ToggleView
+          className="row-start-1 col-span-1 row-span-4 border-r"
+          isVisible={}
+          setVisible={}
+        >Toggle Tree browser</ToggleView>
+        */}
+        {/*
+        <ToggleView
+          className="col-span-4 row-span-1 row-start-4 border-t"
+          isVisible={showTimeline}
+          setVisible={setShowTimeline}
+        >
+          Toggle Timeline
+        </ToggleView>
+        */}
+
+        <ToggleView
+          className="col-span-1 col-start-3 row-span-2 border-b border-l border-r"
+          isVisible={showVideoPlayer}
+          setVisible={setShowVideoPlayer}
+        >
+          Toggle Monitor
+        </ToggleView>
+        <ToggleView
+          className="col-span-1 col-start-4 row-span-4 border-l"
+          isVisible={showAssistant}
+          setVisible={setShowAssistant}
+        >
+          Toggle Assistant
+        </ToggleView>
+
         <Tooltip>
           <TooltipTrigger className="">
-            <div className="scale-100 cursor-pointer text-stone-300/70 transition-all duration-200 ease-in-out hover:scale-110 hover:text-stone-100/90">
+            <div className="ml-2 scale-100 cursor-pointer text-stone-300/70 transition-all duration-200 ease-in-out hover:scale-110 hover:text-stone-100/90">
               <a href="https://discord.gg/AEruz9B92B" target='"_blank'>
                 <TbBrandDiscord className="h-4 w-4" />
               </a>

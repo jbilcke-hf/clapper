@@ -85,17 +85,6 @@ export function TopMenuView() {
           }}
           >Show asset explorer</MenubarCheckboxItem>
       */}
-        <MenubarCheckboxItem
-          checked={showAssistant}
-          onClick={(e) => {
-            setShowAssistant(!showAssistant)
-            e.stopPropagation()
-            e.preventDefault()
-            return false
-          }}
-        >
-          Show assistant
-        </MenubarCheckboxItem>
 
         <MenubarCheckboxItem
           checked={followCursor}
