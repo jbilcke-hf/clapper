@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import {
   ReactFlow,
   useNodesState,
@@ -7,54 +7,33 @@ import {
   MiniMap,
   Controls,
   OnConnect,
+  Node,
+  Edge,
 } from '@xyflow/react'
 
 import '@xyflow/react/dist/base.css'
 
-import { Node } from './Node'
+import { NodeView } from './NodeView'
+import { ReactWorkflowEdge, ReactWorkflowNode } from '../types'
+import { useWorkflowEditor } from '@/services/editors'
+
+import { glifs } from '../samples/glif'
+import { glifToReactWorkflow } from '../specialized/glif/glifToReactWorkflow'
 
 const nodeTypes = {
-  custom: Node,
+  custom: NodeView,
 }
 
-const initNodes = [
-  {
-    id: '1',
-    type: 'custom',
-    data: { name: 'Jane Doe', job: 'CEO', emoji: '😎' },
-    position: { x: 0, y: 50 },
-  },
-  {
-    id: '2',
-    type: 'custom',
-    data: { name: 'Tyler Weary', job: 'Designer', emoji: '🤓' },
-
-    position: { x: -200, y: 200 },
-  },
-  {
-    id: '3',
-    type: 'custom',
-    data: { name: 'Kristi Price', job: 'Developer', emoji: '🤩' },
-    position: { x: 200, y: 200 },
-  },
-]
-
-const initEdges = [
-  {
-    id: 'e1-2',
-    source: '1',
-    target: '2',
-  },
-  {
-    id: 'e1-3',
-    source: '1',
-    target: '3',
-  },
-]
-
 export function WorkflowView() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initEdges)
+  const current = useWorkflowEditor((s) => s.current)
+  const [nodes, setNodes, onNodesChange] = useNodesState<ReactWorkflowNode>([])
+  const [edges, setEdges, onEdgesChange] = useEdgesState<ReactWorkflowEdge>([])
+
+  useEffect(() => {
+    const { nodes, edges } = glifToReactWorkflow(glifs[0])
+    setNodes(nodes)
+    setEdges(edges)
+  }, [])
 
   const onConnect: OnConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -62,13 +41,13 @@ export function WorkflowView() {
   )
 
   return (
-    <ReactFlow
+    <ReactFlow<ReactWorkflowNode>
       nodes={nodes}
       edges={edges}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
-      nodeTypes={nodeTypes}
+      nodeTypes={nodeTypes as any}
       fitView
       className="bg-teal-50"
     >
