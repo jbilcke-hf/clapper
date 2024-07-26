@@ -60,7 +60,7 @@ export function ProjectEditor() {
         }}
       />
       <FormInput<number>
-        label={'Default media width'}
+        label={'Default media width ⚠️'}
         value={current.width || 1024}
         defaultValue={1024}
         // 4k is 3840×2160
@@ -69,7 +69,7 @@ export function ProjectEditor() {
         maxValue={1024}
       />
       <FormInput<number>
-        label={'Default media height'}
+        label={'Default media height ⚠️'}
         value={current.height || 576}
         defaultValue={576}
         // 4k is 3840×2160
