@@ -403,7 +403,7 @@ export const lore: UITheme = {
   editorTextColor: '#f6d6d8',
   editorMenuBgColor: '#151520',
   editorMenuTextColor: 'f6d6d8',
-  editorBorderColor: '#152639',
+  editorBorderColor: '#252530',
   monitorBgColor: '#151520',
   monitorSecondaryTextColor: '#D6D3D1',
   monitorPrimaryTextColor: '#DE4A80',
