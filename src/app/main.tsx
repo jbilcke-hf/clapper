@@ -70,8 +70,11 @@ function MainContent() {
       <TopBar />
       <div
         className={cn(
-          `flex h-[calc(100vh-68px)] w-screen flex-row overflow-hidden`
+          `flex h-[calc(100vh-64px)] w-screen flex-row overflow-hidden`
         )}
+        style={{
+          backgroundColor: theme.defaultBgColor || '#090909',
+        }}
       >
         <ReflexContainer orientation="vertical">
           <ReflexElement>
@@ -82,14 +85,16 @@ function MainContent() {
                 size={showTimeline ? 1200 : 400}
               >
                 <ReflexContainer orientation="vertical">
-                  <ReflexElement
-                    size={showExplorer ? undefined : 1}
-                    minSize={showExplorer ? 100 : 1}
-                    maxSize={showExplorer ? 2000 : 1}
-                  >
-                    <Editors />
-                  </ReflexElement>
-                  {showVideoPlayer && <ReflexSplitter />}
+                  {showExplorer && (
+                    <ReflexElement
+                      size={showExplorer ? undefined : 1}
+                      minSize={showExplorer ? 100 : 1}
+                      maxSize={showExplorer ? 2000 : 1}
+                    >
+                      <Editors />
+                    </ReflexElement>
+                  )}
+                  {showExplorer && showVideoPlayer && <ReflexSplitter />}
                   {showVideoPlayer && (
                     <ReflexElement
                       minSize={showVideoPlayer ? 200 : 1}
@@ -125,7 +130,7 @@ function MainContent() {
           showWelcomeScreen
             ? 'pointer-events-auto z-[101] flex'
             : 'pointer-events-none hidden',
-          `fixed top-[40px] h-[calc(100vh-40px)] w-screen flex-row overflow-hidden`,
+          `fixed top-9 h-[calc(100vh-36px)] w-screen flex-row overflow-hidden`,
           `items-center justify-center`,
           `bg-stone-950`
         )}
@@ -139,7 +144,7 @@ function MainContent() {
         >
           <div
             className={cn(
-              `pointer-events-none absolute left-[100px] top-[20px]`,
+              `pointer-events-none absolute left-[100px] top-[16px]`,
               `opacity-90`
             )}
           >
@@ -151,7 +156,7 @@ function MainContent() {
           </div>
           <div
             className={cn(
-              `pointer-events-none absolute left-[305px] top-[140px]`,
+              `pointer-events-none absolute left-[305px] top-[136px]`,
               `transition-all duration-200 ease-out`,
               isTopMenuOpen ? 'scale-100 opacity-90' : 'scale-90 opacity-0'
             )}

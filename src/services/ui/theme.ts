@@ -13,7 +13,11 @@
  */
 
 import { ClapSegmentCategory } from '@aitube/clap'
-import { UITheme, UIThemeName } from '@aitube/clapper-services'
+import {
+  UITheme,
+  UIThemeName,
+  WorkflowEditorTheme,
+} from '@aitube/clapper-services'
 import { ClapSegmentCategoryColors } from '@aitube/timeline'
 
 export const baseClapSegmentCategoryColors: ClapSegmentCategoryColors = {
@@ -85,13 +89,13 @@ export const backstage: UITheme = {
   editorCursorColor: '#f5f5f4',
   editorTextColor: '#d6d3d1',
   editorMenuBgColor: '#1c1917',
-  editorMenuTextColor: 'd6d3d1',
-  editorBorderColor: '#3e3a39',
-  monitorBgColor: '#1c1917',
+  editorMenuTextColor: '494544',
+  editorBorderColor: '#3c3837',
+  monitorBgColor: '#201d1c',
   monitorSecondaryTextColor: '#D6D3D1',
   monitorPrimaryTextColor: '#FACC15',
 
-  assistantBgColor: '#292524',
+  assistantBgColor: '#242120',
   assistantUserBgColor: '#075985',
   assistantUserTextColor: '#bae6fd',
   assistantRobotBgColor: '#3730a3',
@@ -135,6 +139,21 @@ export const backstage: UITheme = {
       lineColor: '#FACC15',
     },
   },
+
+  workflow: {
+    bgColor: '#242120',
+    node: {
+      bgColor: '#393534',
+      borderColor: '#494544',
+      textPrimaryColor: '#d6d3d1',
+      textSecondaryColor: '#b6b3b1',
+      radius: '8px',
+    },
+    handle: {
+      inputColor: '#FACC15',
+      outputColor: '#FACC15',
+    },
+  },
 }
 
 export const midnight: UITheme = {
@@ -144,36 +163,36 @@ export const midnight: UITheme = {
   description: '',
   defaultBgColor: '#101e2d',
   defaultTextColor: '#b8bdc3',
-  defaultPrimaryColor: '#5B9DF1',
+  defaultPrimaryColor: '#5A9DF7',
   defaultBorderColor: '#152639',
-  logoColor: '#5B9DF1',
-  editorBgColor: '#101e2d',
-  editorCursorColor: '#5B9DF1',
+  logoColor: '#5A9DF7',
+  editorBgColor: '#011222',
+  editorCursorColor: '#5A9DF7',
   editorTextColor: '#b8bdc3',
-  editorMenuBgColor: '#101e2d',
+  editorMenuBgColor: '#000e1d',
   editorMenuTextColor: 'b8bdc3',
   editorBorderColor: '#152639',
-  monitorBgColor: '#152639',
+  monitorBgColor: '#011222',
   monitorSecondaryTextColor: '#b8bdc3',
-  monitorPrimaryTextColor: '#5B9DF1',
-  assistantBgColor: '#101e2d',
+  monitorPrimaryTextColor: '#5A9DF7',
+  assistantBgColor: '#001121',
   assistantUserBgColor: '#075985',
   assistantUserTextColor: '#bae6fd',
   assistantRobotBgColor: '#3730a3',
   assistantRobotTextColor: '#e0e7ff',
   timeline: {
     topBarTimeScale: {
-      backgroundColor: 'rgb(70,90,107)',
+      backgroundColor: '#32506b',
       textColor: '#ffffff',
       lineColor: '#E6E6E6',
     },
     leftBarTrackScale: {
-      backgroundColor: 'rgb(70,90,107)',
+      backgroundColor: '#32506b',
       textColor: '#ffffff',
       lineColor: '#B3B3B3',
     },
     grid: {
-      backgroundColor: '#101e2d',
+      backgroundColor: '#000e1d',
     },
     cell: {
       categoryColors: baseClapSegmentCategoryColors,
@@ -195,7 +214,21 @@ export const midnight: UITheme = {
       },
     },
     playbackCursor: {
-      lineColor: '#5B9DF1',
+      lineColor: '#5A9DF7',
+    },
+  },
+  workflow: {
+    bgColor: '#011222',
+    node: {
+      bgColor: '#152639',
+      borderColor: '#253649',
+      textPrimaryColor: '#d3d1d6',
+      textSecondaryColor: '#b3b1b6',
+      radius: '8px',
+    },
+    handle: {
+      inputColor: '#5A9DF7',
+      outputColor: '#5A9DF7',
     },
   },
 }
@@ -210,28 +243,28 @@ export const lavender: UITheme = {
   defaultPrimaryColor: '#A78BFA',
   defaultBorderColor: '#152639',
   logoColor: '#A78BFA',
-  editorBgColor: '#211b32',
+  editorBgColor: '#211b30',
   editorCursorColor: '#A78BFA',
   editorTextColor: '#dbd0fd',
-  editorMenuBgColor: '#32294b',
+  editorMenuBgColor: '#1a1526',
   editorMenuTextColor: 'dbd0fd',
-  editorBorderColor: '#152639',
-  monitorBgColor: '#32294b',
+  editorBorderColor: '#312b42',
+  monitorBgColor: '#211b30',
   monitorSecondaryTextColor: '#D6D3D1',
   monitorPrimaryTextColor: '#A78BFA',
-  assistantBgColor: '#32294b',
+  assistantBgColor: '#211b30',
   assistantUserBgColor: '#075985',
   assistantUserTextColor: '#bae6fd',
   assistantRobotBgColor: '#3730a3',
   assistantRobotTextColor: '#e0e7ff',
   timeline: {
     topBarTimeScale: {
-      backgroundColor: 'rgb(110,90,127)',
+      backgroundColor: '#6E5A7F',
       textColor: '#ffffff',
       lineColor: '#E6E6E6',
     },
     leftBarTrackScale: {
-      backgroundColor: 'rgb(110,90,127)',
+      backgroundColor: '#6E5A7F',
       textColor: '#ffffff',
       lineColor: '#B3B3B3',
     },
@@ -261,6 +294,20 @@ export const lavender: UITheme = {
       lineColor: '#A78BFA',
     },
   },
+  workflow: {
+    bgColor: '#211b30',
+    node: {
+      bgColor: '#22192b',
+      borderColor: '#62597b',
+      textPrimaryColor: '#d6ccdf',
+      textSecondaryColor: '#6E5A7F',
+      radius: '8px',
+    },
+    handle: {
+      inputColor: '#A78BFA',
+      outputColor: '#A78BFA',
+    },
+  },
 }
 
 export const flix: UITheme = {
@@ -278,7 +325,7 @@ export const flix: UITheme = {
   editorTextColor: '#ffeeee',
   editorMenuBgColor: '#000000',
   editorMenuTextColor: 'ffeeee',
-  editorBorderColor: '#152639',
+  editorBorderColor: '#232323',
   monitorBgColor: '#000000',
   monitorSecondaryTextColor: '#D6D3D1',
   monitorPrimaryTextColor: '#D22F27',
@@ -323,6 +370,20 @@ export const flix: UITheme = {
     },
     playbackCursor: {
       lineColor: '#D22F27',
+    },
+  },
+  workflow: {
+    bgColor: '#000000',
+    node: {
+      bgColor: '#0f0f0f',
+      borderColor: '#3e3939',
+      textPrimaryColor: '#d6d3d1',
+      textSecondaryColor: '#b6b3b1',
+      radius: '8px',
+    },
+    handle: {
+      inputColor: '#B23F37',
+      outputColor: '#B23F37',
     },
   },
 }
@@ -389,13 +450,27 @@ export const lore: UITheme = {
       lineColor: '#DE4A80',
     },
   },
+  workflow: {
+    bgColor: '#151520',
+    node: {
+      bgColor: '#151520',
+      borderColor: '#555560',
+      textPrimaryColor: '#d6d3d1',
+      textSecondaryColor: '#b6b3b1',
+      radius: '8px',
+    },
+    handle: {
+      inputColor: '#DE4A80',
+      outputColor: '#DE4A80',
+    },
+  },
 }
 export const gordon: UITheme = {
   id: 'gordon',
   label: 'Gordon',
   author: 'Clapper',
   description: '',
-  defaultBgColor: '#323232',
+  defaultBgColor: '#525252',
   defaultTextColor: '#e0e0e0',
   defaultPrimaryColor: '#ff8400',
   defaultBorderColor: '#2e2e2e',
@@ -403,7 +478,7 @@ export const gordon: UITheme = {
   editorBgColor: '#434343',
   editorCursorColor: '#ffffff',
   editorTextColor: '#e0e0e0',
-  editorMenuBgColor: '#323232',
+  editorMenuBgColor: '#333333',
   editorMenuTextColor: 'e0e0e0',
   editorBorderColor: '#2e2e2e',
   monitorBgColor: '#323232',
@@ -452,6 +527,20 @@ export const gordon: UITheme = {
     },
     playbackCursor: {
       lineColor: '#ff8400',
+    },
+  },
+  workflow: {
+    bgColor: '#444444',
+    node: {
+      bgColor: '#333333',
+      borderColor: '#636363',
+      textPrimaryColor: '#d6d3d1',
+      textSecondaryColor: '#b6b3b1',
+      radius: '8px',
+    },
+    handle: {
+      inputColor: '#ff8400',
+      outputColor: '#ff8400',
     },
   },
 }
@@ -518,6 +607,20 @@ export const system360: UITheme = {
     },
     playbackCursor: {
       lineColor: '#C74E40',
+    },
+  },
+  workflow: {
+    bgColor: '#100e0e',
+    node: {
+      bgColor: '#2f2f2f',
+      borderColor: '#3e3a39',
+      textPrimaryColor: '#d6d3d1',
+      textSecondaryColor: '#b6b3b1',
+      radius: '8px',
+    },
+    handle: {
+      inputColor: '#FACC15',
+      outputColor: '#FACC15',
     },
   },
 }
@@ -652,6 +755,20 @@ export const silent: UITheme = {
       lineColor: '#ffffff',
     },
   },
+  workflow: {
+    bgColor: '#100e0e',
+    node: {
+      bgColor: '#121212',
+      borderColor: '#3a3a3a',
+      textPrimaryColor: '#d6d6d6',
+      textSecondaryColor: '#b3b3b3',
+      radius: '8px',
+    },
+    handle: {
+      inputColor: '#5A5A5A',
+      outputColor: '#5A5A5A',
+    },
+  },
 }
 
 export const sandy: UITheme = {
@@ -716,8 +833,23 @@ export const sandy: UITheme = {
       lineColor: '#e67a7a',
     },
   },
+  workflow: {
+    bgColor: '#100e0e',
+    node: {
+      bgColor: '#2f2f2f',
+      borderColor: '#3e3a39',
+      textPrimaryColor: '#d6d3d1',
+      textSecondaryColor: '#b6b3b1',
+      radius: '8px',
+    },
+    handle: {
+      inputColor: '#FACC15',
+      outputColor: '#FACC15',
+    },
+  },
 }
 
+// some themes I've made suck / need more work, so I've commented them out
 export const themes: Record<UIThemeName, UITheme> = {
   backstage,
   midnight,

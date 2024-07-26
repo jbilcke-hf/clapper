@@ -1,5 +1,4 @@
-import { useTasks } from '@/components/tasks/useTasks'
-
+export { useTasks } from '@/components/tasks/useTasks'
 export { useAssistant } from './assistant/useAssistant'
 export { useAudio } from './audio/useAudio'
 export { useBroadcast } from './broadcast/useBroadcast'
@@ -18,6 +17,6 @@ export { useRenderer } from './renderer/useRenderer'
 export { useResolver } from './resolver/useResolver'
 export { useSettings } from './settings/useSettings'
 export { useUI } from './ui/useUI'
-export { useTasks }
+export { useTheme } from './ui/useTheme'
 
 import './debug'

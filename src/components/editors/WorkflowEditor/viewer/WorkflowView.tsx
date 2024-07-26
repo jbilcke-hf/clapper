@@ -19,12 +19,14 @@ import { useWorkflowEditor } from '@/services/editors'
 
 import { glifs } from '../samples/glif'
 import { glifToReactWorkflow } from '../specialized/glif/glifToReactWorkflow'
+import { useTheme } from '@/services'
 
 const nodeTypes = {
   custom: NodeView,
 }
 
 export function WorkflowView() {
+  const theme = useTheme()
   const current = useWorkflowEditor((s) => s.current)
   const [nodes, setNodes, onNodesChange] = useNodesState<ReactWorkflowNode>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<ReactWorkflowEdge>([])
@@ -49,9 +51,16 @@ export function WorkflowView() {
       onConnect={onConnect}
       nodeTypes={nodeTypes as any}
       fitView
-      className="bg-teal-50"
+      className="bg-transparent"
+      // TODO: the "light" / "dark" string should be
+      // defined in the theme, eg. colorMode={theme.mode}
+      colorMode="dark"
+      style={{
+        backgroundColor:
+          theme.workflow.bgColor || theme.defaultBgColor || '#000000',
+      }}
     >
-      <MiniMap />
+      <MiniMap nodeStrokeWidth={3} pannable zoomable className="scale-75" />
       <Controls />
     </ReactFlow>
   )

@@ -7,31 +7,35 @@ This extends the original react-reflex.css (from react-reflex@4.1.0),
 with some custom colors and sizes
 */
 
+body .reflex-splitter {
+  opacity: 0.2;
+}
+
 @layer components {
   body .reflex-container > .reflex-splitter {
-    @apply bg-stone-600 transition-all duration-200 ease-in-out;
+    @apply bg-neutral-400 transition-all duration-200 ease-in-out;
   }
 
   body .reflex-container > .reflex-splitter.active,
   body .reflex-container > .reflex-splitter:hover {
-    @apply bg-stone-400 transition-all duration-200 ease-in-out;
+    @apply bg-neutral-200 transition-all duration-200 ease-in-out;
   }
 
   body .horizontal > .reflex-splitter {
-    @apply h-[3px] border-b-stone-600 border-t-stone-600 bg-stone-600;
+    @apply h-[3px] border-b-neutral-400 border-t-neutral-400 bg-neutral-400;
   }
 
   body .reflex-container.horizontal > .reflex-splitter:hover,
   body .reflex-container.horizontal > .reflex-splitter.active {
-    @apply h-[3px] border-b-stone-400 border-t-stone-400 bg-stone-400;
+    @apply h-[3px] border-b-neutral-200 border-t-neutral-200 bg-neutral-200;
   }
 
   body .reflex-container.vertical > .reflex-splitter {
-    @apply w-[3px] border-l-stone-600 border-r-stone-600 bg-stone-600;
+    @apply w-[3px] border-l-neutral-400 border-r-neutral-400 bg-neutral-400;
   }
 
   body .reflex-container.vertical > .reflex-splitter:hover,
   body .reflex-container.vertical > .reflex-splitter.active {
-    @apply w-[3px] border-l-stone-400 border-r-stone-400 bg-stone-400;
+    @apply w-[3px] border-l-neutral-200 border-r-neutral-200 bg-neutral-200;
   }
 }
