@@ -31,7 +31,15 @@ export function BottomToolbar() {
           <span className="text-stone-300/70">{APP_REVISION}</span>
         </div>
 
-        {/* <Metrics /> */}
+        {/*
+        Note sure that's really useful since there is a garbage collector,
+        I got a situation where I had 1.2 Gb when loaded empty,
+        and it turned into 800 Mb after loading a big project,
+        thanks to the GC kicking in.
+
+        what would be more useful is to collect system metrics in the Desktop version.
+        <Metrics />
+        */}
       </div>
       <div className="flex flex-row space-x-6">
         <Tasks />

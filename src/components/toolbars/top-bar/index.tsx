@@ -12,7 +12,7 @@ export function TopBar() {
     <div
       className={cn(
         `flex flex-row`,
-        `h-10 w-full`,
+        `h-9 w-full`,
         `items-center bg-stone-900`,
         `border-b`,
         `border-b-stone-700`

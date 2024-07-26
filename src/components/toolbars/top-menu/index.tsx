@@ -64,14 +64,13 @@ export function TopMenu() {
         {
           // clap?.meta?.title || "Untitled"
         }
-
-        {/*
         <ToggleView
-          className="row-start-1 col-span-1 row-span-4 border-r"
-          isVisible={}
-          setVisible={}
-        >Toggle Tree browser</ToggleView>
-        */}
+          className="col-span-1 row-span-4 row-start-1 border-r"
+          isVisible={showExplorer}
+          setVisible={setShowExplorer}
+        >
+          Toggle Explorer
+        </ToggleView>
         {/*
         <ToggleView
           className="col-span-4 row-span-1 row-start-4 border-t"

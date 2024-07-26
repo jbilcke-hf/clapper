@@ -33,8 +33,11 @@ export function Tasks() {
   return (
     <div className={cn(``)}>
       <Popover>
-        <PopoverTrigger>
-          {nbRunningBackgroundTasks || 'no'} pending tasks
+        <PopoverTrigger className="group opacity-70 transition-all duration-100 ease-out hover:opacity-100">
+          <span className="mr-0.5 text-stone-300">
+            {nbRunningBackgroundTasks || 'no'}
+          </span>
+          <span className="text-stone-400">pending tasks</span>
         </PopoverTrigger>
         <PopoverContent>
           <div className={cn(`flex flex-col text-xs font-light`)}>

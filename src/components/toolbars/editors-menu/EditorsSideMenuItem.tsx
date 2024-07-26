@@ -54,17 +54,17 @@ export function EditorsSideMenuItem({
 
   return (
     <Tooltip delayDuration={0}>
-      <TooltipTrigger asChild disabled={!tooltipLabel} className="h-14 w-full">
+      <TooltipTrigger asChild disabled={!tooltipLabel} className="h-12 w-full">
         <div
           className={cn(
-            `flex h-14 w-full flex-col`,
-            `transition-all duration-200 ease-out`,
+            `flex h-12 w-full flex-col`,
+            `transition-all duration-150 ease-out`,
             `items-center justify-center`,
             unmanaged || isActive ? '' : `cursor-pointer`,
             `border-l-[2px]`,
             isActive
-              ? 'fill-gray-50 text-gray-50 hover:fill-gray-50 hover:text-gray-50'
-              : 'fill-gray-400 text-gray-400 hover:fill-gray-200 hover:text-gray-200',
+              ? 'fill-stone-50/80 text-stone-50 opacity-100 hover:fill-stone-50 hover:text-stone-50'
+              : 'fill-stone-400/80 text-gray-400 opacity-80 hover:fill-stone-200 hover:text-stone-200 hover:opacity-100',
             `group`
           )}
           style={{
@@ -89,7 +89,7 @@ export function EditorsSideMenuItem({
         </div>
       </TooltipTrigger>
       <TooltipContent side="right">
-        <p className="">{tooltipLabel}</p>
+        <p className="text-xs">{tooltipLabel}</p>
       </TooltipContent>
     </Tooltip>
   )
