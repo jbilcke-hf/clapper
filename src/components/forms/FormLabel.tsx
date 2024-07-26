@@ -10,7 +10,7 @@ export function FormLabel({
   className?: string
 }) {
   return (
-    <label className={cn(`text-base font-light text-stone-400`, className)}>
+    <label className={cn(`font-mono text-xs text-white/70`, className)}>
       {children}
     </label>
   )

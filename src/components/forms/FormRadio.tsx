@@ -9,33 +9,24 @@ export function FormRadio({
   className,
   selected,
   items,
-  horizontal,
-  centered,
 }: {
   label?: string
   className?: string
   selected?: string
   items?: { name: string; label: string; disabled?: boolean }[]
-  horizontal?: boolean
-  centered?: boolean
 }) {
   return (
-    <FormField
-      label={label}
-      className={cn(`flex-row space-x-5`, className)}
-      horizontal={horizontal}
-      centered={centered}
-    >
+    <FormField label={label} className={cn(``, className)}>
       {items?.map((item) => (
         <div
           key={item.name}
           className={cn(
             `flex flex-row items-center space-x-2`,
             selected === item.name
-              ? `font-light text-stone-200`
+              ? `font-light text-neutral-200`
               : item.disabled
-                ? `font-light text-stone-600`
-                : `font-light text-stone-400`
+                ? `font-light text-neutral-600`
+                : `font-light text-neutral-400`
           )}
         >
           {selected === item.name ? (

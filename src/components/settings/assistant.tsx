@@ -28,7 +28,6 @@ export function SettingsSectionAssistant() {
             value: provider,
           }))}
           onSelect={setAssistantProvider}
-          horizontal
         />
       </FormSection>
     </div>

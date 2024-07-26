@@ -12,18 +12,14 @@ export function FormFile({
   placeholder,
   disabled,
   onChange,
-  horizontal,
   accept,
-  centered,
 }: {
   label?: string
   className?: string
   placeholder?: string
   disabled?: boolean
   onChange?: (files: File[]) => void
-  horizontal?: boolean
   accept?: string
-  centered?: boolean
 }) {
   const ref = useRef<HTMLInputElement>(null)
 
@@ -42,14 +38,11 @@ export function FormFile({
   )
 
   return (
-    <FormField label={`${label}:`} horizontal={horizontal} centered={centered}>
+    <FormField label={label}>
       <Input
         ref={ref}
         placeholder={`${placeholder || ''}`}
-        className={cn(
-          `w-full text-base font-light md:w-60 lg:w-64 xl:w-80`,
-          className
-        )}
+        className={cn(`w-full`, `font-mono text-xs font-light`, className)}
         disabled={disabled}
         onChange={handleChange}
         type="file"

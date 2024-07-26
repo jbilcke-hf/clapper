@@ -18,8 +18,6 @@ export function FormSelect<T>({
   defaultItemLabel,
   items = [],
   onSelect,
-  horizontal,
-  centered,
 }: {
   label?: string
   className?: string
@@ -34,20 +32,16 @@ export function FormSelect<T>({
     value: T
   }[]
   onSelect?: (value?: T) => void
-  horizontal?: boolean
-  centered?: boolean
 }) {
   return (
     <FormField
       label={
         typeof defaultItemId !== 'undefined' &&
         typeof defaultItemLabel !== 'undefined'
-          ? `${label} (defaults to ${defaultItemLabel || 'N.A.'}):`
-          : `${label}:`
+          ? `${label} (defaults to ${defaultItemLabel || 'N.A.'})`
+          : `${label}`
       }
       className={cn(``, className)}
-      horizontal={horizontal}
-      centered={centered}
     >
       <Select
         onValueChange={(newSelectedItemId: string) => {
@@ -61,7 +55,7 @@ export function FormSelect<T>({
         }}
         defaultValue={selectedItemId}
       >
-        <SelectTrigger className="w-full text-base font-light md:w-60 lg:w-64 xl:w-80">
+        <SelectTrigger className={cn(`w-full`, `font-mono text-xs font-light`)}>
           <SelectValue placeholder={selectedItemLabel} />
         </SelectTrigger>
         <SelectContent>

@@ -19,22 +19,20 @@ export function SettingsSectionEditors() {
   return (
     <div className="flex flex-col justify-between space-y-6">
       <FormSection label="Editors">
-        <h3 className="pb-2 text-2xl font-thin text-stone-400">
+        <h2 className="text-base font-normal text-white/50">
           Screenplay editor
-        </h3>
+        </h2>
 
         <FormSwitch
           label="Show line numbers"
           checked={!scriptEditorShowLineNumbers}
           onCheckedChange={setScriptEditorShowLineNumbers}
-          horizontal
         />
 
         <FormSwitch
           label="Show minimap"
           checked={!scriptEditorShowMinimap}
           onCheckedChange={setScriptEditorShowMinimap}
-          horizontal
         />
       </FormSection>
     </div>

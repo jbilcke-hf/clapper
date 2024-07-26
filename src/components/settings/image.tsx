@@ -67,7 +67,6 @@ export function SettingsSectionImage() {
             value: provider,
           }))}
           onSelect={setImageProvider}
-          horizontal
         />
 
         <FormInput

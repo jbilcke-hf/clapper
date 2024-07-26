@@ -96,7 +96,6 @@ export function SettingsSectionVideo() {
             value: provider,
           }))}
           onSelect={setVideoProvider}
-          horizontal
         />
 
         <FormInput
