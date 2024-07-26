@@ -50,7 +50,6 @@ export function SettingsSectionMusic() {
             value: provider,
           }))}
           onSelect={setMusicProvider}
-          horizontal
         />
         {
           musicProvider.startsWith('COMFY_') ? (

@@ -12,18 +12,14 @@ export function FormDir({
   placeholder,
   disabled,
   onChange,
-  horizontal,
   accept,
-  centered,
 }: {
   label?: string
   className?: string
   placeholder?: string
   disabled?: boolean
   onChange?: (files: File[]) => void
-  horizontal?: boolean
   accept?: string
-  centered?: boolean
 }) {
   const handleChange = useMemo(
     () => (event: ChangeEvent<HTMLInputElement>) => {
@@ -40,13 +36,10 @@ export function FormDir({
   )
 
   return (
-    <FormField label={`${label}:`} horizontal={horizontal} centered={centered}>
+    <FormField label={label}>
       <Input
         placeholder={`${placeholder || ''}`}
-        className={cn(
-          `w-full text-base font-light md:w-52 lg:w-56 xl:w-64`,
-          className
-        )}
+        className={cn(`w-full`, `font-mono text-xs font-light`, className)}
         disabled={disabled}
         onChange={handleChange}
         type="file"

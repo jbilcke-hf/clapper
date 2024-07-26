@@ -50,7 +50,6 @@ export function SettingsSectionVoice() {
             value: provider,
           }))}
           onSelect={setVoiceProvider}
-          horizontal
         />
         {
           voiceProvider.startsWith('COMFY_') ? (

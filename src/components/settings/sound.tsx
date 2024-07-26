@@ -49,7 +49,6 @@ export function SettingsSectionSound() {
             value: provider,
           }))}
           onSelect={setSoundProvider}
-          horizontal
         />
         {
           soundProvider.startsWith('COMFY_') ? (

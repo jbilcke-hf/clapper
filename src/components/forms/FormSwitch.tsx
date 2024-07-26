@@ -10,23 +10,14 @@ export function FormSwitch({
   className,
   checked,
   onCheckedChange,
-  horizontal,
-  centered,
 }: {
   label?: string
   className?: string
   checked?: boolean
   onCheckedChange: (checked: boolean) => void
-  horizontal?: boolean
-  centered?: boolean
 }) {
   return (
-    <FormField
-      label={label}
-      className={cn(`flex-row space-x-5`, className)}
-      horizontal={horizontal}
-      centered={centered}
-    >
+    <FormField label={label} className={cn(``, className)}>
       <Switch
         checked={checked}
         onCheckedChange={(checked) => {

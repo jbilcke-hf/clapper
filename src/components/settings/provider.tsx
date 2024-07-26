@@ -95,7 +95,6 @@ export function SettingsSectionProvider() {
           label="Hide API Keys"
           checked={!showApiKeys}
           onCheckedChange={setShowApiKeys}
-          horizontal
         />
 
         <FormInput
@@ -137,7 +136,6 @@ export function SettingsSectionProvider() {
             })
           )}
           onSelect={setComfyIcuAccelerator}
-          horizontal
         />
 
         <FormInput

@@ -8,29 +8,31 @@ export function FormField({
   label,
   children,
   className,
-  horizontal = false,
-  centered = false,
 }: {
   label?: ReactNode
   children?: ReactNode
   className?: string
-  horizontal?: boolean
-  centered?: boolean
 }) {
   return (
     <div
       className={cn(
-        `flex flex-col space-y-3`,
-        `text-base font-thin text-stone-400`,
-        horizontal ? '' : 'w-full'
+        `flex flex-col items-center justify-center`,
+        `full`,
+        `opacity-60`,
+        `font-thin text-neutral-200`,
+        // note: the parent component needs @container for this to work
+        `@md:flex-row @md:space-x-3`
       )}
     >
-      {label && <FormLabel>{label}</FormLabel>}
+      {label && (
+        <div className={cn(`flex flex-row`, `mb-2 w-full @md:mb-0 @md:w-1/3`)}>
+          <FormLabel>{label}</FormLabel>
+        </div>
+      )}
       <div
         className={cn(
-          `flex`,
-          horizontal ? '' : 'w-full',
-          centered ? (horizontal ? 'items-center' : 'justify-center') : '',
+          `flex flex-row items-center justify-center`,
+          'w-full @md:w-2/3',
           className
         )}
       >
