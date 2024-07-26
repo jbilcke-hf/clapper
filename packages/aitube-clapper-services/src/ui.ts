@@ -1,6 +1,7 @@
 import { ClapTimelineTheme } from "@aitube/timeline"
 import { SettingsCategory } from "./base-types"
 import { ProjectCreationWizardStep } from "./types"
+import { WorkflowEditorTheme } from "./workflow-editor"
 
 export type UIThemeName = "lavender" | "backstage" | "midnight" | "mythril" | "flix" | "lore" | "mocha" | string
 
@@ -48,6 +49,8 @@ export type UITheme = {
   assistantRobotTextColor?: string
 
   timeline: ClapTimelineTheme
+
+  workflow: WorkflowEditorTheme
 }
 
 export type UIState = {

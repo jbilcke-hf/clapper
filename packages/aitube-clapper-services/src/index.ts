@@ -95,7 +95,8 @@ export {
 export {
   WorkflowEditorState,
   WorkflowEditorControls,
-  WorkflowEditorStore
+  WorkflowEditorStore,
+  WorkflowEditorTheme
 } from "./workflow-editor"
 
 export {
