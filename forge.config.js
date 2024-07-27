@@ -12,6 +12,10 @@ module.exports = {
   packagerConfig: {
     name: "Clapper",
     asar: true,
+    asarUnpack: [
+      "**/node_modules/sharp/**/*",
+      "**/node_modules/@img/**/*"
+    ],
     icon: "./public/images/logos/CL.png",
     osxSign: {},
 

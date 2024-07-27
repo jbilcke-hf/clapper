@@ -47,6 +47,7 @@ export function ChatView() {
             placeholder="Ask something (a red car, etc)"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
+            className="rounded-none border-t border-none"
             onKeyDown={({ key }) => {
               if (key === 'Enter') {
                 handleSubmit()

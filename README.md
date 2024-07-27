@@ -84,9 +84,11 @@ If you find that Clapper is working with a more recent (stable) version of Node,
 ### Installing and running the app
 
 ```bash
-npm i
+npm i --include=optional
 npm run dev
 ```
+
+`--include=optional` is to make sure optional dependencies are installed (pre-build native modules compatible with your system)
 
 ### Making sure everything is working properly
 

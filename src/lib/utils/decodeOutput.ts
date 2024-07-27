@@ -14,7 +14,13 @@ export async function decodeOutput(input: any): Promise<string> {
     ? urlOrBase64
     : await fetchContentToBase64(urlOrBase64)
 
-  if (base64Url.startsWith('data:image/')) {
+  if (
+      base64Url.startsWith('data:image/')
+    ) {
+
+    if (base64Url.startsWith('data:image/jpeg') || base64Url.startsWith('data:image/jpg')) {
+      return base64Url
+    }
     // this step is important since some providers store data as PNG,
     // which is a unreasonable since a few frames quickly add up to 10 Mb,
     // we can't afford to have a 20 Gb .clap file

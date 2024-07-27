@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
+import { useTheme } from '@/services'
 
 export function FormSelect<T>({
   label,
@@ -18,6 +19,7 @@ export function FormSelect<T>({
   defaultItemLabel,
   items = [],
   onSelect,
+  props,
 }: {
   label?: string
   className?: string
@@ -32,7 +34,9 @@ export function FormSelect<T>({
     value: T
   }[]
   onSelect?: (value?: T) => void
+  props?: any
 }) {
+  const theme = useTheme()
   return (
     <FormField
       label={
@@ -54,6 +58,10 @@ export function FormSelect<T>({
           onSelect(selectedItem?.value)
         }}
         defaultValue={selectedItemId}
+        style={{
+          borderRadius: theme.formInputRadius || '8px',
+        }}
+        {...props}
       >
         <SelectTrigger className={cn(`w-full`, `font-mono text-xs font-light`)}>
           <SelectValue placeholder={selectedItemLabel} />
