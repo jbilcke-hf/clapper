@@ -19,7 +19,7 @@ export function FormSection({
         className
       )}
     >
-      <h2 className="pb-2 text-xl font-normal text-white/45">{label}</h2>
+      <h2 className="pb-2 text-xl font-normal text-white/60">{label}</h2>
       <div className={cn('flex w-full', 'flex-col space-y-4')}>{children}</div>
     </div>
   )

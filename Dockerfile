@@ -48,7 +48,7 @@ RUN ffmpeg -version
 # Copy the current directory contents into the container at /app setting the owner to the user
 COPY --chown=user . /app
 
-RUN npm ci
+RUN npm ci --include=optional
 
 RUN npm run build:ci
 

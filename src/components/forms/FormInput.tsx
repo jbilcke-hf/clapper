@@ -11,6 +11,7 @@ import { cn, getValidNumber, isValidNumber } from '@/lib/utils'
 import { Input } from '../ui/input'
 
 import { FormField } from './FormField'
+import { useTheme } from '@/services'
 
 export function FormInput<T>(
   {
@@ -24,7 +25,7 @@ export function FormInput<T>(
     disabled,
     onChange,
     type,
-    // ...props
+    ...props
   }: {
     label?: ReactNode
     className?: string
@@ -36,10 +37,12 @@ export function FormInput<T>(
     disabled?: boolean
     onChange?: (newValue: T) => void
     type?: HTMLInputTypeAttribute
+    props?: any
   }
   //  & Omit<ComponentProps<typeof Input>, "value" | "defaultValue" | "placeholder" | "type" | "className" | "disabled" | "onChange">
   // & ComponentProps<typeof Input>
 ) {
+  const theme = useTheme()
   const isNumberInput =
     typeof defaultValue === 'number' || typeof value === 'number'
 
@@ -100,9 +103,13 @@ export function FormInput<T>(
         // {...props}
         type={inputType}
         value={`${value || defaultValue}`}
-
         // since we are controlling the element with value=*, we should not use defaultValue=*
         // defaultValue={`${defaultValue || ""}`}
+
+        style={{
+          borderRadius: theme.formInputRadius || '8px',
+        }}
+        {...props}
       />
     </FormField>
   )

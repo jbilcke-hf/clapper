@@ -15,6 +15,7 @@
 import { ClapSegmentCategory } from '@aitube/clap'
 import {
   UITheme,
+  UIThemeColorMode,
   UIThemeName,
   WorkflowEditorTheme,
 } from '@aitube/clapper-services'
@@ -79,6 +80,7 @@ export const backstage: UITheme = {
   id: 'backstage',
   label: 'Backstage',
   author: 'Clapper',
+  colorMode: UIThemeColorMode.DARK,
   description: '',
   defaultBgColor: '#1c1917',
   defaultTextColor: '#d6d3d1',
@@ -100,6 +102,8 @@ export const backstage: UITheme = {
   assistantUserTextColor: '#bae6fd',
   assistantRobotBgColor: '#3730a3',
   assistantRobotTextColor: '#e0e7ff',
+
+  formInputRadius: '8px',
 
   timeline: {
     topBarTimeScale: {
@@ -160,6 +164,7 @@ export const midnight: UITheme = {
   id: 'midnight',
   label: 'Midnight',
   author: 'Clapper',
+  colorMode: UIThemeColorMode.DARK,
   description: '',
   defaultBgColor: '#101e2d',
   defaultTextColor: '#b8bdc3',
@@ -171,7 +176,7 @@ export const midnight: UITheme = {
   editorTextColor: '#b8bdc3',
   editorMenuBgColor: '#000e1d',
   editorMenuTextColor: 'b8bdc3',
-  editorBorderColor: '#152639',
+  editorBorderColor: '#232e3b',
   monitorBgColor: '#011222',
   monitorSecondaryTextColor: '#b8bdc3',
   monitorPrimaryTextColor: '#5A9DF7',
@@ -180,6 +185,9 @@ export const midnight: UITheme = {
   assistantUserTextColor: '#bae6fd',
   assistantRobotBgColor: '#3730a3',
   assistantRobotTextColor: '#e0e7ff',
+
+  formInputRadius: '8px',
+
   timeline: {
     topBarTimeScale: {
       backgroundColor: '#32506b',
@@ -197,17 +205,6 @@ export const midnight: UITheme = {
     cell: {
       categoryColors: baseClapSegmentCategoryColors,
       waveform: {
-        // "original" style
-        // lineSpacing: 2,
-        // gradientStart: 1.0,
-        // gradientEnd: 0.6,
-
-        // "drapes" style
-        // lineSpacing: 0,
-        // gradientStart: 0.7,
-        // gradientEnd: 0.1,
-
-        // that is an "aggressive" style
         lineSpacing: 1,
         gradientStart: 0.6,
         gradientEnd: 1.0,
@@ -237,6 +234,7 @@ export const lavender: UITheme = {
   id: 'lavender',
   label: 'Lavender',
   author: 'Clapper',
+  colorMode: UIThemeColorMode.DARK,
   description: '',
   defaultBgColor: '#32294b',
   defaultTextColor: '#dbd0fd',
@@ -257,6 +255,9 @@ export const lavender: UITheme = {
   assistantUserTextColor: '#bae6fd',
   assistantRobotBgColor: '#3730a3',
   assistantRobotTextColor: '#e0e7ff',
+
+  formInputRadius: '8px',
+
   timeline: {
     topBarTimeScale: {
       backgroundColor: '#6E5A7F',
@@ -314,6 +315,7 @@ export const flix: UITheme = {
   id: 'flix',
   label: 'Flix',
   author: 'Clapper',
+  colorMode: UIThemeColorMode.DARK,
   description: 'A new DVD rent-by-mail business',
   defaultBgColor: '#000000',
   defaultTextColor: '#D22F27',
@@ -334,6 +336,9 @@ export const flix: UITheme = {
   assistantUserTextColor: '#bae6fd',
   assistantRobotBgColor: '#3730a3',
   assistantRobotTextColor: '#e0e7ff',
+
+  formInputRadius: '8px',
+
   timeline: {
     topBarTimeScale: {
       backgroundColor: 'rgb(80,80,80)',
@@ -392,6 +397,7 @@ export const lore: UITheme = {
   id: 'lore',
   label: 'Lore',
   author: 'Clapper',
+  colorMode: UIThemeColorMode.DARK,
   description: '',
   defaultBgColor: '#151520',
   defaultTextColor: '#f6d6d8',
@@ -403,7 +409,7 @@ export const lore: UITheme = {
   editorTextColor: '#f6d6d8',
   editorMenuBgColor: '#151520',
   editorMenuTextColor: 'f6d6d8',
-  editorBorderColor: '#252530',
+  editorBorderColor: '#282834',
   monitorBgColor: '#151520',
   monitorSecondaryTextColor: '#D6D3D1',
   monitorPrimaryTextColor: '#DE4A80',
@@ -412,14 +418,17 @@ export const lore: UITheme = {
   assistantUserTextColor: '#bae6fd',
   assistantRobotBgColor: '#3730a3',
   assistantRobotTextColor: '#e0e7ff',
+
+  formInputRadius: '8px',
+
   timeline: {
     topBarTimeScale: {
-      backgroundColor: 'rgb(100,100,127)',
+      backgroundColor: 'rgb(98,94,111)',
       textColor: '#ffffff',
       lineColor: '#E6E6E6',
     },
     leftBarTrackScale: {
-      backgroundColor: 'rgb(100,100,127)',
+      backgroundColor: 'rgb(98,94,111)',
       textColor: '#ffffff',
       lineColor: '#B3B3B3',
     },
@@ -469,6 +478,7 @@ export const gordon: UITheme = {
   id: 'gordon',
   label: 'Gordon',
   author: 'Clapper',
+  colorMode: UIThemeColorMode.DARK,
   description: '',
   defaultBgColor: '#525252',
   defaultTextColor: '#e0e0e0',
@@ -478,10 +488,10 @@ export const gordon: UITheme = {
   editorBgColor: '#434343',
   editorCursorColor: '#ffffff',
   editorTextColor: '#e0e0e0',
-  editorMenuBgColor: '#333333',
+  editorMenuBgColor: '#323232',
   editorMenuTextColor: 'e0e0e0',
   editorBorderColor: '#2e2e2e',
-  monitorBgColor: '#323232',
+  monitorBgColor: '#333333',
   monitorSecondaryTextColor: '#e0e0e0',
   monitorPrimaryTextColor: '#ff8400',
 
@@ -490,6 +500,8 @@ export const gordon: UITheme = {
   assistantUserTextColor: '#ffffff',
   assistantRobotBgColor: '#6b6b6b',
   assistantRobotTextColor: '#ffffff',
+
+  formInputRadius: '8px',
 
   timeline: {
     topBarTimeScale: {
@@ -545,90 +557,11 @@ export const gordon: UITheme = {
   },
 }
 
-export const system360: UITheme = {
-  id: 'system360',
-  label: 'System/360',
-  author: 'Clapper',
-  description: 'Inspired by vintage IBM mainframes',
-  defaultBgColor: '#e0e0d8', // Light smoky grey
-  defaultTextColor: '#31312F',
-  defaultPrimaryColor: '#C74E40', // IBM blue
-  defaultBorderColor: '#b8b8b0', // Lighter grey for borders
-  logoColor: '#C74E40',
-  editorBgColor: '#d8d8d0', // "#f0f0e8", // Slightly lighter grey for contrast
-  editorCursorColor: '#C74E40',
-  editorTextColor: '#31312F',
-  editorMenuBgColor: '#2A2522', // //  "#d8d8d0", // Slightly darker grey for menus
-  editorMenuTextColor: '31312F',
-  editorBorderColor: '#b8b8b0',
-  monitorBgColor: '#2A2522', // Black for screen areas
-  monitorSecondaryTextColor: '#4E88DA', // Green for terminal text
-  monitorPrimaryTextColor: '#818173', // White for important text
-
-  assistantBgColor: '#d8d8d0',
-  assistantUserBgColor: '#0072c6',
-  assistantUserTextColor: '#ffffff',
-  assistantRobotBgColor: '#d62728', // Red accent from the image
-  assistantRobotTextColor: '#ffffff',
-
-  timeline: {
-    topBarTimeScale: {
-      backgroundColor: '#d8d8d3',
-      textColor: '#333333',
-      lineColor: '#666666',
-    },
-    leftBarTrackScale: {
-      backgroundColor: '#d8d8d3',
-      textColor: '#333333',
-      lineColor: '#666666',
-    },
-    grid: {
-      backgroundColor: '#f0f0e8',
-    },
-    cell: {
-      categoryColors: baseClapSegmentCategoryColors,
-
-      waveform: {
-        // "original" style
-        lineSpacing: 2,
-        gradientStart: 1.0,
-        gradientEnd: 0.6,
-
-        // "drapes" style
-        // lineSpacing: 0,
-        // gradientStart: 0.7,
-        // gradientEnd: 0.1,
-
-        // that is an "aggressive" style
-        // lineSpacing: 1,
-        // gradientStart: 0.6,
-        // gradientEnd: 1.0,
-      },
-    },
-    playbackCursor: {
-      lineColor: '#C74E40',
-    },
-  },
-  workflow: {
-    bgColor: '#100e0e',
-    node: {
-      bgColor: '#2f2f2f',
-      borderColor: '#3e3a39',
-      textPrimaryColor: '#d6d3d1',
-      textSecondaryColor: '#b6b3b1',
-      radius: '8px',
-    },
-    handle: {
-      inputColor: '#FACC15',
-      outputColor: '#FACC15',
-    },
-  },
-}
-
 export const silent: UITheme = {
   id: 'silent',
   label: 'Silent',
   author: 'Clapper',
+  colorMode: UIThemeColorMode.DARK,
   description: 'Monochrome theme inspired by classic films',
   defaultBgColor: '#1a1a1a',
   defaultTextColor: '#d0d0d0',
@@ -649,6 +582,9 @@ export const silent: UITheme = {
   assistantUserTextColor: '#ffffff',
   assistantRobotBgColor: '#2a2a2a',
   assistantRobotTextColor: '#e0e0e0',
+
+  formInputRadius: '32px',
+
   timeline: {
     topBarTimeScale: {
       backgroundColor: '#3a3a3a',
@@ -771,80 +707,72 @@ export const silent: UITheme = {
   },
 }
 
-export const sandy: UITheme = {
-  id: 'sandy',
-  label: 'Sandy',
+export const ripley: UITheme = {
+  id: 'ripley',
+  label: 'Ripley',
   author: 'Clapper',
-  description: 'Warm, sandy tones with a rosy tint and colorful accents',
-  defaultBgColor: '#c2b3b3', // Main background color with rose tint
-  defaultTextColor: '#4a3939',
-  defaultPrimaryColor: '#e67a7a', // Rosier accent color
-  defaultBorderColor: '#ab9e9e',
-  logoColor: '#e67a7a',
-  editorBgColor: '#d1c2c2', // Slightly lighter for contrast, with rose tint
-  editorCursorColor: '#e67a7a',
-  editorTextColor: '#4a3939',
-  editorMenuBgColor: '#a29494', // Slightly darker for menus, with rose tint
-  editorMenuTextColor: '4a3939',
-  editorBorderColor: '#ab9e9e',
-  monitorBgColor: '#e0d1d1', // Light rose-sand color for main workspace
-  monitorSecondaryTextColor: '#755e5e',
-  monitorPrimaryTextColor: '#4a3939',
-  assistantBgColor: '#d1c2c2',
-  assistantUserBgColor: '#e67a7a',
-  assistantUserTextColor: '#ffffff',
-  assistantRobotBgColor: '#b68e8e', // Rosier teal accent color
-  assistantRobotTextColor: '#ffffff',
+  colorMode: UIThemeColorMode.DARK,
+  description: 'Inspired by a famous Weyland-Yutani employee.',
+  defaultBgColor: '#292929',
+  defaultTextColor: '#E0E7E0',
+  defaultPrimaryColor: '#bcc227',
+  defaultBorderColor: '#4A4A4A',
+  logoColor: '#bcc227',
+  editorBgColor: '#1E1E1E',
+  editorCursorColor: '#bcc227',
+  editorTextColor: '#E0E7E0',
+  editorMenuBgColor: '#383838',
+  editorMenuTextColor: '#E0E7E0',
+  editorBorderColor: '#4A4A4A',
+  monitorBgColor: '#1E1E1E',
+  monitorSecondaryTextColor: '#bfbfb0',
+  monitorPrimaryTextColor: '#bcc227',
+  assistantBgColor: '#1E1E1E',
+  assistantUserBgColor: '#3A4D3A',
+  assistantUserTextColor: '#D1ECD1',
+  assistantRobotBgColor: '#4A5E4A',
+  assistantRobotTextColor: '#E6F3E6',
+
+  formInputRadius: '32px',
+
   timeline: {
     topBarTimeScale: {
-      backgroundColor: '#e0d3d3',
-      textColor: '#2a1919',
-      lineColor: '#553e3e',
+      backgroundColor: '#797979',
+      textColor: '#FFFFFF',
+      lineColor: '#D6D6D6',
     },
     leftBarTrackScale: {
-      backgroundColor: '#e0d3d3',
-      textColor: '#2a1919',
-      lineColor: '#553e3e',
+      backgroundColor: '#797979',
+      textColor: '#FFFFFF',
+      lineColor: '#D6D6D6',
     },
     grid: {
-      backgroundColor: '#b0a3a3',
+      backgroundColor: '#292929',
     },
     cell: {
-      categoryColors: baseClapSegmentCategoryColors,
-
+      categoryColors: baseClapSegmentCategoryColors, // Assuming this is defined elsewhere
       waveform: {
-        // "original" style
-        //lineSpacing: 2,
-        //gradientStart: 1.0,
-        //gradientEnd: 0.6,
-
-        // "drapes" style
-        lineSpacing: 0,
-        gradientStart: 0.7,
-        gradientEnd: 0.1,
-
-        // that is an "aggressive" style
-        // lineSpacing: 1,
-        // gradientStart: 0.6,
-        // gradientEnd: 1.0,
+        lineSpacing: 2,
+        gradientStart: 1.0,
+        gradientEnd: 0.6,
       },
     },
     playbackCursor: {
-      lineColor: '#e67a7a',
+      lineColor: '#bcc227',
     },
   },
   workflow: {
-    bgColor: '#100e0e',
+    bgColor: '#292929',
     node: {
-      bgColor: '#2f2f2f',
-      borderColor: '#3e3a39',
-      textPrimaryColor: '#d6d3d1',
-      textSecondaryColor: '#b6b3b1',
-      radius: '8px',
+      bgColor: '#383838',
+      borderColor: '#4A4A4A',
+      textPrimaryColor: '#bfbfb0',
+      textSecondaryColor: '#A4D6A4',
+      radius: '32px',
     },
     handle: {
-      inputColor: '#FACC15',
-      outputColor: '#FACC15',
+      inputColor: '#bcc227',
+      outputColor: '#bcc227',
     },
   },
 }
@@ -854,11 +782,10 @@ export const themes: Record<UIThemeName, UITheme> = {
   backstage,
   midnight,
   lavender,
-  // sandy,
   flix,
   lore,
   gordon,
-  // system360,
+  ripley,
   silent,
 }
 

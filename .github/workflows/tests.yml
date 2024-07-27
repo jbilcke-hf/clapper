@@ -39,8 +39,8 @@ jobs:
         # If source files changed but packages didn't, rebuild from a prior cache.
         restore-keys: |
           ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-   
-    - name: Install dependencies
-      run: npm ci
+    - name: Install dependencies (with optional dependencies)
+      run: npm ci --include=optional
 
     - name: Install Playwright
       run: npm install @playwright/test@${{ env.PLAYWRIGHT_VERSION }}
