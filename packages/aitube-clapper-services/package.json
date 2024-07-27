@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.1.2-2",
+  "version": "0.1.2-3",
   "description": "Base types for Clapper services",
   "scripts": {
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap --external=@aitube/timeline --external=@monaco-editor/react --external=monaco-editor --external=zustand --external=react --external=react-dom && bun run build:declaration",
