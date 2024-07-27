@@ -14,18 +14,18 @@ import {
 import '@xyflow/react/dist/base.css'
 
 import { NodeView } from './NodeView'
-import { ReactWorkflowEdge, ReactWorkflowNode } from '../types'
+import { ReactWorkflowEdge, ReactWorkflowNode } from './types'
 import { useWorkflowEditor } from '@/services/editors'
 
-import { glifs } from '../samples/glif'
-import { glifToReactWorkflow } from '../specialized/glif/glifToReactWorkflow'
+import { glifs } from './samples/glif'
+import { glifToReactWorkflow } from './formats/glif/glifToReactWorkflow'
 import { useTheme } from '@/services'
 
 const nodeTypes = {
   custom: NodeView,
 }
 
-export function WorkflowView() {
+export function ReactFlowCanvas() {
   const theme = useTheme()
   const current = useWorkflowEditor((s) => s.current)
   const [nodes, setNodes, onNodesChange] = useNodesState<ReactWorkflowNode>([])
@@ -59,8 +59,27 @@ export function WorkflowView() {
         backgroundColor:
           theme.workflow.bgColor || theme.defaultBgColor || '#000000',
       }}
+      proOptions={{
+        // Since a workflow can be shown inside a tiny panel, we need to free up visual space.
+        // As a consequence I have hidden the React Flow attribution.
+        // Doing so is acceptable by their terms, since at the time of writing
+        // Clapper is a non-commercial project that doesn't belong to any organization.
+        //
+        // for more information about React Flow licensing and attribution:
+        //
+        //  "If you start making money using React Flow or use it in an organization in the future,
+        //  we would ask that you re-add the attribution or sign up for one of our subscriptions."
+        //
+        // https://reactflow.dev/learn/troubleshooting/remove-attribution
+        hideAttribution: true,
+      }}
     >
-      <MiniMap nodeStrokeWidth={3} pannable zoomable className="scale-75" />
+      <MiniMap
+        nodeStrokeWidth={3}
+        pannable
+        zoomable
+        className="translate-x-14 translate-y-12 scale-50"
+      />
       <Controls />
     </ReactFlow>
   )

@@ -1,15 +1,20 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { isClapEntity } from '../utils/isSomething'
-import { useProjectLibrary } from '../stores/useProjectLibrary'
-import { LibraryNodeItem, LibraryNodeType } from '../types'
+import { isClapEntity } from '@/components/tree-browsers/utils/isSomething'
+import { TreeNodeItem, LibraryNodeType } from '@/components/tree-browsers/types'
 import { Tree } from '@/components/core/tree'
 
-export function ProjectTreeBrowser() {
-  const libraryTreeRoot = useProjectLibrary((s) => s.libraryTreeRoot)
-  const selectTreeNode = useProjectLibrary((s) => s.selectTreeNode)
-  const selectedTreeNodeId = useProjectLibrary((s) => s.selectedTreeNodeId)
+import { useEntityTree } from './useEntityTree'
+
+export function EntityTree({
+  className = '',
+}: {
+  className?: string
+} = {}) {
+  const libraryTreeRoot = useEntityTree((s) => s.libraryTreeRoot)
+  const selectTreeNode = useEntityTree((s) => s.selectTreeNode)
+  const selectedTreeNodeId = useEntityTree((s) => s.selectedTreeNodeId)
 
   /**
    * handle click on tree node
@@ -23,7 +28,7 @@ export function ProjectTreeBrowser() {
   const handleOnChange = async (
     id: string | null,
     nodeType?: LibraryNodeType,
-    nodeItem?: LibraryNodeItem
+    nodeItem?: TreeNodeItem
   ) => {
     console.log(`calling selectTreeNodeById(id)`)
     selectTreeNode(id, nodeType, nodeItem)
@@ -44,17 +49,15 @@ export function ProjectTreeBrowser() {
   }
 
   return (
-    <div className={cn()}>
-      <Tree.Root<LibraryNodeType, LibraryNodeItem>
-        value={selectedTreeNodeId}
-        onChange={handleOnChange}
-        className="not-prose h-full w-full px-2 pt-8"
-        label="Project Library"
-      >
-        {libraryTreeRoot.map((node) => (
-          <Tree.Node node={node} key={node.id} />
-        ))}
-      </Tree.Root>
-    </div>
+    <Tree.Root<LibraryNodeType, TreeNodeItem>
+      value={selectedTreeNodeId}
+      onChange={handleOnChange}
+      className={cn(`not-prose h-full w-full px-2 pt-2`, className)}
+      label="Entities"
+    >
+      {libraryTreeRoot.map((node) => (
+        <Tree.Node node={node} key={node.id} />
+      ))}
+    </Tree.Root>
   )
 }
