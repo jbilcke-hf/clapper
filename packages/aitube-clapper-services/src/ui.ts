@@ -65,8 +65,8 @@ export type UITheme = {
   assistantUserTextColor?: string
   assistantRobotTextColor?: string
 
-  formInputRadius: number
-  
+  formInputRadius: string
+
   timeline: ClapTimelineTheme
 
   workflow: WorkflowEditorTheme
