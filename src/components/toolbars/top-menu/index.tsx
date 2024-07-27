@@ -40,7 +40,7 @@ export function TopMenu() {
 
   return (
     <Menubar
-      className="ml-1 w-full"
+      className="w-full pl-2"
       onValueChange={(value) => {
         setIsTopMenuOpen(!!value)
       }}

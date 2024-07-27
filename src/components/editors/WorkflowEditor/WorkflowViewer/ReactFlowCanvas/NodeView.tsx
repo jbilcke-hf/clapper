@@ -1,9 +1,9 @@
 import React, { memo } from 'react'
 import { Handle, Position } from '@xyflow/react'
 
-import { ReactWorkflowNode } from '../types'
 import { useTheme } from '@/services'
 import { cn } from '@/lib/utils'
+import { ReactWorkflowNode } from './types'
 
 function NodeComponent({ data }: ReactWorkflowNode) {
   const theme = useTheme()

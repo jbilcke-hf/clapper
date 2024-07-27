@@ -48,11 +48,21 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
     if (!textModel) {
       return
     }
-    // we need to update the model
-    textModel?.setValue(draft)
+
+    try {
+      // we need to update the model
+      textModel?.setValue(draft)
+    } catch (err) {
+      // to catch the "Error: Model is disposed!"
+      // this can happen if the timing isn't right,
+      // the model might already (or still) be disposed of
+      return
+    }
 
     // and highlight the text again
-    highlightElements()
+    try {
+      highlightElements()
+    } catch (err) {}
   },
   publishDraftToTimeline: async (): Promise<void> => {
     const { draft } = get()

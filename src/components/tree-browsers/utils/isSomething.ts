@@ -6,63 +6,51 @@
 
 import { ClapEntity } from '@aitube/clap'
 import {
-  HuggingFaceUserCollection,
-  HuggingFaceUserItem,
-  LibraryNodeItem,
+  CommunityEntityCollection,
+  CommunityFileOrFolder,
+  TreeNodeItem,
   LibraryNodeType,
-  LocalUserCollection,
-  LocalUserItem,
-  ReplicateCollection,
+  DeviceCollection,
+  DeviceFileOrFolder,
 } from '../types'
 
-export const isLocalUserCollection = (
+export const isFSCollection = (
   nodeType: LibraryNodeType,
-  data: LibraryNodeItem
-): data is LocalUserCollection => {
-  return nodeType === 'LIB_NODE_LOCAL_USER_COLLECTION'
+  data: TreeNodeItem
+): data is DeviceCollection => {
+  return nodeType === 'TREE_ROOT_DEVICE'
 }
 
-export const isLocalUserItem = (
+export const isFSFileOrFolder = (
   nodeType: LibraryNodeType,
-  data: LibraryNodeItem
-): data is LocalUserItem => {
+  data: TreeNodeItem
+): data is DeviceFileOrFolder => {
   return (
-    nodeType === 'LIB_NODE_LOCAL_USER_FILE' ||
-    nodeType === 'LIB_NODE_LOCAL_USER_FOLDER'
+    nodeType === 'DEVICE_TREE_NODE_LIST_FOLDER' ||
+    nodeType === 'DEVICE_TREE_NODE_ITEM_FILE'
   )
 }
 
-export const isHuggingFaceUserCollection = (
+export const isCommunityEntityCollection = (
   nodeType: LibraryNodeType,
-  data: LibraryNodeItem
-): data is HuggingFaceUserCollection => {
-  return nodeType === 'LIB_NODE_HUGGINGFACE_USER_COLLECTION'
+  data: TreeNodeItem
+): data is CommunityEntityCollection => {
+  return nodeType === 'COMMUNITY_TREE_NODE_LIST_DATASET'
 }
 
-export const isHuggingFaceUserItem = (
+export const isCommunityFileOrFolder = (
   nodeType: LibraryNodeType,
-  data: LibraryNodeItem
-): data is HuggingFaceUserItem => {
+  data: TreeNodeItem
+): data is CommunityFileOrFolder => {
   return (
-    nodeType === 'LIB_NODE_HUGGINGFACE_USER_FILE' ||
-    nodeType === 'LIB_NODE_HUGGINGFACE_USER_FOLDER'
+    nodeType === 'COMMUNITY_TREE_NODE_LIST_FOLDER' ||
+    nodeType === 'COMMUNITY_TREE_NODE_ITEM_FILE'
   )
-}
-
-export const isReplicateCollection = (
-  nodeType: LibraryNodeType,
-  data: LibraryNodeItem
-): data is ReplicateCollection => {
-  return nodeType === 'LIB_NODE_REPLICATE_COLLECTION'
 }
 
 export const isClapEntity = (
   nodeType: LibraryNodeType,
-  data: LibraryNodeItem
+  data: TreeNodeItem
 ): data is ClapEntity => {
-  return (
-    nodeType === 'LIB_NODE_REPLICATE_MODEL' ||
-    nodeType === 'LIB_NODE_HUGGINGFACE_MODEL' ||
-    nodeType === 'LIB_NODE_GENERIC_MODEL'
-  )
+  return nodeType === 'ENTITY_TREE_NODE_ITEM_ENTITY'
 }

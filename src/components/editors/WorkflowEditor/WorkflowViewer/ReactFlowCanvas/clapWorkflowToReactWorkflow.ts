@@ -1,7 +1,7 @@
 import { ClapWorkflow, ClapWorkflowEngine } from '@aitube/clap'
 
 import { ReactWorkflow } from './types'
-import { glifToReactWorkflow } from './specialized/glif/glifToReactWorkflow'
+import { glifToReactWorkflow } from './formats/glif/glifToReactWorkflow'
 
 export function clapWorkflowToReactWorkflow(
   clapWorkflow: ClapWorkflow

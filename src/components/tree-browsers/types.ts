@@ -4,67 +4,72 @@ import { ScreenplaySequence } from '@aitube/broadway'
 import { ClapEntity, ClapSegment, ClapWorkflow } from '@aitube/clap'
 import { TreeNodeType } from '../core/tree/types'
 
-// not sure if we should also sort them into data type categories,
-// as vendors like to be on multiple kind of models
+export type DefaultTreeNodeList = 'DEFAULT_TREE_NODE_LIST'
+export type DefaultTreeNodeItem = 'DEFAULT_TREE_NODE_ITEM'
+export type DefaultTreeNodeEmpty = 'DEFAULT_TREE_NODE_EMPTY'
 
-export type LibraryNodeHuggingFaceType =
-  | 'LIB_NODE_HUGGINGFACE_USER_COLLECTION'
-  | 'LIB_NODE_HUGGINGFACE_USER_DATASET'
+export type DefaultTreeNode =
+  | DefaultTreeNodeList
+  | DefaultTreeNodeItem
+  | DefaultTreeNodeEmpty
 
-export type LibraryNodeLocalFileType =
-  | 'LIB_NODE_LOCAL_USER_FILE'
-  | 'LIB_NODE_LOCAL_USER_FOLDER'
+// ------------------------------------------
+export type CommunityTreeNodeDataset = 'COMMUNITY_TREE_NODE_LIST_DATASET'
+export type CommunityTreeNodeList = 'COMMUNITY_TREE_NODE_LIST_FOLDER'
+export type CommunityTreeNodeItem = 'COMMUNITY_TREE_NODE_ITEM_FILE'
 
-export type LibraryNodeRemoteFileType =
-  | 'LIB_NODE_HUGGINGFACE_USER_FOLDER'
-  | 'LIB_NODE_HUGGINGFACE_USER_FILE'
+export type CommunityTreeNode =
+  | CommunityTreeNodeDataset
+  | CommunityTreeNodeList
+  | CommunityTreeNodeItem
 
-export type LibraryNodeFileType =
-  | LibraryNodeLocalFileType
-  | LibraryNodeRemoteFileType
+// ------------------------------------------
 
-export type LibraryNodeWorkflowType = 'LIB_NODE_WORKFLOWS' | 'LIB_NODE_WORKFLOW'
+export type DeviceTreeNodeList = 'DEVICE_TREE_NODE_LIST_FOLDER'
+export type DeviceTreeNodeItem = 'DEVICE_TREE_NODE_ITEM_FILE'
 
-export type LibraryNodeProjectType =
-  | 'LIB_NODE_PROJECT_COLLECTION'
-  | 'LIB_NODE_PROJECT_ARCHIVE'
-  | 'LIB_NODE_PROJECT_ASSET' // image, sound file..
-  | 'LIB_NODE_PROJECT_ENTITY_GENERIC'
-  | 'LIB_NODE_PROJECT_ENTITY_CHARACTER'
-  | 'LIB_NODE_PROJECT_ENTITY_LOCATION'
+export type DeviceTreeNode = DeviceTreeNodeList | DeviceTreeNodeItem
 
-export type LibraryNodeGenericType =
-  | 'LIB_NODE_GENERIC_COLLECTION'
-  | 'LIB_NODE_GENERIC_MODEL'
-  | 'LIB_NODE_GENERIC_ITEM'
-  | 'LIB_NODE_GENERIC_EMPTY'
+// ------------------------------------------
 
-/**
- * we could use "LIB_NODE_GENERIC_COLLECTION",
- * but I think it can also be useful to keep specific types,
- * that way we can show a custom collection UI panel on the right of the explorer
- */
-export type LibraryNodeType =
-  | 'LIB_NODE_LOCAL_USER_COLLECTION'
-  | LibraryNodeLocalFileType
-  | LibraryNodeHuggingFaceType
-  | LibraryNodeRemoteFileType
-  | LibraryNodeWorkflowType
-  | LibraryNodeProjectType
-  | 'LIB_NODE_TEAM_COLLECTION'
-  | 'LIB_NODE_TEAM_MODEL'
-  | 'LIB_NODE_COMMUNITY_COLLECTION'
-  | 'LIB_NODE_COMMUNITY_MODEL'
-  | 'LIB_NODE_HUGGINGFACE_COLLECTION'
-  | 'LIB_NODE_HUGGINGFACE_MODEL'
-  | 'LIB_NODE_REPLICATE_COLLECTION'
-  | 'LIB_NODE_REPLICATE_MODEL'
-  | 'LIB_NODE_CIVITAI_COLLECTION'
-  | 'LIB_NODE_CIVITAI_MODEL'
-  | LibraryNodeGenericType
+export type FlowTreeNodeList = 'FLOW_TREE_NODE_LIST_WORKFLOWS'
+export type FlowTreeNodeItem = 'FLOW_TREE_NODE_ITEM_WORKFLOW'
+
+export type FlowTreeNode = FlowTreeNodeList | FlowTreeNodeItem
+
+// ------------------------------------------
+
+export type EntityTreeNodeList = 'ENTITY_TREE_NODE_LIST_ENTITIES'
+export type EntityTreeNodeItem = 'ENTITY_TREE_NODE_ITEM_ENTITY'
+
+export type EntityTreeNode = EntityTreeNodeList | EntityTreeNodeItem
+
+// ------------------------------------------
+
+// some specialized types
+
+// TODO
+
+// ------------------------------------------
+
+// Root elements
+export type TreeRootProject = 'TREE_ROOT_PROJECT'
+export type TreeRootDevice = 'TREE_ROOT_DEVICE'
+export type TreeRootTeam = 'TREE_ROOT_TEAM'
+export type TreeRootCommunity = 'TREE_ROOT_COMMUNITY'
+export type TreeRootBuiltin = 'TREE_ROOT_BUILTIN'
+
+export type TreeRoot =
+  | TreeRootProject
+  | TreeRootDevice
+  | TreeRootTeam
+  | TreeRootCommunity
+  | TreeRootBuiltin
+
+// ------------------------------------------
 
 // can be a file or folder
-export type LocalUserItem = {
+export type DeviceFileOrFolder = {
   id: string // can be the path for now
   path: string // path to the file content
   fileName: string
@@ -73,19 +78,19 @@ export type LocalUserItem = {
   extension: string
   mimetype: string
   isDirectory: boolean
-  items: LocalUserItem[]
+  items: DeviceFileOrFolder[]
 }
 
-export type LocalUserCollection = {
+export type DeviceCollection = {
   id: string
   name: string
   description: string
   path: string // path to the root directory (eg "~/Clapper")
-  items: LocalUserItem[] // files or folders
+  items: DeviceFileOrFolder[] // files or folders
 }
 
 // can be a file or folder
-export type HuggingFaceUserItem = {
+export type CommunityFileOrFolder = {
   id: string // can be the path for now (so not a uuid)
   assetUrl: string // full URL to download the content (eg. to use with wget)
   datasetName: string
@@ -99,18 +104,25 @@ export type HuggingFaceUserItem = {
   mimeType: string
   isDirectory: boolean
   isPrivate: boolean
-  items: HuggingFaceUserItem[]
+  items: CommunityFileOrFolder[]
 }
 
-export type HuggingFaceUserCollection = {
-  id: string // huggingface ud (not a uuid)
+export type CommunityEntityCollection = {
+  id: string // huggingface id (not a uuid)
   name: string
   description: string
   userName: string
   datasetName: string
   repository: string
   url: string
-  items: HuggingFaceUserItem[] // files or folders
+  items: ClapEntity[]
+}
+
+export type ProjectEntityCollection = {
+  id: string
+  name: string
+  description: string
+  items: ClapEntity[]
 }
 
 export type ReplicateModel = {
@@ -158,24 +170,38 @@ export type WorkflowCollection = {
 }
 
 // TODO unify this a bit, at least in the naming scheme
-export type LibraryNodeFileItem = LocalUserItem | HuggingFaceUserItem
+export type LibraryNodeFileItem = DeviceFileOrFolder | CommunityFileOrFolder
+
+// ------------------------------------------
+
+export type LibraryNodeType =
+  | DefaultTreeNode
+  | CommunityTreeNode
+  | DeviceTreeNode
+  | FlowTreeNode
+  | EntityTreeNode
+  | TreeRoot
 
 // TODO unify this a bit, at least in the naming scheme
-export type LibraryNodeItem =
+export type TreeNodeItem =
   | ClapEntity
-  | ReplicateCollection
-  | ReplicateModel
-  | CivitaiCollection
-  | CivitaiModel
-  | LocalUserCollection
-  | LocalUserItem
-  | HuggingFaceUserCollection
-  | HuggingFaceUserItem
-  | ScreenplaySequence
   | ClapSegment
-  | WorkflowCollection
+  | ScreenplaySequence
   | ClapWorkflow
+  | WorkflowCollection
+
+  // TODO: if we keep them, then rename those to things like
+  // ReplicateWorkflowCollection,
+  // CivitaiWorkflowCollection etc
+  // | ReplicateCollection
+  // | ReplicateModel
+  // | CivitaiCollection
+  // | CivitaiModel
+  | DeviceCollection
+  | DeviceFileOrFolder
+  | CommunityEntityCollection
+  | CommunityFileOrFolder
 
 // a model library is a collection of models
 // this collection can itself include sub-models
-export type LibraryTreeNode = TreeNodeType<LibraryNodeType, LibraryNodeItem>
+export type LibraryTreeNode = TreeNodeType<LibraryNodeType, TreeNodeItem>

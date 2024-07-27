@@ -2,12 +2,20 @@
 
 import { create } from 'zustand'
 import { ClapEntity, UUID } from '@aitube/clap'
-import { LibraryNodeItem, LibraryNodeType, LibraryTreeNode } from '../types'
-import { icons } from '@/components/icons'
-import { collectionClassName, libraryClassName } from './treeNodeStyles'
 
-export const useWorkflowLibrary = create<{
-  builtInLibraryTreeNodeId: string
+import { icons } from '@/components/icons'
+import {
+  TreeNodeItem,
+  LibraryNodeType,
+  LibraryTreeNode,
+} from '@/components/tree-browsers/types'
+import {
+  collectionClassName,
+  libraryClassName,
+} from '@/components/tree-browsers/style/treeNodeStyles'
+
+export const useWorkflowTree = create<{
+  builtinLibraryTreeNodeId: string
   communityLibraryTreeNodeId: string
   libraryTreeRoot: LibraryTreeNode[]
   init: () => void
@@ -29,32 +37,32 @@ export const useWorkflowLibrary = create<{
   //setCommunityCollections: (collections: WorkflowCollection[]) => void
 
   // we support those all selection modes for convenience - please keep them!
-  selectedNodeItem?: LibraryNodeItem
+  selectedNodeItem?: TreeNodeItem
   selectedNodeType?: LibraryNodeType
   selectTreeNode: (
     treeNodeId?: string | null,
     nodeType?: LibraryNodeType,
-    nodeItem?: LibraryNodeItem
+    nodeItem?: TreeNodeItem
   ) => void
   selectedTreeNodeId: string | null
 }>((set, get) => ({
-  builtInLibraryTreeNodeId: '',
+  builtinLibraryTreeNodeId: '',
   communityLibraryTreeNodeId: '',
   libraryTreeRoot: [],
   init: () => {
-    const builtInLibrary: LibraryTreeNode = {
+    const builtinLibrary: LibraryTreeNode = {
       id: UUID(),
-      nodeType: 'LIB_NODE_WORKFLOWS',
-      label: 'Built-in workflows',
-      icon: icons.project,
+      nodeType: 'TREE_ROOT_BUILTIN',
+      label: 'Default workflows',
+      icon: icons.community,
       className: libraryClassName,
       isExpanded: true,
       children: [
         {
           id: UUID(),
-          nodeType: 'LIB_NODE_GENERIC_EMPTY',
-          label: 'A - 2',
-          icon: icons.project,
+          nodeType: 'DEFAULT_TREE_NODE_EMPTY',
+          label: 'Empty',
+          icon: icons.community,
           className: collectionClassName,
         },
       ],
@@ -62,25 +70,25 @@ export const useWorkflowLibrary = create<{
 
     const communityLibrary: LibraryTreeNode = {
       id: UUID(),
-      nodeType: 'LIB_NODE_COMMUNITY_COLLECTION',
+      nodeType: 'TREE_ROOT_COMMUNITY',
       label: 'Community workflows',
       icon: icons.community,
       className: libraryClassName,
       children: [
         {
           id: UUID(),
-          nodeType: 'LIB_NODE_GENERIC_EMPTY',
-          label: 'A - 2',
+          nodeType: 'DEFAULT_TREE_NODE_EMPTY',
+          label: 'Empty',
           icon: icons.community,
           className: collectionClassName,
         },
       ],
     }
 
-    const libraryTreeRoot = [builtInLibrary, communityLibrary]
+    const libraryTreeRoot = [builtinLibrary, communityLibrary]
 
     set({
-      builtInLibraryTreeNodeId: builtInLibrary.id,
+      builtinLibraryTreeNodeId: builtinLibrary.id,
       communityLibraryTreeNodeId: communityLibrary.id,
       libraryTreeRoot,
       selectedNodeItem: undefined,
@@ -113,7 +121,7 @@ export const useWorkflowLibrary = create<{
   selectTreeNode: (
     treeNodeId?: string | null,
     nodeType?: LibraryNodeType,
-    nodeItem?: LibraryNodeItem
+    nodeItem?: TreeNodeItem
   ) => {
     set({ selectedTreeNodeId: treeNodeId ? treeNodeId : undefined })
     set({ selectedNodeType: nodeType ? nodeType : undefined })
@@ -121,4 +129,4 @@ export const useWorkflowLibrary = create<{
   },
 }))
 
-useWorkflowLibrary.getState().init()
+useWorkflowTree.getState().init()

@@ -1,4 +1,4 @@
-import { GlifWorkflow } from '../specialized/glif/types'
+import { GlifWorkflow } from '../formats/glif/types'
 
 export const glifs: GlifWorkflow[] = [
   {
