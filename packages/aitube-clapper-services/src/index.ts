@@ -185,6 +185,7 @@ export {
 } from "./types"
 
 export {
+  UIThemeColorMode,
   UIThemeName,
   UITheme,
   UIStore,

@@ -3,7 +3,23 @@ import { SettingsCategory } from "./base-types"
 import { ProjectCreationWizardStep } from "./types"
 import { WorkflowEditorTheme } from "./workflow-editor"
 
-export type UIThemeName = "lavender" | "backstage" | "midnight" | "mythril" | "flix" | "lore" | "mocha" | string
+export type UIThemeName = 
+  | 'backstage'
+  | 'midnight'
+  | 'lavender'
+  | 'flix'
+  | 'lore'
+  | 'gordon'
+  | 'ripley'
+  | 'silent'
+  | string
+
+// Tailwind and React Flow expect a color mode in lowercase,
+// so we just leave it that way
+export enum UIThemeColorMode {
+  DARK = "dark",
+  LIGHT = "light"
+}
 
 /**
  * TODO:
@@ -20,6 +36,7 @@ export type UIThemeName = "lavender" | "backstage" | "midnight" | "mythril" | "f
  */
 export type UITheme = {
   id: UIThemeName
+  colorMode: UIThemeColorMode
   label: string
   author: string
   description: string
@@ -48,6 +65,8 @@ export type UITheme = {
   assistantUserTextColor?: string
   assistantRobotTextColor?: string
 
+  formInputRadius: number
+  
   timeline: ClapTimelineTheme
 
   workflow: WorkflowEditorTheme
