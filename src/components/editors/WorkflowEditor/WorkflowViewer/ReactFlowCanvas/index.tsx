@@ -54,7 +54,7 @@ export function ReactFlowCanvas() {
       className="bg-transparent"
       // TODO: the "light" / "dark" string should be
       // defined in the theme, eg. colorMode={theme.mode}
-      colorMode="dark"
+      colorMode={theme.colorMode}
       style={{
         backgroundColor:
           theme.workflow.bgColor || theme.defaultBgColor || '#000000',
