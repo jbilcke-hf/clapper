@@ -72,6 +72,11 @@ export type UITheme = {
   workflow: WorkflowEditorTheme
 }
 
+export enum UIWindowLayout {
+  GRID = "GRID",
+  FLYING = "FLYING"
+}
+
 export type UIState = {
   isTopMenuOpen: boolean
   showWelcomeScreen: boolean
@@ -87,6 +92,8 @@ export type UIState = {
   showFPS: boolean
   followCursor: boolean
   editorFontSize: number
+
+  windowLayout: UIWindowLayout
 
   projectCreationWizardStep: ProjectCreationWizardStep
 }
@@ -110,6 +117,7 @@ export type UIControls = {
   setShowFPS: (showFPS: boolean) => void
   setFollowCursor: (followCursor: boolean) => void
   setEditorFontSize: (editorFontSize: number) => void
+  setWindowLayout: (windowLayout: UIWindowLayout) => void
   setProjectCreationWizardStep: (projectCreationWizardStep: ProjectCreationWizardStep) => void
 }
 
