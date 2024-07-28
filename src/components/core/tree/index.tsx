@@ -157,7 +157,7 @@ export function Node<S, T>({
                 width={2}
                 xmlns="http://www.w3.org/2000/svg"
                 // if you want to display vertical lines, tweak the stroke-gray-900/100
-                className="absolute bottom-0 left-3.5 top-[31px] z-[-1] h-[calc(100%-30px)] -translate-x-1/2 transform stroke-gray-900/100"
+                className="absolute bottom-0 left-3.5 top-[31px] z-[-1] h-[calc(100%-30px)] -translate-x-1/2 transform"
                 key={node.id + 'line'}
                 stroke="currentColor"
               >

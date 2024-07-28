@@ -18,6 +18,7 @@ import { useResolver } from './resolver/useResolver'
 import { useSettings } from './settings/useSettings'
 import { useSimulator } from './simulator/useSimulator'
 import { useUI } from './ui/useUI'
+import { useWindows } from './windows/useWindows'
 
 // those are just used for developer convenience
 // to help debug things in the chrome developer console
@@ -41,4 +42,5 @@ if (typeof window !== 'undefined') {
   w.useSettings = useSettings
   w.useSimulator = useSimulator
   w.useUI = useUI
+  w.useWindows = useWindows
 }

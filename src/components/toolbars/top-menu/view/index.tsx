@@ -12,6 +12,7 @@ import {
 import { useFullscreenStatus } from '@/lib/hooks'
 import { useUI } from '@/services/ui'
 import { ThemeList } from '../lists/ThemeList'
+import { UIWindowLayout } from '@aitube/clapper-services'
 
 export function TopMenuView() {
   const [isFullscreen, setFullscreen, ref] = useFullscreenStatus()
@@ -23,6 +24,9 @@ export function TopMenuView() {
       ref.current = document.body
     }
   }, [ref])
+
+  const windowLayout = useUI((s) => s.windowLayout)
+  const setWindowLayout = useUI((s) => s.setWindowLayout)
 
   const showTimeline = useUI((s) => s.showTimeline)
   const setShowTimeline = useUI((s) => s.setShowTimeline)
@@ -61,6 +65,23 @@ export function TopMenuView() {
           }}
         >
           Toggle fullscreen
+        </MenubarCheckboxItem>
+
+        <MenubarCheckboxItem
+          checked={windowLayout === UIWindowLayout.FLYING}
+          onClick={(e) => {
+            setWindowLayout(
+              windowLayout === UIWindowLayout.FLYING
+                ? UIWindowLayout.GRID
+                : UIWindowLayout.FLYING
+            )
+
+            e.stopPropagation()
+            e.preventDefault()
+            return false
+          }}
+        >
+          🥭 Fruity mode (experimental)
         </MenubarCheckboxItem>
 
         {/*

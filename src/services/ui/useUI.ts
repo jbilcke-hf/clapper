@@ -11,6 +11,7 @@ import {
   UIStore,
   UITheme,
   UIThemeName,
+  UIWindowLayout,
 } from '@aitube/clapper-services'
 import { getDefaultUIState } from './getDefaultUIState'
 import { themes } from './theme'
@@ -83,6 +84,9 @@ export const useUI = create<UIStore>()(
       },
       setEditorFontSize: (editorFontSize: number) => {
         set({ editorFontSize })
+      },
+      setWindowLayout: (windowLayout: UIWindowLayout) => {
+        set({ windowLayout })
       },
       setProjectCreationWizardStep: (
         projectCreationWizardStep: ProjectCreationWizardStep

@@ -2,10 +2,12 @@
 
 import { APP_DOMAIN, APP_LINK, APP_NAME } from '@/lib/core/constants'
 import { cn } from '@/lib/utils'
+import { useTheme } from '@/services'
 import { useEffect, useState } from 'react'
 
 export function IframeWarning() {
   const [showWarning, setShowWarning] = useState(false)
+  const theme = useTheme()
 
   useEffect(() => {
     setShowWarning(window.self !== window.top)
@@ -21,10 +23,7 @@ export function IframeWarning() {
           ? 'pointer-events-auto opacity-100'
           : 'pointer-events-none opacity-0'
       )}
-      style={{
-        backgroundImage:
-          'repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #37353455, #373534 )',
-      }}
+      style={{ backgroundImage: theme.wallpaperBgImage }}
     >
       <p
         className={cn('font-sans text-stone-100')}
