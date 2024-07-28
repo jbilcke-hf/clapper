@@ -190,7 +190,8 @@ export {
   UITheme,
   UIStore,
   UIState,
-  UIControls
+  UIControls,
+  UIWindowLayout
 } from "./ui"
 
 export {
