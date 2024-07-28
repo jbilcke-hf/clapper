@@ -40,6 +40,9 @@ export type UITheme = {
   label: string
   author: string
   description: string
+
+  wallpaperBgImage?: string
+  
   defaultBgColor?: string
   defaultTextColor?: string
   defaultPrimaryColor?: string
@@ -65,7 +68,12 @@ export type UITheme = {
   assistantUserTextColor?: string
   assistantRobotTextColor?: string
 
-  formInputRadius: string
+  formInputRadius?: string
+
+  windowHeaderBgColor?: string
+  windowBodyBgColor?: string
+  windowBorderColor?: string
+  windowBorderRadius?: string
 
   timeline: ClapTimelineTheme
 
@@ -94,7 +102,6 @@ export type UIState = {
   editorFontSize: number
 
   windowLayout: UIWindowLayout
-
   projectCreationWizardStep: ProjectCreationWizardStep
 }
 
