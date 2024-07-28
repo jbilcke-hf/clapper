@@ -22,6 +22,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { ToggleView } from './ToggleView'
+import { UIWindowLayout } from '@aitube/clapper-services'
+import { Tasks } from '../bottom-bar/tasks'
 
 export function TopMenu() {
   const isBusyResolving = useResolver((s) => s.isBusyResolving)
@@ -35,7 +37,7 @@ export function TopMenu() {
   const showAssistant = useUI((s) => s.showAssistant)
   const setShowAssistant = useUI((s) => s.setShowAssistant)
   const setIsTopMenuOpen = useUI((s) => s.setIsTopMenuOpen)
-
+  const windowLayout = useUI((s) => s.windowLayout)
   const hasBetaAccess = useUI((s) => s.hasBetaAccess)
 
   return (
@@ -64,37 +66,46 @@ export function TopMenu() {
         {
           // clap?.meta?.title || "Untitled"
         }
-        <ToggleView
-          className="col-span-1 row-span-4 row-start-1 border-r"
-          isVisible={showExplorer}
-          setVisible={setShowExplorer}
-        >
-          Toggle Explorer
-        </ToggleView>
-        {/*
-        <ToggleView
-          className="col-span-4 row-span-1 row-start-4 border-t"
-          isVisible={showTimeline}
-          setVisible={setShowTimeline}
-        >
-          Toggle Timeline
-        </ToggleView>
-        */}
 
-        <ToggleView
-          className="col-span-1 col-start-3 row-span-2 border-b border-l border-r"
-          isVisible={showVideoPlayer}
-          setVisible={setShowVideoPlayer}
-        >
-          Toggle Monitor
-        </ToggleView>
-        <ToggleView
-          className="col-span-1 col-start-4 row-span-4 border-l"
-          isVisible={showAssistant}
-          setVisible={setShowAssistant}
-        >
-          Toggle Assistant
-        </ToggleView>
+        {windowLayout === UIWindowLayout.GRID ? (
+          <>
+            <ToggleView
+              className="col-span-1 row-span-4 row-start-1 border-r"
+              isVisible={showExplorer}
+              setVisible={setShowExplorer}
+            >
+              Toggle Explorer
+            </ToggleView>
+            {/*
+          <ToggleView
+            className="col-span-4 row-span-1 row-start-4 border-t"
+            isVisible={showTimeline}
+            setVisible={setShowTimeline}
+          >
+            Toggle Timeline
+          </ToggleView>
+          */}
+
+            <ToggleView
+              className="col-span-1 col-start-3 row-span-2 border-b border-l border-r"
+              isVisible={showVideoPlayer}
+              setVisible={setShowVideoPlayer}
+            >
+              Toggle Monitor
+            </ToggleView>
+            <ToggleView
+              className="col-span-1 col-start-4 row-span-4 border-l"
+              isVisible={showAssistant}
+              setVisible={setShowAssistant}
+            >
+              Toggle Assistant
+            </ToggleView>
+          </>
+        ) : (
+          <>
+            <Tasks />
+          </>
+        )}
 
         <Tooltip>
           <TooltipTrigger className="">

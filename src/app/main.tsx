@@ -5,6 +5,7 @@ import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
 import { useSearchParams } from 'next/navigation'
 import { DndProvider, useDrop } from 'react-dnd'
 import { HTML5Backend, NativeTypes } from 'react-dnd-html5-backend'
+import { UIWindowLayout } from '@aitube/clapper-services'
 
 import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/lib/utils'
@@ -20,6 +21,11 @@ import { ChatView } from '@/components/assistant/ChatView'
 import { Editors } from '@/components/editors/Editors'
 import { useTheme } from '@/services/ui/useTheme'
 import { BottomToolbar } from '@/components/toolbars/bottom-bar'
+import { FruityDesktop, FruityWindow } from '@/components/windows'
+import { ScriptEditor } from '@/components/editors/ScriptEditor'
+import { SegmentEditor } from '@/components/editors/SegmentEditor'
+import { EntityEditor } from '@/components/editors/EntityEditor'
+import { WorkflowEditor } from '@/components/editors/WorkflowEditor'
 
 type DroppableThing = { files: File[] }
 
@@ -33,6 +39,7 @@ function MainContent() {
   const theme = useTheme()
   const openFiles = useIO((s) => s.openFiles)
   const isTopMenuOpen = useUI((s) => s.isTopMenuOpen)
+  const windowLayout = useUI((s) => s.windowLayout)
 
   const [{ isOver, canDrop }, connectFileDrop] = useDrop({
     accept: [NativeTypes.FILE],
@@ -56,133 +63,219 @@ function MainContent() {
     setHasBetaAccess(hasBetaAccess)
   }, [hasBetaAccess, setHasBetaAccess])
 
+  const gridLayout = (
+    <ReflexContainer orientation="vertical">
+      <ReflexElement>
+        <ReflexContainer orientation="horizontal">
+          <ReflexElement
+            // minSize={showTimeline ? 1 : 100}
+            // maxSize={2000}
+            size={showTimeline ? 1200 : 400}
+          >
+            <ReflexContainer orientation="vertical">
+              {showExplorer && (
+                <ReflexElement
+                  size={showExplorer ? undefined : 1}
+                  minSize={showExplorer ? 100 : 1}
+                  maxSize={showExplorer ? 2000 : 1}
+                >
+                  <Editors />
+                </ReflexElement>
+              )}
+              {showExplorer && showVideoPlayer && <ReflexSplitter />}
+              {showVideoPlayer && (
+                <ReflexElement
+                  minSize={showVideoPlayer ? 200 : 1}
+                  size={showVideoPlayer ? undefined : 1}
+                >
+                  <Monitor />
+                </ReflexElement>
+              )}
+            </ReflexContainer>
+          </ReflexElement>
+          <ReflexSplitter />
+          <ReflexElement
+            size={showTimeline ? 400 : 1}
+            minSize={showTimeline ? 200 : 1}
+            maxSize={showTimeline ? 1600 : 1}
+          >
+            <Timeline />
+          </ReflexElement>
+        </ReflexContainer>
+      </ReflexElement>
+
+      {showAssistant && <ReflexSplitter />}
+      {showAssistant && (
+        <ReflexElement size={300}>
+          <ChatView />
+        </ReflexElement>
+      )}
+    </ReflexContainer>
+  )
+
+  const flyingLayout = (
+    <FruityDesktop>
+      <FruityWindow
+        id="ScriptEditor"
+        title="Script editor"
+        defaultWidth="450px"
+        minWidth="200px"
+        defaultHeight="350px"
+        minHeight="100px"
+        canBeClosed={false}
+      >
+        <ScriptEditor />
+      </FruityWindow>
+
+      <FruityWindow
+        id="SegmentEditor"
+        title="segment editor"
+        defaultWidth="450px"
+        minWidth="200px"
+        defaultHeight="350px"
+        minHeight="100px"
+        canBeClosed={false}
+      >
+        <SegmentEditor />
+      </FruityWindow>
+
+      <FruityWindow
+        id="EntityEditor"
+        title="Entity editor"
+        defaultWidth="450px"
+        minWidth="200px"
+        defaultHeight="350px"
+        minHeight="100px"
+        canBeClosed={false}
+      >
+        <EntityEditor />
+      </FruityWindow>
+
+      {hasBetaAccess && (
+        <FruityWindow
+          id="WorkflowEditor"
+          title="Workflow editor"
+          defaultWidth="450px"
+          minWidth="200px"
+          defaultHeight="350px"
+          minHeight="100px"
+          canBeClosed={false}
+        >
+          <WorkflowEditor />
+        </FruityWindow>
+      )}
+
+      <FruityWindow
+        id="Monitor"
+        title="Monitor"
+        defaultWidth="450px"
+        minWidth="200px"
+        defaultHeight="350px"
+        minHeight="100px"
+        canBeClosed={false}
+      >
+        <Monitor />
+      </FruityWindow>
+
+      <FruityWindow
+        id="Timeline"
+        title="Timeline"
+        defaultWidth="800px"
+        minWidth="200px"
+        defaultHeight="350px"
+        minHeight="100px"
+        canBeClosed={false}
+      >
+        <Timeline />
+      </FruityWindow>
+    </FruityDesktop>
+  )
+
+  const welcomeScreen = (
+    <div
+      className={cn(
+        showWelcomeScreen
+          ? 'pointer-events-auto z-[101] flex'
+          : 'pointer-events-none hidden',
+        `fixed top-9 h-[calc(100vh-36px)] w-screen flex-row overflow-hidden`,
+        `items-center justify-center`,
+        `bg-stone-950`
+      )}
+    >
+      <div
+        className="flex h-full w-full items-center justify-center"
+        style={{
+          backgroundImage: theme.wallpaperBgImage,
+        }}
+      >
+        <div
+          className={cn(
+            `pointer-events-none absolute left-[100px] top-[16px]`,
+            `opacity-90`
+          )}
+        >
+          <img
+            src="/images/onboarding/get-started.png"
+            width="180"
+            className=""
+          ></img>
+        </div>
+        <div
+          className={cn(
+            `pointer-events-none absolute left-[305px] top-[136px]`,
+            `transition-all duration-200 ease-out`,
+            isTopMenuOpen ? 'scale-100 opacity-90' : 'scale-90 opacity-0'
+          )}
+        >
+          <img src="/images/onboarding/pick-an-example.png" width="140"></img>
+        </div>
+        <div className="flex flex-col items-center justify-center space-y-6">
+          <h1 className="text-6xl font-bold">
+            Welcome to{' '}
+            <span className="" style={{ color: theme.defaultPrimaryColor }}>
+              Clapper
+            </span>
+            .
+          </h1>
+          <div className="flex flex-col items-center justify-center space-y-2 text-center text-2xl font-semibold">
+            <p>A free and open-source AI video editor,</p>
+            <p>designed for the age of generative filmmaking.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <div
       ref={ref}
       className={cn(
-        `dark fixed flex h-screen w-screen select-none flex-col overflow-hidden font-light text-stone-900/90 dark:text-stone-100/90`
+        `dark fixed flex h-screen w-screen select-none flex-col overflow-hidden font-light text-neutral-900/90 dark:text-neutral-100/90`
       )}
-      style={{
-        backgroundImage:
-          'repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #37353455, #373534 )',
-      }}
     >
       <TopBar />
       <div
         className={cn(
-          `flex h-[calc(100vh-64px)] w-screen flex-row overflow-hidden`
+          `flex w-screen flex-row overflow-hidden`,
+          windowLayout === UIWindowLayout.GRID
+            ? 'h-[calc(100vh-64px)]'
+            : 'h-[calc(100vh-36px)]'
         )}
-        style={{
-          backgroundColor: theme.defaultBgColor || '#090909',
-        }}
+        style={
+          windowLayout === UIWindowLayout.GRID
+            ? { backgroundColor: theme.defaultBgColor }
+            : { backgroundImage: theme.wallpaperBgImage }
+        }
       >
-        <ReflexContainer orientation="vertical">
-          <ReflexElement>
-            <ReflexContainer orientation="horizontal">
-              <ReflexElement
-                // minSize={showTimeline ? 1 : 100}
-                // maxSize={2000}
-                size={showTimeline ? 1200 : 400}
-              >
-                <ReflexContainer orientation="vertical">
-                  {showExplorer && (
-                    <ReflexElement
-                      size={showExplorer ? undefined : 1}
-                      minSize={showExplorer ? 100 : 1}
-                      maxSize={showExplorer ? 2000 : 1}
-                    >
-                      <Editors />
-                    </ReflexElement>
-                  )}
-                  {showExplorer && showVideoPlayer && <ReflexSplitter />}
-                  {showVideoPlayer && (
-                    <ReflexElement
-                      minSize={showVideoPlayer ? 200 : 1}
-                      size={showVideoPlayer ? undefined : 1}
-                    >
-                      <Monitor />
-                    </ReflexElement>
-                  )}
-                </ReflexContainer>
-              </ReflexElement>
-              <ReflexSplitter />
-              <ReflexElement
-                size={showTimeline ? 400 : 1}
-                minSize={showTimeline ? 200 : 1}
-                maxSize={showTimeline ? 1600 : 1}
-              >
-                <Timeline />
-              </ReflexElement>
-            </ReflexContainer>
-          </ReflexElement>
-
-          {showAssistant && <ReflexSplitter />}
-          {showAssistant && (
-            <ReflexElement size={300}>
-              <ChatView />
-            </ReflexElement>
-          )}
-        </ReflexContainer>
+        {windowLayout === UIWindowLayout.FLYING ? flyingLayout : gridLayout}
       </div>
 
-      <div
-        className={cn(
-          showWelcomeScreen
-            ? 'pointer-events-auto z-[101] flex'
-            : 'pointer-events-none hidden',
-          `fixed top-9 h-[calc(100vh-36px)] w-screen flex-row overflow-hidden`,
-          `items-center justify-center`,
-          `bg-stone-950`
-        )}
-      >
-        <div
-          className="flex h-full w-full items-center justify-center"
-          style={{
-            backgroundImage:
-              'repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #37353455, #373534 )',
-          }}
-        >
-          <div
-            className={cn(
-              `pointer-events-none absolute left-[100px] top-[16px]`,
-              `opacity-90`
-            )}
-          >
-            <img
-              src="/images/onboarding/get-started.png"
-              width="180"
-              className=""
-            ></img>
-          </div>
-          <div
-            className={cn(
-              `pointer-events-none absolute left-[305px] top-[136px]`,
-              `transition-all duration-200 ease-out`,
-              isTopMenuOpen ? 'scale-100 opacity-90' : 'scale-90 opacity-0'
-            )}
-          >
-            <img src="/images/onboarding/pick-an-example.png" width="140"></img>
-          </div>
-          <div className="flex flex-col items-center justify-center space-y-6">
-            <h1 className="text-6xl font-bold">
-              Welcome to{' '}
-              <span className="" style={{ color: theme.defaultPrimaryColor }}>
-                Clapper
-              </span>
-              .
-            </h1>
-            <div className="flex flex-col items-center justify-center space-y-2 text-center text-2xl font-semibold">
-              <p>A free and open-source AI video editor,</p>
-              <p>designed for the age of generative filmmaking.</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {welcomeScreen}
 
       <SettingsDialog />
       <LoadingDialog />
       <Toaster />
-      <BottomToolbar />
+      {windowLayout === UIWindowLayout.GRID && <BottomToolbar />}
     </div>
   )
 }

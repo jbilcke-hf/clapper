@@ -5,6 +5,7 @@ import React, {
   useLayoutEffect,
   useRef,
   MutableRefObject,
+  useCallback,
 } from 'react'
 
 interface FullscreenElement {
@@ -24,67 +25,65 @@ export function useFullscreenStatus(): [
   MutableRefObject<Element | null>,
 ] {
   const elRef = useRef<Element | null>(null)
-  const [isFullscreen, setIsFullscreen] = useState(
-    typeof document !== 'undefined'
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  const getFullscreenStatus = useCallback(() => {
+    return typeof document !== 'undefined'
       ? Boolean(
           (document as FullscreenElement)[getBrowserFullscreenElementProp()]
         )
       : false
+  }, [])
+
+  const updateFullscreenStatus = useCallback(() => {
+    setIsFullscreen(getFullscreenStatus())
+  }, [getFullscreenStatus])
+
+  const setFullscreen = useCallback(
+    (maybeValue?: boolean) => {
+      if (!elRef.current) return
+
+      const isFullScreen = getFullscreenStatus()
+      const shouldBeFullScreen =
+        typeof maybeValue === 'boolean' ? maybeValue : !isFullScreen
+
+      if (isFullScreen === shouldBeFullScreen) {
+        return
+      }
+
+      const operation = shouldBeFullScreen
+        ? elRef.current.requestFullscreen()
+        : typeof document !== 'undefined'
+          ? document.exitFullscreen()
+          : Promise.resolve(true)
+
+      operation.then(updateFullscreenStatus).catch(updateFullscreenStatus)
+    },
+    [getFullscreenStatus, updateFullscreenStatus]
   )
 
-  const setFullscreen = (maybeValue?: boolean) => {
-    if (!elRef.current) return
+  useLayoutEffect(() => {
+    updateFullscreenStatus()
 
-    const isFullScreen =
-      typeof document !== 'undefined'
-        ? Boolean(
-            (document as FullscreenElement)[getBrowserFullscreenElementProp()]
-          )
-        : false
-
-    const shouldBeFullScreen =
-      typeof maybeValue === 'boolean' ? maybeValue : !isFullScreen
-
-    // nothing to do
-    if (isFullScreen === shouldBeFullScreen) {
-      return
+    const fullscreenChangeHandler = () => {
+      updateFullscreenStatus()
     }
 
-    const operation = shouldBeFullScreen
-      ? elRef.current.requestFullscreen()
-      : typeof document !== 'undefined'
-        ? document.exitFullscreen()
-        : Promise.resolve(true)
-
-    operation
-      .then(() => {
-        setIsFullscreen(shouldBeFullScreen)
-      })
-      .catch(() => {
-        if (typeof document !== 'undefined') {
-          // make sure we grab a fresh value here
-          const isFullScreen = Boolean(
-            (document as FullscreenElement)[getBrowserFullscreenElementProp()]
-          )
-          setIsFullscreen(isFullScreen)
-        }
-      })
-  }
-
-  useLayoutEffect(() => {
     if (typeof document !== 'undefined') {
-      document.onfullscreenchange = () =>
-        setIsFullscreen(
-          Boolean(
-            (document as FullscreenElement)[getBrowserFullscreenElementProp()]
-          )
-        )
+      document.addEventListener('fullscreenchange', fullscreenChangeHandler)
+
+      // Polling mechanism
+      const intervalId = setInterval(updateFullscreenStatus, 100)
 
       return () => {
-        document.onfullscreenchange = null
+        document.removeEventListener(
+          'fullscreenchange',
+          fullscreenChangeHandler
+        )
+        clearInterval(intervalId)
       }
     }
-  }, [])
+  }, [updateFullscreenStatus])
 
   return [isFullscreen, setFullscreen, elRef]
 }

@@ -25,11 +25,6 @@ export function DeprecatedLoader({
           : 'pointer-events-none opacity-0',
         className
       )}
-      style={
-        {
-          // backgroundImage: "repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #37353455, #373534 )"
-        }
-      }
     >
       <p
         className={cn('font-sans text-[3vw] font-thin text-stone-100')}

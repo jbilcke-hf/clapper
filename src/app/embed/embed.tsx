@@ -11,10 +11,12 @@ import { Monitor } from '@/components/monitor'
 import { SettingsDialog } from '@/components/settings'
 import { LoadingDialog } from '@/components/dialogs/loader/LoadingDialog'
 import { TopBar } from '@/components/toolbars/top-bar'
+import { useTheme } from '@/services'
 
 export function Embed() {
   const ref = useRef<HTMLDivElement>(null)
   const isEmpty = useTimeline((s) => s.isEmpty)
+  const theme = useTheme()
 
   return (
     <TooltipProvider>
@@ -23,10 +25,7 @@ export function Embed() {
         className={cn(
           `dark fixed flex h-screen w-screen select-none flex-col items-center justify-center overflow-hidden font-light text-stone-900/90 dark:text-stone-100/90`
         )}
-        style={{
-          backgroundImage:
-            'repeating-radial-gradient( circle at 0 0, transparent 0, #000000 7px ), repeating-linear-gradient( #37353455, #373534 )',
-        }}
+        style={{ backgroundImage: theme.wallpaperBgImage }}
       >
         <TopBar />
         <div

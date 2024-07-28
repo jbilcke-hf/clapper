@@ -82,6 +82,10 @@ export const backstage: UITheme = {
   author: 'Clapper',
   colorMode: UIThemeColorMode.DARK,
   description: '',
+
+  wallpaperBgImage: `repeating-radial-gradient(circle at 0 0, transparent 0, #000000 7px ),
+    repeating-linear-gradient( #37353455, #373534 )`,
+
   defaultBgColor: '#1c1917',
   defaultTextColor: '#d6d3d1',
   defaultPrimaryColor: '#FACC15',
@@ -104,6 +108,11 @@ export const backstage: UITheme = {
   assistantRobotTextColor: '#e0e7ff',
 
   formInputRadius: '8px',
+
+  windowHeaderBgColor: '#1c1917',
+  windowBodyBgColor: '#292524',
+  windowBorderColor: 'rgba(255, 255, 255, 0.05)',
+  windowBorderRadius: '8px',
 
   timeline: {
     topBarTimeScale: {
@@ -166,6 +175,10 @@ export const midnight: UITheme = {
   author: 'Clapper',
   colorMode: UIThemeColorMode.DARK,
   description: '',
+
+  wallpaperBgImage: `repeating-radial-gradient(circle at -10% -10%, #000819 0, #020410 7px ),
+    repeating-linear-gradient( #01012210, #121224 )`,
+
   defaultBgColor: '#101e2d',
   defaultTextColor: '#b8bdc3',
   defaultPrimaryColor: '#5A9DF7',
@@ -187,6 +200,11 @@ export const midnight: UITheme = {
   assistantRobotTextColor: '#e0e7ff',
 
   formInputRadius: '8px',
+
+  windowHeaderBgColor: '#000e1d',
+  windowBodyBgColor: '#011222',
+  windowBorderColor: 'rgba(255, 255, 255, 0.05)',
+  windowBorderRadius: '8px',
 
   timeline: {
     topBarTimeScale: {
@@ -236,6 +254,10 @@ export const lavender: UITheme = {
   author: 'Clapper',
   colorMode: UIThemeColorMode.DARK,
   description: '',
+
+  wallpaperBgImage: `repeating-radial-gradient(circle at 0 0, #161520 0, #160510 7px ),
+    repeating-linear-gradient( #16152055, #161520 )`,
+
   defaultBgColor: '#32294b',
   defaultTextColor: '#dbd0fd',
   defaultPrimaryColor: '#A78BFA',
@@ -257,6 +279,11 @@ export const lavender: UITheme = {
   assistantRobotTextColor: '#e0e7ff',
 
   formInputRadius: '8px',
+
+  windowHeaderBgColor: '#1a1526',
+  windowBodyBgColor: '#211b30',
+  windowBorderColor: 'rgba(255, 255, 255, 0.05)',
+  windowBorderRadius: '8px',
 
   timeline: {
     topBarTimeScale: {
@@ -317,27 +344,36 @@ export const flix: UITheme = {
   author: 'Clapper',
   colorMode: UIThemeColorMode.DARK,
   description: 'A new DVD rent-by-mail business',
-  defaultBgColor: '#000000',
+
+  wallpaperBgImage: `repeating-radial-gradient(circle at 0 0, transparent 0, #000000 6px ),
+    repeating-linear-gradient( #37353455, #373534 )`,
+
+  defaultBgColor: '#131313',
   defaultTextColor: '#D22F27',
   defaultPrimaryColor: '#D22F27',
   defaultBorderColor: '#152639',
   logoColor: '#D22F27',
-  editorBgColor: '#000000',
+  editorBgColor: '#131313',
   editorCursorColor: '#D22F27',
   editorTextColor: '#ffeeee',
   editorMenuBgColor: '#000000',
   editorMenuTextColor: 'ffeeee',
   editorBorderColor: '#232323',
-  monitorBgColor: '#000000',
+  monitorBgColor: '#131313',
   monitorSecondaryTextColor: '#D6D3D1',
   monitorPrimaryTextColor: '#D22F27',
-  assistantBgColor: '#000000',
+  assistantBgColor: '#131313',
   assistantUserBgColor: '#075985',
   assistantUserTextColor: '#bae6fd',
   assistantRobotBgColor: '#3730a3',
   assistantRobotTextColor: '#e0e7ff',
 
   formInputRadius: '8px',
+
+  windowHeaderBgColor: '#121212',
+  windowBodyBgColor: '#131313',
+  windowBorderColor: 'rgba(255, 255, 255, 0.05)',
+  windowBorderRadius: '8px',
 
   timeline: {
     topBarTimeScale: {
@@ -399,6 +435,10 @@ export const lore: UITheme = {
   author: 'Clapper',
   colorMode: UIThemeColorMode.DARK,
   description: '',
+
+  wallpaperBgImage: `repeating-radial-gradient(circle at 0 0, #101520 0, #100510 7px ),
+    repeating-linear-gradient( #10152055, #101520 )`,
+
   defaultBgColor: '#151520',
   defaultTextColor: '#f6d6d8',
   defaultPrimaryColor: '#DE4A80',
@@ -420,6 +460,11 @@ export const lore: UITheme = {
   assistantRobotTextColor: '#e0e7ff',
 
   formInputRadius: '8px',
+
+  windowHeaderBgColor: '#151520',
+  windowBodyBgColor: '#151520',
+  windowBorderColor: 'rgba(255, 255, 255, 0.05)',
+  windowBorderRadius: '8px',
 
   timeline: {
     topBarTimeScale: {
@@ -480,28 +525,37 @@ export const gordon: UITheme = {
   author: 'Clapper',
   colorMode: UIThemeColorMode.DARK,
   description: '',
+
+  wallpaperBgImage: `repeating-radial-gradient(circle at 100% 0, #232323 0, #333333 5px ),
+    repeating-linear-gradient( #43434355, #434343 )`,
+
   defaultBgColor: '#525252',
   defaultTextColor: '#e0e0e0',
   defaultPrimaryColor: '#ff8400',
   defaultBorderColor: '#2e2e2e',
   logoColor: '#ff8400',
-  editorBgColor: '#434343',
+  editorBgColor: '#383838',
   editorCursorColor: '#ffffff',
-  editorTextColor: '#e0e0e0',
+  editorTextColor: '#c0c0c0',
   editorMenuBgColor: '#323232',
   editorMenuTextColor: 'e0e0e0',
   editorBorderColor: '#2e2e2e',
-  monitorBgColor: '#333333',
+  monitorBgColor: '#404040',
   monitorSecondaryTextColor: '#e0e0e0',
   monitorPrimaryTextColor: '#ff8400',
 
-  assistantBgColor: '#535353',
+  assistantBgColor: '#404040',
   assistantUserBgColor: '#ff8400',
   assistantUserTextColor: '#ffffff',
   assistantRobotBgColor: '#6b6b6b',
   assistantRobotTextColor: '#ffffff',
 
   formInputRadius: '8px',
+
+  windowHeaderBgColor: '#323232',
+  windowBodyBgColor: '#434343',
+  windowBorderColor: 'rgba(255, 255, 255, 0.05)',
+  windowBorderRadius: '8px',
 
   timeline: {
     topBarTimeScale: {
@@ -563,27 +617,36 @@ export const silent: UITheme = {
   author: 'Clapper',
   colorMode: UIThemeColorMode.DARK,
   description: 'Monochrome theme inspired by classic films',
-  defaultBgColor: '#1a1a1a',
+
+  wallpaperBgImage: `repeating-radial-gradient(circle at 50% 50%, transparent 0, #000000 6px ),
+    repeating-linear-gradient( #00000055, #37373760 )`,
+
+  defaultBgColor: '#1f1f1f',
   defaultTextColor: '#d0d0d0',
   defaultPrimaryColor: '#ffffff',
   defaultBorderColor: '#2a2a2a',
   logoColor: '#ffffff',
-  editorBgColor: '#1a1a1a',
+  editorBgColor: '#1f1f1f',
   editorCursorColor: '#ffffff',
   editorTextColor: '#d0d0d0',
-  editorMenuBgColor: '#1a1a1a',
+  editorMenuBgColor: '#121212',
   editorMenuTextColor: 'd0d0d0',
   editorBorderColor: '#2a2a2a',
-  monitorBgColor: '#0f0f0f',
+  monitorBgColor: '#1f1f1f',
   monitorSecondaryTextColor: '#b0b0b0',
   monitorPrimaryTextColor: '#ffffff',
-  assistantBgColor: '#1a1a1a',
+  assistantBgColor: '#1f1f1f',
   assistantUserBgColor: '#3a3a3a',
   assistantUserTextColor: '#ffffff',
   assistantRobotBgColor: '#2a2a2a',
   assistantRobotTextColor: '#e0e0e0',
 
   formInputRadius: '32px',
+
+  windowHeaderBgColor: '#121212',
+  windowBodyBgColor: '#1f1f1f',
+  windowBorderColor: 'rgba(255, 255, 255, 0.05)',
+  windowBorderRadius: '8px',
 
   timeline: {
     topBarTimeScale: {
@@ -692,7 +755,7 @@ export const silent: UITheme = {
     },
   },
   workflow: {
-    bgColor: '#100e0e',
+    bgColor: '#191919',
     node: {
       bgColor: '#121212',
       borderColor: '#3a3a3a',
@@ -713,6 +776,10 @@ export const ripley: UITheme = {
   author: 'Clapper',
   colorMode: UIThemeColorMode.DARK,
   description: 'Inspired by a famous Weyland-Yutani employee.',
+
+  wallpaperBgImage: `repeating-radial-gradient(circle at 0 0, #151515 0, #050905 7px ),
+    repeating-linear-gradient( #15181555, #151815 )`,
+
   defaultBgColor: '#292929',
   defaultTextColor: '#E0E7E0',
   defaultPrimaryColor: '#bcc227',
@@ -734,6 +801,11 @@ export const ripley: UITheme = {
   assistantRobotTextColor: '#E6F3E6',
 
   formInputRadius: '32px',
+
+  windowHeaderBgColor: '#383838',
+  windowBodyBgColor: '#1E1E1E',
+  windowBorderColor: 'rgba(255, 255, 255, 0.05)',
+  windowBorderRadius: '10px',
 
   timeline: {
     topBarTimeScale: {
