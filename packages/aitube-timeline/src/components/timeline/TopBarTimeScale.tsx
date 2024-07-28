@@ -6,7 +6,6 @@ import {
 useTimeline
 } from "@/hooks"
 
-import { hslToHex } from "@/utils"
 import { useTimeScaleGraduations } from "@/hooks/useTimeScaleGraduations"
 import { DEFAULT_DURATION_IN_MS_PER_STEP, NB_MAX_SHOTS } from "@/constants/grid"
 import { formatTimestamp } from "@/utils/formatTimestamp"
@@ -20,6 +19,10 @@ export function TopBarTimeScale() {
   const jumpAt = useTimeline(s => s.jumpAt)
   const togglePlayback = useTimeline(s => s.togglePlayback)
   const theme = useTimeline(s => s.theme)
+  const isEmpty = useTimeline(s => s.isEmpty)
+
+  // right now empty means disabled, but in the future we might use other things
+  const isDisabled = isEmpty;
 
   const wasPlayingRef = useRef<boolean | undefined>(undefined)
 
@@ -50,6 +53,8 @@ export function TopBarTimeScale() {
   // it can be annoying to have to be exactly on the right top bar track when dragging the cursor
   // to improve the UX, we allow the user to move the mouse ANYWHERE on the screen while doing so
   useEffect(() => {
+    if (isDisabled) { return; } // Don't add event listeners if the component is empty
+
     const onMouseMove = (evt: MouseEvent) => {
       const {
         isDraggingCursor,
@@ -89,7 +94,7 @@ export function TopBarTimeScale() {
     return () => {
       document.removeEventListener("mousemove", onMouseMove)
     }
-  }, [])
+  }, [isDisabled])
 
   // console.log("contentWidth:", contentWidth)
   // console.log("NB_MAX_SHOTS * cellWidth:",  NB_MAX_SHOTS * cellWidth)
@@ -117,6 +122,8 @@ export function TopBarTimeScale() {
             // we need to set the color here to create a sticky overlay
               attach="material"
               color={theme.topBarTimeScale.backgroundColor}
+              opacity={isDisabled ? 0.5 : 1}
+              transparent={true}
             />
         </Plane>
       </group>
@@ -206,6 +213,7 @@ export function TopBarTimeScale() {
     theme.topBarTimeScale.backgroundColor,
     theme.topBarTimeScale.lineColor,
     theme.topBarTimeScale.textColor,
+    isDisabled,
   ])
 
   return (
@@ -218,7 +226,7 @@ export function TopBarTimeScale() {
       // just a trick
       position={[0, 0, -3]}
       onWheel={(e) => {
-        if (e.offsetY > topBarTimeScaleHeight) { return }
+        if (isDisabled || e.offsetY > topBarTimeScaleHeight) { return }
 
         const disableWheel = true
         if (disableWheel) {
@@ -238,6 +246,7 @@ export function TopBarTimeScale() {
         return false
       }}
       onPointerDown={(e) => {
+        if (isDisabled) { return }
         const cursorX = e.point.x + (size.width / 2)
         const cursorTimestampAtInMs = (cursorX / cellWidth) * DEFAULT_DURATION_IN_MS_PER_STEP
         const { wasPlaying } = togglePlayback(false)
@@ -249,6 +258,7 @@ export function TopBarTimeScale() {
         return false
       }}
       onPointerUp={(e) => {
+        if (isDisabled) { return }
         setIsDraggingCursor(false)
         if (typeof wasPlayingRef.current === "boolean") {
           if (wasPlayingRef.current) {
@@ -259,6 +269,7 @@ export function TopBarTimeScale() {
         return false
       }}
       onPointerMove={e => {
+        if (isDisabled) { return }
         // TODO move this into the whole parent container?
         // the problem is.. are we still gonna get events
 
