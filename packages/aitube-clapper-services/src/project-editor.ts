@@ -1,10 +1,10 @@
 import { ClapMeta } from "@aitube/clap"
 
-import { VersionControls, VersionedState } from "./version-control"
+import { VersionControls, VersionState } from "./version-control"
 
 export type ProjectEditorState = {
   
-} & VersionedState<ClapMeta>
+} & VersionState<ClapMeta>
 
 
 export type ProjectEditorControls = {

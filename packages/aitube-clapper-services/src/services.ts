@@ -20,6 +20,7 @@ import { SimulatorStore } from "./simulator"
 import { TasksStore } from "./tasks"
 import { UIStore } from "./ui"
 import { IOStore } from "./io"
+import { FiltersStore } from "./filters"
 
 export type AssistantService = UseBoundStore<StoreApi<AssistantStore>>
 export type MicService = UseBoundStore<StoreApi<MicStore>>
@@ -31,6 +32,7 @@ export type ProjectEditorService = UseBoundStore<StoreApi<ProjectEditorStore>>
 export type ScriptEditorService = UseBoundStore<StoreApi<ScriptEditorStore>>
 export type WorkflowEditorService = UseBoundStore<StoreApi<WorkflowEditorStore>>
 export type EditorsService = UseBoundStore<StoreApi<EditorsStore>>
+export type FiltersService = UseBoundStore<StoreApi<FiltersStore>>
 export type MonitorService = UseBoundStore<StoreApi<MonitorStore>>
 export type RendererService = UseBoundStore<StoreApi<RendererStore>>
 export type ResolverService = UseBoundStore<StoreApi<ResolverStore>>
@@ -60,6 +62,7 @@ export type PublicServices = {
   scriptEditor: ScriptEditorService
   workflowEditor: WorkflowEditorService
   editors: EditorsService
+  filters: FiltersService
   monitor: MonitorService
   timeline: TimelineService
   renderer: RendererService

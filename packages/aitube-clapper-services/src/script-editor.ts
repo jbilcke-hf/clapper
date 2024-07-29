@@ -3,7 +3,7 @@ import { TimelineSegment } from "@aitube/timeline"
 import { Monaco } from "@monaco-editor/react"
 import MonacoEditor from "monaco-editor"
 
-import { VersionControls, VersionedState } from "./version-control"
+import { VersionControls, VersionState } from "./version-control"
 
 export type ScrollData = {
   scrollHeight: number
@@ -37,7 +37,7 @@ export type ScriptEditorState = {
    * (the topmost visible timeline step in the current timeline)
    */
   scrollTopInMs: number
-} & ScrollData & VersionedState<string>
+} & ScrollData & VersionState<string>
 
 export type ScriptEditorControls = {
   setMonaco: (monaco?: Monaco) => void

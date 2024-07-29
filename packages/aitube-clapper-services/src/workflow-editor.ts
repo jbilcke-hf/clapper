@@ -1,6 +1,6 @@
 import { ClapWorkflow } from "@aitube/clap"
 
-import { VersionControls, VersionedState } from "./version-control"
+import { VersionControls, VersionState } from "./version-control"
 
 export type WorkflowEditorTheme = {
   bgColor?: string;
@@ -19,7 +19,7 @@ export type WorkflowEditorTheme = {
 
 export type WorkflowEditorState = {
 
-} & VersionedState<ClapWorkflow>
+} & VersionState<ClapWorkflow>
 
 export type WorkflowEditorControls = {
   

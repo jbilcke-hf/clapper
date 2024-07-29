@@ -1,4 +1,8 @@
 import { ClapEntity, ClapMeta } from "@aitube/clap"
+
+// TODO: export this one in a more proper way
+import { ClapInputField } from "@aitube/clap/dist/types"
+
 import { TimelineSegment } from "@aitube/timeline"
 
 import { SettingsState } from "./settings"
