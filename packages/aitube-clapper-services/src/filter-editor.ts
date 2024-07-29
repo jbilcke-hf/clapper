@@ -9,15 +9,15 @@ export type Filter = {
   shader: string // WGSL shader code for the filter
 }
 
-export type FiltersState = {
+export type FilterEditorState = {
   availableFilters: Filter[]
 }& VersionState<string>
 
-export type FiltersControls = {
+export type FilterEditorControls = {
   applyFilters: (input: string) => Promise<string>
 
   // later we can have functions like addFilter()
   // which could be used by the plugin engine to add filters
 } & VersionControls<string>
 
-export type FiltersStore = FiltersState & FiltersControls
+export type FilterEditorStore = FilterEditorState & FilterEditorControls
