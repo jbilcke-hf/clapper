@@ -38,9 +38,9 @@
   "dependencies": {
     "@aitube/broadway": "0.1.2",
     "@aitube/clap": "0.1.2",
-    "@aitube/clapper-services": "0.1.2-7",
+    "@aitube/clapper-services": "0.1.2-8",
     "@aitube/engine": "0.1.2",
-    "@aitube/timeline": "0.1.2-1",
+    "@aitube/timeline": "0.1.2-2",
     "@fal-ai/serverless-client": "^0.13.0",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@ffmpeg/util": "^0.12.1",
@@ -165,23 +165,23 @@
     "vitest": "^2.0.2"
   },
   "optionalDependencies": {
-    "@img/sharp-win32-ia32": "0.33.4",
-    "@img/sharp-win32-x64": "0.33.4",
     "@img/sharp-darwin-arm64": "0.33.4",
     "@img/sharp-darwin-x64": "0.33.4",
+    "@img/sharp-libvips-darwin-arm64": "1.0.2",
+    "@img/sharp-libvips-darwin-x64": "1.0.2",
+    "@img/sharp-libvips-linux-arm": "1.0.2",
+    "@img/sharp-libvips-linux-arm64": "1.0.2",
+    "@img/sharp-libvips-linux-x64": "1.0.2",
+    "@img/sharp-libvips-linuxmusl-arm64": "1.0.2",
+    "@img/sharp-libvips-linuxmusl-x64": "1.0.2",
+    "@img/sharp-libvips-win32-ia32": "1.0.2",
+    "@img/sharp-libvips-win32-x64": "1.0.2",
     "@img/sharp-linux-arm": "0.33.4",
     "@img/sharp-linux-arm64": "0.33.4",
     "@img/sharp-linux-x64": "0.33.4",
-    "@img/sharp-linuxmusl-x64": "0.33.4",
     "@img/sharp-linuxmusl-arm64": "0.33.4",
-    "@img/sharp-libvips-win32-x64": "1.0.2",
-    "@img/sharp-libvips-win32-ia32": "1.0.2",
-    "@img/sharp-libvips-linux-arm": "1.0.2",
-    "@img/sharp-libvips-linux-x64": "1.0.2",
-    "@img/sharp-libvips-linux-arm64": "1.0.2",
-    "@img/sharp-libvips-linuxmusl-x64": "1.0.2",
-    "@img/sharp-libvips-linuxmusl-arm64": "1.0.2",
-    "@img/sharp-libvips-darwin-x64": "1.0.2",
-    "@img/sharp-libvips-darwin-arm64": "1.0.2"
+    "@img/sharp-linuxmusl-x64": "0.33.4",
+    "@img/sharp-win32-ia32": "0.33.4",
+    "@img/sharp-win32-x64": "0.33.4"
   }
 }

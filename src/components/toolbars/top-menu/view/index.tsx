@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import {
   MenubarCheckboxItem,
   MenubarContent,
+  MenubarItem,
   MenubarMenu,
   MenubarSeparator,
   MenubarTrigger,
@@ -13,6 +14,10 @@ import { useFullscreenStatus } from '@/lib/hooks'
 import { useUI } from '@/services/ui'
 import { ThemeList } from '../lists/ThemeList'
 import { UIWindowLayout } from '@aitube/clapper-services'
+import { cn } from '@/lib/utils'
+import { GiStrawberry } from 'react-icons/gi'
+import { BiSolidWindowAlt } from 'react-icons/bi'
+import { RiFullscreenExitLine, RiFullscreenLine } from 'react-icons/ri'
 
 export function TopMenuView() {
   const [isFullscreen, setFullscreen, ref] = useFullscreenStatus()
@@ -49,14 +54,8 @@ export function TopMenuView() {
     <MenubarMenu>
       <MenubarTrigger>View</MenubarTrigger>
       <MenubarContent>
-        <MenubarCheckboxItem
-          checked={isFullscreen}
+        <MenubarItem
           onClick={(e) => {
-            // currently isFullscreen is a bit buggy and might not reflect the correct value
-            // setFullscreen(!isFullscreen)
-
-            // so to be sure we use setFullscreen in "toggle" mode
-            // (ie. we don't pass a boolean, so it will act as a current value switch)
             setFullscreen()
 
             e.stopPropagation()
@@ -64,11 +63,32 @@ export function TopMenuView() {
             return false
           }}
         >
-          Toggle fullscreen
-        </MenubarCheckboxItem>
+          <div
+            className={cn(
+              `grid h-4 w-5 scale-100 cursor-pointer grid-cols-4 grid-rows-4 overflow-hidden rounded border border-neutral-100 opacity-70 transition-all duration-200 ease-in-out hover:scale-110 hover:opacity-100`
+            )}
+          >
+            <div className="flex h-4 w-4 items-center justify-center">
+              <RiFullscreenLine
+                className={cn(
+                  `absolute -mt-0.5 ml-0.5 h-3 w-3`,
+                  `transition-all duration-200 ease-in-out`,
+                  !isFullscreen ? 'opacity-100' : 'opacity-0'
+                )}
+              />
+              <RiFullscreenExitLine
+                className={cn(
+                  `absolute -mt-0.5 ml-0.5 h-3 w-3`,
+                  `transition-all duration-200 ease-in-out`,
+                  isFullscreen ? 'opacity-100' : 'opacity-0'
+                )}
+              />
+            </div>
+          </div>
+          <span className="ml-2">Toggle fullscreen</span>
+        </MenubarItem>
 
-        <MenubarCheckboxItem
-          checked={windowLayout === UIWindowLayout.FLYING}
+        <MenubarItem
           onClick={(e) => {
             setWindowLayout(
               windowLayout === UIWindowLayout.FLYING
@@ -81,8 +101,34 @@ export function TopMenuView() {
             return false
           }}
         >
-          🥭 Fruity mode (experimental)
-        </MenubarCheckboxItem>
+          <div
+            className={cn(
+              `grid h-4 w-5 scale-100 cursor-pointer grid-cols-4 grid-rows-4 overflow-hidden rounded border border-neutral-100 opacity-70 transition-all duration-200 ease-in-out hover:scale-110 hover:opacity-100`
+            )}
+          >
+            <div className="flex h-4 w-4 items-center justify-center">
+              <GiStrawberry
+                className={cn(
+                  `absolute -mt-0.5 ml-0.5 h-3 w-3`,
+                  `transition-all duration-200 ease-in-out`,
+                  windowLayout === UIWindowLayout.FLYING
+                    ? 'opacity-100'
+                    : 'opacity-0'
+                )}
+              />
+              <BiSolidWindowAlt
+                className={cn(
+                  `absolute -mt-0.5 ml-0.5 h-3 w-3`,
+                  `transition-all duration-200 ease-in-out`,
+                  windowLayout === UIWindowLayout.GRID
+                    ? 'opacity-100'
+                    : 'opacity-0'
+                )}
+              />
+            </div>
+          </div>
+          <span className="ml-2">Toggle layout</span>
+        </MenubarItem>
 
         {/*
         <MenubarSeparator />

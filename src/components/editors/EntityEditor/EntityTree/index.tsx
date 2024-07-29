@@ -1,11 +1,15 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useTimeline } from '@aitube/timeline'
+
 import { cn } from '@/lib/utils'
 import { isClapEntity } from '@/components/tree-browsers/utils/isSomething'
 import { TreeNodeItem, LibraryNodeType } from '@/components/tree-browsers/types'
 import { Tree } from '@/components/core/tree'
 
 import { useEntityTree } from './useEntityTree'
+import { ClapEntity } from '@aitube/clap'
 
 export function EntityTree({
   className = '',
@@ -15,7 +19,15 @@ export function EntityTree({
   const libraryTreeRoot = useEntityTree((s) => s.libraryTreeRoot)
   const selectTreeNode = useEntityTree((s) => s.selectTreeNode)
   const selectedTreeNodeId = useEntityTree((s) => s.selectedTreeNodeId)
+  const setProjectEntities = useEntityTree((s) => s.setProjectEntities)
 
+  const entitiesChanged: number = useTimeline((s) => s.entitiesChanged)
+  const entities: ClapEntity[] = useTimeline((s) => s.entities)
+
+  useEffect(() => {
+    console.log('loading entities:', entities)
+    setProjectEntities(entities)
+  }, [entities, entitiesChanged, entities.length])
   /**
    * handle click on tree node
    * yes, this is where the magic happens!

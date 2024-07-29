@@ -1,7 +1,7 @@
 'use client'
 
 import { create } from 'zustand'
-import { ClapEntity, UUID } from '@aitube/clap'
+import { ClapEntity, ClapSegmentCategory, UUID } from '@aitube/clap'
 import {
   LibraryTreeNode,
   TreeNodeItem,
@@ -11,6 +11,7 @@ import { icons } from '@/components/icons'
 import { getAppropriateIcon } from '@/components/icons/getAppropriateIcon'
 import {
   collectionClassName,
+  itemClassName,
   libraryClassName,
 } from '@/components/tree-browsers/style/treeNodeStyles'
 
@@ -33,7 +34,7 @@ export const useEntityTree = create<{
    * @param collections
    * @returns
    */
-  // setProjectLibrary: (collections: ProjectEntityCollection[]) => void
+  setProjectEntities: (entities: ClapEntity[]) => Promise<void>
 
   /**
    * Load entity collections (characters, locations..) from the Clapper community into the tree
@@ -109,11 +110,10 @@ export const useEntityTree = create<{
     })
   },
 
-  /*
   setProjectEntities: async (entities: ClapEntity[]) => {
     const characters: LibraryTreeNode = {
       id: UUID(),
-      nodeType: 'LIB_NODE_GENERIC_COLLECTION',
+      nodeType: 'ENTITY_TREE_NODE_LIST_ENTITIES',
       data: undefined,
       label: 'Characters',
       icon: icons.characters,
@@ -124,7 +124,7 @@ export const useEntityTree = create<{
 
     const locations: LibraryTreeNode = {
       id: UUID(),
-      nodeType: 'LIB_NODE_GENERIC_COLLECTION',
+      nodeType: 'ENTITY_TREE_NODE_LIST_ENTITIES',
       data: undefined,
       label: 'Locations',
       icon: icons.location,
@@ -135,7 +135,7 @@ export const useEntityTree = create<{
 
     const misc: LibraryTreeNode = {
       id: UUID(),
-      nodeType: 'LIB_NODE_GENERIC_COLLECTION',
+      nodeType: 'ENTITY_TREE_NODE_LIST_ENTITIES',
       data: undefined,
       label: 'Misc',
       icon: icons.misc,
@@ -146,7 +146,7 @@ export const useEntityTree = create<{
 
     entities.forEach((entity) => {
       const node: LibraryTreeNode = {
-        nodeType: TreeNodeEntityItem,
+        nodeType: 'ENTITY_TREE_NODE_ITEM_ENTITY',
         id: entity.id,
         data: entity,
         label: entity.label,
@@ -165,6 +165,7 @@ export const useEntityTree = create<{
     })
   },
 
+  /*
   setCommunityCollections: (collections: CommunityEntityCollection[]) => {
     // TODO: implement this
    

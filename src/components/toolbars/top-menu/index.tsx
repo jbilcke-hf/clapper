@@ -24,6 +24,8 @@ import {
 import { ToggleView } from './ToggleView'
 import { UIWindowLayout } from '@aitube/clapper-services'
 import { Tasks } from '../bottom-bar/tasks'
+import { ToggleWindowLayout } from './ToggleWindowLayout'
+import { ToggleFullScreen } from './ToggleFullScreen'
 
 export function TopMenu() {
   const isBusyResolving = useResolver((s) => s.isBusyResolving)
@@ -38,6 +40,7 @@ export function TopMenu() {
   const setShowAssistant = useUI((s) => s.setShowAssistant)
   const setIsTopMenuOpen = useUI((s) => s.setIsTopMenuOpen)
   const windowLayout = useUI((s) => s.windowLayout)
+  const setWindowLayout = useUI((s) => s.setWindowLayout)
   const hasBetaAccess = useUI((s) => s.hasBetaAccess)
 
   return (
@@ -106,6 +109,10 @@ export function TopMenu() {
             <Tasks />
           </>
         )}
+
+        <ToggleFullScreen />
+
+        <ToggleWindowLayout />
 
         <Tooltip>
           <TooltipTrigger className="">
