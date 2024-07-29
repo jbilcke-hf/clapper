@@ -1,7 +1,8 @@
-import { ColorGradingFilter } from '../types'
+import { Filter } from '@aitube/clapper-services'
 
-export const infraredBlackAndWhite: ColorGradingFilter = {
-  name: 'Infrared Black and White',
+export const infraredBlackAndWhite: Filter = {
+  id: 'infrared_black_and_white',
+  label: 'Infrared Black and White',
   parameters: [
     {
       id: 'contrast',

@@ -27,6 +27,7 @@ import {
   useSegmentEditor,
   useScriptEditor,
   useWorkflowEditor,
+  useFilterEditor,
 } from '../editors'
 import { useSimulator } from '../simulator/useSimulator'
 import { useIO } from '../io/useIO'
@@ -67,6 +68,7 @@ export const usePlugins = create<PluginsStore>((set, get) => ({
       mic: useMic,
       segmentEditor: useSegmentEditor,
       entityEditor: useEntityEditor,
+      filterEditor: useFilterEditor,
       projectEditor: useProjectEditor,
       scriptEditor: useScriptEditor,
       workflowEditor: useWorkflowEditor,

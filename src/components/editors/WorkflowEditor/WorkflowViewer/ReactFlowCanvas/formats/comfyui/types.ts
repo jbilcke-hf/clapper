@@ -2,7 +2,7 @@ export type ComfyuiWorkflow = {
   extra: {
     ds: {
       scale: number
-      offset: number[]
+      offset: { '0': number; '1': number }
     }
   }
   links: [number, number, number, number, number, string][]
@@ -18,37 +18,37 @@ export type ComfyuiWorkflowNode = {
   id: number
   pos: number[]
   mode: number
-  size: number[]
+  size: { '0': number; '1': number }
   type: string
-  color?: string
+  color?: string | null
   flags: {
-    collapsed?: boolean
+    collapsed?: boolean | null
   }
   order: number
   inputs?: ComfyuiWorkflowNodeInput[]
   outputs?: ComfyuiWorkflowNodeOutput[]
   properties: Record<string, any>
-  widgets_values?: any[]
+  widgets_values?: any | null
 }
 
 export type ComfyuiWorkflowNodeInput = {
-  link?: number
+  link?: number | null
   name: string
   type: string
-  label?: string
+  label?: string | null
   widget?: {
     name: string
-  }
-  slot_index?: number
+  } | null
+  slot_index?: number | null
 }
 
 export type ComfyuiWorkflowNodeOutput = {
   name: string
   type: string
-  label?: string
-  links?: number[]
+  label?: string | null
+  links?: number[] | null
   shape: number
-  slot_index?: number
+  slot_index?: number | null
 }
 
 export type ComfyuiWorkflowGroup = {

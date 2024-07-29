@@ -1,16 +1,17 @@
 import { decode, encode } from 'base64-arraybuffer'
 
-import { ColorGradingFilter } from './types'
+import {
+  Filter,
+  FilterParams,
+  FilterWithParams,
+} from '@aitube/clapper-services'
 
-export async function applyColorGrading({
+export async function runFilterPipeline({
   images,
   filters,
 }: {
   images: Array<{ image: string; depthMap?: string }>
-  filters: Array<{
-    filter: ColorGradingFilter
-    parameters?: Record<string, string | number>
-  }>
+  filters: FilterWithParams[]
 }): Promise<string[]> {
   if (!navigator.gpu) {
     throw new Error('WebGPU is not supported in this browser.')
@@ -105,8 +106,8 @@ async function applyFilter(
   device: GPUDevice,
   inputTexture: GPUTexture,
   depthTexture: GPUTexture | null,
-  filter: ColorGradingFilter,
-  parameters?: Record<string, string | number>
+  filter: Filter,
+  parameters?: FilterParams
 ): Promise<GPUTexture> {
   const shader = createShaderModule(device, filter.shader)
   const pipeline = device.createComputePipeline({

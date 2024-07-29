@@ -1,51 +1,41 @@
-import { ColorGradingFilter } from '../types'
+import { Filter } from '@aitube/clapper-services'
 
-export const lomography: ColorGradingFilter = {
-  name: 'Lomography',
+export const crossProcessing: Filter = {
+  id: 'cross_processing',
+  label: 'Cross-Processing',
   parameters: [
     {
-      id: 'saturation',
-      label: 'Saturation',
-      description: 'Color saturation',
-      type: 'number',
-      minValue: 0,
-      maxValue: 2,
-      defaultValue: 1.3,
-    },
-    {
-      id: 'contrast',
-      label: 'Contrast',
-      description: 'Image contrast',
-      type: 'number',
-      minValue: 0.5,
-      maxValue: 2,
-      defaultValue: 1.2,
-    },
-    {
-      id: 'vignetteIntensity',
-      label: 'Vignette intensity',
-      description: 'Intensity of vignette effect',
+      id: 'intensity',
+      label: 'Intensity',
+      description: 'Intensity of the cross-processing effect',
       type: 'number',
       minValue: 0,
       maxValue: 1,
       defaultValue: 0.5,
     },
     {
-      id: 'lightLeakIntensity',
-      label: 'Light leak intensity',
-      description: 'Intensity of light leak effect',
+      id: 'contrastBoost',
+      label: 'Contrast boost',
+      description: 'Amount of contrast boost',
       type: 'number',
       minValue: 0,
       maxValue: 1,
       defaultValue: 0.3,
     },
+    {
+      id: 'colorShift',
+      label: 'Color shift',
+      description: 'Direction of color shift',
+      type: 'string',
+      allowedValues: ['Cool', 'Warm'],
+      defaultValue: 'Cool',
+    },
   ],
   shader: `
     struct Params {
-      saturation: f32,
-      contrast: f32,
-      vignette_intensity: f32,
-      light_leak_intensity: f32,
+      intensity: f32,
+      contrast_boost: f32,
+      color_shift: u32,
     }
 
     @group(0) @binding(0) var input_texture: texture_2d<f32>;
@@ -99,10 +89,6 @@ export const lomography: ColorGradingFilter = {
       return rgb + vec3<f32>(m);
     }
 
-    fn rand(co: vec2<f32>) -> f32 {
-      return fract(sin(dot(co, vec2<f32>(12.9898, 78.233))) * 43758.5453);
-    }
-
     @compute @workgroup_size(8, 8)
     fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
       let dimensions = textureDimensions(input_texture);
@@ -117,29 +103,26 @@ export const lomography: ColorGradingFilter = {
       // Convert to HSV
       var hsv = rgb_to_hsv(color);
 
+      // Apply color shift
+      if (params.color_shift == 0u) { // Cool shift
+        hsv.x = fract(hsv.x - 0.1 * params.intensity);
+      } else { // Warm shift
+        hsv.x = fract(hsv.x + 0.1 * params.intensity);
+      }
+
       // Increase saturation
-      hsv.y = clamp(hsv.y * params.saturation, 0.0, 1.0);
+      hsv.y = clamp(hsv.y + 0.2 * params.intensity, 0.0, 1.0);
 
       // Convert back to RGB
       color = hsv_to_rgb(hsv);
 
-      // Apply contrast
-      color = (color - 0.5) * params.contrast + 0.5;
+      // Apply contrast boost
+      color = (color - 0.5) * (1.0 + params.contrast_boost) + 0.5;
 
-      // Apply vignette
-      let center = vec2<f32>(0.5, 0.5);
-      let uv = vec2<f32>(coord) / vec2<f32>(dimensions);
-      let dist = distance(uv, center);
-      let vignette = 1.0 - smoothstep(0.3, 0.7, dist * params.vignette_intensity);
-      color *= vignette;
-
-      // Apply light leak
-      let leak = rand(uv * 10.0);
-      let leak_color = vec3<f32>(1.0, 0.5, 0.2); // Warm light leak color
-      color = mix(color, leak_color, leak * params.light_leak_intensity);
-
-      // Ensure color values are within [0, 1] range
-      color = clamp(color, vec3<f32>(0.0), vec3<f32>(1.0));
+      // Adjust individual channels for cross-processing look
+      color.r = clamp(color.r + 0.1 * params.intensity, 0.0, 1.0);
+      color.g = clamp(color.g - 0.05 * params.intensity, 0.0, 1.0);
+      color.b = clamp(color.b + 0.15 * params.intensity, 0.0, 1.0);
 
       textureStore(output_texture, coord, vec4<f32>(color, 1.0));
     }

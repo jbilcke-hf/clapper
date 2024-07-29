@@ -1,4 +1,4 @@
-import { applyColorGrading } from './applyColorGrading'
+import { runFilterPipeline } from './runFilterPipeline'
 
 import { analogLensSimulator } from './filters/analogLens'
 import { cinematic } from './filters/cinematic'
@@ -12,7 +12,7 @@ import { hdrToneMapping } from './filters/toneMapping'
 import { vintageFilm } from './filters/vintageFilm'
 
 export async function demo() {
-  const base64DataUriImages = await applyColorGrading({
+  const base64DataUriImages = await runFilterPipeline({
     images: [
       {
         image: 'data:image/png....',

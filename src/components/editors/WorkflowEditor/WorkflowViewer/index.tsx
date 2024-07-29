@@ -16,7 +16,7 @@ export function WorkflowViewer({
     <ReactFlowCanvas />
   ) : !current ? (
     <FormSection label={'Workflow Editor'} className="p-4">
-      Workflows are not implemented yet.
+      Workflows are WIP and not available yet.
     </FormSection>
   ) : (
     <FormSection label={'Workflow Editor'} className="p-4">

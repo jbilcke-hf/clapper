@@ -1,26 +1,9 @@
-import { ColorGradingFilter } from '../types'
+import { Filter } from '@aitube/clapper-services'
 
-export const hdrToneMapping: ColorGradingFilter = {
-  name: 'HDR Tone Mapping',
+export const lomography: Filter = {
+  id: 'lomography',
+  label: 'Lomography',
   parameters: [
-    {
-      id: 'exposure',
-      label: 'Exposure',
-      description: 'Exposure adjustment',
-      type: 'number',
-      minValue: -2,
-      maxValue: 2,
-      defaultValue: 0,
-    },
-    {
-      id: 'contrast',
-      label: 'Contrast',
-      description: 'Contrast adjustment',
-      type: 'number',
-      minValue: 0.5,
-      maxValue: 2,
-      defaultValue: 1,
-    },
     {
       id: 'saturation',
       label: 'Saturation',
@@ -28,34 +11,42 @@ export const hdrToneMapping: ColorGradingFilter = {
       type: 'number',
       minValue: 0,
       maxValue: 2,
-      defaultValue: 1,
+      defaultValue: 1.3,
     },
     {
-      id: 'highlights',
-      label: 'Highlights',
-      description: 'Highlight adjustment',
+      id: 'contrast',
+      label: 'Contrast',
+      description: 'Image contrast',
       type: 'number',
-      minValue: -1,
-      maxValue: 1,
-      defaultValue: 0,
+      minValue: 0.5,
+      maxValue: 2,
+      defaultValue: 1.2,
     },
     {
-      id: 'Shadows',
-      label: 'shadows',
-      description: 'Shadow adjustment',
+      id: 'vignetteIntensity',
+      label: 'Vignette intensity',
+      description: 'Intensity of vignette effect',
       type: 'number',
-      minValue: -1,
+      minValue: 0,
       maxValue: 1,
-      defaultValue: 0,
+      defaultValue: 0.5,
+    },
+    {
+      id: 'lightLeakIntensity',
+      label: 'Light leak intensity',
+      description: 'Intensity of light leak effect',
+      type: 'number',
+      minValue: 0,
+      maxValue: 1,
+      defaultValue: 0.3,
     },
   ],
   shader: `
     struct Params {
-      exposure: f32,
-      contrast: f32,
       saturation: f32,
-      highlights: f32,
-      shadows: f32,
+      contrast: f32,
+      vignette_intensity: f32,
+      light_leak_intensity: f32,
     }
 
     @group(0) @binding(0) var input_texture: texture_2d<f32>;
@@ -109,8 +100,8 @@ export const hdrToneMapping: ColorGradingFilter = {
       return rgb + vec3<f32>(m);
     }
 
-    fn reinhard_tone_mapping(hdr: vec3<f32>) -> vec3<f32> {
-      return hdr / (hdr + 1.0);
+    fn rand(co: vec2<f32>) -> f32 {
+      return fract(sin(dot(co, vec2<f32>(12.9898, 78.233))) * 43758.5453);
     }
 
     @compute @workgroup_size(8, 8)
@@ -124,25 +115,29 @@ export const hdrToneMapping: ColorGradingFilter = {
 
       var color = textureLoad(input_texture, coord, 0).rgb;
 
-      // Apply exposure
-      color *= exp2(params.exposure);
+      // Convert to HSV
+      var hsv = rgb_to_hsv(color);
+
+      // Increase saturation
+      hsv.y = clamp(hsv.y * params.saturation, 0.0, 1.0);
+
+      // Convert back to RGB
+      color = hsv_to_rgb(hsv);
 
       // Apply contrast
-      color = pow(color, vec3<f32>(params.contrast));
+      color = (color - 0.5) * params.contrast + 0.5;
 
-      // Apply highlights and shadows adjustments
-      let luminance = dot(color, vec3<f32>(0.299, 0.587, 0.114));
-      let shadow_adjust = 1.0 + params.shadows * (1.0 - luminance);
-      let highlight_adjust = 1.0 - params.highlights * luminance;
-      color *= shadow_adjust * highlight_adjust;
+      // Apply vignette
+      let center = vec2<f32>(0.5, 0.5);
+      let uv = vec2<f32>(coord) / vec2<f32>(dimensions);
+      let dist = distance(uv, center);
+      let vignette = 1.0 - smoothstep(0.3, 0.7, dist * params.vignette_intensity);
+      color *= vignette;
 
-      // Apply HDR tone mapping
-      color = reinhard_tone_mapping(color);
-
-      // Adjust saturation
-      var hsv = rgb_to_hsv(color);
-      hsv.y *= params.saturation;
-      color = hsv_to_rgb(hsv);
+      // Apply light leak
+      let leak = rand(uv * 10.0);
+      let leak_color = vec3<f32>(1.0, 0.5, 0.2); // Warm light leak color
+      color = mix(color, leak_color, leak * params.light_leak_intensity);
 
       // Ensure color values are within [0, 1] range
       color = clamp(color, vec3<f32>(0.0), vec3<f32>(1.0));

@@ -1,40 +1,62 @@
-import { ColorGradingFilter } from '../types'
+import { Filter } from '@aitube/clapper-services'
 
-export const crossProcessing: ColorGradingFilter = {
-  name: 'Cross-Processing',
+export const hdrToneMapping: Filter = {
+  id: 'hd_tone_mapping',
+  label: 'HDR Tone Mapping',
   parameters: [
     {
-      id: 'intensity',
-      label: 'Intensity',
-      description: 'Intensity of the cross-processing effect',
+      id: 'exposure',
+      label: 'Exposure',
+      description: 'Exposure adjustment',
       type: 'number',
-      minValue: 0,
-      maxValue: 1,
-      defaultValue: 0.5,
+      minValue: -2,
+      maxValue: 2,
+      defaultValue: 0,
     },
     {
-      id: 'contrastBoost',
-      label: 'Contrast boost',
-      description: 'Amount of contrast boost',
+      id: 'contrast',
+      label: 'Contrast',
+      description: 'Contrast adjustment',
       type: 'number',
-      minValue: 0,
-      maxValue: 1,
-      defaultValue: 0.3,
+      minValue: 0.5,
+      maxValue: 2,
+      defaultValue: 1,
     },
     {
-      id: 'colorShift',
-      label: 'Color shift',
-      description: 'Direction of color shift',
-      type: 'string',
-      allowedValues: ['Cool', 'Warm'],
-      defaultValue: 'Cool',
+      id: 'saturation',
+      label: 'Saturation',
+      description: 'Color saturation',
+      type: 'number',
+      minValue: 0,
+      maxValue: 2,
+      defaultValue: 1,
+    },
+    {
+      id: 'highlights',
+      label: 'Highlights',
+      description: 'Highlight adjustment',
+      type: 'number',
+      minValue: -1,
+      maxValue: 1,
+      defaultValue: 0,
+    },
+    {
+      id: 'Shadows',
+      label: 'shadows',
+      description: 'Shadow adjustment',
+      type: 'number',
+      minValue: -1,
+      maxValue: 1,
+      defaultValue: 0,
     },
   ],
   shader: `
     struct Params {
-      intensity: f32,
-      contrast_boost: f32,
-      color_shift: u32,
+      exposure: f32,
+      contrast: f32,
+      saturation: f32,
+      highlights: f32,
+      shadows: f32,
     }
 
     @group(0) @binding(0) var input_texture: texture_2d<f32>;
@@ -88,6 +110,10 @@ export const crossProcessing: ColorGradingFilter = {
       return rgb + vec3<f32>(m);
     }
 
+    fn reinhard_tone_mapping(hdr: vec3<f32>) -> vec3<f32> {
+      return hdr / (hdr + 1.0);
+    }
+
     @compute @workgroup_size(8, 8)
     fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
       let dimensions = textureDimensions(input_texture);
@@ -99,29 +125,28 @@ export const crossProcessing: ColorGradingFilter = {
 
       var color = textureLoad(input_texture, coord, 0).rgb;
 
-      // Convert to HSV
+      // Apply exposure
+      color *= exp2(params.exposure);
+
+      // Apply contrast
+      color = pow(color, vec3<f32>(params.contrast));
+
+      // Apply highlights and shadows adjustments
+      let luminance = dot(color, vec3<f32>(0.299, 0.587, 0.114));
+      let shadow_adjust = 1.0 + params.shadows * (1.0 - luminance);
+      let highlight_adjust = 1.0 - params.highlights * luminance;
+      color *= shadow_adjust * highlight_adjust;
+
+      // Apply HDR tone mapping
+      color = reinhard_tone_mapping(color);
+
+      // Adjust saturation
       var hsv = rgb_to_hsv(color);
-
-      // Apply color shift
-      if (params.color_shift == 0u) { // Cool shift
-        hsv.x = fract(hsv.x - 0.1 * params.intensity);
-      } else { // Warm shift
-        hsv.x = fract(hsv.x + 0.1 * params.intensity);
-      }
-
-      // Increase saturation
-      hsv.y = clamp(hsv.y + 0.2 * params.intensity, 0.0, 1.0);
-
-      // Convert back to RGB
+      hsv.y *= params.saturation;
       color = hsv_to_rgb(hsv);
 
-      // Apply contrast boost
-      color = (color - 0.5) * (1.0 + params.contrast_boost) + 0.5;
-
-      // Adjust individual channels for cross-processing look
-      color.r = clamp(color.r + 0.1 * params.intensity, 0.0, 1.0);
-      color.g = clamp(color.g - 0.05 * params.intensity, 0.0, 1.0);
-      color.b = clamp(color.b + 0.15 * params.intensity, 0.0, 1.0);
+      // Ensure color values are within [0, 1] range
+      color = clamp(color, vec3<f32>(0.0), vec3<f32>(1.0));
 
       textureStore(output_texture, coord, vec4<f32>(color, 1.0));
     }

@@ -26,6 +26,7 @@ import { ScriptEditor } from '@/components/editors/ScriptEditor'
 import { SegmentEditor } from '@/components/editors/SegmentEditor'
 import { EntityEditor } from '@/components/editors/EntityEditor'
 import { WorkflowEditor } from '@/components/editors/WorkflowEditor'
+import { FilterEditor } from '@/components/editors/FilterEditor'
 
 type DroppableThing = { files: File[] }
 
@@ -117,7 +118,7 @@ function MainContent() {
     <FruityDesktop>
       <FruityWindow
         id="ScriptEditor"
-        title="Script editor"
+        title="Screenplay"
         defaultWidth={375}
         minWidth={200}
         defaultHeight={370}
@@ -131,7 +132,7 @@ function MainContent() {
 
       <FruityWindow
         id="SegmentEditor"
-        title="segment editor"
+        title="Segments"
         defaultWidth={342}
         minWidth={200}
         defaultHeight={395}
@@ -145,7 +146,7 @@ function MainContent() {
 
       <FruityWindow
         id="EntityEditor"
-        title="Entity editor"
+        title="Entities"
         defaultWidth={544}
         minWidth={200}
         defaultHeight={318}
@@ -157,21 +158,33 @@ function MainContent() {
         <EntityEditor />
       </FruityWindow>
 
-      {hasBetaAccess && (
-        <FruityWindow
-          id="WorkflowEditor"
-          title="Workflow editor"
-          defaultWidth={459}
-          minWidth={200}
-          defaultHeight={351}
-          minHeight={100}
-          defaultX={536}
-          defaultY={3}
-          canBeClosed={false}
-        >
-          <WorkflowEditor />
-        </FruityWindow>
-      )}
+      <FruityWindow
+        id="WorkflowEditor"
+        title="Workflows"
+        defaultWidth={459}
+        minWidth={200}
+        defaultHeight={351}
+        minHeight={100}
+        defaultX={536}
+        defaultY={3}
+        canBeClosed={false}
+      >
+        <WorkflowEditor />
+      </FruityWindow>
+
+      <FruityWindow
+        id="FilterEditor"
+        title="Filters"
+        defaultWidth={459}
+        minWidth={200}
+        defaultHeight={351}
+        minHeight={100}
+        defaultX={936}
+        defaultY={400}
+        canBeClosed={false}
+      >
+        <FilterEditor />
+      </FruityWindow>
 
       <FruityWindow
         id="Monitor"

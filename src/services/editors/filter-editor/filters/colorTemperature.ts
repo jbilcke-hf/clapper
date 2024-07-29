@@ -1,7 +1,8 @@
-import { ColorGradingFilter } from '../types'
+import { Filter } from '@aitube/clapper-services'
 
-export const colorTemperature: ColorGradingFilter = {
-  name: 'Color Temperature Adjustment',
+export const colorTemperature: Filter = {
+  id: 'color_temperature_adjustment',
+  label: 'Color Temperature Adjustment',
   parameters: [
     {
       id: 'temperature',
