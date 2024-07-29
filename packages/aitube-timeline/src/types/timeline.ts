@@ -169,11 +169,7 @@ export type TimelineStoreProjectState = {
   maxHorizontalZoomLevel: number
   originalHorizontalZoomLevel: number
 
-  position: THREE.Vector3
-  scale: THREE.Vector3
   initialized: boolean
-  beforeSteps: number
-  afterSteps: number
   timeout: NodeJS.Timeout
 
   typicalSegmentDurationInSteps: number
@@ -216,6 +212,8 @@ export type TimelineStoreProjectState = {
 
 
 export type TimelineStorePreferencesState = {
+  canvas?: HTMLCanvasElement
+  
   // used to track the timeline state
   // this helps informing parent app user
   // that the timeline has been recreated inside the React tree for instance
@@ -258,6 +256,7 @@ export type TimelineStoreState = TimelineStoreProjectState & TimelineStorePrefer
 
 
 export type TimelineStoreModifiers = {
+  setCanvas: (canvas?: HTMLCanvasElement) => void
   clear: () => void
   setClap: (clap?: ClapProject) => Promise<void>
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => void

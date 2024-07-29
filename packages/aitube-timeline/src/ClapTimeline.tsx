@@ -1,11 +1,10 @@
 import AutoSizer, { Size } from "react-virtualized-auto-sizer"
-import { Canvas, useFrame, useThree } from "@react-three/fiber"
+import { Canvas } from "@react-three/fiber"
 import { Stats } from "@react-three/drei"
 
 import {
   TimelineControls,
   HorizontalScroller,
-  VerticalScroller,
   Timeline
 } from "@/components"
 import { ClapProject, isValidNumber } from "@aitube/clap"
@@ -21,7 +20,6 @@ import { cn } from "./utils"
 import { TimelineCamera } from "./components/camera"
 import { useTimeline } from "./hooks"
 import { topBarTimeScaleHeight } from "./constants/themes"
-import { useRef } from "react"
 
 export function ClapTimeline({
   clap,
@@ -58,9 +56,9 @@ export function ClapTimeline({
     showFPS: DEFAULT_SHOW_FPS,
     // frameloop: DEFAULT_FRAMELOOP
   }) {
-  const ref = useRef<HTMLCanvasElement>(null)
-
   const theme = useTimeline(s => s.theme)
+  const canvas = useTimeline(s => s.canvas)
+  const setCanvas = useTimeline(s => s.setCanvas)
 
   const handleIsCreated = () => {
     useTimeline.setState({ isReady: true })
@@ -81,7 +79,9 @@ export function ClapTimeline({
         <div className="flex flex-grow flex-col w-full h-full">
           <HorizontalScroller />
           <Canvas
-            ref={ref}
+            ref={(canvas) => {
+              setCanvas(canvas || undefined)
+            }}
             id="clap-timeline"
 
             // must be active when playing back a video
@@ -103,7 +103,7 @@ export function ClapTimeline({
             onCreated={handleIsCreated}
   
             onWheel={(wheelEvent) => {
-              const rect = ref.current?.getBoundingClientRect()
+              const rect = canvas?.getBoundingClientRect()
               if (!rect) { return }
 
               const clientY = wheelEvent.clientY

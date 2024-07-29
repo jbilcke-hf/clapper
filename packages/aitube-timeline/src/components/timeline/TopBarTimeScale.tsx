@@ -14,6 +14,8 @@ import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/theme
 import { useThree } from "@react-three/fiber"
 
 export function TopBarTimeScale() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const { size } = useThree()
 
   const jumpAt = useTimeline(s => s.jumpAt)
@@ -60,13 +62,15 @@ export function TopBarTimeScale() {
         isDraggingCursor,
         timelineCursor,
         topBarTimeScale,
-        timelineCamera
+        timelineCamera,
+        canvas
       } = useTimeline.getState()
-      if (!timelineCursor || !isDraggingCursor || !topBarTimeScale || !timelineCamera) { return }
+      if (!timelineCursor || !isDraggingCursor || !topBarTimeScale || !timelineCamera || !canvas) { return }
 
       // if we are actualling pressing a button
       if (evt.buttons) {
-        const mouseX = evt.x
+        let canvasRect = canvas.getBoundingClientRect()
+        const mouseX = evt.pageX - canvasRect.left
 
         const newPositionOfTheCursorX = mouseX //- leftBarTrackScaleWidth 
         // TODO: take the left column into account for the calculation

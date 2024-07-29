@@ -8,6 +8,7 @@ import { newClap } from "@aitube/clap"
 // those settings will change between .clap project reloads
 export function getDefaultProjectState(): TimelineStoreProjectState {
   return {
+    
     clap: newClap(),
     segments: [],
     totalDurationInMs: 0,
@@ -22,11 +23,7 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     isEmpty: true,
     isLoading: false,
 
-    position: new THREE.Vector3(),
-    scale: new THREE.Vector3(),
     initialized: false,
-    beforeSteps: 0,
-    afterSteps: 0,
     timeout: 0 as unknown as NodeJS.Timeout,
 
     minHorizontalZoomLevel: 6,
@@ -78,6 +75,7 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
 // those settings will NOT changes between .clap project reloads
 export function getDefaultPreferencesState(): TimelineStorePreferencesState {
   return {
+    canvas: undefined,
     isReady: false,
     width: 1800,
     height: 800,
