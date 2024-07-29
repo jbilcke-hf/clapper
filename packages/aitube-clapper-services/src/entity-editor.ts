@@ -1,11 +1,11 @@
 import { ClapEntity } from "@aitube/clap"
 
-import { VersionControls, VersionedState } from "./version-control"
+import { VersionControls, VersionState } from "./version-control"
 
 export type EntityEditorState = {
   draft?: ClapEntity
   showEntityList: boolean
-} & VersionedState<ClapEntity>
+} & VersionState<ClapEntity>
 
 export type EntityEditorControls = {
   setDraft: (draft?: ClapEntity) => void

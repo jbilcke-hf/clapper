@@ -52,6 +52,7 @@ export {
   ScriptEditorService,
   WorkflowEditorService,
   EditorsService,
+  FiltersService,
   MonitorService,
   RendererService,
   ResolverService,
@@ -105,6 +106,13 @@ export {
   EditorsControls,
   EditorsStore
 } from "./editors"
+
+export {
+  Filter,
+  FiltersState,
+  FiltersControls,
+  FiltersStore,
+} from "./filters"
 
 export {
   MonitoringMode,
@@ -203,6 +211,9 @@ export {
 } from "./io"
 
 export {
-  VersionedState,
-  VersionControls
+  VersionHistory,
+  VersionState,
+  VersionControls,
+  undo,
+  redo,
 } from "./version-control"
