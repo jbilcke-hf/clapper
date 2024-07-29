@@ -3,13 +3,12 @@ import { create } from 'zustand'
 import { WindowsStore, WindowState } from './types'
 import { useCallback } from 'react'
 
-// Create the Zustand store
 export const useWindows = create<WindowsStore>((set, get) => ({
   windows: {},
   getNextPosition: (width: number, height: number) => {
     const state = get()
     const existingWindows = Object.values(state.windows)
-    const defaultOffset = 30 // Offset for cascading windows
+    const defaultOffset = 100 // Offset for cascading windows
     let newX = 0
     let newY = 0
     let maxIterations = 100 // Prevent infinite loop
@@ -73,7 +72,9 @@ export const useWindows = create<WindowsStore>((set, get) => ({
     set((state) => ({
       windows: {
         ...state.windows,
-        [id]: { ...state.windows[id], ...updates },
+        [id]: state.windows[id]
+          ? { ...state.windows[id], ...updates }
+          : state.windows[id],
       },
     })),
   removeWindow: (id) =>

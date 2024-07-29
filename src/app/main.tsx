@@ -118,10 +118,12 @@ function MainContent() {
       <FruityWindow
         id="ScriptEditor"
         title="Script editor"
-        defaultWidth="450px"
-        minWidth="200px"
-        defaultHeight="350px"
-        minHeight="100px"
+        defaultWidth={375}
+        minWidth={200}
+        defaultHeight={370}
+        minHeight={100}
+        defaultX={18}
+        defaultY={7}
         canBeClosed={false}
       >
         <ScriptEditor />
@@ -130,10 +132,12 @@ function MainContent() {
       <FruityWindow
         id="SegmentEditor"
         title="segment editor"
-        defaultWidth="450px"
-        minWidth="200px"
-        defaultHeight="350px"
-        minHeight="100px"
+        defaultWidth={342}
+        minWidth={200}
+        defaultHeight={395}
+        minHeight={100}
+        defaultX={21}
+        defaultY={424}
         canBeClosed={false}
       >
         <SegmentEditor />
@@ -142,10 +146,12 @@ function MainContent() {
       <FruityWindow
         id="EntityEditor"
         title="Entity editor"
-        defaultWidth="450px"
-        minWidth="200px"
-        defaultHeight="350px"
-        minHeight="100px"
+        defaultWidth={544}
+        minWidth={200}
+        defaultHeight={318}
+        minHeight={100}
+        defaultX={347}
+        defaultY={193}
         canBeClosed={false}
       >
         <EntityEditor />
@@ -155,10 +161,12 @@ function MainContent() {
         <FruityWindow
           id="WorkflowEditor"
           title="Workflow editor"
-          defaultWidth="450px"
-          minWidth="200px"
-          defaultHeight="350px"
-          minHeight="100px"
+          defaultWidth={459}
+          minWidth={200}
+          defaultHeight={351}
+          minHeight={100}
+          defaultX={536}
+          defaultY={3}
           canBeClosed={false}
         >
           <WorkflowEditor />
@@ -168,10 +176,12 @@ function MainContent() {
       <FruityWindow
         id="Monitor"
         title="Monitor"
-        defaultWidth="450px"
-        minWidth="200px"
-        defaultHeight="350px"
-        minHeight="100px"
+        defaultWidth={333}
+        minWidth={200}
+        defaultHeight={298}
+        minHeight={100}
+        defaultX={1027}
+        defaultY={21}
         canBeClosed={false}
       >
         <Monitor />
@@ -180,10 +190,12 @@ function MainContent() {
       <FruityWindow
         id="Timeline"
         title="Timeline"
-        defaultWidth="800px"
-        minWidth="200px"
-        defaultHeight="350px"
-        minHeight="100px"
+        defaultWidth={936}
+        minWidth={200}
+        defaultHeight={282}
+        minHeight={100}
+        defaultX={375}
+        defaultY={527}
         canBeClosed={false}
       >
         <Timeline />

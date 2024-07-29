@@ -2,17 +2,17 @@
 
 import React, {
   useState,
-  useLayoutEffect,
+  useEffect,
   useRef,
   MutableRefObject,
   useCallback,
 } from 'react'
 
 interface FullscreenElement {
-  fullscreenElement?: Element
-  mozFullScreenElement?: Element
-  msFullscreenElement?: Element
-  webkitFullscreenElement?: Element
+  fullscreenElement?: Element | null
+  mozFullScreenElement?: Element | null
+  msFullscreenElement?: Element | null
+  webkitFullscreenElement?: Element | null
 }
 
 declare global {
@@ -21,66 +21,68 @@ declare global {
 
 export function useFullscreenStatus(): [
   boolean,
-  (requestedValue?: boolean) => void,
+  (requestedValue?: boolean) => Promise<void>,
   MutableRefObject<Element | null>,
 ] {
   const elRef = useRef<Element | null>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
 
-  const getFullscreenStatus = useCallback(() => {
-    return typeof document !== 'undefined'
-      ? Boolean(
-          (document as FullscreenElement)[getBrowserFullscreenElementProp()]
-        )
-      : false
+  const getFullscreenElement = useCallback((): Element | null => {
+    if (typeof document === 'undefined') return null
+    const fullscreenProp = getBrowserFullscreenElementProp()
+    return document[fullscreenProp] || null
   }, [])
 
   const updateFullscreenStatus = useCallback(() => {
-    setIsFullscreen(getFullscreenStatus())
-  }, [getFullscreenStatus])
+    const fullscreenElement = getFullscreenElement()
+    setIsFullscreen(
+      !!elRef.current &&
+        !!fullscreenElement &&
+        fullscreenElement === elRef.current
+    )
+  }, [getFullscreenElement])
 
   const setFullscreen = useCallback(
-    (maybeValue?: boolean) => {
+    async (requestedValue?: boolean) => {
       if (!elRef.current) return
 
-      const isFullScreen = getFullscreenStatus()
-      const shouldBeFullScreen =
-        typeof maybeValue === 'boolean' ? maybeValue : !isFullScreen
+      const isCurrentlyFullscreen = getFullscreenElement() === elRef.current
+      const shouldBeFullScreen = requestedValue ?? !isCurrentlyFullscreen
 
-      if (isFullScreen === shouldBeFullScreen) {
-        return
+      if (isCurrentlyFullscreen === shouldBeFullScreen) return
+
+      try {
+        if (shouldBeFullScreen) {
+          await elRef.current.requestFullscreen()
+        } else if (document.fullscreenElement) {
+          await document.exitFullscreen()
+        }
+      } catch (error) {
+        console.error('Fullscreen error:', error)
       }
 
-      const operation = shouldBeFullScreen
-        ? elRef.current.requestFullscreen()
-        : typeof document !== 'undefined'
-          ? document.exitFullscreen()
-          : Promise.resolve(true)
-
-      operation.then(updateFullscreenStatus).catch(updateFullscreenStatus)
+      // Wait for the next frame before updating status
+      requestAnimationFrame(updateFullscreenStatus)
     },
-    [getFullscreenStatus, updateFullscreenStatus]
+    [getFullscreenElement, updateFullscreenStatus]
   )
 
-  useLayoutEffect(() => {
-    updateFullscreenStatus()
-
+  useEffect(() => {
     const fullscreenChangeHandler = () => {
-      updateFullscreenStatus()
+      requestAnimationFrame(updateFullscreenStatus)
     }
 
     if (typeof document !== 'undefined') {
       document.addEventListener('fullscreenchange', fullscreenChangeHandler)
 
-      // Polling mechanism
-      const intervalId = setInterval(updateFullscreenStatus, 100)
+      // Initial status update
+      updateFullscreenStatus()
 
       return () => {
         document.removeEventListener(
           'fullscreenchange',
           fullscreenChangeHandler
         )
-        clearInterval(intervalId)
       }
     }
   }, [updateFullscreenStatus])
@@ -89,15 +91,20 @@ export function useFullscreenStatus(): [
 }
 
 function getBrowserFullscreenElementProp(): keyof FullscreenElement {
-  if (typeof document.fullscreenElement !== 'undefined') {
-    return 'fullscreenElement'
-  } else if (typeof document.mozFullScreenElement !== 'undefined') {
-    return 'mozFullScreenElement'
-  } else if (typeof document.msFullscreenElement !== 'undefined') {
-    return 'msFullscreenElement'
-  } else if (typeof document.webkitFullscreenElement !== 'undefined') {
-    return 'webkitFullscreenElement'
-  } else {
-    throw new Error('fullscreenElement is not supported by this browser')
+  if (typeof document === 'undefined') return 'fullscreenElement'
+
+  const props: (keyof FullscreenElement)[] = [
+    'fullscreenElement',
+    'mozFullScreenElement',
+    'msFullscreenElement',
+    'webkitFullscreenElement',
+  ]
+
+  for (const prop of props) {
+    if (prop in document) {
+      return prop
+    }
   }
+
+  return 'fullscreenElement'
 }
