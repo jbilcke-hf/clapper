@@ -15,6 +15,9 @@ import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
 
+  setCanvas: (canvas?: HTMLCanvasElement) => {
+    set({ canvas })
+  },
 
   clear: () => {
     // this re-initialize everything that is related to the current .clap project

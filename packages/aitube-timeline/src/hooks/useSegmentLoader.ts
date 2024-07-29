@@ -209,7 +209,7 @@ export const useSegmentLoader = ({
 
   // force a re-render when cell width or height change
   useEffect(() => {
-    console.log("Re-rendering the whole segment timeline (this is an expensive operation, should be rare)")
+    console.log("Re-rendering the timeline (this is an expensive operation, please optimize the code to make this rare!)")
     const fn = async () => { try { await sync(true) } catch (err) {} }
     fn()
   }, [cellHeight, cellWidth, allSegmentsChanged])
