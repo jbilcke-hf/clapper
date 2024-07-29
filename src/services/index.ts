@@ -4,6 +4,7 @@ export { useAudio } from './audio/useAudio'
 export { useBroadcast } from './broadcast/useBroadcast'
 export {
   useEntityEditor,
+  useFilterEditor,
   useProjectEditor,
   useSegmentEditor,
   useScriptEditor,

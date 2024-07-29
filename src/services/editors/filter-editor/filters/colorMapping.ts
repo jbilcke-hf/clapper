@@ -1,8 +1,9 @@
-import { ColorGradingFilter } from '../types'
+import { Filter } from '@aitube/clapper-services'
 
 // Example filter implementations
-export const colorMapping: ColorGradingFilter = {
-  name: 'Color Mapping',
+export const colorMapping: Filter = {
+  id: 'color_mapping',
+  label: 'Color Mapping',
   parameters: [
     {
       id: 'redMultiplier',

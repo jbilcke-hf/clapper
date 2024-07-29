@@ -1,6 +1,6 @@
 {
   "name": "clapper",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": true,
   "description": "🎬 Clapper",
   "license": "GPL-3.0-only",
@@ -38,9 +38,9 @@
   "dependencies": {
     "@aitube/broadway": "0.1.2",
     "@aitube/clap": "0.1.2",
-    "@aitube/clapper-services": "0.1.2-8",
+    "@aitube/clapper-services": "0.1.2-14",
     "@aitube/engine": "0.1.2",
-    "@aitube/timeline": "0.1.2-2",
+    "@aitube/timeline": "0.1.2-3",
     "@fal-ai/serverless-client": "^0.13.0",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@ffmpeg/util": "^0.12.1",

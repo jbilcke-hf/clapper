@@ -1,7 +1,8 @@
-import { ColorGradingFilter } from '../types'
+import { Filter } from '@aitube/clapper-services'
 
-export const vintageFilm: ColorGradingFilter = {
-  name: 'Enhanced Vintage Film Stocks',
+export const vintageFilm: Filter = {
+  id: 'enhanced_vintage_film_stocks',
+  label: 'Enhanced Vintage Film Stocks',
   parameters: [
     {
       id: 'preset',

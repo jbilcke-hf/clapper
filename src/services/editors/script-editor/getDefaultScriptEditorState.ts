@@ -15,9 +15,10 @@ export function getDefaultScriptEditorState(): ScriptEditorState {
     scrollWidth: 0,
     scrollTopInMs: 0,
 
+    before: [],
     current: undefined,
+    after: [],
     version: 0,
-    history: [],
   }
 
   return state

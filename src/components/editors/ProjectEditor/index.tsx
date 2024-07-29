@@ -12,7 +12,6 @@ export function ProjectEditor() {
 
   const current = useProjectEditor((s) => s.current)
   const setCurrent = useProjectEditor((s) => s.setCurrent)
-  const history = useProjectEditor((s) => s.history)
   const undo = useProjectEditor((s) => s.undo)
   const redo = useProjectEditor((s) => s.redo)
 

@@ -1,7 +1,8 @@
-import { ColorGradingFilter } from '../types'
+import { Filter } from '@aitube/clapper-services'
 
-export const filmDegradation: ColorGradingFilter = {
-  name: 'Film Degradation',
+export const filmDegradation: Filter = {
+  id: 'film_degradation',
+  label: 'Film Degradation',
   parameters: [
     {
       id: 'scratchesIntensity',

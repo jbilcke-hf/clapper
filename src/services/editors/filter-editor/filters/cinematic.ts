@@ -1,7 +1,8 @@
-import { ColorGradingFilter } from '../types'
+import { Filter } from '@aitube/clapper-services'
 
-export const cinematic: ColorGradingFilter = {
-  name: 'Cinematic Color Grading',
+export const cinematic: Filter = {
+  id: 'cinematic_color_grading',
+  label: 'Cinematic Color Grading',
   parameters: [
     {
       id: 'preset',

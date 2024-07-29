@@ -1,7 +1,8 @@
-import { ColorGradingFilter } from '../types'
+import { Filter } from '@aitube/clapper-services'
 
-export const analogLensSimulator: ColorGradingFilter = {
-  name: 'Analog Lens Simulator',
+export const analogLensSimulator: Filter = {
+  id: 'analog_lens_simulator',
+  label: 'Analog Lens Simulator',
   parameters: [
     {
       id: 'chromaticAberration',

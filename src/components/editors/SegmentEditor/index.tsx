@@ -13,7 +13,6 @@ export function SegmentEditor() {
   )
   const current = useSegmentEditor((s) => s.current)
   const setCurrent = useSegmentEditor((s) => s.setCurrent)
-  const history = useSegmentEditor((s) => s.history)
   const undo = useSegmentEditor((s) => s.undo)
   const redo = useSegmentEditor((s) => s.redo)
 

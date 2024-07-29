@@ -1,7 +1,8 @@
-import { ColorGradingFilter } from '../types'
+import { Filter } from '@aitube/clapper-services'
 
-export const analogFilmSimulator: ColorGradingFilter = {
-  name: 'Analog Film Simulator',
+export const analogFilmSimulator: Filter = {
+  id: 'analog_film_simulator',
+  label: 'Analog Film Simulator',
   parameters: [
     {
       id: 'preset',

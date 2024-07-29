@@ -6,6 +6,7 @@ import { useBroadcast } from './broadcast/useBroadcast'
 import {
   useEditors,
   useEntityEditor,
+  useFilterEditor,
   useProjectEditor,
   useScriptEditor,
   useSegmentEditor,
@@ -31,6 +32,7 @@ if (typeof window !== 'undefined') {
   w.useBroadcast = useBroadcast
   w.useEditors = useEditors
   w.useEntityEditor = useEntityEditor
+  w.useFilterEditor = useFilterEditor
   w.useProjectEditor = useProjectEditor
   w.useScriptEditor = useScriptEditor
   w.useSegmentEditor = useSegmentEditor

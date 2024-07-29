@@ -1,7 +1,8 @@
-import { ColorGradingFilter } from '../types'
+import { Filter } from '@aitube/clapper-services'
 
-export const splitToning: ColorGradingFilter = {
-  name: 'Split Toning',
+export const splitToning: Filter = {
+  id: 'split_toning',
+  label: 'Split Toning',
   parameters: [
     {
       id: 'highlightColor',

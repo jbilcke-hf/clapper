@@ -1,4 +1,5 @@
 export { useEntityEditor } from './entity-editor/useEntityEditor'
+export { useFilterEditor } from './filter-editor/useFilterEditor'
 export { useProjectEditor } from './project-editor/useProjectEditor'
 export { useSegmentEditor } from './segment-editor/useSegmentEditor'
 export { useScriptEditor } from './script-editor/useScriptEditor'
