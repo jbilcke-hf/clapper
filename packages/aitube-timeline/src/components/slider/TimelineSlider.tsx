@@ -1,3 +1,4 @@
+import { useTimeline } from '@/index';
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 
 export interface TimelineSliderEvent {
@@ -109,8 +110,10 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
 
   const handleMouseDown = (e: React.MouseEvent) => {
     const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
+    if (!rect) { return; }
   
+    if (useTimeline.getState().isEmpty) { return }
+
     const x = e.clientX - rect.left;
     const cursorX = ((playbackCursor - minTimeInMs) / (maxTimeInMs - minTimeInMs)) * rect.width;
   
@@ -162,7 +165,8 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDraggingWindow && !isDraggingCursor) return;
-  
+    if (useTimeline.getState().isEmpty) { return }
+
     const containerWidth = containerRef.current?.clientWidth || 1;
     const deltaX = e.clientX - dragStartX;
   
@@ -232,6 +236,7 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
 
   const handleWheel = (e: React.WheelEvent) => {
     if (!allowSlidingWindowRangeThumbResizeOnMouseWheel) return;
+    if (useTimeline.getState().isEmpty) { return }
 
     const delta = e.deltaY * mouseWheelSensibility;
     const windowWidth = windowEnd - windowStart;
@@ -256,7 +261,8 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
   const handleDoubleClick = (e: React.MouseEvent) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
-  
+    if (useTimeline.getState().isEmpty) { return }
+
     const x = e.clientX - rect.left;
     const clickedTime = minTimeInMs + (x / rect.width) * (maxTimeInMs - minTimeInMs);
     
