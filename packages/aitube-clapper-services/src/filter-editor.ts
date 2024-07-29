@@ -11,6 +11,7 @@ export type Filter = {
 
 export type FilterEditorState = {
   availableFilters: Filter[]
+  activeFilters: Filter[]
 }& VersionState<string>
 
 export type FilterEditorControls = {
