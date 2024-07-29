@@ -20,13 +20,13 @@ export type FilterEditorState = {
   isEnabled: boolean
   availableFilters: Filter[]
   activeFilters: FilterWithParams[]
-}& VersionState<string>
+}& VersionState<FilterWithParams[]>
 
 export type FilterEditorControls = {
   runFilterPipeline: (input: string) => Promise<string>
 
   setEnabled: (isEnabled: boolean) => void
-  
+
   // later we can have functions like addFilter()
   // which could be used by the plugin engine to add filters
 } & VersionControls<FilterWithParams[]>
