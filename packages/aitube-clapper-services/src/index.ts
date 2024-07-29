@@ -49,10 +49,10 @@ export {
   ProjectEditorService,
   SegmentEditorService,
   EntityEditorService,
+  FilterEditorService,
   ScriptEditorService,
   WorkflowEditorService,
   EditorsService,
-  FiltersService,
   MonitorService,
   RendererService,
   ResolverService,
@@ -88,6 +88,13 @@ export {
 } from "./entity-editor"
 
 export {
+  Filter,
+  FilterEditorState,
+  FilterEditorControls,
+  FilterEditorStore,
+} from "./filter-editor"
+
+export {
   SegmentEditorState,
   SegmentEditorControls,
   SegmentEditorStore
@@ -106,13 +113,6 @@ export {
   EditorsControls,
   EditorsStore
 } from "./editors"
-
-export {
-  Filter,
-  FiltersState,
-  FiltersControls,
-  FiltersStore,
-} from "./filters"
 
 export {
   MonitoringMode,
