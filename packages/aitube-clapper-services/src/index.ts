@@ -89,6 +89,8 @@ export {
 
 export {
   Filter,
+  FilterParams,
+  FilterWithParams,
   FilterEditorState,
   FilterEditorControls,
   FilterEditorStore,
