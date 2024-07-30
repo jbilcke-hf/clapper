@@ -90,10 +90,9 @@ npm run dev
 
 `--include=optional` is to make sure optional dependencies are installed (pre-build native modules compatible with your system)
 
-### Making sure everything is working properly
+### Building the app
 
-There are no tests yet (I will create a ticket for that),
-but until then you can run the following command to make sure all the types are consistant and properly set:
+You can run the following command to build the app, making sure all the types are consistant and properly set:
 
 ```bash
 npm run build
@@ -125,11 +124,9 @@ You might see a DeprecationWarning message written in red at the end but that's 
 
 ### Code conventions
 
-I haven't setup Prettier or a Linter yet.
+I have setup Prettier and ESLint, they use some basic rules (you can propose new rules if you want to)
 
 ### Testing
-
-@jbilcke-hf is working to add tests, and will also act as the "QA engineer".
 
 To run all the tests (unit and e2e) please run: 
 
@@ -137,9 +134,11 @@ To run all the tests (unit and e2e) please run:
 
 This is not instantaneous: playwright may seems to do nothing for a while at first.
 
+@jbilcke-hf is working to add more tests, and will also act as the "QA engineer".
+
 #### Unit tests
 
-Note: I've just added Vitest so we only have like 2 tests for now.
+Note: I've just added Vitest so we only have a few tests for now.
 
 
 To run the test without watching, type:
