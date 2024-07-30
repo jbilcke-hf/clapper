@@ -57,7 +57,7 @@ export const useFilterTree = create<{
       children: [
         {
           id: UUID(),
-          nodeType: 'DEFAULT_TREE_NODE_EMPTY',
+          nodeType: 'FILTER_TREE_NODE_ITEM_FILTER',
           label: 'Empty',
           icon: icons.project,
           className: collectionClassName,
@@ -84,11 +84,12 @@ export const useFilterTree = create<{
       className: libraryClassName,
       isExpanded: true,
       children: filters.map((filter) => ({
-        id: UUID(),
-        nodeType: 'DEFAULT_TREE_NODE_ITEM',
+        id: filter.id,
+        nodeType: 'FILTER_TREE_NODE_ITEM_FILTER',
         label: filter.label,
         icon: icons.imageFilter,
         className: collectionClassName,
+        data: filter,
       })),
     }
 
@@ -110,24 +111,26 @@ export const useFilterTree = create<{
   */
 
   selectedNodeItem: undefined,
-  selectEntity: (entity?: ClapEntity) => {
-    if (entity) {
+  /*
+  selectFilter: (filter?: Filter) => {
+    if (filter) {
       console.log(
-        'TODO julian: change this code to search in the entity collections'
+        'TODO julian: change this code to search in the filter collections children instead'
       )
       const selectedTreeNode = get().libraryTreeRoot.find(
-        (node) => node.data?.id === entity.id
+        (node) => (node.data as any)?.id === filter.id
       )
 
       // set({ selectedTreeNode })
       set({ selectedTreeNodeId: selectedTreeNode?.id || null })
-      set({ selectedNodeItem: entity })
+      set({ selectedNodeItem: filter })
     } else {
       // set({ selectedTreeNode: undefined })
       set({ selectedTreeNodeId: null })
       set({ selectedNodeItem: undefined })
     }
   },
+  */
 
   // selectedTreeNode: undefined,
   selectedTreeNodeId: null,

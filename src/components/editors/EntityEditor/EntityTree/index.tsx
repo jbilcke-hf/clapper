@@ -10,6 +10,7 @@ import { Tree } from '@/components/core/tree'
 
 import { useEntityTree } from './useEntityTree'
 import { ClapEntity } from '@aitube/clap'
+import { useEntityEditor } from '@/services'
 
 export function EntityTree({
   className = '',
@@ -28,42 +29,29 @@ export function EntityTree({
     setProjectEntities(entities)
   }, [entitiesChanged, entities.map((e) => e.id).join(',')])
 
-  /**
-   * handle click on tree node
-   * yes, this is where the magic happens!
-   *
-   * @param id
-   * @param nodeType
-   * @param node
-   * @returns
-   */
-  const handleOnChange = async (
-    id: string | null,
-    nodeType?: LibraryNodeType,
-    nodeItem?: TreeNodeItem
-  ) => {
-    console.log(`calling selectTreeNodeById(id)`)
-    selectTreeNode(id, nodeType, nodeItem)
+  const setCurrent = useEntityEditor((s) => s.setCurrent)
+  const selectedNodeItem = useEntityTree((s) => s.selectedNodeItem)
+  const selectedNodeType = useEntityTree((s) => s.selectedNodeType)
 
-    if (!nodeType || !nodeItem) {
-      console.log('tree-browser: clicked on an undefined node')
+  useEffect(() => {
+    if (!selectedNodeType || !selectedNodeItem) {
+      setCurrent(undefined)
       return
     }
-    if (isClapEntity(nodeType, nodeItem)) {
-      // ClapEntity
+
+    if (isClapEntity(selectedNodeType, selectedNodeItem)) {
+      const entity: ClapEntity = selectedNodeItem
+
+      setCurrent(entity)
     } else {
-      console.log(
-        `tree-browser: no action attached to ${nodeType}, so skipping`
-      )
-      return
+      // must be a different kind of node (eg. a collection, list or folder)
     }
-    console.log(`tree-browser: clicked on a ${nodeType}`, nodeItem)
-  }
+  }, [selectedNodeType, selectedNodeItem])
 
   return (
     <Tree.Root<LibraryNodeType, TreeNodeItem>
       value={selectedTreeNodeId}
-      onChange={handleOnChange}
+      onChange={selectTreeNode}
       className={cn(`not-prose h-full w-full px-2 pt-2`, className)}
       label="Entities"
     >

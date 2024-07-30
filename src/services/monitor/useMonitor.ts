@@ -123,7 +123,7 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
     const timeline: TimelineStore = useTimeline.getState()
 
     const { isPlaying, mode, staticVideoRef } = monitor
-    const { renderLoop } = renderer
+    const { renderLoop, syncVideoToCurrentCursorPosition } = renderer
     const { setCursorTimestampAtInMs, cursorTimestampAtInMs } = timeline
 
     if (cursorTimestampAtInMs !== timeInMs) {
@@ -138,13 +138,15 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
       if (!staticVideoRef) {
         return
       }
-      // console.log("resetting static video current time")
+      console.log('resetting static video current time')
       staticVideoRef.currentTime = timeInMs / 1000
     } else if (mode === MonitoringMode.DYNAMIC) {
       // we force a full state recompute
       // and we also pass jumpedSomewhere=true to indicate that we
       // need a buffer transition
       renderLoop(true)
+
+      syncVideoToCurrentCursorPosition()
     }
   },
 

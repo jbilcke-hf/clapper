@@ -3,12 +3,21 @@
 import { useEffect } from 'react'
 
 import { cn } from '@/lib/utils'
-import { isClapEntity } from '@/components/tree-browsers/utils/isSomething'
+import {
+  isClapEntity,
+  isFilter,
+  isFilterWithParams,
+} from '@/components/tree-browsers/utils/isSomething'
 import { TreeNodeItem, LibraryNodeType } from '@/components/tree-browsers/types'
 import { Tree } from '@/components/core/tree'
 
 import { useFilterTree } from './useFilterTree'
 import { useFilterEditor } from '@/services/editors/filter-editor/useFilterEditor'
+import {
+  Filter,
+  FilterParams,
+  FilterWithParams,
+} from '@aitube/clapper-services'
 
 export function FilterTree({
   className = '',
@@ -23,47 +32,59 @@ export function FilterTree({
   const availableFilters = useFilterEditor((s) => s.availableFilters)
   const activeFilters = useFilterEditor((s) => s.activeFilters)
   const current = useFilterEditor((s) => s.current)
+  const setCurrent = useFilterEditor((s) => s.setCurrent)
 
   useEffect(() => {
     setAvailableFilters(availableFilters)
   }, [availableFilters.map((f) => f.id).join(',')])
 
-  /**
-   * handle click on tree node
-   * yes, this is where the magic happens!
-   *
-   * @param id
-   * @param nodeType
-   * @param node
-   * @returns
-   */
-  const handleOnChange = async (
-    id: string | null,
-    nodeType?: LibraryNodeType,
-    nodeItem?: TreeNodeItem
-  ) => {
-    console.log(`calling selectTreeNodeById(id)`)
-    selectTreeNode(id, nodeType, nodeItem)
+  const selectedNodeItem = useFilterTree((s) => s.selectedNodeItem)
+  const selectedNodeType = useFilterTree((s) => s.selectedNodeType)
 
-    if (!nodeType || !nodeItem) {
-      console.log('tree-browser: clicked on an undefined node')
+  useEffect(() => {
+    console.log('FilterTree:', {
+      selectedNodeType,
+      selectedNodeItem,
+    })
+    if (!selectedNodeType || !selectedNodeItem) {
+      setCurrent(undefined)
       return
     }
-    if (isClapEntity(nodeType, nodeItem)) {
-      // ClapEntity
+
+    if (isFilter(selectedNodeType, selectedNodeItem)) {
+      console.log('is Filter!')
+      const filter: Filter = selectedNodeItem
+
+      const parameters: FilterParams = {}
+      for (const field of filter.parameters) {
+        parameters[field.id] = field.defaultValue
+      }
+
+      const filterWithParams: FilterWithParams = {
+        filter,
+        parameters,
+      }
+
+      const pipeline = [filterWithParams]
+
+      setCurrent(pipeline)
+    } else if (isFilterWithParams(selectedNodeType, selectedNodeItem)) {
+      console.log('is FilterWithParams!')
+      const filterWithParams: FilterWithParams = selectedNodeItem
+
+      const pipeline = [filterWithParams]
+
+      setCurrent(pipeline)
     } else {
-      console.log(
-        `tree-browser: no action attached to ${nodeType}, so skipping`
-      )
-      return
+      console.log('is not a filter..')
+      // must be a different kind of node (eg. a collection, list or folder)
     }
-    console.log(`tree-browser: clicked on a ${nodeType}`, nodeItem)
-  }
+  }, [selectedNodeType, selectedNodeItem])
 
   return (
     <Tree.Root<LibraryNodeType, TreeNodeItem>
       value={selectedTreeNodeId}
-      onChange={handleOnChange}
+      onChange={selectTreeNode}
       className={cn(`not-prose h-full w-full px-2 pt-2`, className)}
       label="Filters"
     >

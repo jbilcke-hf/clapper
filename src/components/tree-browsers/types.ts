@@ -3,6 +3,7 @@
 import { ScreenplaySequence } from '@aitube/broadway'
 import { ClapEntity, ClapSegment, ClapWorkflow } from '@aitube/clap'
 import { TreeNodeType } from '../core/tree/types'
+import { Filter, FilterWithParams } from '@aitube/clapper-services'
 
 export type DefaultTreeNodeList = 'DEFAULT_TREE_NODE_LIST'
 export type DefaultTreeNodeItem = 'DEFAULT_TREE_NODE_ITEM'
@@ -43,6 +44,17 @@ export type EntityTreeNodeList = 'ENTITY_TREE_NODE_LIST_ENTITIES'
 export type EntityTreeNodeItem = 'ENTITY_TREE_NODE_ITEM_ENTITY'
 
 export type EntityTreeNode = EntityTreeNodeList | EntityTreeNodeItem
+
+// ------------------------------------------
+
+export type FilterTreeNodeList = 'FILTER_TREE_NODE_LIST_FILTERS'
+export type FilterTreeNodeItem = 'FILTER_TREE_NODE_ITEM_FILTER'
+export type FilterTreeNodeItemPreset = 'FILTER_TREE_NODE_ITEM_FILTER_PRESET'
+
+export type FilterTreeNode =
+  | FilterTreeNodeList
+  | FilterTreeNodeItem
+  | FilterTreeNodeItemPreset
 
 // ------------------------------------------
 
@@ -180,6 +192,7 @@ export type LibraryNodeType =
   | DeviceTreeNode
   | FlowTreeNode
   | EntityTreeNode
+  | FilterTreeNode
   | TreeRoot
 
 // TODO unify this a bit, at least in the naming scheme
@@ -201,6 +214,8 @@ export type TreeNodeItem =
   | DeviceFileOrFolder
   | CommunityEntityCollection
   | CommunityFileOrFolder
+  | Filter
+  | FilterWithParams
 
 // a model library is a collection of models
 // this collection can itself include sub-models
