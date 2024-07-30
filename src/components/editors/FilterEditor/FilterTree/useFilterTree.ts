@@ -79,19 +79,17 @@ export const useFilterTree = create<{
     const availableFilterLibrary: LibraryTreeNode = {
       id: UUID(),
       nodeType: 'TREE_ROOT_PROJECT',
-      label: 'Filters',
-      icon: icons.project,
+      label: 'Available filters',
+      icon: icons.imageFilter,
       className: libraryClassName,
       isExpanded: true,
-      children: [
-        {
-          id: UUID(),
-          nodeType: 'DEFAULT_TREE_NODE_EMPTY',
-          label: 'Empty',
-          icon: icons.project,
-          className: collectionClassName,
-        },
-      ],
+      children: filters.map((filter) => ({
+        id: UUID(),
+        nodeType: 'DEFAULT_TREE_NODE_ITEM',
+        label: filter.label,
+        icon: icons.imageFilter,
+        className: collectionClassName,
+      })),
     }
 
     const libraryTreeRoot = [availableFilterLibrary]

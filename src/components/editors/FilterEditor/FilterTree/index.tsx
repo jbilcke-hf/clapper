@@ -25,8 +25,9 @@ export function FilterTree({
   const current = useFilterEditor((s) => s.current)
 
   useEffect(() => {
-    console.log('TODO: populate the filter tree')
+    setAvailableFilters(availableFilters)
   }, [availableFilters.map((f) => f.id).join(',')])
+
   /**
    * handle click on tree node
    * yes, this is where the magic happens!

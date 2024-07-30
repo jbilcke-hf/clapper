@@ -36,6 +36,7 @@ import { MdOutlineHighQuality } from 'react-icons/md'
 import { MdOutlineAutoAwesomeMotion } from 'react-icons/md'
 import { BiTransfer } from 'react-icons/bi'
 import { LiaFileDownloadSolid } from 'react-icons/lia'
+import { IoColorFilterOutline } from 'react-icons/io5'
 
 // icons used for our various model types
 export const icons: Record<string, IconType> = {
@@ -70,4 +71,5 @@ export const icons: Record<string, IconType> = {
   textToMusic: MdQueueMusic,
   referenceVideoFolder: RiFolderVideoLine,
   referenceVideoFile: PiFileVideo,
+  imageFilter: IoColorFilterOutline,
 }

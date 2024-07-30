@@ -25,9 +25,9 @@ export function EntityTree({
   const entities: ClapEntity[] = useTimeline((s) => s.entities)
 
   useEffect(() => {
-    console.log('loading entities:', entities)
     setProjectEntities(entities)
-  }, [entities, entitiesChanged, entities.length])
+  }, [entitiesChanged, entities.map((e) => e.id).join(',')])
+
   /**
    * handle click on tree node
    * yes, this is where the magic happens!
