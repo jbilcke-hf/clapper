@@ -130,7 +130,7 @@ export function TopMenu() {
         <Tooltip>
           <TooltipTrigger className="">
             <div className="scale-100 cursor-pointer text-stone-300/70 transition-all duration-200 ease-in-out hover:scale-110 hover:text-stone-100/90">
-              <a href="https://discord.gg/AEruz9B92B" target='"_blank'>
+              <a href="https://github.com/jbilcke-hf/clapper" target='"_blank'>
                 <FaGithubAlt className="h-4 w-4" />
               </a>
             </div>
