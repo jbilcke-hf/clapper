@@ -111,6 +111,8 @@ export const useEntityTree = create<{
   },
 
   setProjectEntities: async (entities: ClapEntity[]) => {
+    const { libraryTreeRoot } = get()
+
     const characters: LibraryTreeNode = {
       id: UUID(),
       nodeType: 'ENTITY_TREE_NODE_LIST_ENTITIES',
@@ -162,6 +164,20 @@ export const useEntityTree = create<{
       } else {
         misc.children!.push(node)
       }
+    })
+
+    set({
+      libraryTreeRoot: libraryTreeRoot.map((root) => {
+        if (root.label === 'Project entities') {
+          return {
+            ...root,
+            children: [characters, locations, misc],
+          }
+        }
+        return root
+      }),
+      selectedNodeItem: undefined,
+      selectedTreeNodeId: null,
     })
   },
 
