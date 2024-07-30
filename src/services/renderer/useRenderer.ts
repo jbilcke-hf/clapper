@@ -79,27 +79,22 @@ export const useRenderer = create<RendererStore>((set, get) => ({
 
       if (jumpedSomewhere) {
         // if we jumped somewhere we need to change the visible buffer
-
         if (previousActiveBufferNumber == 2) {
           // visible buffer is #2
 
-          if (newCurrentSegmentKey !== previousDataUriBuffer1Key) {
+          if (newCurrentSegmentKey !== previousDataUriBuffer2Key) {
             // we thus write to visible buffer (#1)
             newDataUriBuffer1 = maybeNewCurrentSegment
-            newDataUriBuffer1Key = `${newDataUriBuffer1?.assetUrl || ''}`.slice(
-              0,
-              1024
-            )
+            newDataUriBuffer1Key =
+              `${maybeNewCurrentSegment?.assetUrl || ''}`.slice(0, 1024)
           }
         } else {
           // visible buffer is #1
-          if (newCurrentSegmentKey !== previousDataUriBuffer2Key) {
+          if (newCurrentSegmentKey !== previousDataUriBuffer1Key) {
             // we thus write to visible buffer (#2)
             newDataUriBuffer2 = maybeNewCurrentSegment
-            newDataUriBuffer2Key = `${newDataUriBuffer2?.assetUrl || ''}`.slice(
-              0,
-              1024
-            )
+            newDataUriBuffer2Key =
+              `${maybeNewCurrentSegment?.assetUrl || ''}`.slice(0, 1024)
           }
         }
       }
@@ -259,8 +254,63 @@ export const useRenderer = create<RendererStore>((set, get) => ({
   },
 
   syncVideoToCurrentCursorPosition: () => {
+    const {
+      dataUriBuffer1,
+      dataUriBuffer2,
+      dataUriBuffer1Key,
+      dataUriBuffer2Key,
+      activeBufferNumber,
+    } = get()
     const timeline: TimelineStore = useTimeline.getState()
-    // @TODO julian: make sure we play the video at the correct time
-    console.log(`syncing Video..`)
+
+    const activeSegment =
+      activeBufferNumber === 1 ? dataUriBuffer1 : dataUriBuffer2
+
+    if (!activeSegment) {
+      return
+    }
+
+    const elements = document.getElementsByTagName('video')
+
+    const visibleVideoElements = Array.from(elements).filter((element) =>
+      Array.from(element.classList).includes('opacity-100')
+    )
+
+    const segmentDurationInMs =
+      activeSegment.endTimeInMs - activeSegment.startTimeInMs
+
+    const actualDurationInMs = Math.min(
+      segmentDurationInMs,
+      activeSegment.assetDurationInMs
+    )
+
+    // how much advanced into the video we should be
+    const deltaTimeInMs =
+      timeline.cursorTimestampAtInMs - activeSegment.startTimeInMs
+
+    let progressTimeWithinVideoInMs = 0
+    if (deltaTimeInMs < 0) {
+      progressTimeWithinVideoInMs = 0
+    } else if (deltaTimeInMs > actualDurationInMs) {
+      progressTimeWithinVideoInMs = actualDurationInMs
+    } else {
+      progressTimeWithinVideoInMs = deltaTimeInMs
+    }
+
+    for (const videoElement of visibleVideoElements) {
+      const currentTimeInMs = videoElement.currentTime * 1000
+
+      const diffInMs = Math.abs(currentTimeInMs - progressTimeWithinVideoInMs)
+
+      // console.log(`diffInMs = ${diffInMs}; deltaTimeInMs = ${deltaTimeInMs}; currentTime = ${visibleVideoElements[0].currentTime * 1000};`)
+
+      // we let the native video player controls the playback as much as possible
+      // normally we should be in sync, more or less 50ms
+      // but to be safe, we only kick-in the sync if we observe a discrepancy > 100ms
+      if (diffInMs > 100) {
+        //  need to be converted to seconds
+        videoElement.currentTime = progressTimeWithinVideoInMs / 1000
+      }
+    }
   },
 }))

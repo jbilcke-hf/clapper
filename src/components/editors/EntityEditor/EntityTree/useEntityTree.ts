@@ -189,13 +189,14 @@ export const useEntityTree = create<{
   */
 
   selectedNodeItem: undefined,
+  /*
   selectEntity: (entity?: ClapEntity) => {
     if (entity) {
       console.log(
-        'TODO julian: change this code to search in the entity collections'
+        'TODO julian: change this code to search in the entity collections children instead'
       )
       const selectedTreeNode = get().libraryTreeRoot.find(
-        (node) => node.data?.id === entity.id
+        (node) =>(node.data as any)?.id === entity.id
       )
 
       // set({ selectedTreeNode })
@@ -207,6 +208,7 @@ export const useEntityTree = create<{
       set({ selectedNodeItem: undefined })
     }
   },
+  */
 
   // selectedTreeNode: undefined,
   selectedTreeNodeId: null,

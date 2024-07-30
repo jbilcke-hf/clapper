@@ -1,9 +1,3 @@
-/*
-    as you can see, we try to make some data structure generic a bit,
-    for instance we have a single data structure for AI models ("clap model"),
-    and a single data structure for files ("item")
-*/
-
 import { ClapEntity } from '@aitube/clap'
 import {
   CommunityEntityCollection,
@@ -13,6 +7,15 @@ import {
   DeviceCollection,
   DeviceFileOrFolder,
 } from '../types'
+import { Filter, FilterWithParams } from '@aitube/clapper-services'
+
+////////////////////////////////////
+//          TYPEGUARDS            //
+////////////////////////////////////
+
+// a tree can mix nodes of various nature (list, leaf) and type (segment, entity, filter, filter with preset params..)
+// the purpose of all those type guards is to be able to rect the type of a node,
+// and make sure we are within the right type context
 
 export const isFSCollection = (
   nodeType: LibraryNodeType,
@@ -53,4 +56,18 @@ export const isClapEntity = (
   data: TreeNodeItem
 ): data is ClapEntity => {
   return nodeType === 'ENTITY_TREE_NODE_ITEM_ENTITY'
+}
+
+export const isFilter = (
+  nodeType: LibraryNodeType,
+  data: TreeNodeItem
+): data is Filter => {
+  return nodeType === 'FILTER_TREE_NODE_ITEM_FILTER'
+}
+
+export const isFilterWithParams = (
+  nodeType: LibraryNodeType,
+  data: TreeNodeItem
+): data is FilterWithParams => {
+  return nodeType === 'FILTER_TREE_NODE_ITEM_FILTER_PRESET'
 }

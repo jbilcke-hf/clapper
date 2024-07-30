@@ -16,42 +16,12 @@ export function WorkflowTree({
   const selectTreeNode = useWorkflowTree((s) => s.selectTreeNode)
   const selectedTreeNodeId = useWorkflowTree((s) => s.selectedTreeNodeId)
 
-  /**
-   * handle click on tree node
-   * yes, this is where the magic happens!
-   *
-   * @param id
-   * @param nodeType
-   * @param node
-   * @returns
-   */
-  const handleOnChange = async (
-    id: string | null,
-    nodeType?: LibraryNodeType,
-    nodeItem?: TreeNodeItem
-  ) => {
-    console.log(`calling selectTreeNodeById(id)`)
-    selectTreeNode(id, nodeType, nodeItem)
-
-    if (!nodeType || !nodeItem) {
-      console.log('tree-browser: clicked on an undefined node')
-      return
-    }
-    if (isClapEntity(nodeType, nodeItem)) {
-      // ClapEntity
-    } else {
-      console.log(
-        `tree-browser: no action attached to ${nodeType}, so skipping`
-      )
-      return
-    }
-    console.log(`tree-browser: clicked on a ${nodeType}`, nodeItem)
-  }
+  // TODO: allow selecting a workflow (see example of filter/entity tree)
 
   return (
     <Tree.Root<LibraryNodeType, TreeNodeItem>
       value={selectedTreeNodeId}
-      onChange={handleOnChange}
+      onChange={selectTreeNode}
       className={cn(`not-prose h-full w-full px-2 pt-2`, className)}
       label="Workflows"
     >

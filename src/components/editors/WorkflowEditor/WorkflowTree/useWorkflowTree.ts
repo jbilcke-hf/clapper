@@ -85,6 +85,8 @@ export const useWorkflowTree = create<{
       ],
     }
 
+    // TODO: inject the workflow (don't foget to set the `data: field` as well)
+
     const libraryTreeRoot = [builtinLibrary, communityLibrary]
 
     set({
@@ -97,24 +99,6 @@ export const useWorkflowTree = create<{
   },
 
   selectedNodeItem: undefined,
-  selectEntity: (entity?: ClapEntity) => {
-    if (entity) {
-      console.log(
-        'TODO julian: change this code to search in the entity collections'
-      )
-      const selectedTreeNode = get().libraryTreeRoot.find(
-        (node) => node.data?.id === entity.id
-      )
-
-      // set({ selectedTreeNode })
-      set({ selectedTreeNodeId: selectedTreeNode?.id || null })
-      set({ selectedNodeItem: entity })
-    } else {
-      // set({ selectedTreeNode: undefined })
-      set({ selectedTreeNodeId: null })
-      set({ selectedNodeItem: undefined })
-    }
-  },
 
   // selectedTreeNode: undefined,
   selectedTreeNodeId: null,

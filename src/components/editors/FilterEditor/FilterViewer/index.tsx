@@ -1,4 +1,9 @@
-import { FormSection } from '@/components/forms'
+import {
+  FormField,
+  FormInput,
+  FormSection,
+  FormSwitch,
+} from '@/components/forms'
 import { useFilterEditor, useUI } from '@/services'
 
 export function FilterViewer() {
@@ -26,8 +31,40 @@ export function FilterViewer() {
   }
 
   return (
-    <FormSection label={'Filter Editor'} className="p-4">
-      <p>Put filter parameters</p>
-    </FormSection>
+    <>
+      {current.map(({ filter, parameters }) => (
+        <FormSection key={filter.id} label={filter.label} className="p-4">
+          {filter.parameters.map((filter) => (
+            <FormField key={filter.id}>
+              {filter.type === 'string' && (
+                <FormInput
+                  type="text"
+                  label={filter.label}
+                  value={parameters[filter.id]}
+                  defaultValue={filter.defaultValue}
+                />
+              )}
+              {filter.type === 'number' && (
+                <FormInput
+                  type="number"
+                  label={filter.label}
+                  value={parameters[filter.id]}
+                  defaultValue={filter.defaultValue}
+                />
+              )}
+              {filter.type === 'boolean' && (
+                <FormSwitch
+                  label={filter.label}
+                  checked={!!parameters[filter.id]}
+                  onCheckedChange={() => {
+                    // TODO
+                  }}
+                />
+              )}
+            </FormField>
+          ))}
+        </FormSection>
+      ))}
+    </>
   )
 }

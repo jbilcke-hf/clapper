@@ -150,9 +150,10 @@ async function pollGenerationResult(
             throw new Error(errors?.join('\n'))
           }
           if (
-            finish_reason !=
+            finish_reason !==
             StabilityAIVImageToVideoFetchhGenerationFinishReason.SUCCESS
           ) {
+            console.log('finish_reason:', finish_reason)
             throw new Error('Content filtered')
           }
           resolve(`data:video/mp4;base64,${video}`)
