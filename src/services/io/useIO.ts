@@ -49,7 +49,6 @@ import { sleep } from '@/lib/utils/sleep'
 import { FFMPegAudioInput, FFMPegVideoInput } from './ffmpegUtils'
 import { createFullVideo } from './createFullVideo'
 import { extractScenesFromVideo } from './extractScenesFromVideo'
-import { extractCaptionsFromFrames } from './extractCaptionsFromFrames'
 import { base64DataUriToFile } from '@/lib/utils/base64DataUriToFile'
 import { useUI } from '../ui'
 import { getTypeAndExtension } from '@/lib/utils/getTypeAndExtension'
@@ -233,39 +232,6 @@ export const useIO = create<IOStore>((set, get) => ({
     }
 
     sceneExtractionTask.success()
-
-    const enableCaptioning = false
-
-    if (enableCaptioning) {
-      const captioningTask = useTasks.getState().add({
-        category: TaskCategory.IMPORT,
-        // visibility: TaskVisibility.BLOCKER,
-
-        // since this is very long task, we can run it in the background
-        visibility: TaskVisibility.BACKGROUND,
-        initialMessage: `Analyzing storyboards..`,
-        successMessage: `Analyzing storyboards.. 100% done`,
-        value: 0,
-      })
-
-      console.log('calling extractCaptionsFromFrames() with:', frames)
-      /*
-      const captions = await extractCaptionsFromFrames(
-        frames,
-        (progress: number, storyboardIndex: number, nbStoryboards: number) => {
-          captioningTask.setProgress({
-            message: `Analyzing storyboards (${progress}%)`,
-            value: progress,
-          })
-        }
-      )
-  
-      console.log('captions:', captions)
-      */
-      // TODO: add
-
-      captioningTask.success()
-    }
 
     useUI.getState().setShowWelcomeScreen(false)
   },
