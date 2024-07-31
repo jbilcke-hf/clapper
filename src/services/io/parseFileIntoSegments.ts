@@ -68,7 +68,6 @@ export async function parseFileIntoSegments({
       // I expect people will use AI service providers for sound and voice,
       // maybe in some case music too, but there are also many people
       // who will want to use their own track eg. to create a music video
-      const category = ClapSegmentCategory.STORYBOARD
 
       const assetUrl = await blobToBase64DataUri(file)
 
@@ -122,7 +121,8 @@ export async function parseFileIntoSegments({
         status: ClapSegmentStatus.COMPLETED,
         // track: findFreeTrack({ segments, startTimeInMs, endTimeInMs }), // track row index
         label: `${file.name}`, // a short label to name the segment (optional, can be human or LLM-defined)
-        category,
+        category: ClapSegmentCategory.STORYBOARD,
+
         assetUrl,
         assetDurationInMs: durationInMs,
         assetSourceType: ClapAssetSource.DATA,
@@ -145,10 +145,8 @@ export async function parseFileIntoSegments({
       // we assume we want it to be immediately visible
       storyboard.visibility = SegmentVisibility.VISIBLE
 
-      // console.log("newSegment:", audioSegment)
-
-      // poof! type disappears.. it's magic
       newSegments.push(storyboard)
+
       break
     }
 

@@ -103,15 +103,18 @@ export const useTasks = create<TasksStore>((set, get) => ({
   }): Task[] => {
     const { tasks } = get()
 
-    let list = Object.values(tasks)
-
-    if (params?.status) {
-      list = list.filter((t) => t.status === params?.status)
-    }
-
-    if (params?.category) {
-      list = list.filter((t) => t.category === params?.category)
-    }
+    let list = Object.values(tasks).filter((t) => {
+      if (params?.status && t.status !== params.status) {
+        return false
+      }
+      if (params?.category && t.category !== params.category) {
+        return false
+      }
+      if (params?.visibility && t.visibility !== params.visibility) {
+        return false
+      }
+      return true
+    })
 
     return list
   },
