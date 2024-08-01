@@ -73,6 +73,12 @@ export const estimatedMetrics: Record<
       averageDurationInSec: 15,
       averageCostPerGeneration: 0.01,
     },
+    'fal-ai/flux-pro': {
+      estimationType: ProviderMetricsEstimationType.MANUAL_MEASUREMENTS,
+      averageCostPerComputeTimeInSec: 0,
+      averageDurationInSec: 0,
+      averageCostPerGeneration: 0,
+    },
     'fal-ai/fast-sdxl': {
       estimationType: ProviderMetricsEstimationType.MANUAL_MEASUREMENTS,
       averageCostPerComputeTimeInSec: 0.001105904404873477,

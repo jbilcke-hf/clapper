@@ -31,7 +31,7 @@ export async function demo() {
           bloomRadius: 4,
           dofFocusDistance: 0.6,
           dofFocusRange: 0.1,
-          dofBlurStrength: 3,
+          dofBlurStrength: 0.2,
         },
       },
 
@@ -46,10 +46,14 @@ export async function demo() {
       {
         filter: filmDegradation,
         parameters: {
-          scratchesIntensity: 0.35,
-          dustIntensity: 0.25,
-          colorFading: 0.4,
-          lightLeakIntensity: 0.3,
+          scratchesIntensity: 0.3,
+          dustIntensity: 0.2,
+          grainIntensity: 0.4,
+          colorFading: 0.35,
+          vignettingIntensity: 0.05,
+          flickerIntensity: 0.15,
+          lightLeakIntensity: 0.2,
+          filmType: 'color',
         },
       },
       {

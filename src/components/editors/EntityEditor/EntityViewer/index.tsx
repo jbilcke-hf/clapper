@@ -11,6 +11,7 @@ import { useEntityEditor, useIO } from '@/services'
 import { cn } from '@/lib/utils'
 
 import { EntityList } from './EntityList'
+import { FormSlider } from '@/components/forms/FormSlider'
 
 export function EntityViewer({
   className = '',
@@ -163,9 +164,12 @@ export function EntityViewer({
                 value={draft.appearance || ''}
                 onChange={(value) => handleInputChange('appearance', value)}
               />
-              <FormInput
+              <FormSlider
                 label="Age"
-                value={draft.age?.toString() || ''}
+                value={draft.age || 18}
+                defaultValue={18}
+                minValue={18}
+                maxValue={110}
                 onChange={(value) => handleInputChange('age', value)}
               />
               <FormInput
