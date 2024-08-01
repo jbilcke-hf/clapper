@@ -187,6 +187,9 @@ export const availableModelsForImageGeneration: Partial<
   Record<ComputeProvider, string[]>
 > = {
   [ComputeProvider.FALAI]: [
+    'fal-ai/flux-pro',
+    'fal-ai/flux/schnell',
+    'fal-ai/flux/dev',
     'fal-ai/stable-diffusion-v3-medium',
     'fal-ai/fast-sdxl',
     'fal-ai/stable-cascade',

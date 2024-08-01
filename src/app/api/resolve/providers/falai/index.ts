@@ -45,10 +45,10 @@ export async function resolveSegment(
     if (request.settings.imageGenerationModel === 'fal-ai/pulid') {
       if (!request.prompts.image.identity) {
         // throw new Error(`you selected model ${request.settings.falAiModelForImage}, but no character was found, so skipping`)
-        // console.log(`warning: user selected model ${request.settings.falAiModelForImage}, but no character was found. Falling back to fal-ai/fast-sdxl`)
+        // console.log(`warning: user selected model ${request.settings.falAiModelForImage}, but no character was found. Falling back to fal-ai/flux-pro`)
 
         // dirty fix to fallback to a non-face model
-        request.settings.imageGenerationModel = 'fal-ai/fast-sdxl'
+        request.settings.imageGenerationModel = 'fal-ai/flux-pro'
       }
     }
 

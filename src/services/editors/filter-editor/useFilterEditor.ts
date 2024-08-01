@@ -9,7 +9,7 @@ import {
 } from '@aitube/clapper-services'
 
 import { getDefaultFilterEditorState } from './getDefaultFilterEditorState'
-import { runFilterPipeline } from './runFilterPipeline'
+import { debouncedRunFilterPipeline } from './runFilterPipeline'
 
 export const useFilterEditor = create<FilterEditorStore>()((set, get) => ({
   ...getDefaultFilterEditorState(),
@@ -19,10 +19,10 @@ export const useFilterEditor = create<FilterEditorStore>()((set, get) => ({
   },
 
   runFilterPipeline: async (input: string) => {
-    const { activeFilters } = get()
-    const results = await runFilterPipeline({
+    const { current } = get()
+    const results = await debouncedRunFilterPipeline({
       images: [{ image: input }],
-      filters: activeFilters,
+      filters: current || [],
     })
 
     const result = results[0]

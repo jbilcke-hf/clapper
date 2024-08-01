@@ -153,6 +153,10 @@ export function TopMenuView() {
           >Show asset explorer</MenubarCheckboxItem>
       */}
 
+        {/*
+
+        this feature isn't implemented yet
+
         <MenubarCheckboxItem
           checked={followCursor}
           onClick={(e) => {
@@ -164,6 +168,7 @@ export function TopMenuView() {
         >
           Follow cursor during playback
         </MenubarCheckboxItem>
+        */}
         {/*
         <MenubarCheckboxItem
           checked={showVideoPlayer}
