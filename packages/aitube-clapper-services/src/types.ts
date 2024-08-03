@@ -57,3 +57,16 @@ export enum ProjectCreationWizardStep {
   CHOOSE_CATEGORY = "CHOOSE_CATEGORY",
   CREATE_FROM_PROMPT = "CREATE_FROM_PROMPT",
 }
+
+/**
+ * We use a simplified representation of what is a segment
+ *
+ * This is used for LLM interactions
+ */
+export type SimplifiedSegmentData = {
+  // id: string
+  prompt: string
+  startTimeInMs: number
+  endTimeInMs: number
+  category: string
+}
