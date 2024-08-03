@@ -192,6 +192,7 @@ export {
   ResolveRequest,
   AssistantRequest,
   ProjectCreationWizardStep,
+  SimplifiedSegmentData
 } from "./types"
 
 export {
