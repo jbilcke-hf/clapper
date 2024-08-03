@@ -23,16 +23,16 @@ export type ScriptEditorState = {
   // used to know if the user is actually inside the editor or not
   mouseIsInside: boolean
 
-  // the full-text of the screenplay
-  draft: string
+  // the last version of the prompt that was published
+  lastPublished: string
 
-  // map screenplay lines to dialogue segments
+  // map prompt lines to dialogue segments
   // (note: some lines point to nothing, eg. when we have empty spaces)
   lineNumberToMentionedSegments: Record<number, TimelineSegment>
 
 
   /**
-   * the index of the first step visible in the current screenplay
+   * the index of the first step visible in the current prompt
    * 
    * (the topmost visible timeline step in the current timeline)
    */
@@ -45,9 +45,7 @@ export type ScriptEditorControls = {
   setStandaloneCodeEditor: (standaloneCodeEditor?: MonacoEditor.editor.IStandaloneCodeEditor) => void
   setMouseIsInside: (mouseIsInside: boolean) => void
   loadDraftFromClap: (clap: ClapProject) => void
-  setDraft: (draft: string) => boolean
-  setPublished: (published: string) => boolean
-  publishToTimeline: () => Promise<void>
+  publish: () => Promise<void>
   onDidScrollChange: (scrollData: ScrollData) => void
   jumpCursorOnLineClick: (line?: number) => void
   highlightElements: () => void
