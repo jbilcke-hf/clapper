@@ -341,9 +341,24 @@ export type TimelineStoreModifiers = {
     startTimeInMs?: number
     track?: number
 }) => Promise<void>
+
+  /**
+   * Find an available free track
+   * 
+   * @param params 
+   * @returns 
+   */
   findFreeTrack: (params: { startTimeInMs?: number; endTimeInMs?: number }) => number
 
+
   fitSegmentToAssetDuration: (segment: TimelineSegment, durationInMs?: number) => Promise<void>
+
+  /**
+   * Delete segments from the 
+   * @param ids 
+   * @returns 
+   */
+  deleteSegments: (ids: string[]) => void
 
   addEntities: (entities: ClapEntity[]) => Promise<void>
   updateEntities: (entities: ClapEntity[]) => Promise<void>
