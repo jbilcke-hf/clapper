@@ -70,3 +70,8 @@ export type SimplifiedSegmentData = {
   endTimeInMs: number
   category: string
 }
+
+export type AssistantResponse = {
+  rawUnstructuredOutput: string;
+  segments: SimplifiedSegmentData[];
+};

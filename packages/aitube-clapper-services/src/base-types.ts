@@ -99,12 +99,6 @@ export type ResolveRequestPrompts = {
   }
 }
 
-export type AssistantResponse = {
-  prompt: string
-  categoryName: ClapSegmentCategory
-  llmOutput: string
-}
-
 export type ComfyParameter =
   | string
   | number

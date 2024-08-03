@@ -25,7 +25,6 @@ export {
   ComputeProvider,
   ComfyIcuAccelerator,
   ResolveRequestPrompts,
-  AssistantResponse,
   ComfyParameter,
   ComfyNode,
   FalAiImageSize,
@@ -192,7 +191,8 @@ export {
   ResolveRequest,
   AssistantRequest,
   ProjectCreationWizardStep,
-  SimplifiedSegmentData
+  SimplifiedSegmentData,
+  AssistantResponse
 } from "./types"
 
 export {
