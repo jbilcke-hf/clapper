@@ -1,4 +1,3 @@
-import { ClapSegmentCategory } from "@aitube/clap"
 
 export type ChatEvent = {
   eventId: string
@@ -9,6 +8,12 @@ export type ChatEvent = {
   sentAt: string
   message: string
   isCurrentUser: boolean
+
+  /**
+   * Some message are only used for purely technical reasons,
+   * and should be hidden (eg. JSON responses)
+   */
+  isHidden: boolean
 }
 
 export type ChatHistory = ChatEvent[]
