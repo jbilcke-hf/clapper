@@ -1,11 +1,11 @@
 import { create } from "zustand"
 import * as THREE from "three"
-import { ClapOutputType, ClapProject, ClapSceneEvent, ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode, filterSegments, isValidNumber, newClap, serializeClap, ClapTrack, ClapTracks, ClapEntity } from "@aitube/clap"
+import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity } from "@aitube/clap"
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_DURATION_IN_MS_PER_STEP, DEFAULT_NB_TRACKS } from "@/constants"
-import { hslToHex, findFreeTrack, getAudioBuffer, getFinalVideo, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment } from "@/utils"
+import { hslToHex, findFreeTrack, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment } from "@/utils"
 import { ClapSegmentCategoryColors, ClapSegmentColorScheme, ClapTimelineTheme, SegmentResolver } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
@@ -887,7 +887,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     return findFreeTrack({ segments, startTimeInMs, endTimeInMs })
   },
 
-  // resize and move the end of a segmrnt, as well as the segment after it
+  // resize and move the end of a segment, as well as the segment after it
   fitSegmentToAssetDuration: async (segment: TimelineSegment, requestedDurationInMs?: number): Promise<void> => {
     
     const {
@@ -1037,6 +1037,32 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         defaultSegmentDurationInSteps,
         totalDurationInMs,
       })
+    })
+  },
+  deleteSegments: (ids: string[]): void => {
+    const {
+      segments: previousSegments,
+      allSegmentsChanged,
+      atLeastOneSegmentChanged,
+      silentChangesInSegment,
+      clap
+    } = get()
+
+    const deletables = new Set(ids)
+
+    const newSegments = previousSegments.filter(({ id }) => {
+      silentChangesInSegment[id] = 1 + (silentChangesInSegment[id] || 0)
+      return !deletables.has(id)
+    })
+
+    // not sure we need to do this, but let's do it anyway for consistency
+    clap.segments = newSegments
+    
+    set({
+      segments: newSegments,
+      allSegmentsChanged: 1 + allSegmentsChanged,
+      atLeastOneSegmentChanged: 1 + atLeastOneSegmentChanged,
+      silentChangesInSegment,
     })
   },
   addEntities: async (newEntities: ClapEntity[]) => {
