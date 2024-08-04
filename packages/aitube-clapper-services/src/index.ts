@@ -25,6 +25,7 @@ export {
   AssistantAction,
   AssistantMessage,
   ChatEvent,
+  ChatEventVisibility,
   ChatHistory,
   SettingsCategory,
   ComputeProvider,
