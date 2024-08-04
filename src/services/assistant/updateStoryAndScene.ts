@@ -75,12 +75,16 @@ export async function updateStoryAndScene({
         startTimeInMs,
         endTimeInMs,
         durationInMs: endTimeInMs - startTimeInMs,
-        prompt: [assistantSegment.prompt],
+        prompt: assistantSegment.prompt,
+        label: assistantSegment.prompt,
         categoryName: assistantSegment.category,
         // outputType: ClapOutputType.TEXT,
       })
     )
 
+    // I don't think we need to do that anymore
+    segment.prompt = assistantSegment.prompt
+    segment.label = assistantSegment.prompt
     segment.track = track
 
     const existingSegment: TimelineSegment | undefined = existingSegments.find(
@@ -88,8 +92,6 @@ export async function updateStoryAndScene({
     )
 
     if (existingSegment) {
-      console.log('note: we do not support other types of changes for now')
-
       const segmentPromptHasChanged = segment.prompt !== existingSegment.prompt
 
       const segmentStartTimeHasChanged =
@@ -109,16 +111,28 @@ export async function updateStoryAndScene({
         // segment.startTimeInMs !== existingSegment.startTimeInMs
         segment.endTimeInMs !== existingSegment.endTimeInMs
 
+      console.log('found a match!', {
+        segmentId: segment.id,
+        segmentPrompt: segment.prompt,
+        existingSegmentPrompt: existingSegment.prompt,
+        segmentPromptHasChanged,
+        segmentStartTimeHasChanged,
+        segmentLengthHasChanged,
+      })
+
       // we do not support changing the category, as it wouldn't make much sense
       // segment.category !== existingSegment.category
 
       if (segmentPromptHasChanged || segmentLengthHasChanged) {
         segmentsToUpdate.push(segment)
 
-        Object.assign(existingSegment, {
-          prompt: segment.prompt,
-          label: segment.prompt,
-        })
+        if (segmentPromptHasChanged && segment.prompt) {
+          console.log(`overwriting prompt with: ` + segment.prompt)
+          Object.assign(existingSegment, {
+            prompt: segment.prompt,
+            label: segment.prompt,
+          })
+        }
 
         if (segmentLengthHasChanged) {
           await timeline.fitSegmentToAssetDuration(

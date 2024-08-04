@@ -7,6 +7,7 @@ import { useAssistant } from '@/services/assistant/useAssistant'
 import { ChatBubble } from './ChatBubble'
 import { Input } from '../ui/input'
 import { useTheme } from '@/services/ui/useTheme'
+import { ChatEventVisibility } from '@aitube/clapper-services'
 
 export function ChatView() {
   const [_isPending, startTransition] = useTransition()
@@ -27,6 +28,10 @@ export function ChatView() {
     processUserMessage(draft.trim())
   }
 
+  const visibleHistory = history.filter(
+    (event) => event.visibility !== ChatEventVisibility.TO_ASSISTANT_ONLY
+  )
+
   return (
     <div
       className="flex h-full w-full items-center justify-center pt-8"
@@ -37,7 +42,7 @@ export function ChatView() {
       <div className="flex h-full w-full flex-col">
         <div className="flex flex-grow overflow-y-scroll">
           <div className="flex w-full flex-col space-y-6 p-2">
-            {history.map((event) => (
+            {visibleHistory.map((event) => (
               <ChatBubble key={event.eventId} {...event} />
             ))}
           </div>

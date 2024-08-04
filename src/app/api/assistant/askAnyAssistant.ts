@@ -29,12 +29,14 @@ import {
   AssistantSceneSegment,
   AssistantStorySentence,
   ComputeProvider,
+  ChatEventVisibility,
 } from '@aitube/clapper-services'
 
 import { examples, humanTemplate, systemTemplate } from './templates'
 import { isValidNumber } from '@/lib/utils'
 import { assistantMessageParser, formatInstructions } from './parser'
 import { parseRawInputToAction } from '@/services/assistant/parseRawInputToAction'
+import { parseLangChainResponse } from './parseLangChainResponse'
 
 /**
  * Query the preferred language model on the user prompt + the segments of the current scene
@@ -157,7 +159,7 @@ export async function askAnyAssistant({
 
   const chain = chatPrompt.pipe(coerceable).pipe(assistantMessageParser)
 
-  const assistantMessage: AssistantMessage = {
+  let assistantMessage: AssistantMessage = {
     comment: '',
     action: AssistantAction.NONE,
     updatedStorySentences: [],
@@ -169,101 +171,71 @@ export async function askAnyAssistant({
       examples,
       projectInfo,
       inputData: JSON.stringify(inputData),
-      chatHistory: history.map(
-        ({
-          eventId,
-          senderId,
-          senderName,
-          roomId,
-          roomName,
-          sentAt,
-          message,
-          isCurrentUser,
-        }) => {
-          if (isCurrentUser) {
-            return new HumanMessage(message)
-          } else {
-            return new AIMessage(message)
+
+      // we don't use this capability yet, but we can create a "fake"
+      // chat history that will contain JSON and will only be shown to the AI
+      // by using the `visibility` setting
+      chatHistory: history
+        .filter(
+          (event) => event.visibility !== ChatEventVisibility.TO_USER_ONLY
+        )
+        .map(
+          ({
+            eventId,
+            senderId,
+            senderName,
+            roomId,
+            roomName,
+            sentAt,
+            message,
+            isCurrentUser,
+            visibility,
+          }) => {
+            if (isCurrentUser) {
+              return new HumanMessage(message)
+            } else {
+              return new AIMessage(message)
+            }
           }
-        }
-      ),
+        ),
     })
 
-    console.log(
-      'LLM replied this rawResponse:',
-      JSON.stringify(rawResponse, null, 2)
-    )
-
-    // this is a fallback in case of LLM failure
-    if (!rawResponse) {
-      // complete failure
-    } else if (typeof rawResponse === 'string') {
-      assistantMessage.action = parseRawInputToAction(rawResponse)
-      if (assistantMessage.action === AssistantAction.NONE) {
-        assistantMessage.comment = rawResponse
-      }
-    } else {
-      assistantMessage.comment =
-        typeof rawResponse.comment === 'string' ? rawResponse.comment : ''
-
-      assistantMessage.action = Object.keys(AssistantAction).includes(
-        `${rawResponse.action || ''}`.toUpperCase()
-      )
-        ? rawResponse.action
-        : AssistantAction.NONE
-
-      let i = 0
-      for (const segment of rawResponse.updatedSceneSegments || []) {
-        i++
-        const segmentId = isValidNumber(segment.segmentId)
-          ? segment.segmentId!
-          : i
-
-        const category: ClapSegmentCategory =
-          segment.category &&
-          Object.keys(ClapSegmentCategory).includes(
-            segment.category.toUpperCase()
-          )
-            ? (segment.category as ClapSegmentCategory)
-            : ClapSegmentCategory.GENERIC
-
-        const startTimeInMs: number = isValidNumber(segment.startTimeInMs)
-          ? segment.startTimeInMs
-          : 0
-        const endTimeInMs: number = isValidNumber(segment.endTimeInMs)
-          ? segment.endTimeInMs
-          : 0
-
-        const prompt = segment?.prompt || ''
-
-        // we assume no prompt is an error
-        if (prompt) {
-          assistantMessage.updatedSceneSegments.push({
-            segmentId,
-            prompt,
-            startTimeInMs,
-            endTimeInMs,
-            category,
-          })
-        }
-      }
-    }
+    assistantMessage = parseLangChainResponse(rawResponse)
   } catch (err) {
+    // LangChain failure (this happens quite often, actually)
+
     let errorPlainText = `${err}`
+
+    // Markdown formatting failure
+    errorPlainText = `${errorPlainText.split('```').unshift() || errorPlainText}`
+
+    // JSON parsing exception failure
     errorPlainText =
       errorPlainText.split(`Error: Failed to parse. Text: "`).pop() ||
       errorPlainText
+
     errorPlainText =
       errorPlainText.split(`". Error: SyntaxError`).shift() || errorPlainText
 
     if (errorPlainText) {
       console.log(
-        `result wasn't a JSON, switching to the fallback LLM response parser..`
+        `failed to parse the response from the LLM, trying to repair the output from LangChain..`
       )
-      assistantMessage.comment = errorPlainText
-      assistantMessage.action = AssistantAction.NONE
-      assistantMessage.updatedSceneSegments = []
-      assistantMessage.updatedStorySentences = []
+
+      try {
+        assistantMessage = parseLangChainResponse(JSON.parse(errorPlainText))
+      } catch (err) {
+        console.log(`repairing the output failed!`, err)
+        assistantMessage.comment = errorPlainText || ''
+        assistantMessage.action = AssistantAction.NONE
+        assistantMessage.updatedSceneSegments = []
+        assistantMessage.updatedStorySentences = []
+        if (!errorPlainText) {
+          throw new Error(
+            `failed to repair the output from LangChain (empty string)`
+          )
+        }
+      }
     } else {
       throw new Error(
         `couldn't process the request or parse the response (${err})`

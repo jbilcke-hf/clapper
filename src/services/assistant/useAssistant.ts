@@ -7,6 +7,7 @@ import {
   AssistantRequest,
   AssistantStore,
   ChatEvent,
+  ChatEventVisibility,
 } from '@aitube/clapper-services'
 import {
   ClapAssetSource,
@@ -154,7 +155,7 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
       sentAt: new Date().toISOString(),
       message: '',
       isCurrentUser: true,
-      isHidden: false,
+      visibility: ChatEventVisibility.TO_BOTH,
     }
     const newEvent: ChatEvent = {
       ...defaultEvent,
