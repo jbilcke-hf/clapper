@@ -167,6 +167,12 @@ export interface ImageSegment {
   score: number;
 }
 
+export type AssistantInput = {
+  directorRequest: string
+  storySentences: AssistantStorySentence[]
+  sceneSegments: AssistantSceneSegment[]
+}
+
 export type AssistantSceneSegment = {
   segmentId: number
   prompt: string
