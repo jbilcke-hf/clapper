@@ -15,9 +15,10 @@ export const state: {
   nameToStats: {},
 }
 
-const dirName = 'detection-of-age-and-gender'
 const fileName = 'baby-names-us-year-of-birth-full.csv'
-const storageFilePath = `${dirName}/${fileName}`
+//const dirName = 'detection-of-age-and-gender'
+//const storageFilePath = `${dirName}/${fileName}`
+const storageFilePath = `${fileName}`
 
 const DEFAULT_DOWNLOAD_URL = `https://clapper.app/datasets/${fileName}`
 
@@ -29,11 +30,16 @@ export async function loadAgeGenderNameStats(url = DEFAULT_DOWNLOAD_URL) : Promi
   if (typeof window !== "undefined") {
     try {
       const { default: fs } = await import("indexeddb-fs")
-      
-      if (!await fs.isDirectory(dirName)) {
-        await fs.createDirectory(dirName)
+      /*
+      try {
+        if (!(await fs.isDirectory(dirName))) {
+          await fs.createDirectory(dirName)
+        }
+      } catch (err) {
+        console.log(`failed to create directory "${dirName}"`)
       }
-      
+      */
+
       const rawCacheContent = await fs.readFile(storageFilePath) as string
       const cacheObject = JSON.parse(rawCacheContent) as NameToStats
       if (Object.keys(cacheObject).length === 0) {
@@ -85,9 +91,15 @@ export async function loadAgeGenderNameStats(url = DEFAULT_DOWNLOAD_URL) : Promi
     try {
       const { default: fs } = await import("indexeddb-fs")
 
-      if (!await fs.isDirectory(dirName)) {
-        await fs.createDirectory(dirName)
+      /*
+      try {
+        if (!(await fs.isDirectory(dirName))) {
+          await fs.createDirectory(dirName)
+        }
+      } catch (err) {
+        console.log(`failed to create directory "${dirName}"`)
       }
+      */
 
       await fs.writeFile(storageFilePath, JSON.stringify(nameToStats))
     } catch (err) {
