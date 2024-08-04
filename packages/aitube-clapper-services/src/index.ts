@@ -121,7 +121,6 @@ export {
 } from "./editors"
 
 export {
-  MonitoringMode,
   MonitorState,
   MonitorControls,
   MonitorStore
