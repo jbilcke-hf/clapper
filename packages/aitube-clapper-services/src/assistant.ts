@@ -1,4 +1,8 @@
-import { ChatEvent, ChatHistory } from "./base-types"
+import {
+  ChatEvent,
+  ChatHistory,
+  AssistantMessage,
+} from "./base-types"
 
 /**
  * Assistant 
@@ -10,14 +14,10 @@ export type AssistantState = {
   history: ChatHistory
 }
 export type AssistantControls = {
-  /**
-   * Run a prompt command (which can come from a transcript or somewhere else)
-   * 
-   * This returns true in case of success (if something happened, and we don't need to do anything anymore)
-   * @param prompt 
-   * @returns 
-   */
-  runCommand: (prompt: string) => boolean
+
+  processAssistantMessage: (assistantMessage: AssistantMessage) => void
+
+  processUserMessage: (userMessage: string) => void
 
   /**
    * Add a chat event to the history
@@ -28,8 +28,6 @@ export type AssistantControls = {
   addEventToHistory: (event: Partial<ChatEvent>) => ChatEvent
 
   clearHistory: () => void
-
-  processMessage: (input: string) => void
 }
 
 export type AssistantStore =

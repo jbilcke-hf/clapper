@@ -19,6 +19,10 @@ export {
 } from "./audio"
 
 export {
+  AssistantSceneSegment,
+  AssistantStorySentence,
+  AssistantAction,
+  AssistantMessage,
   ChatEvent,
   ChatHistory,
   SettingsCategory,
@@ -191,8 +195,6 @@ export {
   ResolveRequest,
   AssistantRequest,
   ProjectCreationWizardStep,
-  SimplifiedSegmentData,
-  AssistantResponse
 } from "./types"
 
 export {
