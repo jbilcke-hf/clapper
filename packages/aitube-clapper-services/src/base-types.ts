@@ -166,3 +166,36 @@ export interface ImageSegment {
   label: string;
   score: number;
 }
+
+export type AssistantSceneSegment = {
+  segmentId: number
+  prompt: string
+  startTimeInMs: number
+  endTimeInMs: number
+  category: string
+}
+
+export type AssistantStorySentence = {
+  sentenceId: number
+  sentence: string
+}
+
+export enum AssistantAction {
+  UPDATE_STORY = 'UPDATE_STORY',
+  UPDATE_SCENE = 'UPDATE_SCENE',
+  PLAY_VIDEO = 'PLAY_VIDEO',
+  PAUSE_VIDEO = 'PAUSE_VIDEO',
+  MUTE_AUDIO = 'MUTE_AUDIO',
+  UNMUTE_AUDIO = 'UNMUTE_AUDIO',
+  GO_BACK = 'GO_BACK',
+  GO_FORWARD = 'GO_FORWARD',
+  UNDO = 'UNDO',
+  REDO = 'REDO',
+}
+
+export type AssistantMessage = {
+  comment: string;
+  action: AssistantAction;
+  updatedStorySentences: AssistantStorySentence;
+  updatedSceneSegments: AssistantSceneSegment[];
+};
