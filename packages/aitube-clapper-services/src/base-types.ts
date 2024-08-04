@@ -1,3 +1,8 @@
+export enum ChatEventVisibility {
+  TO_ASSISTANT_ONLY = 'TO_ASSISTANT_ONLY',
+  TO_USER_ONLY = 'TO_USER_ONLY',
+  TO_BOTH = 'TO_BOTH',
+}
 
 export type ChatEvent = {
   eventId: string
@@ -13,7 +18,7 @@ export type ChatEvent = {
    * Some message are only used for purely technical reasons,
    * and should be hidden (eg. JSON responses)
    */
-  isHidden: boolean
+  visibility: ChatEventVisibility
 }
 
 export type ChatHistory = ChatEvent[]
