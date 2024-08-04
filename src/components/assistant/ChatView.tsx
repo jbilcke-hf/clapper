@@ -14,7 +14,7 @@ export function ChatView() {
 
   const [draft, setDraft] = useState('')
   const history = useAssistant((s) => s.history)
-  const processMessage = useAssistant((s) => s.processMessage)
+  const processUserMessage = useAssistant((s) => s.processUserMessage)
 
   const handleSubmit = () => {
     const message = draft.trim()
@@ -24,7 +24,7 @@ export function ChatView() {
     }
 
     setDraft('')
-    processMessage(draft.trim())
+    processUserMessage(draft.trim())
   }
 
   return (

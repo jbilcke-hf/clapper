@@ -14,7 +14,6 @@ import {
 import { useUI } from '@/services/ui'
 import { SettingsCategory } from '@aitube/clapper-services'
 import { AssistantModelList } from '../lists/AssistantModelList'
-import { useVoiceAssistant } from '@/services/assistant/useVoiceAssistant'
 import { useAutocomplete } from '@/services/autocomplete/useAutocomplete'
 
 export function TopMenuAssistant() {
@@ -22,9 +21,6 @@ export function TopMenuAssistant() {
   const storyboardsToStory = useAutocomplete((s) => s.storyboardsToStory)
 
   const hasBetaAccess = useUI((s) => s.hasBetaAccess)
-
-  // this should only be called on and at only one place in the project!
-  useVoiceAssistant()
 
   return (
     <MenubarMenu>

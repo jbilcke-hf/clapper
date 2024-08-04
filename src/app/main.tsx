@@ -27,6 +27,7 @@ import { SegmentEditor } from '@/components/editors/SegmentEditor'
 import { EntityEditor } from '@/components/editors/EntityEditor'
 import { WorkflowEditor } from '@/components/editors/WorkflowEditor'
 import { FilterEditor } from '@/components/editors/FilterEditor'
+import { useRenderLoop } from '@/services/renderer'
 
 type DroppableThing = { files: File[] }
 
@@ -41,6 +42,10 @@ function MainContent() {
   const openFiles = useIO((s) => s.openFiles)
   const isTopMenuOpen = useUI((s) => s.isTopMenuOpen)
   const windowLayout = useUI((s) => s.windowLayout)
+
+  // this has to be done at the root of the app, that way it can
+  // perform its routine even when the monitor component is hidden
+  useRenderLoop()
 
   const [{ isOver, canDrop }, connectFileDrop] = useDrop({
     accept: [NativeTypes.FILE],

@@ -1,6 +1,9 @@
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { ChatEvent } from '@aitube/clapper-services'
+
 import { cn } from '@/lib/utils'
-import { useTheme } from '@/services/ui/useTheme'
+import { useTheme } from '@/services'
 
 export function ChatBubble({
   eventId,
@@ -34,7 +37,12 @@ export function ChatBubble({
               : theme.assistantRobotTextColor || theme.defaultTextColor || '',
           }}
         >
-          <p className={cn(`select-text text-sm`)}>{message}</p>
+          <Markdown
+            className={cn(`select-text text-sm`)}
+            remarkPlugins={[remarkGfm]}
+          >
+            {message}
+          </Markdown>
         </div>
         <div
           className={cn(

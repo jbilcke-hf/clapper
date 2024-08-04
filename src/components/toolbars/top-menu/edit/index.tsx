@@ -70,10 +70,10 @@ export function TopMenuEdit() {
         </MenubarItem>
         <MenubarSeparator />
         <MenubarItem onClick={undo}>
-          Undo (TODO @Julian) <MenubarShortcut>⌘Z</MenubarShortcut>
+          Undo <MenubarShortcut>⌘Z</MenubarShortcut>
         </MenubarItem>
         <MenubarItem onClick={redo}>
-          Redo (TODO @Julian) <MenubarShortcut>⇧⌘Z</MenubarShortcut>
+          Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
         </MenubarItem>
       </MenubarContent>
     </MenubarMenu>

@@ -9,18 +9,7 @@ export const useMic = create<MicStore>((set, get) => ({
   ...getDefaultMicState(),
 
   init: () => {
-    const {
-      isSupported,
-      interimResults,
-      lang,
-      continuous,
-      grammar,
-      grammarWeight,
-    } = get()
-
-    if (!isSupported) {
-      return
-    }
+    const { interimResults, lang, continuous, grammar, grammarWeight } = get()
 
     // Initialize webkitSpeechRecognition
     const recognition: SpeechRecognition = new (window.SpeechRecognition ||
@@ -32,6 +21,11 @@ export const useMic = create<MicStore>((set, get) => ({
         error: "this browser doesn't support speech recognition",
       })
       return
+    } else {
+      set({
+        isSupported: true,
+        error: '',
+      })
     }
 
     recognition.interimResults = interimResults
@@ -89,3 +83,7 @@ export const useMic = create<MicStore>((set, get) => ({
     set({ transcript: '', error: '' })
   },
 }))
+
+if (typeof window !== 'undefined') {
+  useMic.getState().init()
+}
