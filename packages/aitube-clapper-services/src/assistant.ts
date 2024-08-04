@@ -21,12 +21,12 @@ export type AssistantControls = {
   processUserMessage: (userMessage: string) => void
 
   /**
-   * Run an action
-   * 
-   * @param action 
+   * Process an action of a message
+   *
+   * @param actionOrAssistantMessage 
    * @returns 
    */
-  executeAction: (action: AssistantAction) => Promise<void>
+  processActionOrMessage: (actionOrAssistantMessage: AssistantAction | AssistantMessage) => Promise<void>
 
   /**
    * Add a chat event to the history
