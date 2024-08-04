@@ -16,12 +16,10 @@ export type AssistantState = {
 }
 export type AssistantControls = {
 
-  processAssistantMessage: (assistantMessage: AssistantMessage) => void
-
   processUserMessage: (userMessage: string) => void
 
   /**
-   * Process an action of a message
+   * Process an action or a message
    *
    * @param actionOrAssistantMessage 
    * @returns 
