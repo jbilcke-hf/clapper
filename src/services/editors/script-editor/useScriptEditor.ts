@@ -13,9 +13,12 @@ import {
   ScriptEditorStore,
   EditorView,
   ScrollData,
+  undo,
+  redo,
 } from '@aitube/clapper-services'
 
 import { getDefaultScriptEditorState } from './getDefaultScriptEditorState'
+import { useAssistant } from '@/services/assistant/useAssistant'
 
 export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
   ...getDefaultScriptEditorState(),
@@ -34,24 +37,16 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
     set({ mouseIsInside })
   },
   loadDraftFromClap: (clap: ClapProject) => {
-    const { setDraft } = get()
+    const { highlightElements, textModel } = get()
 
-    setDraft(clap.meta.screenplay)
-  },
-  setDraft: (draft: string) => {
-    const { draft: previousDraft, highlightElements, textModel } = get()
-    if (draft === previousDraft) {
-      return
-    }
-    set({ draft })
-
-    if (!textModel) {
-      return
-    }
+    set({
+      current: clap.meta.screenplay,
+      lastPublished: clap.meta.screenplay,
+    })
 
     try {
       // we need to update the model
-      textModel?.setValue(draft)
+      textModel?.setValue(clap.meta.screenplay)
     } catch (err) {
       // to catch the "Error: Model is disposed!"
       // this can happen if the timing isn't right,
@@ -64,11 +59,35 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
       highlightElements()
     } catch (err) {}
   },
-  publishDraftToTimeline: async (): Promise<void> => {
-    const { draft } = get()
-    console.log(`user asked to update the whole scene! this is expensive..`)
-    // we can do something smart, which is to only reconstruct the impacted segments
-    // and shift the rest along the time axis, without modifying it
+  publish: async (): Promise<void> => {
+    console.log('publish')
+    const { current, lastPublished } = get()
+    set({
+      lastPublished: current,
+    })
+
+    console.log('state:', { current, lastPublished })
+
+    if (!lastPublished || !current) {
+      return
+    }
+
+    const maxLength = Math.max(lastPublished.length, current.length)
+
+    let i = 0
+    for (; i < maxLength; i++) {
+      if (lastPublished[i] !== current[i]) {
+        break
+      }
+    }
+    const existingText = lastPublished.slice(0, i)
+    const newTextAddition = current.slice(i)
+    console.log('existingText:', existingText)
+    console.log('newTextAddition:', newTextAddition)
+
+    const assistant = useAssistant.getState()
+
+    // call the LLM, with a prompt like:
   },
   onDidScrollChange: ({
     scrollHeight,
@@ -249,6 +268,10 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
   setCurrent: (current?: string) => {
     set({ current })
   },
-  undo: () => {},
-  redo: () => {},
+  undo: () => {
+    set(undo(get()))
+  },
+  redo: () => {
+    set(redo(get()))
+  },
 }))

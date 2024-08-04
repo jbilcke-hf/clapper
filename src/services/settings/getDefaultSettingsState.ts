@@ -171,7 +171,7 @@ export function getDefaultSettingsState(): SettingsState {
     modelsLabModelForSound: "",
     modelsLabModelForMusic: "",
 
-    openaiModelForAssistant: "gpt-4o",
+    openaiModelForAssistant: "gpt-4o-mini",
     openaiModelForImage: "dall-e-3",
     openaiModelForVideo: "sora",
     openaiModelForVoice: "v1",

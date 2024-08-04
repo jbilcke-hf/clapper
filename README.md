@@ -18,9 +18,13 @@ short_description: 🎬 Clapper
 
 🎬 Clapper is an open-source AI story visualization tool.
 
-Clapper can interpret a screenplay and render it to storyboards, videos, voice, sound and music.
+Prototyped [a year ago](https://www.loom.com/share/25b60750a32c4183b7fadc622d7c0120?sid=f1173e95-1ec8-4be2-831d-54b18e835367), Clapper is not designed to replace traditional video editors or modern AI editors using 3D scenes as input.
 
-Please note however that the tool is at an early stage of development, for the moment it is not supposed to be really used by "normal" people (some features don't work, there are no tutorials etc).
+Clapper's philosophy is for anyone to create videos using AI through an interactive, iterative and intuitive process, without the need for external tools, filmmaking or AI engineering skills.
+
+In Clapper you don't edit a sequence of video and audio files directly, but iterate (with the help from your AI assistant) over your story using high-level abstractions such as characters, locations, weather, time period, style etc.
+
+To this end I am also working on a Director's Mode, where you can just put the video in fullscreen, sit confortably in your director's chair (or couch), shouting orders at your AI set assistant to produce your movie.
 
 # Public alpha access
 

@@ -6,8 +6,9 @@ export function getDefaultScriptEditorState(): ScriptEditorState {
     textModel: undefined,
     standaloneCodeEditor: undefined,
     mouseIsInside: false,
-    draft: '',
     lineNumberToMentionedSegments: {},
+
+    lastPublished: '',
 
     scrollHeight: 0,
     scrollLeft: 0,

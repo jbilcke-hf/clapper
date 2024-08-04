@@ -1,9 +1,10 @@
 import { cn } from '@aitube/timeline'
 import { TbBrandDiscord } from 'react-icons/tb'
 import { FaGithubAlt } from 'react-icons/fa'
+import { BiMicrophone, BiMicrophoneOff } from 'react-icons/bi'
 
 import { Menubar } from '@/components/ui/menubar'
-import { useUI, useResolver } from '@/services'
+import { useUI, useResolver, useAssistant } from '@/services'
 
 import { TopMenuFile } from './file'
 import { TopMenuEdit } from './edit'
@@ -26,9 +27,14 @@ import { UIWindowLayout } from '@aitube/clapper-services'
 import { Tasks } from '../bottom-bar/tasks'
 import { ToggleWindowLayout } from './ToggleWindowLayout'
 import { ToggleFullScreen } from './ToggleFullScreen'
+import { IconSwitch } from '@/components/monitor/icons/icon-switch'
+import { useVoiceAssistant } from '@/services/assistant/useVoiceAssistant'
 
 export function TopMenu() {
   const isBusyResolving = useResolver((s) => s.isBusyResolving)
+
+  // this should only be called on and at only one place in the project
+  const { isSupported, isListening, start, stop } = useVoiceAssistant()
 
   const showTimeline = useUI((s) => s.showTimeline)
   const setShowTimeline = useUI((s) => s.setShowTimeline)
@@ -69,6 +75,27 @@ export function TopMenu() {
         {
           // clap?.meta?.title || "Untitled"
         }
+
+        {isSupported && (
+          <IconSwitch
+            onIcon={BiMicrophone}
+            offIcon={BiMicrophoneOff}
+            isToggledOn={isListening}
+            onClick={() => {
+              if (isListening) {
+                stop()
+              } else {
+                start()
+              }
+            }}
+            size="xs"
+            iconClass={isListening ? 'text-green-500' : 'text-red-500'}
+          >
+            {
+              // isListening ? 'AI is listening..' : 'voice control disabled'
+            }
+          </IconSwitch>
+        )}
 
         {windowLayout === UIWindowLayout.GRID ? (
           <>

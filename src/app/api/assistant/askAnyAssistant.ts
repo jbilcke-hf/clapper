@@ -12,7 +12,6 @@ import {
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from '@langchain/core/prompts'
-import { StructuredOutputParser } from '@langchain/core/output_parsers'
 import { ChatOpenAI } from '@langchain/openai'
 import { ChatGroq } from '@langchain/groq'
 import { ChatAnthropic } from '@langchain/anthropic'
@@ -23,17 +22,19 @@ import { ChatVertexAI } from '@langchain/google-vertexai'
 // import { ChatHuggingFace } from "@langchain/huggingface"
 
 import {
+  AssistantInput,
+  AssistantAction,
+  AssistantMessage,
   AssistantRequest,
-  AssistantResponse,
+  AssistantSceneSegment,
+  AssistantStorySentence,
   ComputeProvider,
 } from '@aitube/clapper-services'
 
-import { SimplifiedSegmentData, simplifiedSegmentDataZ } from './types'
 import { examples, humanTemplate, systemTemplate } from './templates'
-
-const parser = StructuredOutputParser.fromZodSchema(simplifiedSegmentDataZ)
-
-const formatInstructions = parser.getFormatInstructions()
+import { isValidNumber } from '@/lib/utils'
+import { assistantMessageParser, formatInstructions } from './parser'
+import { parseRawInputToAction } from '@/services/assistant/parseRawInputToAction'
 
 /**
  * Query the preferred language model on the user prompt + the segments of the current scene
@@ -61,7 +62,7 @@ export async function askAnyAssistant({
   projectInfo = '',
 
   history = [],
-}: AssistantRequest): Promise<AssistantResponse> {
+}: AssistantRequest): Promise<AssistantMessage> {
   const provider = settings.assistantProvider
 
   if (!provider) {
@@ -121,28 +122,53 @@ export async function askAnyAssistant({
     ['human', humanTemplate],
   ])
 
+  //const storySentences: AssistantStorySentence[] = fullScene.split(/(?:. |\n)/).map(storySentence => {
+  //})
+
+  const storySentences: AssistantStorySentence[] = [
+    {
+      sentenceId: 0,
+      sentence: fullScene,
+    },
+    {
+      sentenceId: 1,
+      sentence: actionLine,
+    },
+  ]
+
   // we don't give the whole thing to the LLM as to not confuse it,
   // and also to keep things tight and performant
-  const inputData: SimplifiedSegmentData[] = segments.map(
-    (segment) =>
-      ({
-        prompt: segment.prompt,
-        category: segment.category,
-      }) as SimplifiedSegmentData
-  )
+  const sceneSegments: AssistantSceneSegment[] = segments.map((segment, i) => ({
+    segmentId: i,
+    prompt: segment.prompt,
+    startTimeInMs: segment.startTimeInMs,
+    endTimeInMs: segment.endTimeInMs,
+    category: segment.category,
+  }))
+
+  // TODO put this into a type
+  const inputData: AssistantInput = {
+    directorRequest: prompt,
+    storySentences,
+    sceneSegments,
+  }
 
   // console.log("INPUT:", JSON.stringify(inputData, null, 2))
 
-  const chain = chatPrompt.pipe(coerceable).pipe(parser)
+  const chain = chatPrompt.pipe(coerceable).pipe(assistantMessageParser)
 
+  const assistantMessage: AssistantMessage = {
+    comment: '',
+    action: AssistantAction.NONE,
+    updatedStorySentences: [],
+    updatedSceneSegments: [],
+  }
   try {
-    const result = await chain.invoke({
+    const rawResponse = await chain.invoke({
       formatInstructions,
       examples,
       projectInfo,
-      fullScene,
-      actionLine,
-      userPrompt: prompt,
+      inputData: JSON.stringify(inputData),
       chatHistory: history.map(
         ({
           eventId,
@@ -161,57 +187,89 @@ export async function askAnyAssistant({
           }
         }
       ),
-      inputData: JSON.stringify(inputData),
     })
 
-    // console.log("OUTPUT:", JSON.stringify(result, null, 2))
+    console.log(
+      'LLM replied this rawResponse:',
+      JSON.stringify(rawResponse, null, 2)
+    )
 
-    /*
-    this whole code doesn't work well actually..
+    // this is a fallback in case of LLM failure
+    if (!rawResponse) {
+      // complete failure
+    } else if (typeof rawResponse === 'string') {
+      assistantMessage.action = parseRawInputToAction(rawResponse)
+      if (assistantMessage.action === AssistantAction.NONE) {
+        assistantMessage.comment = rawResponse
+      }
+    } else {
+      assistantMessage.comment =
+        typeof rawResponse.comment === 'string' ? rawResponse.comment : ''
 
-    let match: SegmentData | undefined = segments[result.index] || undefined
+      assistantMessage.action = Object.keys(AssistantAction).includes(
+        `${rawResponse.action || ''}`.toUpperCase()
+      )
+        ? rawResponse.action
+        : AssistantAction.NONE
 
-    // LLM gave an object, but the index is wrong
-    if (!match) {
-      match = segments.find(s => s.category === result.category) || undefined
-    }
-    */
+      let i = 0
+      for (const segment of rawResponse.updatedSceneSegments || []) {
+        i++
+        const segmentId = isValidNumber(segment.segmentId)
+          ? segment.segmentId!
+          : i
 
-    // let's create a new segment then!
-    const categoryName: ClapSegmentCategory =
-      result?.category &&
-      Object.keys(ClapSegmentCategory).includes(result.category.toUpperCase())
-        ? (result.category as ClapSegmentCategory)
-        : ClapSegmentCategory.GENERIC
+        const category: ClapSegmentCategory =
+          segment.category &&
+          Object.keys(ClapSegmentCategory).includes(
+            segment.category.toUpperCase()
+          )
+            ? (segment.category as ClapSegmentCategory)
+            : ClapSegmentCategory.GENERIC
 
-    return {
-      prompt: result?.prompt || '',
-      categoryName,
-      llmOutput: '',
-    }
-  } catch (err1) {
-    // a common scenario is when the output from the LLM is just not a JSON
-    // this can happen quite often, for instance if the user tried to bypass
-    // our prompt, or if they are just asking generic questions
-    const errObj = err1 as any
-    try {
-      const keys = Object.keys(errObj)
-      if (errObj.llmOutput) {
-        return {
-          prompt: '',
-          categoryName: ClapSegmentCategory.GENERIC,
-          llmOutput: `${errObj.llmOutput || ''}`,
+        const startTimeInMs: number = isValidNumber(segment.startTimeInMs)
+          ? segment.startTimeInMs
+          : 0
+        const endTimeInMs: number = isValidNumber(segment.endTimeInMs)
+          ? segment.endTimeInMs
+          : 0
+
+        const prompt = segment?.prompt || ''
+
+        // we assume no prompt is an error
+        if (prompt) {
+          assistantMessage.updatedSceneSegments.push({
+            segmentId,
+            prompt,
+            startTimeInMs,
+            endTimeInMs,
+            category,
+          })
         }
       }
-    } catch (err2) {
-      // err2 is just the error for when the LLM failed to reply
-      console.error(`----<${err1}>----`)
     }
+  } catch (err) {
+    let errorPlainText = `${err}`
+    errorPlainText =
+      errorPlainText.split(`Error: Failed to parse. Text: "`).pop() ||
+      errorPlainText
+    errorPlainText =
+      errorPlainText.split(`". Error: SyntaxError`).shift() || errorPlainText
 
-    return {
-      prompt: '',
-      categoryName: ClapSegmentCategory.GENERIC,
-      llmOutput: '',
+    if (errorPlainText) {
+      console.log(
+        `result wasn't a JSON, switching to the fallback LLM response parser..`
+      )
+      assistantMessage.comment = errorPlainText
+      assistantMessage.action = AssistantAction.NONE
+      assistantMessage.updatedSceneSegments = []
+      assistantMessage.updatedStorySentences = []
+    } else {
+      throw new Error(
+        `couldn't process the request or parse the response (${err})`
+      )
     }
   }
+
+  return assistantMessage
 }

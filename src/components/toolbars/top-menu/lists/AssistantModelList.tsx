@@ -17,11 +17,10 @@ import { ComputeProviderLogo } from '@/components/core/providers/ComputeProvider
 import { cn } from '@/lib/utils'
 
 import { hasNoPublicAPI } from './hasNoPublicAPI'
-import { formatProvider } from './formatProvider'
 
 export function AssistantModelList() {
-  const provider = useSettings((s) => s.soundProvider)
-  const setProvider = useSettings((s) => s.setSoundProvider)
+  const provider = useSettings((s) => s.assistantProvider)
+  const setProvider = useSettings((s) => s.setAssistantProvider)
   const model = useSettings((s) => s.assistantModel)
   const setModel = useSettings((s) => s.setAssistantModel)
 

@@ -125,7 +125,7 @@ export const availableComfyIcuAccelerators = {
 export const availableModelsForAssistant: Partial<
   Record<ComputeProvider, string[]>
 > = {
-  [ComputeProvider.OPENAI]: ['gpt-4', 'gpt-4-turbo', 'gpt-4o'],
+  [ComputeProvider.OPENAI]: ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-4'],
   [ComputeProvider.GROQ]: [
     'Mixtral-8x7b-32768',
     'Gemma-7b-lt',
@@ -178,7 +178,7 @@ export const availableModelsForAssistant: Partial<
 export const availableModelsForAssistantTurbo: Partial<
   Record<ComputeProvider, string[]>
 > = {
-  [ComputeProvider.OPENAI]: ['gpt-4-turbo'],
+  [ComputeProvider.OPENAI]: ['gpt-4o-turbo', 'gpt-4-turbo'],
 }
 
 // note: each of those models do different things, have different parameters..

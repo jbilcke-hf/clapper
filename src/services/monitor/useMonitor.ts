@@ -1,13 +1,8 @@
 'use client'
 
 import { create } from 'zustand'
-import { ClapSegment } from '@aitube/clap'
 import { TimelineStore, useTimeline } from '@aitube/timeline'
-import {
-  MonitoringMode,
-  MonitorStore,
-  RendererStore,
-} from '@aitube/clapper-services'
+import { MonitorStore, RendererStore } from '@aitube/clapper-services'
 
 import { useAudio } from '../audio/useAudio'
 import { getDefaultMonitorState } from './getDefaultMonitorState'
@@ -47,13 +42,9 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
       shortcutsAreBound: true,
     })
   },
-  setMonitoringMode: (mode: MonitoringMode) => {
-    set({ mode })
-  },
 
   setStaticVideoRef: (staticVideoRef: HTMLVideoElement) => {
     set({
-      mode: MonitoringMode.STATIC,
       staticVideoRef,
     })
   },
@@ -73,38 +64,16 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
     wasPlaying: boolean
     isPlaying: boolean
   } => {
-    const { isPlaying: wasPlaying, mode, staticVideoRef } = get()
+    const { isPlaying: wasPlaying, staticVideoRef } = get()
     const { play, stop } = useAudio.getState()
-
-    if (mode === MonitoringMode.NONE) {
-      set({
-        isPlaying: false,
-        lastTimelineUpdateAtInMs: performance.now(),
-      })
-      return {
-        wasPlaying: false,
-        isPlaying: false,
-      }
-    }
 
     const isPlaying =
       typeof forcePlaying === 'boolean' ? forcePlaying : !wasPlaying
 
-    if (mode === MonitoringMode.STATIC && staticVideoRef) {
-      if (isPlaying) {
-        //  console.log(`previous value = ` + staticVideoRef.currentTime)
-        staticVideoRef.play()
-      } else {
-        staticVideoRef.pause()
-      }
-    } else if (mode === MonitoringMode.DYNAMIC) {
-      // console.log(`TODO Julian: implement dynamic mode`)
-      if (isPlaying) {
-        // restart audio
-        play()
-      } else {
-        stop()
-      }
+    if (isPlaying) {
+      play()
+    } else {
+      stop()
     }
 
     set({
@@ -122,7 +91,7 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
     const renderer: RendererStore = useRenderer.getState()
     const timeline: TimelineStore = useTimeline.getState()
 
-    const { isPlaying, mode, staticVideoRef } = monitor
+    const { isPlaying, staticVideoRef } = monitor
     const { renderLoop, syncVideoToCurrentCursorPosition } = renderer
     const { setCursorTimestampAtInMs, cursorTimestampAtInMs } = timeline
 
@@ -130,24 +99,12 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
       setCursorTimestampAtInMs(timeInMs)
     }
 
-    if (mode === MonitoringMode.NONE) {
-      return
-    }
+    // we force a full state recompute
+    // and we also pass jumpedSomewhere=true to indicate that we
+    // need a buffer transition
+    renderLoop(true)
 
-    if (mode === MonitoringMode.STATIC) {
-      if (!staticVideoRef) {
-        return
-      }
-      console.log('resetting static video current time')
-      staticVideoRef.currentTime = timeInMs / 1000
-    } else if (mode === MonitoringMode.DYNAMIC) {
-      // we force a full state recompute
-      // and we also pass jumpedSomewhere=true to indicate that we
-      // need a buffer transition
-      renderLoop(true)
-
-      syncVideoToCurrentCursorPosition()
-    }
+    syncVideoToCurrentCursorPosition()
   },
 
   setLastTimelineUpdateAtInMs: (lastTimelineUpdateAtInMs: number) => {

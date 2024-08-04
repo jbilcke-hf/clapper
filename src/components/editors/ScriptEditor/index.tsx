@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import MonacoEditor from 'monaco-editor'
 import Editor, { Monaco } from '@monaco-editor/react'
-import { ClapSegmentCategory } from '@aitube/clap'
 import {
-  DEFAULT_DURATION_IN_MS_PER_STEP,
   leftBarTrackScaleWidth,
   TimelineStore,
   useTimeline,
 } from '@aitube/timeline'
 
 import { useScriptEditor } from '@/services/editors/script-editor/useScriptEditor'
-import { useRenderer } from '@/services/renderer'
 import { useUI } from '@/services/ui'
-import { useTheme } from '@/services/ui/useTheme'
 import { themes } from '@/services/ui/theme'
 
 import './styles.css'
@@ -22,16 +18,12 @@ export function ScriptEditor() {
   const setStandaloneCodeEditor = useScriptEditor(
     (s) => s.setStandaloneCodeEditor
   )
-  const draft = useScriptEditor((s) => s.draft)
-  const setDraft = useScriptEditor((s) => s.setDraft)
+  const current = useScriptEditor((s) => s.current)
+  const setCurrent = useScriptEditor((s) => s.setCurrent)
+  const publish = useScriptEditor((s) => s.publish)
   const loadDraftFromClap = useScriptEditor((s) => s.loadDraftFromClap)
   const onDidScrollChange = useScriptEditor((s) => s.onDidScrollChange)
   const jumpCursorOnLineClick = useScriptEditor((s) => s.jumpCursorOnLineClick)
-
-  // this is an expensive function, we should only call it on blur or on click on a "save button maybe"
-  const publishDraftToTimeline = useScriptEditor(
-    (s) => s.publishDraftToTimeline
-  )
 
   const clap = useTimeline((s: TimelineStore) => s.clap)
 
@@ -108,20 +100,18 @@ export function ScriptEditor() {
     // as an optimization we can use this later, for surgical edits,
     // to perform real time updates of the timeline
 
+    /*
     textModel.onDidChangeContent(
       (
         modelContentChangedEvent: MonacoEditor.editor.IModelContentChangedEvent
       ) => {
         console.log('onDidChangeContent:')
         for (const change of modelContentChangedEvent.changes) {
-          // console.log(" - change:", change)
+          console.log(" - change:", change)
         }
       }
     )
-  }
-
-  const onChange = (plainText?: string) => {
-    // setDraft(plainText || "")
+      */
   }
 
   const setMonaco = useScriptEditor((s) => s.setMonaco)
@@ -165,7 +155,7 @@ export function ScriptEditor() {
     monaco.editor.setTheme(themes.backstage.id)
 
     const textModel: MonacoEditor.editor.ITextModel = monaco.editor.createModel(
-      draft,
+      current || '',
       'plaintext'
     )
     setTextModel(textModel)
@@ -176,13 +166,14 @@ export function ScriptEditor() {
       className="h-full w-full"
       onMouseEnter={() => setMouseIsInside(true)}
       onMouseLeave={() => setMouseIsInside(false)}
+      onBlur={publish}
     >
       <Editor
         height="100%"
         beforeMount={beforeMount}
         theme={themeName}
         onMount={onMount}
-        onChange={onChange}
+        onChange={setCurrent}
         options={{
           fontSize: editorFontSize,
         }}

@@ -2,17 +2,23 @@
 
 import { create } from 'zustand'
 import {
+  AssistantAction,
+  AssistantMessage,
   AssistantRequest,
   AssistantStore,
   ChatEvent,
 } from '@aitube/clapper-services'
 import {
+  ClapAssetSource,
   ClapOutputType,
+  ClapScene,
+  ClapSegment,
   ClapSegmentCategory,
   newSegment,
   UUID,
 } from '@aitube/clap'
 import {
+  clapSegmentToTimelineSegment,
   DEFAULT_DURATION_IN_MS_PER_STEP,
   findFreeTrack,
   TimelineSegment,
@@ -25,28 +31,119 @@ import { useSettings } from '../settings'
 
 import { askAssistant } from './askAssistant'
 import { useRenderer } from '../renderer'
+import { useMonitor } from '../monitor/useMonitor'
+import { parseRawInputToAction } from './parseRawInputToAction'
+import { useAudio } from '../audio/useAudio'
+import { updateStoryAndScene } from './updateStoryAndScene'
 
 const enableTextToSpeech = false
 
 export const useAssistant = create<AssistantStore>((set, get) => ({
   ...getDefaultAssistantState(),
 
-  runCommand: (prompt: string) => {
-    const query = prompt
-      .toLowerCase()
-      .trim()
-      .replace(/(?:\.)$/gi, '') // remove trailing periods
+  processActionOrMessage: async (
+    actionOrAssistantMessage: AssistantAction | AssistantMessage
+  ): Promise<void> => {
+    const { addEventToHistory } = get()
+    const { mute, unmute } = useAudio.getState()
+    const { togglePlayback } = useMonitor.getState()
 
-    if (!query) {
-      return true
+    let response = ''
+
+    const assistantMessage =
+      typeof actionOrAssistantMessage === 'object'
+        ? (actionOrAssistantMessage as AssistantMessage)
+        : {
+            comment: '',
+            action: actionOrAssistantMessage,
+            updatedStorySentences: [],
+            updatedSceneSegments: [],
+          }
+
+    try {
+      switch (assistantMessage.action) {
+        case AssistantAction.PLAY_VIDEO:
+          togglePlayback(true)
+          break
+
+        case AssistantAction.PAUSE_VIDEO:
+          togglePlayback(false)
+          break
+
+        case AssistantAction.MUTE_AUDIO:
+          mute()
+          break
+
+        case AssistantAction.UNMUTE_AUDIO:
+          unmute()
+          break
+
+        case AssistantAction.UPDATE_STORY_AND_SCENE:
+          // this is not processed in there
+          break
+
+          // note: in case we find a way to update a segment in place
+          // (eg. if LLMs become good at preserving IDs)
+          // we can also try to do this:
+
+          // Object.assign(match, {
+          //   prompt,
+          //   label: prompt,
+          // })
+
+          // // tell the timeline that this individual segment should be redrawn
+          // trackSilentChangeInSegment(match.id)
+
+          break
+
+        case AssistantAction.GO_BACK:
+          // TODO
+          break
+
+        case AssistantAction.GO_FORWARD:
+          // TODO
+          break
+
+        case AssistantAction.UNDO:
+          // this should be the undo of the ASSISTANT actions
+          break
+
+        case AssistantAction.REDO:
+          // this should be the redo of the ASSISTANT actions
+          break
+
+        case AssistantAction.NONE:
+        default:
+          if (assistantMessage.comment) {
+            addEventToHistory({
+              senderId: 'assistant',
+              senderName: 'Assistant',
+              message: assistantMessage.comment || '🤔', // or "???" for a "boomer" theme
+            })
+          } else {
+            console.log(
+              `processActionOrMessage: the message was empty or incomplete`
+            )
+          }
+          return
+      }
+    } catch (err) {
+      addEventToHistory({
+        senderId: 'assistant',
+        senderName: 'Assistant',
+        message: `I'm sorry, I was unable to process your request. Error message: ${err}`,
+      })
+      return
     }
 
-    console.log(`do something with the query: "${query}"`)
-
-    // TODO @julian: put back here voice control code from the original Clapper project
-    return false
+    if (response) {
+      addEventToHistory({
+        senderId: 'assistant',
+        senderName: 'Assistant',
+        message: response,
+      })
+    }
   },
-
   addEventToHistory: (event: Partial<ChatEvent>) => {
     const defaultEvent: ChatEvent = {
       eventId: UUID(),
@@ -57,6 +154,7 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
       sentAt: new Date().toISOString(),
       message: '',
       isCurrentUser: true,
+      isHidden: false,
     }
     const newEvent: ChatEvent = {
       ...defaultEvent,
@@ -77,21 +175,27 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
     set({ history: [] })
   },
 
-  processMessage: async (input: string) => {
+  processUserMessage: async (input: string) => {
     const message = input.trim()
     if (!message) {
       return
     }
-    const { addEventToHistory, runCommand } = get()
 
-    const timelineState: TimelineStore = useTimeline.getState()
-    const { clap } = timelineState
+    const { addEventToHistory, processActionOrMessage } = get()
+    const {
+      bufferedSegments: { activeSegments },
+    } = useRenderer.getState()
+    const timeline: TimelineStore = useTimeline.getState()
+    const { clap, addSegment, entityIndex } = timeline
+
     if (!clap) {
       return
     }
 
-    // note: settings is not the store (with methods etc)
-    // but a serializable snapshot of the values only
+    // note: here `settings` is not the store's state itself (with methods etc)
+    // but a snapshot of the serializable state values only
+    //
+    // when need that because we are going send those settings in HTTPS to our gateway
     const settings = useSettings.getState().getSettings()
 
     addEventToHistory({
@@ -100,49 +204,30 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
       message,
     })
 
-    const basicCommand = await runCommand(message)
-    // LLM analysis can be slow and expensive, so first we try to see if this was a trivial command
-    // like "start", "pause", "stop" etc
-    if (basicCommand) {
-      addEventToHistory({
-        senderId: 'assistant',
-        senderName: 'Assistant',
-        message: `${basicCommand}`,
-      })
-      return // no need to go further
+    // before calling any costly LLM (in terms of money or latency),
+    // we first check if we have an immediate match for an action
+    const directVocalCommandAction = parseRawInputToAction(message)
+    if (directVocalCommandAction !== AssistantAction.NONE) {
+      console.log(
+        `processUserMessage: we intercept a command! skipping LLM step..`
+      )
+      await processActionOrMessage(directVocalCommandAction)
+      return
     }
-
-    console.log(
-      `TODO @julian: restore the concept of "addSegment()", "updateSegment()", "active segment" and "cursor position" inside @aitube-timeline`
-    )
-    const {
-      bufferedSegments: { activeSegments },
-    } = useRenderer.getState()
-
-    const cursorInSteps = 0
 
     const referenceSegment: TimelineSegment | undefined = activeSegments.at(0)
 
-    if (!referenceSegment) {
-      throw new Error(`No segment under the current cursor`)
-    }
+    const scene: ClapScene | undefined = referenceSegment?.sceneId
+      ? clap.scenes.find((s) => s.id === referenceSegment.sceneId)
+      : undefined
 
-    console.log(
-      `TODO @julian: filter entities to only keep the ones in the current active segment? (although.. maybe a bad idea since the LLM need as much context as possible to "fill in the gap" eg. repair/invent missing elements of the story)`
-    )
-
-    const entities = clap.entityIndex
-
-    const projectInfo = clap.meta.description
-
-    const sceneId = referenceSegment.sceneId
-
-    const scene = clap.scenes.find((s) => s.id === sceneId)
-
-    const fullScene: string = scene?.sequenceFullText || ''
-    const actionLine: string = scene?.line || ''
-
-    const segments: TimelineSegment[] = activeSegments.filter(
+    // we should be careful with how we filter and send the segments to the API
+    //
+    // - we need to remove elements that are specific to the browser (eg. audio context nodes)
+    // - we may need to remove binary files (base64 assets) like for sound and music,
+    //  although some AI models could support it
+    // - we don't want to keep all the kinds of segments
+    const existingSegments: TimelineSegment[] = activeSegments.filter(
       (s) =>
         s.category === ClapSegmentCategory.CAMERA ||
         s.category === ClapSegmentCategory.LOCATION ||
@@ -152,96 +237,54 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
         s.category === ClapSegmentCategory.DIALOGUE ||
         s.category === ClapSegmentCategory.WEATHER ||
         s.category === ClapSegmentCategory.ERA ||
-        s.category === ClapSegmentCategory.INTERFACE ||
         s.category === ClapSegmentCategory.MUSIC ||
         s.category === ClapSegmentCategory.SOUND ||
-        s.category === ClapSegmentCategory.STORYBOARD ||
         s.category === ClapSegmentCategory.STYLE ||
-        s.category === ClapSegmentCategory.TRANSITION ||
         s.category === ClapSegmentCategory.GENERIC
     )
 
-    console.log(
-      `TODO @julian: provide both contextual segments and editable ones to the LLM?`
+    // this is where we filter out expensive or heavy binary elements
+    const serializableSegments: TimelineSegment[] = existingSegments.map(
+      (segment) => ({
+        ...segment,
+
+        // we remove things that cannot be serialized easily
+        audioBuffer: undefined,
+        textures: {},
+
+        // we also remove this since it might contain heavy information
+        // although at some point we will want to put it back for some types,
+        // as the most advanced LLMs can handle images and sound files
+        assetUrl: '',
+        assetSourceType: ClapAssetSource.EMPTY,
+      })
     )
 
     const request: AssistantRequest = {
       settings,
       prompt: message,
-      segments,
-      fullScene,
-      actionLine,
-      entities,
-      projectInfo,
+      segments: serializableSegments,
+      fullScene: scene?.sequenceFullText || '',
+      actionLine: scene?.line || '',
+      entities: entityIndex,
+      projectInfo: clap.meta.description,
       history: get().history,
     }
 
-    const { prompt, categoryName, llmOutput } = await askAssistant(request)
-    if (!prompt.length) {
-      addEventToHistory({
-        senderId: 'assistant',
-        senderName: 'Assistant',
-        message: llmOutput || '🤔', // or "???" for a "boomer" theme
-      })
-      return
-    }
+    console.log(`processUserMessage: calling askAssistant() with:`, request)
+    const assistantMessage = await askAssistant(request)
+    console.log(
+      `processUserMessage: result from askAssistant():`,
+      assistantMessage
+    )
 
-    console.log(`askAssistant response: `, { prompt, categoryName, llmOutput })
-
-    let match = segments.find((s) => s.category === categoryName) || undefined
-    if (!match) {
-      const startTimeInMs = cursorInSteps * DEFAULT_DURATION_IN_MS_PER_STEP
-      const durationInSteps = 4
-      const durationInMs = durationInSteps * DEFAULT_DURATION_IN_MS_PER_STEP
-      const endTimeInMs = startTimeInMs + durationInMs
-
-      const newSeg = newSegment({
-        startTimeInSteps: cursorInSteps,
-        prompt: [prompt],
-        durationInSteps: 4,
-        trackId: findFreeTrack({
-          segments,
-          startTimeInMs,
-          endTimeInMs,
-        }),
-        outputType: ClapOutputType.TEXT,
-        categoryName,
-      })
-      console.log('Creating new existing segment:', newSeg)
-
-      console.log(`TODO Julian: add the segment!!`)
-      // addSegment(newSeg)
-
-      addEventToHistory({
-        senderId: 'assistant',
-        senderName: 'Assistant',
-        message: `Segment added: ${newSeg.prompt}`,
+    if (assistantMessage.action === AssistantAction.UPDATE_STORY_AND_SCENE) {
+      await updateStoryAndScene({
+        assistantMessage,
+        existingSegments,
       })
     } else {
-      console.log('Updating an existing segment to:', {
-        ...match,
-        prompt,
-        label: prompt,
-        categoryName,
-      })
-
-      console.log(`TODO Julian: update the segment!!`)
-
-      // const segments: ClapSegment[] = useTimeline.getState().segments
-      // const segment = segments.find(s => s.id === newSeg.id)
-      Object.assign(match, {
-        prompt,
-        label: prompt,
-      })
-
-      // tell the timeline that this individual segment should be redrawn
-      timelineState.trackSilentChangeInSegment(match.id)
-
-      addEventToHistory({
-        senderId: 'assistant',
-        senderName: 'Assistant',
-        message: `Segment updated: ${prompt}`,
-      })
+      await processActionOrMessage(assistantMessage)
     }
   },
 }))
