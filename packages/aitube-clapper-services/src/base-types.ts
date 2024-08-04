@@ -197,6 +197,6 @@ export enum AssistantAction {
 export type AssistantMessage = {
   comment: string;
   action: AssistantAction;
-  updatedStorySentences: AssistantStorySentence;
+  updatedStorySentences: AssistantStorySentence[];
   updatedSceneSegments: AssistantSceneSegment[];
 };
