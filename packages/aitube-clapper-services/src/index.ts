@@ -19,6 +19,7 @@ export {
 } from "./audio"
 
 export {
+  AssistantInput,
   AssistantSceneSegment,
   AssistantStorySentence,
   AssistantAction,
