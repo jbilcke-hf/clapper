@@ -29,6 +29,11 @@ export async function loadAgeGenderNameStats(url = DEFAULT_DOWNLOAD_URL) : Promi
   if (typeof window !== "undefined") {
     try {
       const { default: fs } = await import("indexeddb-fs")
+      
+      if (!await fs.isDirectory(dirName)) {
+        await fs.createDirectory(dirName)
+      }
+      
       const rawCacheContent = await fs.readFile(storageFilePath) as string
       const cacheObject = JSON.parse(rawCacheContent) as NameToStats
       if (Object.keys(cacheObject).length === 0) {
@@ -79,6 +84,7 @@ export async function loadAgeGenderNameStats(url = DEFAULT_DOWNLOAD_URL) : Promi
 
     try {
       const { default: fs } = await import("indexeddb-fs")
+
       if (!await fs.isDirectory(dirName)) {
         await fs.createDirectory(dirName)
       }
