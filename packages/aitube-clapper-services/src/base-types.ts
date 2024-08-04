@@ -181,6 +181,7 @@ export type AssistantStorySentence = {
 }
 
 export enum AssistantAction {
+  NONE = 'NONE',
   UPDATE_STORY = 'UPDATE_STORY',
   UPDATE_SCENE = 'UPDATE_SCENE',
   PLAY_VIDEO = 'PLAY_VIDEO',
