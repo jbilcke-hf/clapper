@@ -2,6 +2,7 @@ import {
   ChatEvent,
   ChatHistory,
   AssistantMessage,
+  AssistantAction,
 } from "./base-types"
 
 /**
@@ -18,6 +19,14 @@ export type AssistantControls = {
   processAssistantMessage: (assistantMessage: AssistantMessage) => void
 
   processUserMessage: (userMessage: string) => void
+
+  /**
+   * Run an action
+   * 
+   * @param action 
+   * @returns 
+   */
+  executeAction: (action: AssistantAction) => Promise<void>
 
   /**
    * Add a chat event to the history
