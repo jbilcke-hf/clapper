@@ -151,6 +151,7 @@ export async function updateStoryAndScene({
           await clapSegmentToTimelineSegment(
             newSegment({
               ...segmentProperties,
+              prompt: 'movie',
               category: ClapSegmentCategory.VIDEO,
               outputType: ClapOutputType.VIDEO,
             })
@@ -160,6 +161,7 @@ export async function updateStoryAndScene({
           await clapSegmentToTimelineSegment(
             newSegment({
               ...segmentProperties,
+              prompt: 'movie still',
               category: ClapSegmentCategory.STORYBOARD,
               outputType: ClapOutputType.IMAGE
             })
