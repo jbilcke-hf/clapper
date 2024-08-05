@@ -34,8 +34,7 @@ A public instance of Clapper is currently hosted on [Hugging Face](https://huggi
 
 - Build and tests status: [![E2E & Unit Tests](https://github.com/jbilcke-hf/clapper/actions/workflows/tests.yml/badge.svg)](https://github.com/jbilcke-hf/clapper/actions/workflows/tests.yml)
 
-- Sponsor a feature: ![Boss Bounty Badge](https://img.shields.io/endpoint.svg?url=https://api.boss.dev/badge/enabled/jbilcke-hf/clapper)
-
+- Sponsor a feature: (temporary disabled due to an issue with the bounty provider)
 
 # Bounty Sponsors
 
@@ -49,9 +48,9 @@ Those generous sponsors are paying for code bounties:
 
 ### Sponsor specific features
 
-If you wish to sponsor the project, help attract new developers, or promote a specific feature faster, you can open a bounty for a specific ticket (eg `"fix music segment duration"`, `"add support for Adobe Premiere Pro export"`, `"finish .fbx integration"`) and open-source community members will be able to submit pull requests to solve them.
+!!  ATTENTION: there is currently an issue with the platform we initially used for bounties. We are looking for an alternative solution. !!
 
-I propose to use Boss.dev to do this as it has lower fees than other platforms: [boss.dev](https://www.boss.dev/doc/#create-bounties)
+If you wish to sponsor the project, help attract new developers, or promote a specific feature faster, you can open a bounty for a specific ticket (eg `"fix music segment duration"`, `"add support for Adobe Premiere Pro export"`, `"finish .fbx integration"`) and open-source community members will be able to submit pull requests to solve them.
 
 If you submit (to pay) or take on (to earn) a bounty, please post a message in the GitHub thread and/or on [Discord](https://discord.com/invite/AEruz9B92B) to help everyone coordinate around it.
 
