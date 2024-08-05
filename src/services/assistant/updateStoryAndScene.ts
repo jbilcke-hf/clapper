@@ -1,4 +1,4 @@
-import { newSegment } from '@aitube/clap'
+import { ClapSegment, ClapSegmentCategory, newSegment } from '@aitube/clap'
 import {
   AssistantMessage,
   AssistantSceneSegment,
@@ -65,27 +65,22 @@ export async function updateStoryAndScene({
       ? assistantSegment.endTimeInMs
       : fallbackEndTimeInMs
 
-    const track = findFreeTrack({
+    const prompt = assistantSegment.prompt
+    const category =
+      assistantSegment.category.toUpperCase() as ClapSegmentCategory
+
+    const segmentProperties: Partial<ClapSegment> = {
       startTimeInMs,
       endTimeInMs,
-    })
+      assetDurationInMs: endTimeInMs - startTimeInMs,
+      prompt: prompt,
+      label: prompt,
+      category,
+    }
 
     const segment: TimelineSegment = await clapSegmentToTimelineSegment(
-      newSegment({
-        startTimeInMs,
-        endTimeInMs,
-        durationInMs: endTimeInMs - startTimeInMs,
-        prompt: assistantSegment.prompt,
-        label: assistantSegment.prompt,
-        categoryName: assistantSegment.category,
-        // outputType: ClapOutputType.TEXT,
-      })
+      newSegment(segmentProperties)
     )
-
-    // I don't think we need to do that anymore
-    segment.prompt = assistantSegment.prompt
-    segment.label = assistantSegment.prompt
-    segment.track = track
 
     const existingSegment: TimelineSegment | undefined = existingSegments.find(
       (s, segmentId) => segmentId === assistantSegment.segmentId
@@ -147,12 +142,28 @@ export async function updateStoryAndScene({
         segmentsToKeep.push(segment)
       }
     } else {
+      // if the LLM tries to add a new camera, we must
+      // also create corresponding video and storyboards segments as well
+      if (segment.category === ClapSegmentCategory.CAMERA) {
+        segmentsToAdd.push(
+          await clapSegmentToTimelineSegment(
+            newSegment({
+              ...segmentProperties,
+              category: ClapSegmentCategory.VIDEO,
+            })
+          )
+        )
+        segmentsToAdd.push(
+          await clapSegmentToTimelineSegment(
+            newSegment({
+              ...segmentProperties,
+              category: ClapSegmentCategory.STORYBOARD,
+            })
+          )
+        )
+      }
+
       segmentsToAdd.push(segment)
-      await addSegment({
-        segment,
-        startTimeInMs: segment.startTimeInMs,
-        track: segment.track,
-      })
     }
   }
 
@@ -162,6 +173,10 @@ export async function updateStoryAndScene({
     segmentsToKeep,
     segmentsToUpdate,
   })
+
+  for (const segment of segmentsToAdd) {
+    await addSegment({ segment })
+  }
 
   addEventToHistory({
     senderId: 'assistant',

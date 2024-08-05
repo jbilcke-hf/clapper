@@ -57,7 +57,7 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
         : {
             comment: '',
             action: actionOrAssistantMessage,
-            updatedStorySentences: [],
+            updatedStoryBlocks: [],
             updatedSceneSegments: [],
           }
 
@@ -230,11 +230,13 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
     // - we don't want to keep all the kinds of segments
     const existingSegments: TimelineSegment[] = activeSegments.filter(
       (s) =>
+        // we only keep the camera
         s.category === ClapSegmentCategory.CAMERA ||
         s.category === ClapSegmentCategory.LOCATION ||
         s.category === ClapSegmentCategory.TIME ||
         s.category === ClapSegmentCategory.LIGHTING ||
         s.category === ClapSegmentCategory.ACTION ||
+        s.category === ClapSegmentCategory.CHARACTER ||
         s.category === ClapSegmentCategory.DIALOGUE ||
         s.category === ClapSegmentCategory.WEATHER ||
         s.category === ClapSegmentCategory.ERA ||

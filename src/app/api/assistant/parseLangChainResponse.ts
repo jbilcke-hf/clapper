@@ -8,7 +8,7 @@ export function parseLangChainResponse(
   const assistantMessage: AssistantMessage = {
     comment: '',
     action: AssistantAction.NONE,
-    updatedStorySentences: [],
+    updatedStoryBlocks: [],
     updatedSceneSegments: [],
   }
   /*
@@ -71,6 +71,22 @@ export function parseLangChainResponse(
           startTimeInMs,
           endTimeInMs,
           category,
+        })
+      }
+    }
+
+    i = 0
+    for (const block of langChainResponse.updatedStoryBlocks || []) {
+      i++
+      const blockId = isValidNumber(block.blockId) ? block.blockId! : i
+
+      // TODO: rename block.block to block.text or block.content it would be better
+      const textBlock = `${block.block || ''}`
+      // we assume no prompt is an error
+      if (textBlock) {
+        assistantMessage.updatedStoryBlocks.push({
+          blockId,
+          block: textBlock,
         })
       }
     }
