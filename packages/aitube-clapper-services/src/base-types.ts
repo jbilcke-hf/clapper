@@ -172,12 +172,6 @@ export interface ImageSegment {
   score: number;
 }
 
-export type AssistantInput = {
-  directorRequest: string
-  storySentences: AssistantStorySentence[]
-  sceneSegments: AssistantSceneSegment[]
-}
-
 export type AssistantSceneSegment = {
   segmentId: number
   prompt: string
@@ -186,9 +180,15 @@ export type AssistantSceneSegment = {
   category: string
 }
 
-export type AssistantStorySentence = {
-  sentenceId: number
-  sentence: string
+export type AssistantStoryBlock = {
+  blockId: number
+  block: string
+}
+
+export type AssistantInput = {
+  directorRequest: string
+  storyBlocks: AssistantStoryBlock[]
+  sceneSegments: AssistantSceneSegment[]
 }
 
 export enum AssistantAction {
@@ -207,6 +207,6 @@ export enum AssistantAction {
 export type AssistantMessage = {
   comment: string;
   action: AssistantAction;
-  updatedStorySentences: AssistantStorySentence[];
+  updatedStoryBlocks: AssistantStoryBlock[];
   updatedSceneSegments: AssistantSceneSegment[];
 };

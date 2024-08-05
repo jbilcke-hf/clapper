@@ -21,7 +21,7 @@ export {
 export {
   AssistantInput,
   AssistantSceneSegment,
-  AssistantStorySentence,
+  AssistantStoryBlock,
   AssistantAction,
   AssistantMessage,
   ChatEvent,
