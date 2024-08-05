@@ -14,7 +14,7 @@ export function useVoiceAssistant() {
   const stop = useMic((s) => s.stop)
   const clear = useMic((s) => s.clear)
 
-  const debouncedTranscript = useDebounce(transcript, 300)
+  const debouncedTranscript = useDebounce(transcript, 1200)
 
   useEffect(() => {
     processUserMessage(transcript)

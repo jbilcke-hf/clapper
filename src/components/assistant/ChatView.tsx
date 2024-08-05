@@ -1,21 +1,21 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { ChatEventVisibility } from '@aitube/clapper-services'
 
-import { useAssistant } from '@/services/assistant/useAssistant'
+import { useAssistant, useTheme } from '@/services'
 
 import { ChatBubble } from './ChatBubble'
 import { Input } from '../ui/input'
-import { useTheme } from '@/services/ui/useTheme'
-import { ChatEventVisibility } from '@aitube/clapper-services'
 
 export function ChatView() {
-  const [_isPending, startTransition] = useTransition()
   const theme = useTheme()
 
   const [draft, setDraft] = useState('')
   const history = useAssistant((s) => s.history)
   const processUserMessage = useAssistant((s) => s.processUserMessage)
+
+  const chatContainerRef = useRef<HTMLDivElement>(null)
 
   const handleSubmit = () => {
     const message = draft.trim()
@@ -25,12 +25,18 @@ export function ChatView() {
     }
 
     setDraft('')
-    processUserMessage(draft.trim())
+    processUserMessage(message)
   }
 
   const visibleHistory = history.filter(
     (event) => event.visibility !== ChatEventVisibility.TO_ASSISTANT_ONLY
   )
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
+    }
+  }, [visibleHistory])
 
   return (
     <div
@@ -40,7 +46,10 @@ export function ChatView() {
       }}
     >
       <div className="flex h-full w-full flex-col">
-        <div className="flex flex-grow overflow-y-scroll">
+        <div
+          ref={chatContainerRef}
+          className="flex flex-grow overflow-y-scroll"
+        >
           <div className="flex w-full flex-col space-y-6 p-2">
             {visibleHistory.map((event) => (
               <ChatBubble key={event.eventId} {...event} />

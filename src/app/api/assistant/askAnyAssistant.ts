@@ -27,7 +27,7 @@ import {
   AssistantMessage,
   AssistantRequest,
   AssistantSceneSegment,
-  AssistantStorySentence,
+  AssistantStoryBlock,
   ComputeProvider,
   ChatEventVisibility,
 } from '@aitube/clapper-services'
@@ -124,17 +124,17 @@ export async function askAnyAssistant({
     ['human', humanTemplate],
   ])
 
-  //const storySentences: AssistantStorySentence[] = fullScene.split(/(?:. |\n)/).map(storySentence => {
+  //const storyBlocks: AssistantStorySentence[] = fullScene.split(/(?:. |\n)/).map(storySentence => {
   //})
 
-  const storySentences: AssistantStorySentence[] = [
+  const storyBlocks: AssistantStoryBlock[] = [
     {
-      sentenceId: 0,
-      sentence: fullScene,
+      blockId: 0,
+      block: fullScene,
     },
     {
-      sentenceId: 1,
-      sentence: actionLine,
+      blockId: 1,
+      block: actionLine,
     },
   ]
 
@@ -151,7 +151,7 @@ export async function askAnyAssistant({
   // TODO put this into a type
   const inputData: AssistantInput = {
     directorRequest: prompt,
-    storySentences,
+    storyBlocks,
     sceneSegments,
   }
 
@@ -162,7 +162,7 @@ export async function askAnyAssistant({
   let assistantMessage: AssistantMessage = {
     comment: '',
     action: AssistantAction.NONE,
-    updatedStorySentences: [],
+    updatedStoryBlocks: [],
     updatedSceneSegments: [],
   }
   try {
@@ -199,11 +199,14 @@ export async function askAnyAssistant({
           }
         ),
     })
+    // console.log('Lanchain success on the first time! rawResponse:', rawResponse)
 
     assistantMessage = parseLangChainResponse(rawResponse)
+    // console.log('assistantMessage:', assistantMessage)
   } catch (err) {
     // LangChain failure (this happens quite often, actually)
 
+    // console.log(`Langchain error:\n${err}`)
     let errorPlainText = `${err}`
 
     // Markdown formatting failure
@@ -229,7 +232,7 @@ export async function askAnyAssistant({
         assistantMessage.comment = errorPlainText || ''
         assistantMessage.action = AssistantAction.NONE
         assistantMessage.updatedSceneSegments = []
-        assistantMessage.updatedStorySentences = []
+        assistantMessage.updatedStoryBlocks = []
         if (!errorPlainText) {
           throw new Error(
             `failed to repair the output from LangChain (empty string)`

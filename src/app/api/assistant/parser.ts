@@ -45,20 +45,22 @@ export const zAssistantSceneSegment = z.object({
 })
 
 export const zAssistantStorySentence = z.object({
-  sentenceId: z.number().describe('unique identifier'),
-  sentence: z
+  blockId: z.number().describe('unique identifier for the story block'),
+  block: z
     .string()
-    .describe('A sentence extracted from the story plain-text.'),
+    .describe(
+      'A text block extracted from the story plain text. Can be about the general story, a specific scene like the current one.'
+    ),
 })
 
 export const zAssistantMessage = z.object({
   comment: z
     .string()
     .describe(
-      'A free-form comment and chat message, allowing you to answer to the user directly.'
+      'A free-form comment and chat message, allowing the assistant (aka you) to directly address, answer or question the director (aka user).'
     ),
   action: zAssistantAction,
-  updatedStorySentences: z.array(zAssistantStorySentence),
+  updatedStoryBlocks: z.array(zAssistantStorySentence),
   updatedSceneSegments: z.array(zAssistantSceneSegment),
 })
 

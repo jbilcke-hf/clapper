@@ -1,3 +1,4 @@
+import { useTimeline } from '@aitube/timeline'
 import { useTasks } from '@/components/tasks/useTasks'
 import { useAssistant } from './assistant/useAssistant'
 import { useMic } from './mic/useMic'
@@ -45,4 +46,5 @@ if (typeof window !== 'undefined') {
   w.useSimulator = useSimulator
   w.useUI = useUI
   w.useWindows = useWindows
+  w.useTimeine = useTimeline
 }
