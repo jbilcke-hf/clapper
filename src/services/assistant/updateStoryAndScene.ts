@@ -1,4 +1,4 @@
-import { ClapSegment, ClapSegmentCategory, newSegment } from '@aitube/clap'
+import { ClapOutputType, ClapSegment, ClapSegmentCategory, newSegment } from '@aitube/clap'
 import {
   AssistantMessage,
   AssistantSceneSegment,
@@ -76,6 +76,8 @@ export async function updateStoryAndScene({
       prompt: prompt,
       label: prompt,
       category,
+      // TODO put SOUND in here
+      // outputType: category === ClapSegmentCategory.SOUND || category === ClapSegmentCategory.MUSIC || category === ClapSegmentCategory.DIALOGUE
     }
 
     const segment: TimelineSegment = await clapSegmentToTimelineSegment(
@@ -150,6 +152,7 @@ export async function updateStoryAndScene({
             newSegment({
               ...segmentProperties,
               category: ClapSegmentCategory.VIDEO,
+              outputType: ClapOutputType.VIDEO,
             })
           )
         )
@@ -158,6 +161,7 @@ export async function updateStoryAndScene({
             newSegment({
               ...segmentProperties,
               category: ClapSegmentCategory.STORYBOARD,
+              outputType: ClapOutputType.IMAGE
             })
           )
         )
