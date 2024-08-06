@@ -14,11 +14,9 @@ export function useVoiceAssistant() {
   const stop = useMic((s) => s.stop)
   const clear = useMic((s) => s.clear)
 
-  const debouncedTranscript = useDebounce(transcript, 1200)
-
   useEffect(() => {
-    processUserMessage(debouncedTranscript)
-  }, [debouncedTranscript, processUserMessage])
+    processUserMessage(transcript)
+  }, [transcript, processUserMessage])
 
   return {
     isSupported,

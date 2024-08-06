@@ -58,8 +58,10 @@ Each item describes a different property (or facet) of the scene, based on its c
 - Remember, if the director is asking to edit the video project data structure, you MUST only return the item object, in JSON format.
 - If you don't understand how to modify, it's okay to say you don't understand and politely ask for clarification.
 - When you edit a JSON list, sure to recopy the id for each field exactly like it is in the original, otherwise it breaks everything.
-- The director might give a query in English, French, Spanish.. but the movie scene is in English.
+- The director might give a query in French, English, Spanish.. but the movie scene is in English.
 - ALWAYS write the output in English: if the query is in another language, translate it to English.
+- When updating a scene (with UPDATE_STORY_AND_SCENE) never forget to update the updatedSceneSegments array!
+- Also when updating a scene segments, NEVER, EVER FORGET ABOUT THE CAMERA SEGMENTS! BEcause this is how we actually split our scene into separate shots!
 - Important: if the director is asking a QUESTION ("who is.. what is.. please analyze etc..") then DO NOT return JSON, but raw text instead`
 
 export const examples = `
