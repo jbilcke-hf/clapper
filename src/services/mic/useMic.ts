@@ -5,6 +5,8 @@ import { MicStore } from '@aitube/clapper-services'
 
 import { getDefaultMicState } from './getDefaultMicState'
 
+const cutoffTimeInMs = 1200
+
 export const useMic = create<MicStore>((set, get) => ({
   ...getDefaultMicState(),
 
@@ -28,20 +30,50 @@ export const useMic = create<MicStore>((set, get) => ({
       })
     }
 
-    recognition.interimResults = interimResults
+    recognition.interimResults = true
     recognition.lang = lang
-    recognition.continuous = continuous
+    recognition.continuous = true
 
     const speechRecognitionList = new window.webkitSpeechGrammarList()
     speechRecognitionList.addFromString(grammar, grammarWeight)
     recognition.grammars = speechRecognitionList
 
+    let debounceTimer: NodeJS.Timeout | null = null
+    let lastCompleteTranscript = ''
+    let currentTranscript = ''
+    let lastSpeechTime = Date.now()
+
     const handleResult = (event: SpeechRecognitionEvent) => {
-      let transcript = ''
-      for (let i = 0; i < event.results.length; i++) {
-        transcript += event.results?.[i]?.[0]?.transcript || ''
+      const currentTime = Date.now()
+      
+      // Check if it's been more than $cutoffTimeInMs since the last speech
+      if (currentTime - lastSpeechTime > cutoffTimeInMs) {
+        lastCompleteTranscript = ''
+        currentTranscript = ''
       }
-      set({ transcript })
+      
+      lastSpeechTime = currentTime
+
+      // Get the most recent result
+      const latestResult = event.results[event.results.length - 1]
+      currentTranscript = latestResult[0].transcript.trim()
+
+      // If it's a final result, update lastCompleteTranscript
+      if (latestResult.isFinal) {
+        lastCompleteTranscript = currentTranscript
+      }
+
+      const fullTranscript = lastCompleteTranscript + 
+        (currentTranscript !== lastCompleteTranscript ? ' ' + currentTranscript : '')
+
+      if (debounceTimer) {
+        clearTimeout(debounceTimer)
+      }
+
+      debounceTimer = setTimeout(() => {
+        set({ transcript: fullTranscript.trim() })
+        debounceTimer = null
+      }, cutoffTimeInMs)
     }
 
     const handleError = (event: SpeechRecognitionErrorEvent) => {
@@ -54,7 +86,13 @@ export const useMic = create<MicStore>((set, get) => ({
     }
 
     const handleEnd = () => {
-      set({ isListening: false, transcript: '' })
+      if (debounceTimer) {
+        clearTimeout(debounceTimer)
+        const fullTranscript = lastCompleteTranscript + 
+          (currentTranscript !== lastCompleteTranscript ? ' ' + currentTranscript : '')
+        set({ transcript: fullTranscript.trim() })
+      }
+      set({ isListening: false })
     }
 
     recognition.addEventListener('result', handleResult)

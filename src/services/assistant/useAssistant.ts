@@ -37,8 +37,6 @@ import { parseRawInputToAction } from './parseRawInputToAction'
 import { useAudio } from '../audio/useAudio'
 import { updateStoryAndScene } from './updateStoryAndScene'
 
-const enableTextToSpeech = false
-
 export const useAssistant = create<AssistantStore>((set, get) => ({
   ...getDefaultAssistantState(),
 
@@ -181,6 +179,8 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
     if (!message) {
       return
     }
+
+    console.log('processUserMessage():', input)
 
     const { addEventToHistory, processActionOrMessage } = get()
     const {
