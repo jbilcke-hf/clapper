@@ -16,6 +16,7 @@ import { RedrawButton } from "./RedrawButton"
 import { AudioCell } from "./AudioCell"
 import { useThree } from "@react-three/fiber"
 import { SegmentArea } from "@/types/timeline"
+import { SegmentIcon } from "../icons/SegmentIcon"
 
 export function Cell({
   segment: s
@@ -240,7 +241,17 @@ export function Cell({
           isResizing={isResizing}
           track={tracks[s.track]}
         />
-       </Suspense>
+      </Suspense>
+       
+      {/*
+      if you manage to make this component work,
+      let me know.. 
+      
+      (s.category !== ClapSegmentCategory.STORYBOARD && 
+       s.category !== ClapSegmentCategory.VIDEO) 
+      && <SegmentIcon category={s.category} />
+      */}
+
       {
         // TODO also add the buttons to Dialogue, Sound, Music etc..
         // also maybe fix the display, as when zoomed out it doesn't look good
