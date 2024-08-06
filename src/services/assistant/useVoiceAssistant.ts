@@ -17,7 +17,7 @@ export function useVoiceAssistant() {
   const debouncedTranscript = useDebounce(transcript, 1200)
 
   useEffect(() => {
-    processUserMessage(transcript)
+    processUserMessage(debouncedTranscript)
   }, [debouncedTranscript, processUserMessage])
 
   return {
