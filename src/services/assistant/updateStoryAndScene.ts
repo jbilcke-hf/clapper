@@ -1,4 +1,9 @@
-import { ClapOutputType, ClapSegment, ClapSegmentCategory, newSegment } from '@aitube/clap'
+import {
+  ClapOutputType,
+  ClapSegment,
+  ClapSegmentCategory,
+  newSegment,
+} from '@aitube/clap'
 import {
   AssistantMessage,
   AssistantSceneSegment,
@@ -163,7 +168,7 @@ export async function updateStoryAndScene({
               ...segmentProperties,
               prompt: 'movie still',
               category: ClapSegmentCategory.STORYBOARD,
-              outputType: ClapOutputType.IMAGE
+              outputType: ClapOutputType.IMAGE,
             })
           )
         )

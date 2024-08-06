@@ -66,9 +66,9 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
       lastPublished: current,
     })
 
-    console.log('state:', { current, lastPublished })
+    // console.log('state:', { current, lastPublished })
 
-    if (!lastPublished || !current) {
+    if (!lastPublished || !current || current === lastPublished) {
       return
     }
 
@@ -82,8 +82,8 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
     }
     const existingText = lastPublished.slice(0, i)
     const newTextAddition = current.slice(i)
-    console.log('existingText:', existingText)
-    console.log('newTextAddition:', newTextAddition)
+    // console.log('existingText:', existingText)
+    // console.log('newTextAddition:', newTextAddition)
 
     const assistant = useAssistant.getState()
 
