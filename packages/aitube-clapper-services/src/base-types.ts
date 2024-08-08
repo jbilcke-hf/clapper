@@ -38,37 +38,6 @@ export enum SettingsCategory {
   SOUND = "SOUND"
 }
 
-export enum ComputeProvider {
-  NONE = "NONE",
-  CUSTOM = "CUSTOM",
-  HUGGINGFACE = "HUGGINGFACE", // https://huggingface.co
-  COMFY_HUGGINGFACE = "COMFY_HUGGINGFACE", // https://huggingface.co
-  REPLICATE = "REPLICATE", // https://replicate.com
-  COMFY_REPLICATE = "COMFY_REPLICATE", // https://replicate.com
-  COMFY_COMFYICU = "COMFY_COMFYICU", // https://comfy.icu
-  ELEVENLABS = "ELEVENLABS", // https://elevenlabs.io
-  KITSAI = "KITSAI", // https://kits.ai
-  OPENAI = "OPENAI", // https://openai.com
-  STABILITYAI = "STABILITYAI", // https://stability.ai
-  FIREWORKSAI = "FIREWORKSAI", // https://fireworks.ai
-  GROQ = "GROQ", // https://groq.com
-  ANTHROPIC = "ANTHROPIC", // https://anthropic.com
-  GOOGLE = "GOOGLE", // https://google.com (in case you didn't know)
-  MISTRALAI = "MISTRALAI", // https://mistral.ai
-  COHERE = "COHERE", // https://cohere.com
-  FALAI = "FALAI", // https://fal.ai
-  MODELSLAB = "MODELSLAB", // https://modelslab.com
-  MIDJOURNEY = "MIDJOURNEY",
-  SUNO = "SUNO",
-  UDIO = "UDIO",
-  LUMALABS = "LUMALABS",
-  KUAISHOU = "KUAISHOU",
-  RUNWAYML = "RUNWAYML",
-  HEDRA = "HEDRA",
-  LEONARDOAI = "LEONARDOAI",
-  EVERARTAI = "EVERARTAI",
-}
-
 export enum ComfyIcuAccelerator {
   T4 = "T4",
   L4 = "L4",
@@ -218,35 +187,4 @@ export enum ProjectCreationWizardStep {
   NONE = "NONE",
   CHOOSE_CATEGORY = "CHOOSE_CATEGORY",
   CREATE_FROM_PROMPT = "CREATE_FROM_PROMPT",
-}
-
-
-// note: it could be argued that image filtering and upscaling
-// are both subsets of the same general concept of "image to image"
-// and.. yes, that's true!
-// there are only separated for convenient, to add some semantic
-// to those abstract image-to-image models.
-export enum WorkflowCategory {
-  IMAGE_GENERATION = "IMAGE_GENERATION",
-  IMAGE_FILTERING = "IMAGE_FILTERING",
-  IMAGE_UPSCALING = "IMAGE_UPSCALING",
-  IMAGE_DEPTH_MAPPING = "IMAGE_DEPTH_MAPPING",
-  IMAGE_SEGMENTATION = "IMAGE_SEGMENTATION",
-  MUSIC_GENERATION = "MUSIC_GENERATION",
-  SOUND_GENERATION = "SOUND_GENERATION",
-  VOICE_GENERATION = "VOICE_GENERATION",
-  VIDEO_GENERATION = "VIDEO_GENERATION",
-  VIDEO_FILTERING = "VIDEO_FILTERING",
-  VIDEO_UPSCALING = "VIDEO_UPSCALING",
-  VIDEO_DEPTH_MAPPING = "VIDEO_DEPTH_MAPPING",
-  VIDEO_SEGMENTATION = "VIDEO_SEGMENTATION",
-}
-
-export type Workflow = {
-  provider: ComputeProvider
-  category: WorkflowCategory
-  workflow: ClapWorkflow
-
-  // used in the UI, to determine if a workflow is current active or not
-  isActive?: boolean
 }

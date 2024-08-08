@@ -28,7 +28,6 @@ export {
   ChatEventVisibility,
   ChatHistory,
   SettingsCategory,
-  ComputeProvider,
   ComfyIcuAccelerator,
   ResolveRequestPrompts,
   ComfyParameter,
@@ -38,8 +37,6 @@ export {
   StabilityAiGenerationMode,
   ImageSegment,
   ProjectCreationWizardStep,
-  WorkflowCategory,
-  Workflow,
 } from "./base-types"
 
 export {
