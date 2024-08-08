@@ -1,9 +1,9 @@
-import { ClapWorkflowProvider } from "@aitube/clap"
+import { ClapWorkflow, ClapWorkflowProvider } from "@aitube/clap"
 import { RenderingStrategy } from "@aitube/timeline"
 
 import { ComfyIcuAccelerator } from "./base-types"
 
-export type SettingsState = {
+export type BaseSettings = {
   customComfyUiApiKey: string
   replicateApiKey: string
   comfyIcuApiKey: string
@@ -38,22 +38,6 @@ export type SettingsState = {
   videoPromptPrefix: string
   videoPromptSuffix: string
   videoNegativePrompt: string
-  
-
-  assistantWorkflow: string
-  assistantTurboWorkflow: string
-  imageGenerationWorkflow: string
-  imageGenerationTurboWorkflow: string
-  imageUpscalingWorkflow: string
-  imageDepthWorkflow: string
-  imageSegmentationWorkflow: string
-  videoGenerationWorkflow: string
-  videoUpscalingWorkflow: string
-  videoDepthWorkflow: string
-  videoSegmentationWorkflow: string
-  soundGenerationWorkflow: string
-  voiceGenerationWorkflow: string
-  musicGenerationWorkflow: string
 
   imageRenderingStrategy: RenderingStrategy
   imageUpscalingRenderingStrategy: RenderingStrategy
@@ -89,6 +73,44 @@ export type SettingsState = {
 
   scriptEditorShowLineNumbers: boolean
   scriptEditorShowMinimap: boolean
+}
+
+// Settings are serialized to the local storage,
+// and we want to keep them lightweight
+export type SettingsState = BaseSettings & {
+  assistantWorkflow: string
+  assistantTurboWorkflow: string
+  imageGenerationWorkflow: string
+  imageGenerationTurboWorkflow: string
+  imageUpscalingWorkflow: string
+  imageDepthWorkflow: string
+  imageSegmentationWorkflow: string
+  videoGenerationWorkflow: string
+  videoUpscalingWorkflow: string
+  videoDepthWorkflow: string
+  videoSegmentationWorkflow: string
+  soundGenerationWorkflow: string
+  voiceGenerationWorkflow: string
+  musicGenerationWorkflow: string
+}
+
+// those settings are used for requests to the AI Assistant,
+// or to resolve segments
+export type RequestSettings = BaseSettings & {
+  assistantWorkflow: ClapWorkflow
+  assistantTurboWorkflow: ClapWorkflow
+  imageGenerationWorkflow: ClapWorkflow
+  imageGenerationTurboWorkflow: ClapWorkflow
+  imageUpscalingWorkflow: ClapWorkflow
+  imageDepthWorkflow: ClapWorkflow
+  imageSegmentationWorkflow: ClapWorkflow
+  videoGenerationWorkflow: ClapWorkflow
+  videoUpscalingWorkflow: ClapWorkflow
+  videoDepthWorkflow: ClapWorkflow
+  videoSegmentationWorkflow: ClapWorkflow
+  soundGenerationWorkflow: ClapWorkflow
+  voiceGenerationWorkflow: ClapWorkflow
+  musicGenerationWorkflow: ClapWorkflow
 }
 
 export type SettingsControls = {
@@ -165,7 +187,12 @@ export type SettingsControls = {
   setScriptEditorShowLineNumbers: (scriptEditorShowLineNumbers: boolean) => void
   setScriptEditorShowMinimap: (scriptEditorShowMinimap: boolean) => void
 
-  getSettings: () => SettingsState
+  /**
+   * Return settings that can be used for a request
+   * 
+   * @returns
+   */
+  getRequestSettings: () => RequestSettings
 }
 
 export type SettingsStore =
