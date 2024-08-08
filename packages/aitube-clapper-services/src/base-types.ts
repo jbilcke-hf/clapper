@@ -1,3 +1,5 @@
+import { ClapWorkflow } from "@aitube/clap"
+
 export enum ChatEventVisibility {
   TO_ASSISTANT_ONLY = 'TO_ASSISTANT_ONLY',
   TO_USER_ONLY = 'TO_USER_ONLY',
@@ -210,3 +212,41 @@ export type AssistantMessage = {
   updatedStoryBlocks: AssistantStoryBlock[];
   updatedSceneSegments: AssistantSceneSegment[];
 };
+
+
+export enum ProjectCreationWizardStep {
+  NONE = "NONE",
+  CHOOSE_CATEGORY = "CHOOSE_CATEGORY",
+  CREATE_FROM_PROMPT = "CREATE_FROM_PROMPT",
+}
+
+
+// note: it could be argued that image filtering and upscaling
+// are both subsets of the same general concept of "image to image"
+// and.. yes, that's true!
+// there are only separated for convenient, to add some semantic
+// to those abstract image-to-image models.
+export enum WorkflowCategory {
+  IMAGE_GENERATION = "IMAGE_GENERATION",
+  IMAGE_FILTERING = "IMAGE_FILTERING",
+  IMAGE_UPSCALING = "IMAGE_UPSCALING",
+  IMAGE_DEPTH_MAPPING = "IMAGE_DEPTH_MAPPING",
+  IMAGE_SEGMENTATION = "IMAGE_SEGMENTATION",
+  MUSIC_GENERATION = "MUSIC_GENERATION",
+  SOUND_GENERATION = "SOUND_GENERATION",
+  VOICE_GENERATION = "VOICE_GENERATION",
+  VIDEO_GENERATION = "VIDEO_GENERATION",
+  VIDEO_FILTERING = "VIDEO_FILTERING",
+  VIDEO_UPSCALING = "VIDEO_UPSCALING",
+  VIDEO_DEPTH_MAPPING = "VIDEO_DEPTH_MAPPING",
+  VIDEO_SEGMENTATION = "VIDEO_SEGMENTATION",
+}
+
+export type Workflow = {
+  provider: ComputeProvider
+  category: WorkflowCategory
+  workflow: ClapWorkflow
+
+  // used in the UI, to determine if a workflow is current active or not
+  isActive?: boolean
+}

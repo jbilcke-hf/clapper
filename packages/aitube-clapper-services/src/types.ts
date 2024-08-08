@@ -1,8 +1,5 @@
 import { ClapEntity, ClapMeta } from "@aitube/clap"
 
-// TODO: export this one in a more proper way
-import { ClapInputField } from "@aitube/clap/dist/types"
-
 import { TimelineSegment } from "@aitube/timeline"
 
 import { SettingsState } from "./settings"
@@ -50,10 +47,4 @@ export type AssistantRequest = {
   projectInfo: string
 
   history: ChatEvent[]
-}
-
-export enum ProjectCreationWizardStep {
-  NONE = "NONE",
-  CHOOSE_CATEGORY = "CHOOSE_CATEGORY",
-  CREATE_FROM_PROMPT = "CREATE_FROM_PROMPT",
 }

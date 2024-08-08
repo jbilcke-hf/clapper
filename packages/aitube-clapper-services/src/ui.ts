@@ -1,6 +1,5 @@
 import { ClapTimelineTheme } from "@aitube/timeline"
-import { SettingsCategory } from "./base-types"
-import { ProjectCreationWizardStep } from "./types"
+import { ProjectCreationWizardStep, SettingsCategory } from "./base-types"
 import { WorkflowEditorTheme } from "./workflow-editor"
 
 export type UIThemeName = 
