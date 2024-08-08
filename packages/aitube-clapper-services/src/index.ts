@@ -37,6 +37,9 @@ export {
   StabilityAiImageSize,
   StabilityAiGenerationMode,
   ImageSegment,
+  ProjectCreationWizardStep,
+  WorkflowCategory,
+  Workflow,
 } from "./base-types"
 
 export {
@@ -195,7 +198,6 @@ export {
 export {
   ResolveRequest,
   AssistantRequest,
-  ProjectCreationWizardStep,
 } from "./types"
 
 export {
