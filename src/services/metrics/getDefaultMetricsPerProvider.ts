@@ -1,93 +1,96 @@
-import { ComputeProvider } from '@aitube/clapper-services'
+import { ClapWorkflowProvider } from '@aitube/clap'
 
 import { MetricsPerProvider } from './types'
-import { getDefaultComputeProviderMetrics } from './getDefaultComputeProviderMetrics'
+import { getDefaultClapWorkflowProviderMetrics } from './getDefaultClapWorkflowProviderMetrics'
 
 export function getDefaultMetricsPerProvider(): MetricsPerProvider {
   const metricsPerProvider: MetricsPerProvider = {
-    [ComputeProvider.NONE]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.NONE]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.CUSTOM]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.BUILTIN]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.HUGGINGFACE]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.CUSTOM]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.COMFY_HUGGINGFACE]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.HUGGINGFACE]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.REPLICATE]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.COMFY_HUGGINGFACE]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.COMFY_REPLICATE]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.REPLICATE]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.COMFY_COMFYICU]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.COMFY_REPLICATE]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.ELEVENLABS]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.COMFY_COMFYICU]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.OPENAI]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.ELEVENLABS]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.STABILITYAI]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.OPENAI]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.FIREWORKSAI]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.STABILITYAI]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.GROQ]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.FIREWORKSAI]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.FALAI]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.GROQ]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.MODELSLAB]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.FALAI]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.KITSAI]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.MODELSLAB]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.ANTHROPIC]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.KITSAI]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.GOOGLE]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.ANTHROPIC]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.MISTRALAI]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.GOOGLE]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.COHERE]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.MISTRALAI]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.MIDJOURNEY]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.COHERE]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.SUNO]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.MIDJOURNEY]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.UDIO]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.SUNO]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.LUMALABS]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.UDIO]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.KUAISHOU]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.LUMALABS]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.RUNWAYML]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.KUAISHOU]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.HEDRA]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.RUNWAYML]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.LEONARDOAI]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.HEDRA]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ComputeProvider.EVERARTAI]: {
-      ...getDefaultComputeProviderMetrics(),
+    [ClapWorkflowProvider.LEONARDOAI]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
+    },
+    [ClapWorkflowProvider.EVERARTAI]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
     },
   }
   return metricsPerProvider

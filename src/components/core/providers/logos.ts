@@ -1,4 +1,4 @@
-import { ComputeProvider } from '@aitube/clapper-services'
+import { ClapWorkflowProvider } from '@aitube/clap'
 
 const none = '/images/providers/none.png'
 const anthropic = '/images/providers/anthropic.png'
@@ -25,33 +25,35 @@ const stabilityai = '/images/providers/stabilityai.png'
 const suno = '/images/providers/suno.png'
 const udio = '/images/providers/udio.png'
 
-export const computeProvidersLogos: Record<ComputeProvider, string> = {
-  [ComputeProvider.NONE]: none,
-  [ComputeProvider.ANTHROPIC]: anthropic,
-  [ComputeProvider.COHERE]: cohere,
-  [ComputeProvider.ELEVENLABS]: elevenlabs,
-  [ComputeProvider.FALAI]: falai,
-  [ComputeProvider.FIREWORKSAI]: fireworks,
-  [ComputeProvider.GOOGLE]: google,
-  [ComputeProvider.GROQ]: groq,
-  [ComputeProvider.HEDRA]: hedra,
-  [ComputeProvider.HUGGINGFACE]: huggingface,
-  [ComputeProvider.KITSAI]: kitsai,
-  [ComputeProvider.LUMALABS]: lumalabs,
-  [ComputeProvider.MIDJOURNEY]: midjourney,
-  [ComputeProvider.MISTRALAI]: mistralai,
-  [ComputeProvider.MODELSLAB]: modelslab,
-  [ComputeProvider.OPENAI]: openai,
-  [ComputeProvider.REPLICATE]: replicate,
-  [ComputeProvider.RUNWAYML]: runwayml,
-  [ComputeProvider.STABILITYAI]: stabilityai,
-  [ComputeProvider.SUNO]: suno,
-  [ComputeProvider.UDIO]: udio,
-  [ComputeProvider.CUSTOM]: none,
-  [ComputeProvider.COMFY_HUGGINGFACE]: huggingface,
-  [ComputeProvider.COMFY_REPLICATE]: replicate,
-  [ComputeProvider.COMFY_COMFYICU]: none,
-  [ComputeProvider.KUAISHOU]: kuaishou,
-  [ComputeProvider.LEONARDOAI]: leonardoai,
-  [ComputeProvider.EVERARTAI]: everartai,
-}
+export const ClapWorkflowProvidersLogos: Record<ClapWorkflowProvider, string> =
+  {
+    [ClapWorkflowProvider.NONE]: none,
+    [ClapWorkflowProvider.BUILTIN]: none, // <- TODO: use Clapper logo here
+    [ClapWorkflowProvider.ANTHROPIC]: anthropic,
+    [ClapWorkflowProvider.COHERE]: cohere,
+    [ClapWorkflowProvider.ELEVENLABS]: elevenlabs,
+    [ClapWorkflowProvider.FALAI]: falai,
+    [ClapWorkflowProvider.FIREWORKSAI]: fireworks,
+    [ClapWorkflowProvider.GOOGLE]: google,
+    [ClapWorkflowProvider.GROQ]: groq,
+    [ClapWorkflowProvider.HEDRA]: hedra,
+    [ClapWorkflowProvider.HUGGINGFACE]: huggingface,
+    [ClapWorkflowProvider.KITSAI]: kitsai,
+    [ClapWorkflowProvider.LUMALABS]: lumalabs,
+    [ClapWorkflowProvider.MIDJOURNEY]: midjourney,
+    [ClapWorkflowProvider.MISTRALAI]: mistralai,
+    [ClapWorkflowProvider.MODELSLAB]: modelslab,
+    [ClapWorkflowProvider.OPENAI]: openai,
+    [ClapWorkflowProvider.REPLICATE]: replicate,
+    [ClapWorkflowProvider.RUNWAYML]: runwayml,
+    [ClapWorkflowProvider.STABILITYAI]: stabilityai,
+    [ClapWorkflowProvider.SUNO]: suno,
+    [ClapWorkflowProvider.UDIO]: udio,
+    [ClapWorkflowProvider.CUSTOM]: none,
+    [ClapWorkflowProvider.COMFY_HUGGINGFACE]: huggingface,
+    [ClapWorkflowProvider.COMFY_REPLICATE]: replicate,
+    [ClapWorkflowProvider.COMFY_COMFYICU]: none,
+    [ClapWorkflowProvider.KUAISHOU]: kuaishou,
+    [ClapWorkflowProvider.LEONARDOAI]: leonardoai,
+    [ClapWorkflowProvider.EVERARTAI]: everartai,
+  }

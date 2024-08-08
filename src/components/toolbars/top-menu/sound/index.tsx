@@ -16,7 +16,7 @@ import { useUI } from '@/services/ui'
 
 import { RenderingStrategyList } from '../lists/RenderingStrategyList'
 import { SettingsCategory } from '@aitube/clapper-services'
-import { SoundGenerationModelList } from '../lists/SoundGenerationModelList'
+import { SoundGenerationWorkflows } from '../lists/SoundGenerationWorkflows'
 import { useResolver } from '@/services/resolver/useResolver'
 import { IsBusy } from '../IsBusy'
 
@@ -45,7 +45,7 @@ export function TopMenuSound() {
             Show advanced settings
           </MenubarItem>
           <MenubarSeparator />
-          <SoundGenerationModelList />
+          <SoundGenerationWorkflows />
           <RenderingStrategyList
             current={soundRenderingStrategy}
             setter={setSoundRenderingStrategy}

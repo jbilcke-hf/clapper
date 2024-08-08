@@ -2,155 +2,29 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { getValidNumber } from '@aitube/clap'
+import { getValidNumber, ClapWorkflowProvider } from '@aitube/clap'
 import { parseRenderingStrategy, RenderingStrategy } from '@aitube/timeline'
 import {
   ComfyIcuAccelerator,
-  ComputeProvider,
+  RequestSettings,
   SettingsState,
   SettingsStore,
 } from '@aitube/clapper-services'
 
-import {
-  getValidBoolean,
-  getValidString,
-  parseComputeProvider,
-} from '@/lib/utils'
+import { getValidBoolean, getValidString } from '@/lib/utils'
 import { HARD_LIMIT_NB_MAX_ASSETS_TO_GENERATE_IN_PARALLEL } from '@/lib/core/constants'
 
 import { getDefaultSettingsState } from './getDefaultSettingsState'
 import { getValidComfyWorkflowTemplate } from '@/lib/utils/getValidComfyWorkflowTemplate'
 import { parseComfyIcuAccelerator } from '@/lib/utils/parseComfyIcuAccelerator'
+import { findWorkflows } from '@/components/toolbars/top-menu/lists/getWorkflowProviders'
+import { useWorkflowEditor } from '../editors'
 
 export const useSettings = create<SettingsStore>()(
   persist(
     (set, get) => ({
       ...getDefaultSettingsState(),
 
-      setAssistantProvider: (assistantProvider?: ComputeProvider) => {
-        const { videoProvider: defaultAssistantProvider } =
-          getDefaultSettingsState()
-        set({
-          assistantProvider: parseComputeProvider(
-            assistantProvider,
-            defaultAssistantProvider
-          ),
-        })
-      },
-      setImageProvider: (imageProvider?: ComputeProvider) => {
-        const { imageProvider: defaultImageProvider } =
-          getDefaultSettingsState()
-        set({
-          imageProvider: parseComputeProvider(
-            imageProvider,
-            defaultImageProvider
-          ),
-        })
-      },
-      setImageDepthProvider: (imageDepthProvider?: ComputeProvider) => {
-        const { imageDepthProvider: defaultImageDepthProvider } =
-          getDefaultSettingsState()
-        set({
-          imageDepthProvider: parseComputeProvider(
-            imageDepthProvider,
-            defaultImageDepthProvider
-          ),
-        })
-      },
-      setImageSegmentationProvider: (
-        imageSegmentationProvider?: ComputeProvider
-      ) => {
-        const { imageSegmentationProvider: defaultImageSegmentationProvider } =
-          getDefaultSettingsState()
-        set({
-          imageSegmentationProvider: parseComputeProvider(
-            imageSegmentationProvider,
-            defaultImageSegmentationProvider
-          ),
-        })
-      },
-      setImageUpscalingProvider: (imageUpscalingProvider?: ComputeProvider) => {
-        const { imageUpscalingProvider: defaultImageUpscalingProvider } =
-          getDefaultSettingsState()
-        set({
-          imageUpscalingProvider: parseComputeProvider(
-            imageUpscalingProvider,
-            defaultImageUpscalingProvider
-          ),
-        })
-      },
-      setVideoProvider: (videoProvider?: ComputeProvider) => {
-        const { videoProvider: defaultVideoProvider } =
-          getDefaultSettingsState()
-        set({
-          videoProvider: parseComputeProvider(
-            videoProvider,
-            defaultVideoProvider
-          ),
-        })
-      },
-      setVideoDepthProvider: (videoDepthProvider?: ComputeProvider) => {
-        const { videoDepthProvider: defaultVideoDepthProvider } =
-          getDefaultSettingsState()
-        set({
-          videoDepthProvider: parseComputeProvider(
-            videoDepthProvider,
-            defaultVideoDepthProvider
-          ),
-        })
-      },
-      setVideoSegmentationProvider: (
-        videoSegmentationProvider?: ComputeProvider
-      ) => {
-        const { videoSegmentationProvider: defaultVideoSegmentationProvider } =
-          getDefaultSettingsState()
-        set({
-          videoSegmentationProvider: parseComputeProvider(
-            videoSegmentationProvider,
-            defaultVideoSegmentationProvider
-          ),
-        })
-      },
-      setVideoUpscalingProvider: (videoUpscalingProvider?: ComputeProvider) => {
-        const { videoUpscalingProvider: defaultVideoUpscalingProvider } =
-          getDefaultSettingsState()
-        set({
-          videoUpscalingProvider: parseComputeProvider(
-            videoUpscalingProvider,
-            defaultVideoUpscalingProvider
-          ),
-        })
-      },
-      setVoiceProvider: (voiceProvider?: ComputeProvider) => {
-        const { voiceProvider: defaultSpeechProvider } =
-          getDefaultSettingsState()
-        set({
-          voiceProvider: parseComputeProvider(
-            voiceProvider,
-            defaultSpeechProvider
-          ),
-        })
-      },
-      setSoundProvider: (soundProvider?: ComputeProvider) => {
-        const { soundProvider: defaultSoundProvider } =
-          getDefaultSettingsState()
-        set({
-          soundProvider: parseComputeProvider(
-            soundProvider,
-            defaultSoundProvider
-          ),
-        })
-      },
-      setMusicProvider: (musicProvider?: ComputeProvider) => {
-        const { musicProvider: defaultMusicProvider } =
-          getDefaultSettingsState()
-        set({
-          musicProvider: parseComputeProvider(
-            musicProvider,
-            defaultMusicProvider
-          ),
-        })
-      },
       setCustomComfyUiApiKey: (customComfyUiApiKey?: string) => {
         const { customComfyUiApiKey: defaulCustomComfyUiApiKey } =
           getDefaultSettingsState()
@@ -363,140 +237,146 @@ export const useSettings = create<SettingsStore>()(
           ),
         })
       },
-      setAssistantModel: (assistantModel?: string) => {
-        const { assistantModel: defaultAssistantModel } =
+      setAssistantWorkflow: (assistantWorkflow?: string) => {
+        const { assistantWorkflow: defaultAssistantWorkflow } =
           getDefaultSettingsState()
         set({
-          assistantModel: getValidString(assistantModel, defaultAssistantModel),
-        })
-      },
-      setAssistantTurboModel: (assistantTurboModel?: string) => {
-        const { assistantTurboModel: defaultAssistantTurboModel } =
-          getDefaultSettingsState()
-        set({
-          assistantTurboModel: getValidString(
-            assistantTurboModel,
-            defaultAssistantTurboModel
+          assistantWorkflow: getValidString(
+            assistantWorkflow,
+            defaultAssistantWorkflow
           ),
         })
       },
-      setImageGenerationModel: (imageGenerationModel?: string) => {
-        const { imageGenerationModel: defaultImageGenerationModel } =
+      setAssistantTurboWorkflow: (assistantTurboWorkflow?: string) => {
+        const { assistantTurboWorkflow: defaultAssistantTurboWorkflow } =
           getDefaultSettingsState()
         set({
-          imageGenerationModel: getValidString(
-            imageGenerationModel,
-            defaultImageGenerationModel
+          assistantTurboWorkflow: getValidString(
+            assistantTurboWorkflow,
+            defaultAssistantTurboWorkflow
           ),
         })
       },
-      setImageGenerationTurboModel: (imageGenerationTurboModel?: string) => {
-        const { imageGenerationTurboModel: defaultImageGenerationTurboModel } =
+      setImageGenerationWorkflow: (imageGenerationWorkflow?: string) => {
+        const { imageGenerationWorkflow: defaultImageGenerationWorkflow } =
           getDefaultSettingsState()
         set({
-          imageGenerationTurboModel: getValidString(
-            imageGenerationTurboModel,
-            defaultImageGenerationTurboModel
+          imageGenerationWorkflow: getValidString(
+            imageGenerationWorkflow,
+            defaultImageGenerationWorkflow
           ),
         })
       },
-      setImageUpscalingModel: (imageUpscalingModel?: string) => {
-        const { imageUpscalingModel: defaultImageUpscalingModel } =
-          getDefaultSettingsState()
+      setImageGenerationTurboWorkflow: (
+        imageGenerationTurboWorkflow?: string
+      ) => {
+        const {
+          imageGenerationTurboWorkflow: defaultImageGenerationTurboWorkflow,
+        } = getDefaultSettingsState()
         set({
-          imageUpscalingModel: getValidString(
-            imageUpscalingModel,
-            defaultImageUpscalingModel
+          imageGenerationTurboWorkflow: getValidString(
+            imageGenerationTurboWorkflow,
+            defaultImageGenerationTurboWorkflow
           ),
         })
       },
-      setImageDepthModel: (imageDepthModel?: string) => {
-        const { imageDepthModel: defaultImageDepthModel } =
+      setImageUpscalingWorkflow: (imageUpscalingWorkflow?: string) => {
+        const { imageUpscalingWorkflow: defaultImageUpscalingWorkflow } =
           getDefaultSettingsState()
         set({
-          imageDepthModel: getValidString(
-            imageDepthModel,
-            defaultImageDepthModel
+          imageUpscalingWorkflow: getValidString(
+            imageUpscalingWorkflow,
+            defaultImageUpscalingWorkflow
           ),
         })
       },
-      setImageSegmentationModel: (imageSegmentationModel?: string) => {
-        const { imageSegmentationModel: defaultImageSegmentationModel } =
+      setImageDepthWorkflow: (imageDepthWorkflow?: string) => {
+        const { imageDepthWorkflow: defaultImageDepthWorkflow } =
           getDefaultSettingsState()
         set({
-          imageSegmentationModel: getValidString(
-            imageSegmentationModel,
-            defaultImageSegmentationModel
+          imageDepthWorkflow: getValidString(
+            imageDepthWorkflow,
+            defaultImageDepthWorkflow
           ),
         })
       },
-      setVideoGenerationModel: (videoGenerationModel?: string) => {
-        const { videoGenerationModel: defaultVideoGenerationModel } =
+      setImageSegmentationWorkflow: (imageSegmentationWorkflow?: string) => {
+        const { imageSegmentationWorkflow: defaultImageSegmentationWorkflow } =
           getDefaultSettingsState()
         set({
-          videoGenerationModel: getValidString(
-            videoGenerationModel,
-            defaultVideoGenerationModel
+          imageSegmentationWorkflow: getValidString(
+            imageSegmentationWorkflow,
+            defaultImageSegmentationWorkflow
           ),
         })
       },
-      setVideoUpscalingModel: (videoUpscalingModel?: string) => {
-        const { videoUpscalingModel: defaultVideoUpscalingModel } =
+      setVideoGenerationWorkflow: (videoGenerationWorkflow?: string) => {
+        const { videoGenerationWorkflow: defaultVideoGenerationWorkflow } =
           getDefaultSettingsState()
         set({
-          videoUpscalingModel: getValidString(
-            videoUpscalingModel,
-            defaultVideoUpscalingModel
+          videoGenerationWorkflow: getValidString(
+            videoGenerationWorkflow,
+            defaultVideoGenerationWorkflow
           ),
         })
       },
-      setVideoDepthModel: (videoDepthModel?: string) => {
-        const { videoDepthModel: defaultVideoDepthModel } =
+      setVideoUpscalingWorkflow: (videoUpscalingWorkflow?: string) => {
+        const { videoUpscalingWorkflow: defaultVideoUpscalingWorkflow } =
           getDefaultSettingsState()
         set({
-          videoDepthModel: getValidString(
-            videoDepthModel,
-            defaultVideoDepthModel
+          videoUpscalingWorkflow: getValidString(
+            videoUpscalingWorkflow,
+            defaultVideoUpscalingWorkflow
           ),
         })
       },
-      setVideoSegmentationModel: (videoSegmentationModel?: string) => {
-        const { videoSegmentationModel: defaultVideoSegmentationModel } =
+      setVideoDepthWorkflow: (videoDepthWorkflow?: string) => {
+        const { videoDepthWorkflow: defaultVideoDepthWorkflow } =
           getDefaultSettingsState()
         set({
-          videoSegmentationModel: getValidString(
-            videoSegmentationModel,
-            defaultVideoSegmentationModel
+          videoDepthWorkflow: getValidString(
+            videoDepthWorkflow,
+            defaultVideoDepthWorkflow
           ),
         })
       },
-      setSoundGenerationModel: (soundGenerationModel?: string) => {
-        const { soundGenerationModel: defaultSoundGenerationModel } =
+      setVideoSegmentationWorkflow: (videoSegmentationWorkflow?: string) => {
+        const { videoSegmentationWorkflow: defaultVideoSegmentationWorkflow } =
           getDefaultSettingsState()
         set({
-          soundGenerationModel: getValidString(
-            soundGenerationModel,
-            defaultSoundGenerationModel
+          videoSegmentationWorkflow: getValidString(
+            videoSegmentationWorkflow,
+            defaultVideoSegmentationWorkflow
           ),
         })
       },
-      setVoiceGenerationModel: (voiceGenerationModel?: string) => {
-        const { voiceGenerationModel: defaultVoiceGenerationModel } =
+      setSoundGenerationWorkflow: (soundGenerationWorkflow?: string) => {
+        const { soundGenerationWorkflow: defaultSoundGenerationWorkflow } =
           getDefaultSettingsState()
         set({
-          voiceGenerationModel: getValidString(
-            voiceGenerationModel,
-            defaultVoiceGenerationModel
+          soundGenerationWorkflow: getValidString(
+            soundGenerationWorkflow,
+            defaultSoundGenerationWorkflow
           ),
         })
       },
-      setMusicGenerationModel: (musicGenerationModel?: string) => {
-        const { musicGenerationModel: defaultVoiceGenerationModel } =
+      setVoiceGenerationWorkflow: (voiceGenerationWorkflow?: string) => {
+        const { voiceGenerationWorkflow: defaultVoiceGenerationWorkflow } =
           getDefaultSettingsState()
         set({
-          musicGenerationModel: getValidString(
-            musicGenerationModel,
-            defaultVoiceGenerationModel
+          voiceGenerationWorkflow: getValidString(
+            voiceGenerationWorkflow,
+            defaultVoiceGenerationWorkflow
+          ),
+        })
+      },
+      setMusicGenerationWorkflow: (musicGenerationWorkflow?: string) => {
+        const { musicGenerationWorkflow: defaultVoiceGenerationWorkflow } =
+          getDefaultSettingsState()
+        set({
+          musicGenerationWorkflow: getValidString(
+            musicGenerationWorkflow,
+            defaultVoiceGenerationWorkflow
           ),
         })
       },
@@ -970,35 +850,86 @@ export const useSettings = create<SettingsStore>()(
         set({ kitsAiModelForVoice: getValidString(kitsAiModelForVoice, getDefaultSettingsState().kitsAiModelForVoice) })
       },
       */
-      getSettings: (): SettingsState => {
+      getRequestSettings: (): RequestSettings => {
         const state = get()
         const defaultSettings = getDefaultSettingsState()
+
+        const availableWorkflows =
+          useWorkflowEditor.getState().availableWorkflows
+
+        const assistantWorkflowId =
+          state.assistantWorkflow || defaultSettings.assistantWorkflow
+
+        const assistantTurboWorkflowId =
+          state.assistantTurboWorkflow || defaultSettings.assistantTurboWorkflow
+
+        const imageGenerationWorkflowId =
+          state.imageGenerationWorkflow ||
+          defaultSettings.imageGenerationWorkflow
+
+        const imageGenerationTurboWorkflowId =
+          state.imageGenerationTurboWorkflow ||
+          defaultSettings.imageGenerationTurboWorkflow
+
+        const imageUpscalingWorkflowId =
+          state.imageUpscalingWorkflow || defaultSettings.imageUpscalingWorkflow
+
+        const imageDepthWorkflowId =
+          state.imageDepthWorkflow || defaultSettings.imageDepthWorkflow
+
+        const imageSegmentationWorkflowId =
+          state.imageSegmentationWorkflow ||
+          defaultSettings.imageSegmentationWorkflow
+
+        const videoGenerationWorkflowId =
+          state.videoGenerationWorkflow ||
+          defaultSettings.videoGenerationWorkflow
+
+        const videoDepthWorkflowId =
+          state.videoDepthWorkflow || defaultSettings.videoDepthWorkflow
+
+        const videoSegmentationWorkflowId =
+          state.videoSegmentationWorkflow ||
+          defaultSettings.videoSegmentationWorkflow
+
+        const videoUpscalingWorkflowId =
+          state.videoUpscalingWorkflow || defaultSettings.videoUpscalingWorkflow
+
+        const soundGenerationWorkflowId =
+          state.soundGenerationWorkflow ||
+          defaultSettings.soundGenerationWorkflow
+
+        const voiceGenerationWorkflowId =
+          state.voiceGenerationWorkflow ||
+          defaultSettings.voiceGenerationWorkflow
+
+        const musicGenerationWorkflowId =
+          state.musicGenerationWorkflow ||
+          defaultSettings.musicGenerationWorkflow
+
+        const { workflowIds } = findWorkflows(availableWorkflows, {
+          workflowIds: [
+            assistantWorkflowId,
+            assistantTurboWorkflowId,
+            imageGenerationWorkflowId,
+            imageGenerationTurboWorkflowId,
+            imageUpscalingWorkflowId,
+            imageDepthWorkflowId,
+            imageSegmentationWorkflowId,
+            videoGenerationWorkflowId,
+            videoDepthWorkflowId,
+            videoSegmentationWorkflowId,
+            videoUpscalingWorkflowId,
+            soundGenerationWorkflowId,
+            voiceGenerationWorkflowId,
+            musicGenerationWorkflowId,
+          ],
+        })
+
         return {
           // why do we need those fallbacks? because some users will leave the fields empty,
           // eg. an empty model string.. basically we want to allow empty config that still works!
-          assistantProvider:
-            state.assistantProvider || defaultSettings.assistantProvider,
-          imageProvider: state.imageProvider || defaultSettings.imageProvider,
-          imageUpscalingProvider:
-            state.imageUpscalingProvider ||
-            defaultSettings.imageUpscalingProvider,
-          imageDepthProvider:
-            state.imageDepthProvider || defaultSettings.imageDepthProvider,
-          imageSegmentationProvider:
-            state.imageSegmentationProvider ||
-            defaultSettings.imageSegmentationProvider,
-          videoProvider: state.videoProvider || defaultSettings.videoProvider,
-          videoUpscalingProvider:
-            state.videoUpscalingProvider ||
-            defaultSettings.videoUpscalingProvider,
-          videoDepthProvider:
-            state.videoDepthProvider || defaultSettings.videoDepthProvider,
-          videoSegmentationProvider:
-            state.videoSegmentationProvider ||
-            defaultSettings.videoSegmentationProvider,
-          soundProvider: state.soundProvider || defaultSettings.soundProvider,
-          voiceProvider: state.voiceProvider || defaultSettings.voiceProvider,
-          musicProvider: state.musicProvider || defaultSettings.musicProvider,
+
           customComfyUiApiKey:
             state.customComfyUiApiKey || defaultSettings.customComfyUiApiKey,
           replicateApiKey:
@@ -1054,40 +985,21 @@ export const useSettings = create<SettingsStore>()(
           videoNegativePrompt:
             state.videoNegativePrompt || defaultSettings.videoNegativePrompt,
 
-          assistantModel:
-            state.assistantModel || defaultSettings.assistantModel,
-          assistantTurboModel:
-            state.assistantTurboModel || defaultSettings.assistantTurboModel,
-
-          imageGenerationModel:
-            state.imageGenerationModel || defaultSettings.imageGenerationModel,
-          imageGenerationTurboModel:
-            state.imageGenerationTurboModel ||
-            defaultSettings.imageGenerationTurboModel,
-          imageUpscalingModel:
-            state.imageUpscalingModel || defaultSettings.imageUpscalingModel,
-          imageDepthModel:
-            state.imageDepthModel || defaultSettings.imageDepthModel,
-          imageSegmentationModel:
-            state.imageSegmentationModel ||
-            defaultSettings.imageSegmentationModel,
-
-          videoGenerationModel:
-            state.videoGenerationModel || defaultSettings.videoGenerationModel,
-          videoDepthModel:
-            state.videoDepthModel || defaultSettings.videoDepthModel,
-          videoSegmentationModel:
-            state.videoSegmentationModel ||
-            defaultSettings.videoSegmentationModel,
-          videoUpscalingModel:
-            state.videoUpscalingModel || defaultSettings.videoUpscalingModel,
-
-          soundGenerationModel:
-            state.soundGenerationModel || defaultSettings.soundGenerationModel,
-          voiceGenerationModel:
-            state.voiceGenerationModel || defaultSettings.voiceGenerationModel,
-          musicGenerationModel:
-            state.musicGenerationModel || defaultSettings.musicGenerationModel,
+          assistantWorkflow: workflowIds[assistantWorkflowId],
+          assistantTurboWorkflow: workflowIds[assistantTurboWorkflowId],
+          imageGenerationWorkflow: workflowIds[imageGenerationWorkflowId],
+          imageGenerationTurboWorkflow:
+            workflowIds[imageGenerationTurboWorkflowId],
+          imageUpscalingWorkflow: workflowIds[imageUpscalingWorkflowId],
+          imageDepthWorkflow: workflowIds[imageDepthWorkflowId],
+          imageSegmentationWorkflow: workflowIds[imageSegmentationWorkflowId],
+          videoGenerationWorkflow: workflowIds[videoGenerationWorkflowId],
+          videoDepthWorkflow: workflowIds[videoDepthWorkflowId],
+          videoSegmentationWorkflow: workflowIds[videoSegmentationWorkflowId],
+          videoUpscalingWorkflow: workflowIds[videoUpscalingWorkflowId],
+          soundGenerationWorkflow: workflowIds[soundGenerationWorkflowId],
+          voiceGenerationWorkflow: workflowIds[voiceGenerationWorkflowId],
+          musicGenerationWorkflow: workflowIds[musicGenerationWorkflowId],
 
           imageRenderingStrategy:
             state.imageRenderingStrategy ||
@@ -1164,72 +1076,6 @@ export const useSettings = create<SettingsStore>()(
           scriptEditorShowMinimap:
             state.scriptEditorShowMinimap ||
             defaultSettings.scriptEditorShowMinimap,
-          /*
-          should we deprecate this? or rename to "default<something>"?
-          huggingFaceModelForAssistant: state.huggingFaceModelForAssistant || defaultSettings.huggingFaceModelForAssistant,
-          huggingFaceModelForImage: state.huggingFaceModelForImage || defaultSettings.huggingFaceModelForImage,
-          huggingFaceModelForImageDepth: state.huggingFaceModelForImageDepth || defaultSettings.huggingFaceModelForImageDepth,
-          huggingFaceModelForImageSegmentation: state.huggingFaceModelForImageSegmentation || defaultSettings.huggingFaceModelForImageSegmentation,
-          huggingFaceModelForImageUpscaling: state.huggingFaceModelForImageUpscaling || defaultSettings.huggingFaceModelForImageUpscaling,
-          huggingFaceModelForVideo: state.huggingFaceModelForVideo || defaultSettings.huggingFaceModelForVideo,
-          huggingFaceModelForVideoDepth: state.huggingFaceModelForVideoDepth || defaultSettings.huggingFaceModelForVideoDepth,
-          huggingFaceModelForVideoSegmentation: state.huggingFaceModelForVideoSegmentation || defaultSettings.huggingFaceModelForVideoSegmentation,
-          huggingFaceModelForVideoUpscaling: state.huggingFaceModelForVideoUpscaling || defaultSettings.huggingFaceModelForVideoUpscaling,
-          huggingFaceModelForVoice: state.huggingFaceModelForVoice || defaultSettings.huggingFaceModelForVoice,
-          huggingFaceModelForSound: state.huggingFaceModelForSound || defaultSettings.huggingFaceModelForSound,
-          huggingFaceModelForMusic: state.huggingFaceModelForMusic || defaultSettings.huggingFaceModelForMusic,
-          replicateModelForImage: state.replicateModelForImage || defaultSettings.replicateModelForImage,
-          replicateModelForImageDepth: state.replicateModelForImageDepth || defaultSettings.replicateModelForImageDepth,
-          replicateModelForImageSegmentation: state.replicateModelForImageSegmentation || defaultSettings.replicateModelForImageSegmentation,
-          replicateModelForImageUpscaling: state.replicateModelForImageUpscaling || defaultSettings.replicateModelForImageUpscaling,
-          replicateModelForVideo: state.replicateModelForVideo || defaultSettings.replicateModelForVideo,
-          replicateModelForVideoDepth: state.replicateModelForVideoDepth || defaultSettings.replicateModelForVideoDepth,
-          replicateModelForVideoSegmentation: state.replicateModelForVideoSegmentation || defaultSettings.replicateModelForVideoSegmentation,
-          replicateModelForVideoUpscaling: state.replicateModelForVideoUpscaling || defaultSettings.replicateModelForVideoUpscaling,
-          replicateModelForVoice: state.replicateModelForVoice || defaultSettings.replicateModelForVoice,
-          replicateModelForSound: state.replicateModelForSound || defaultSettings.replicateModelForSound,
-          replicateModelForMusic: state.replicateModelForMusic || defaultSettings.replicateModelForMusic,
-          stabilityAiModelForImage: state.stabilityAiModelForImage || defaultSettings.stabilityAiModelForImage,
-          stabilityAiModelForVideo: state.stabilityAiModelForVideo || defaultSettings.stabilityAiModelForVideo,
-          stabilityAiModelForVoice: state.stabilityAiModelForVoice || defaultSettings.stabilityAiModelForVoice,
-          stabilityAiModelForSound: state.stabilityAiModelForSound || defaultSettings.stabilityAiModelForSound,
-          stabilityAiModelForMusic: state.stabilityAiModelForMusic || defaultSettings.stabilityAiModelForMusic,
-          fireworksAiModelForAssistant: state.fireworksAiModelForAssistant || defaultSettings.fireworksAiModelForAssistant,
-          fireworksAiModelForImage: state.fireworksAiModelForImage || defaultSettings.fireworksAiModelForImage,
-          fireworksAiModelForVideo: state.fireworksAiModelForVideo || defaultSettings.fireworksAiModelForVideo,
-          fireworksAiModelForVoice: state.fireworksAiModelForVoice || defaultSettings.fireworksAiModelForVoice,
-          fireworksAiModelForSound: state.fireworksAiModelForSound || defaultSettings.fireworksAiModelForSound,
-          fireworksAiModelForMusic: state.fireworksAiModelForMusic || defaultSettings.fireworksAiModelForMusic,
-          falAiModelForImage: state.falAiModelForImage || defaultSettings.falAiModelForImage,
-          falAiModelForImageDepth: state.falAiModelForImageDepth || defaultSettings.falAiModelForImageDepth,
-          falAiModelForImageUpscaling: state.falAiModelForImageUpscaling || defaultSettings.falAiModelForImageUpscaling,
-          falAiModelForImageSegmentation: state.falAiModelForImageSegmentation || defaultSettings.falAiModelForImageSegmentation,
-          falAiModelForVideo: state.falAiModelForVideo || defaultSettings.falAiModelForVideo,
-          falAiModelForVoice: state.falAiModelForVoice || defaultSettings.falAiModelForVoice,
-          falAiModelForSound: state.falAiModelForSound || defaultSettings.falAiModelForSound,
-          falAiModelForMusic: state.falAiModelForMusic || defaultSettings.falAiModelForMusic,
-          modelsLabModelForImage: state.modelsLabModelForImage || defaultSettings.modelsLabModelForImage,
-          modelsLabModelForVideo: state.modelsLabModelForVideo || defaultSettings.modelsLabModelForVideo,
-          modelsLabModelForVoice: state.modelsLabModelForVoice || defaultSettings.modelsLabModelForVoice,
-          modelsLabModelForSound: state.modelsLabModelForSound || defaultSettings.modelsLabModelForSound,
-          modelsLabModelForMusic: state.modelsLabModelForMusic || defaultSettings.modelsLabModelForMusic,
-          openaiModelForAssistant: state.openaiModelForAssistant || defaultSettings.openaiModelForAssistant,
-          openaiModelForImage: state.openaiModelForImage || defaultSettings.openaiModelForImage,
-          openaiModelForVideo: state.openaiModelForVideo || defaultSettings.openaiModelForVideo,
-          openaiModelForVoice: state.openaiModelForVoice || defaultSettings.openaiModelForVoice,
-          groqModelForAssistant: state.groqModelForAssistant || defaultSettings.groqModelForAssistant,
-          googleModelForAssistant: state.googleModelForAssistant || defaultSettings.googleModelForAssistant,
-          googleModelForImage: state.googleModelForImage || defaultSettings.googleModelForImage,
-          googleModelForVideo: state.googleModelForVideo || defaultSettings.googleModelForVideo,
-          googleModelForVoice: state.googleModelForVoice || defaultSettings.googleModelForVoice,
-          googleModelForMusic: state.googleModelForMusic || defaultSettings.googleModelForMusic,
-          anthropicModelForAssistant: state.anthropicModelForAssistant || defaultSettings.anthropicModelForAssistant,
-          elevenLabsModelForVoice: state.elevenLabsModelForVoice || defaultSettings.elevenLabsModelForVoice,
-          elevenLabsModelForSound: state.elevenLabsModelForSound || defaultSettings.elevenLabsModelForSound,
-          cohereModelForAssistant: state.cohereModelForAssistant || defaultSettings.cohereModelForAssistant,
-          mistralAiModelForAssistant: state.mistralAiModelForAssistant || defaultSettings.mistralAiModelForAssistant,
-          kitsAiModelForVoice: state.kitsAiModelForVoice || defaultSettings.kitsAiModelForVoice,
-          */
         }
       },
     }),

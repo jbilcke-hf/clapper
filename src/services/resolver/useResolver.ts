@@ -450,7 +450,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
   resolveSegment: async (
     segment: TimelineSegment
   ): Promise<TimelineSegment> => {
-    const settings = useSettings.getState().getSettings()
+    const settings = useSettings.getState().getRequestSettings()
 
     const timeline: TimelineStore = useTimeline.getState()
 

@@ -1,20 +1,20 @@
 import { cn } from '@aitube/timeline'
 
-import { ComputeProvider } from '@aitube/clapper-services'
 import { formatProvider } from '@/components/toolbars/top-menu/lists/formatProvider'
 
-import { ComputeProviderLogo } from './ComputeProviderLogo'
+import { ClapWorkflowProviderLogo } from './ClapWorkflowProviderLogo'
+import { ClapWorkflowProvider } from '@aitube/clap'
 
-export function ComputeProviderName({
+export function ClapWorkflowProviderName({
   className = '',
-  children = ComputeProvider.NONE,
+  children = ClapWorkflowProvider.NONE,
 }: {
   className?: string
-  children?: ComputeProvider
+  children?: ClapWorkflowProvider
 }) {
   return (
     <div className={cn(`flex flex-row items-center space-x-2`, className)}>
-      <ComputeProviderLogo
+      <ClapWorkflowProviderLogo
         provider={children}
         height={18}
         className={cn(`rounded-full`)}

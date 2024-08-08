@@ -4,9 +4,9 @@ import { decodeOutput } from '@/lib/utils/decodeOutput'
 import { ResolveRequest } from '@aitube/clapper-services'
 
 export async function generateImage(request: ResolveRequest): Promise<string> {
-  if (!request.settings.imageGenerationModel) {
+  if (!request.settings.imageGenerationWorkflow.data) {
     throw new Error(
-      `HuggingFace.generateImage: cannot generate without a valid imageGenerationModel`
+      `HuggingFace.generateImage: cannot generate without a valid imageGenerationWorkflow`
     )
   }
 
@@ -27,7 +27,7 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
   )
 
   const blob: Blob = await hf.textToImage({
-    model: request.settings.imageGenerationModel,
+    model: request.settings.imageGenerationWorkflow.data,
     inputs: request.prompts.image.positive,
     parameters: {
       height: request.meta.height,

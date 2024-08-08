@@ -1,7 +1,7 @@
 // some providers don't provide APIs to get those statistics
 // so we have to resort to using very approximative estimations
 
-import { ComputeProvider } from '@aitube/clapper-services'
+import { ClapWorkflowProvider } from '@aitube/clap'
 import {
   ProviderMetricsEstimationType,
   ProviderMetricsModelEstimations,
@@ -14,59 +14,60 @@ import {
 // provider load etc.. so sometimes there is a big delta between what
 // is announced on the corporate websites and the reality
 export const estimatedMetrics: Record<
-  ComputeProvider,
+  ClapWorkflowProvider,
   Record<string, ProviderMetricsModelEstimations>
 > = {
-  [ComputeProvider.NONE]: {
+  [ClapWorkflowProvider.BUILTIN]: {},
+  [ClapWorkflowProvider.NONE]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.CUSTOM]: {
+  [ClapWorkflowProvider.CUSTOM]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.HUGGINGFACE]: {
+  [ClapWorkflowProvider.HUGGINGFACE]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.COMFY_HUGGINGFACE]: {
+  [ClapWorkflowProvider.COMFY_HUGGINGFACE]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.REPLICATE]: {
+  [ClapWorkflowProvider.REPLICATE]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.COMFY_REPLICATE]: {
+  [ClapWorkflowProvider.COMFY_REPLICATE]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.COMFY_COMFYICU]: {
+  [ClapWorkflowProvider.COMFY_COMFYICU]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.ELEVENLABS]: {
+  [ClapWorkflowProvider.ELEVENLABS]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.OPENAI]: {
+  [ClapWorkflowProvider.OPENAI]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.STABILITYAI]: {
+  [ClapWorkflowProvider.STABILITYAI]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.FIREWORKSAI]: {},
-  [ComputeProvider.GROQ]: {
+  [ClapWorkflowProvider.FIREWORKSAI]: {},
+  [ClapWorkflowProvider.GROQ]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.KITSAI]: {
+  [ClapWorkflowProvider.KITSAI]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.ANTHROPIC]: {
+  [ClapWorkflowProvider.ANTHROPIC]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.GOOGLE]: {
+  [ClapWorkflowProvider.GOOGLE]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.MISTRALAI]: {
+  [ClapWorkflowProvider.MISTRALAI]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.COHERE]: {
+  [ClapWorkflowProvider.COHERE]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.FALAI]: {
+  [ClapWorkflowProvider.FALAI]: {
     'fal-ai/metavoice-v1': {
       estimationType: ProviderMetricsEstimationType.MANUAL_MEASUREMENTS,
       averageCostPerComputeTimeInSec: 0.0006666666666666666,
@@ -111,34 +112,34 @@ export const estimatedMetrics: Record<
       averageCostPerGeneration: 0.015,
     },
   },
-  [ComputeProvider.MODELSLAB]: {
+  [ClapWorkflowProvider.MODELSLAB]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.MIDJOURNEY]: {
+  [ClapWorkflowProvider.MIDJOURNEY]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.SUNO]: {
+  [ClapWorkflowProvider.SUNO]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.UDIO]: {
+  [ClapWorkflowProvider.UDIO]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.LUMALABS]: {
+  [ClapWorkflowProvider.LUMALABS]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.KUAISHOU]: {
+  [ClapWorkflowProvider.KUAISHOU]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.RUNWAYML]: {
+  [ClapWorkflowProvider.RUNWAYML]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.HEDRA]: {
+  [ClapWorkflowProvider.HEDRA]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.LEONARDOAI]: {
+  [ClapWorkflowProvider.LEONARDOAI]: {
     // TODO list the most popular models
   },
-  [ComputeProvider.EVERARTAI]: {
+  [ClapWorkflowProvider.EVERARTAI]: {
     // TODO list the most popular models
   },
 }

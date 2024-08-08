@@ -27,9 +27,9 @@ export async function generateVideo(request: ResolveRequest): Promise<string> {
     throw new Error(`${TAG}: cannot generate without a valid stabilityAiApiKey`)
   }
 
-  if (!request.settings.videoGenerationModel) {
+  if (!request.settings.videoGenerationWorkflow.data) {
     throw new Error(
-      `${TAG}: cannot generate without a valid videoGenerationModel`
+      `${TAG}: cannot generate without a valid videoGenerationWorkflow`
     )
   }
 

@@ -1,8 +1,12 @@
-import { computeProviderShortNames } from '@/components/settings/constants'
-import { ComputeProvider } from '@aitube/clapper-services'
+import { ClapWorkflowProvider } from '@aitube/clap'
 
-export function formatProvider(computeProvider?: ComputeProvider): string {
+import { ClapWorkflowProviderShortNames } from '@/components/settings/constants'
+
+export function formatProvider(
+  ClapWorkflowProvider?: ClapWorkflowProvider
+): string {
   return `${
-    (computeProviderShortNames as any)[computeProvider || ''] || 'None'
+    (ClapWorkflowProviderShortNames as any)[ClapWorkflowProvider || ''] ||
+    'None'
   }`
 }

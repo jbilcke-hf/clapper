@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/menubar'
 import { useUI } from '@/services/ui'
 import { SettingsCategory } from '@aitube/clapper-services'
-import { AssistantModelList } from '../lists/AssistantModelList'
+import { AssistantWorkflows } from '../lists/AssistantWorkflows'
 import { useAutocomplete } from '@/services/autocomplete/useAutocomplete'
 
 export function TopMenuAssistant() {
@@ -35,7 +35,7 @@ export function TopMenuAssistant() {
             Show advanced settings
           </MenubarItem>
           <MenubarSeparator />
-          <AssistantModelList />
+          <AssistantWorkflows />
           {hasBetaAccess && (
             <>
               <MenubarSeparator />

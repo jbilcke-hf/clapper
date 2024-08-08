@@ -16,7 +16,7 @@ import { useUI } from '@/services/ui'
 
 import { RenderingStrategyList } from '../lists/RenderingStrategyList'
 import { SettingsCategory } from '@aitube/clapper-services'
-import { MusicGenerationModelList } from '../lists/MusicGenerationModelList'
+import { MusicGenerationWorkflows } from '../lists/MusicGenerationWorkflows'
 import { useResolver } from '@/services/resolver/useResolver'
 import { IsBusy } from '../IsBusy'
 
@@ -46,7 +46,7 @@ export function TopMenuMusic() {
             Show advanced settings
           </MenubarItem>
           <MenubarSeparator />
-          <MusicGenerationModelList />
+          <MusicGenerationWorkflows />
           <RenderingStrategyList
             current={musicRenderingStrategy}
             setter={setMusicRenderingStrategy}

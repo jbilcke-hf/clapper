@@ -22,10 +22,14 @@ export async function resolveSegment(
 
   const segment: TimelineSegment = request.segment
 
+  let model = request.settings.imageGenerationWorkflow.data || ''
+
   // for doc see:
   // https://fal.ai/models/fal-ai/fast-sdxl/api
 
   if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
+    model = request.settings.imageGenerationWorkflow.data || ''
+
     if (!request.prompts.image.positive) {
       console.error(
         `resolveSegment: cannot resolve a storyboard with an empty prompt`
@@ -42,18 +46,18 @@ export async function resolveSegment(
 
     let result: FalAiImageResponse | undefined = undefined
 
-    if (request.settings.imageGenerationModel === 'fal-ai/pulid') {
+    if (model === 'fal-ai/pulid') {
       if (!request.prompts.image.identity) {
         // throw new Error(`you selected model ${request.settings.falAiModelForImage}, but no character was found, so skipping`)
         // console.log(`warning: user selected model ${request.settings.falAiModelForImage}, but no character was found. Falling back to fal-ai/flux-pro`)
 
         // dirty fix to fallback to a non-face model
-        request.settings.imageGenerationModel = 'fal-ai/flux-pro'
+        model = 'fal-ai/flux-pro'
       }
     }
 
-    if (request.settings.imageGenerationModel === 'fal-ai/pulid') {
-      result = (await fal.run(request.settings.imageGenerationModel, {
+    if (model === 'fal-ai/pulid') {
+      result = (await fal.run(model, {
         input: {
           reference_images: [
             {
@@ -68,16 +72,13 @@ export async function resolveSegment(
         },
       })) as FalAiImageResponse
     } else {
-      result = (await fal.run(request.settings.imageGenerationModel, {
+      result = (await fal.run(model, {
         input: {
           prompt: request.prompts.image.positive,
           image_size: imageSize,
           sync_mode: true,
           num_inference_steps:
-            request.settings.imageGenerationModel ===
-            'fal-ai/stable-diffusion-v3-medium'
-              ? 40
-              : 25,
+            model === 'fal-ai/stable-diffusion-v3-medium' ? 40 : 25,
           num_images: 1,
           enable_safety_checker:
             request.settings.censorNotForAllAudiencesContent,
@@ -95,8 +96,10 @@ export async function resolveSegment(
 
     segment.assetUrl = result.images[0]?.url || ''
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
+    model = request.settings.videoGenerationWorkflow.data || ''
+
     // console.log(`request.settings.falAiModelForVideo = `, request.settings.falAiModelForVideo)
-    if (request.settings.videoGenerationModel !== 'fal-ai/stable-video') {
+    if (model !== 'fal-ai/stable-video') {
       throw new Error(
         `only "fal-ai/stable-video" is supported by Clapper for the moment`
       )
@@ -110,7 +113,7 @@ export async function resolveSegment(
         `cannot generate a video without a storyboard (the concept of Clapper is to use storyboards)`
       )
     }
-    const result = (await fal.run(request.settings.videoGenerationModel, {
+    const result = (await fal.run(model, {
       input: {
         image_url: storyboard.assetUrl,
 
@@ -141,7 +144,12 @@ export async function resolveSegment(
     request.segment.category === ClapSegmentCategory.SOUND ||
     request.segment.category === ClapSegmentCategory.MUSIC
   ) {
-    const result = (await fal.run(request.settings.soundGenerationModel, {
+    model =
+      request.segment.category === ClapSegmentCategory.MUSIC
+        ? request.settings.musicGenerationWorkflow.data
+        : request.settings.soundGenerationWorkflow.data
+
+    const result = (await fal.run(model, {
       input: {
         // note how we use the *segment* prompt for music or sound
         prompt: request.segment.prompt,
@@ -153,7 +161,9 @@ export async function resolveSegment(
 
     segment.assetUrl = result?.audio_file?.url || ''
   } else if (request.segment.category === ClapSegmentCategory.DIALOGUE) {
-    const result = (await fal.run(request.settings.voiceGenerationModel, {
+    model = request.settings.voiceGenerationWorkflow.data || ''
+
+    const result = (await fal.run(model, {
       input: {
         text: request.segment.prompt,
 

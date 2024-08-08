@@ -197,7 +197,7 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
     // but a snapshot of the serializable state values only
     //
     // when need that because we are going send those settings in HTTPS to our gateway
-    const settings = useSettings.getState().getSettings()
+    const settings = useSettings.getState().getRequestSettings()
 
     addEventToHistory({
       senderId: 'director',
