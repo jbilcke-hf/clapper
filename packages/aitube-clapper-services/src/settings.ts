@@ -1,6 +1,7 @@
+import { ClapWorkflowProvider } from "@aitube/clap"
 import { RenderingStrategy } from "@aitube/timeline"
 
-import { ComfyIcuAccelerator, ComputeProvider } from "./base-types"
+import { ComfyIcuAccelerator } from "./base-types"
 
 export type SettingsState = {
   customComfyUiApiKey: string
@@ -25,19 +26,19 @@ export type SettingsState = {
   broadcastObsServerPort: number
   broadcastObsServerPass: string
 
-  // ------------- CATEGORY PROVIDERS ---------------
-  assistantProvider: ComputeProvider
-  imageProvider: ComputeProvider
-  imageDepthProvider: ComputeProvider
-  imageSegmentationProvider: ComputeProvider
-  imageUpscalingProvider: ComputeProvider
-  videoProvider: ComputeProvider
-  videoDepthProvider: ComputeProvider
-  videoSegmentationProvider: ComputeProvider
-  videoUpscalingProvider: ComputeProvider
-  voiceProvider: ComputeProvider
-  soundProvider: ComputeProvider
-  musicProvider: ComputeProvider
+  // ------------- WORKFLOW EXECUTION PROVIDERS ---------------
+  assistantProvider: ClapWorkflowProvider
+  imageProvider: ClapWorkflowProvider
+  imageDepthProvider: ClapWorkflowProvider
+  imageSegmentationProvider: ClapWorkflowProvider
+  imageUpscalingProvider: ClapWorkflowProvider
+  videoProvider: ClapWorkflowProvider
+  videoDepthProvider: ClapWorkflowProvider
+  videoSegmentationProvider: ClapWorkflowProvider
+  videoUpscalingProvider: ClapWorkflowProvider
+  voiceProvider: ClapWorkflowProvider
+  soundProvider: ClapWorkflowProvider
+  musicProvider: ClapWorkflowProvider
 
   // -------------- SAFETY CHECKER ------------------
 
@@ -123,18 +124,18 @@ export type SettingsControls = {
   setKitsAiApiKey: (kitsAiApiKey?: string) => void
   setStabilityAiApiKey: (stabilityAiApiKey?: string) => void
 
-  setAssistantProvider: (assistantProvider?: ComputeProvider) => void
-  setImageProvider: (imageProvider?: ComputeProvider) => void
-  setImageDepthProvider: (imageDepthProvider?: ComputeProvider) => void
-  setImageSegmentationProvider: (imageSegmentationProvider?: ComputeProvider) => void
-  setImageUpscalingProvider: (imageUpscalingProvider?: ComputeProvider) => void
-  setVideoProvider: (videoProvider?: ComputeProvider) => void
-  setVideoDepthProvider: (videoDepthProvider?: ComputeProvider) => void
-  setVideoSegmentationProvider: (videoSegmentationProvider?: ComputeProvider) => void
-  setVideoUpscalingProvider: (videoUpscalingProvider?: ComputeProvider) => void
-  setVoiceProvider: (voiceProvider?: ComputeProvider) => void
-  setSoundProvider: (soundProvider?: ComputeProvider) => void
-  setMusicProvider: (musicProvider?: ComputeProvider) => void
+  setAssistantProvider: (assistantProvider?: ClapWorkflowProvider) => void
+  setImageProvider: (imageProvider?: ClapWorkflowProvider) => void
+  setImageDepthProvider: (imageDepthProvider?: ClapWorkflowProvider) => void
+  setImageSegmentationProvider: (imageSegmentationProvider?: ClapWorkflowProvider) => void
+  setImageUpscalingProvider: (imageUpscalingProvider?: ClapWorkflowProvider) => void
+  setVideoProvider: (videoProvider?: ClapWorkflowProvider) => void
+  setVideoDepthProvider: (videoDepthProvider?: ClapWorkflowProvider) => void
+  setVideoSegmentationProvider: (videoSegmentationProvider?: ClapWorkflowProvider) => void
+  setVideoUpscalingProvider: (videoUpscalingProvider?: ClapWorkflowProvider) => void
+  setVoiceProvider: (voiceProvider?: ClapWorkflowProvider) => void
+  setSoundProvider: (soundProvider?: ClapWorkflowProvider) => void
+  setMusicProvider: (musicProvider?: ClapWorkflowProvider) => void
 
 
   setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => void
