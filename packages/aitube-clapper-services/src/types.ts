@@ -2,11 +2,11 @@ import { ClapEntity, ClapMeta } from "@aitube/clap"
 
 import { TimelineSegment } from "@aitube/timeline"
 
-import { SettingsState } from "./settings"
+import { RequestSettings, SettingsState } from "./settings"
 import { ChatEvent, ResolveRequestPrompts } from "./base-types"
 
 export type ResolveRequest = {
-  settings: SettingsState
+  settings: RequestSettings
 
   // the reference segment to render (eg. storyboard or video)
   segment: TimelineSegment
@@ -27,7 +27,7 @@ export type ResolveRequest = {
 }
 
 export type AssistantRequest = {
-  settings: SettingsState
+  settings: RequestSettings
 
   prompt: string
 
