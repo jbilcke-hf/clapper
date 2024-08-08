@@ -26,20 +26,6 @@ export type SettingsState = {
   broadcastObsServerPort: number
   broadcastObsServerPass: string
 
-  // ------------- WORKFLOW EXECUTION PROVIDERS ---------------
-  assistantProvider: ClapWorkflowProvider
-  imageProvider: ClapWorkflowProvider
-  imageDepthProvider: ClapWorkflowProvider
-  imageSegmentationProvider: ClapWorkflowProvider
-  imageUpscalingProvider: ClapWorkflowProvider
-  videoProvider: ClapWorkflowProvider
-  videoDepthProvider: ClapWorkflowProvider
-  videoSegmentationProvider: ClapWorkflowProvider
-  videoUpscalingProvider: ClapWorkflowProvider
-  voiceProvider: ClapWorkflowProvider
-  soundProvider: ClapWorkflowProvider
-  musicProvider: ClapWorkflowProvider
-
   // -------------- SAFETY CHECKER ------------------
 
   censorNotForAllAudiencesContent: boolean
@@ -54,20 +40,20 @@ export type SettingsState = {
   videoNegativePrompt: string
   
 
-  assistantModel: string
-  assistantTurboModel: string
-  imageGenerationModel: string
-  imageGenerationTurboModel: string
-  imageUpscalingModel: string
-  imageDepthModel: string
-  imageSegmentationModel: string
-  videoGenerationModel: string
-  videoUpscalingModel: string
-  videoDepthModel: string
-  videoSegmentationModel: string
-  soundGenerationModel: string
-  voiceGenerationModel: string
-  musicGenerationModel: string
+  assistantWorkflow: string
+  assistantTurboWorkflow: string
+  imageGenerationWorkflow: string
+  imageGenerationTurboWorkflow: string
+  imageUpscalingWorkflow: string
+  imageDepthWorkflow: string
+  imageSegmentationWorkflow: string
+  videoGenerationWorkflow: string
+  videoUpscalingWorkflow: string
+  videoDepthWorkflow: string
+  videoSegmentationWorkflow: string
+  soundGenerationWorkflow: string
+  voiceGenerationWorkflow: string
+  musicGenerationWorkflow: string
 
   imageRenderingStrategy: RenderingStrategy
   imageUpscalingRenderingStrategy: RenderingStrategy
@@ -124,20 +110,6 @@ export type SettingsControls = {
   setKitsAiApiKey: (kitsAiApiKey?: string) => void
   setStabilityAiApiKey: (stabilityAiApiKey?: string) => void
 
-  setAssistantProvider: (assistantProvider?: ClapWorkflowProvider) => void
-  setImageProvider: (imageProvider?: ClapWorkflowProvider) => void
-  setImageDepthProvider: (imageDepthProvider?: ClapWorkflowProvider) => void
-  setImageSegmentationProvider: (imageSegmentationProvider?: ClapWorkflowProvider) => void
-  setImageUpscalingProvider: (imageUpscalingProvider?: ClapWorkflowProvider) => void
-  setVideoProvider: (videoProvider?: ClapWorkflowProvider) => void
-  setVideoDepthProvider: (videoDepthProvider?: ClapWorkflowProvider) => void
-  setVideoSegmentationProvider: (videoSegmentationProvider?: ClapWorkflowProvider) => void
-  setVideoUpscalingProvider: (videoUpscalingProvider?: ClapWorkflowProvider) => void
-  setVoiceProvider: (voiceProvider?: ClapWorkflowProvider) => void
-  setSoundProvider: (soundProvider?: ClapWorkflowProvider) => void
-  setMusicProvider: (musicProvider?: ClapWorkflowProvider) => void
-
-
   setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => void
   setImagePromptPrefix: (imagePromptPrefix?: string) => void
   setImagePromptSuffix: (imagePromptSuffix?: string) => void
@@ -146,20 +118,20 @@ export type SettingsControls = {
   setVideoPromptSuffix: (videoPromptSuffix?: string) => void
   setVideoNegativePrompt: (videoNegativePrompt?: string) => void
 
-  setAssistantModel: (assistantModel?: string) => void
-  setAssistantTurboModel: (assistantTurboModel?: string) => void
-  setImageGenerationModel: (imageGenerationModel?: string) => void
-  setImageGenerationTurboModel: (imageGenerationTurboModel?: string) => void
-  setImageUpscalingModel: (imageUpscalingModel?: string) => void
-  setImageDepthModel: (imageDepthModel?: string) => void
-  setImageSegmentationModel: (imageSegmentationModel?: string) => void
-  setVideoGenerationModel: (videoGenerationModel?: string) => void
-  setVideoDepthModel: (videoDepthModel?: string) => void
-  setVideoSegmentationModel: (videoSegmentationModel?: string) => void
-  setVideoUpscalingModel: (videoUpscalingModel?: string) => void
-  setSoundGenerationModel: (soundGenerationModel?: string) => void
-  setVoiceGenerationModel: (voiceGenerationModel?: string) => void
-  setMusicGenerationModel: (musicGenerationModel?: string) => void
+  setAssistantWorkflow: (assistantWorkflow?: string) => void
+  setAssistantTurboWorkflow: (assistantTurboWorkflow?: string) => void
+  setImageGenerationWorkflow: (imageGenerationWorkflow?: string) => void
+  setImageGenerationTurboWorkflow: (imageGenerationTurboWorkflow?: string) => void
+  setImageUpscalingWorkflow: (imageUpscalingWorkflow?: string) => void
+  setImageDepthWorkflow: (imageDepthWorkflow?: string) => void
+  setImageSegmentationWorkflow: (imageSegmentationWorkflow?: string) => void
+  setVideoGenerationWorkflow: (videoGenerationWorkflow?: string) => void
+  setVideoDepthWorkflow: (videoDepthWorkflow?: string) => void
+  setVideoSegmentationWorkflow: (videoSegmentationWorkflow?: string) => void
+  setVideoUpscalingWorkflow: (videoUpscalingWorkflow?: string) => void
+  setSoundGenerationWorkflow: (soundGenerationWorkflow?: string) => void
+  setVoiceGenerationWorkflow: (voiceGenerationWorkflow?: string) => void
+  setMusicGenerationWorkflow: (musicGenerationWorkflow?: string) => void
   
   setImageRenderingStrategy: (imageRenderingStrategy?: RenderingStrategy) => void
   setImageUpscalingRenderingStrategy: (imageUpscalingRenderingStrategy?: RenderingStrategy) => void
