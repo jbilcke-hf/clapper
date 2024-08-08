@@ -1,23 +1,23 @@
-import { ComputeProvider } from '@aitube/clapper-services'
+import { ClapWorkflow, ClapWorkflowProvider } from '@aitube/clap'
 
-export function hasNoPublicAPI(model: string) {
-  model = model.toLowerCase()
+export function hasNoPublicAPI({ provider }: ClapWorkflow) {
+  const providerStr = provider.toLowerCase()
   if (
-    model.includes('no public api') ||
-    model.includes('no api') ||
-    model.includes('not available') ||
-    model.includes('no image api') ||
-    model.includes('no video api') ||
-    model.includes('no music api') ||
-    model.includes('no sound api') ||
-    model.includes('no voice api') ||
-    model.includes('unavailable') ||
-    model === ComputeProvider.SUNO ||
-    model === ComputeProvider.KUAISHOU ||
-    model === ComputeProvider.RUNWAYML ||
-    model === ComputeProvider.LUMALABS ||
-    model === ComputeProvider.HEDRA ||
-    model === ComputeProvider.UDIO
+    provider === ClapWorkflowProvider.SUNO ||
+    provider === ClapWorkflowProvider.KUAISHOU ||
+    provider === ClapWorkflowProvider.RUNWAYML ||
+    provider === ClapWorkflowProvider.LUMALABS ||
+    provider === ClapWorkflowProvider.HEDRA ||
+    provider === ClapWorkflowProvider.UDIO ||
+    providerStr.includes('no public api') ||
+    providerStr.includes('no api') ||
+    providerStr.includes('not available') ||
+    providerStr.includes('no image api') ||
+    providerStr.includes('no video api') ||
+    providerStr.includes('no music api') ||
+    providerStr.includes('no sound api') ||
+    providerStr.includes('no voice api') ||
+    providerStr.includes('unavailable')
   ) {
     return true
   }

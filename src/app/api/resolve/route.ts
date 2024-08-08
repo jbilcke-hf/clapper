@@ -4,6 +4,8 @@ import {
   ClapSegmentCategory,
   ClapSegmentStatus,
   getClapAssetSourceType,
+  ClapWorkflowProvider,
+  ClapWorkflow,
 } from '@aitube/clap'
 
 import {
@@ -16,7 +18,7 @@ import {
   resolveSegmentUsingStabilityAi,
 } from './providers'
 
-import { ComputeProvider, ResolveRequest } from '@aitube/clapper-services'
+import { ResolveRequest } from '@aitube/clapper-services'
 import { decodeOutput } from '@/lib/utils/decodeOutput'
 import { getTypeAndExtension } from '@/lib/utils/getTypeAndExtension'
 import { getMediaInfo } from '@/lib/ffmpeg/getMediaInfo'
@@ -29,18 +31,21 @@ export async function POST(req: NextRequest) {
   // await throwIfInvalidToken(req.headers.get("Authorization"))
   const request = (await req.json()) as ResolveRequest
 
-  const provider =
+  const workflow: ClapWorkflow | undefined =
     request.segment.category === ClapSegmentCategory.STORYBOARD
-      ? request.settings.imageProvider
+      ? request.settings.imageGenerationWorkflow
       : request.segment.category === ClapSegmentCategory.VIDEO
-        ? request.settings.videoProvider
+        ? request.settings.videoGenerationWorkflow
         : request.segment.category === ClapSegmentCategory.DIALOGUE
-          ? request.settings.voiceProvider
+          ? request.settings.voiceGenerationWorkflow
           : request.segment.category === ClapSegmentCategory.SOUND
-            ? request.settings.soundProvider
+            ? request.settings.soundGenerationWorkflow
             : request.segment.category === ClapSegmentCategory.MUSIC
-              ? request.settings.musicProvider
-              : null
+              ? request.settings.musicGenerationWorkflow
+              : undefined
+
+  const provider: ClapWorkflowProvider | undefined =
+    workflow?.provider || undefined
 
   if (!provider) {
     throw new Error(
@@ -50,19 +55,19 @@ export async function POST(req: NextRequest) {
 
   // console.log(`API ResolveRequest = `, request.settings)
   const resolveSegment =
-    provider === ComputeProvider.HUGGINGFACE
+    provider === ClapWorkflowProvider.HUGGINGFACE
       ? resolveSegmentUsingHuggingFace
-      : provider === ComputeProvider.COMFY_HUGGINGFACE
+      : provider === ClapWorkflowProvider.COMFY_HUGGINGFACE
         ? resolveSegmentUsingComfyReplicate
-        : provider === ComputeProvider.REPLICATE
+        : provider === ClapWorkflowProvider.REPLICATE
           ? resolveSegmentUsingReplicate
-          : provider === ComputeProvider.COMFY_COMFYICU
+          : provider === ClapWorkflowProvider.COMFY_COMFYICU
             ? resolveSegmentUsingComfyComfyIcu
-            : provider === ComputeProvider.STABILITYAI
+            : provider === ClapWorkflowProvider.STABILITYAI
               ? resolveSegmentUsingStabilityAi
-              : provider === ComputeProvider.FALAI
+              : provider === ClapWorkflowProvider.FALAI
                 ? resolveSegmentUsingFalAi
-                : provider === ComputeProvider.MODELSLAB
+                : provider === ClapWorkflowProvider.MODELSLAB
                   ? resolveSegmentUsingModelsLab
                   : null
 

@@ -1,6 +1,6 @@
 'use server'
 
-import { ClapSegmentCategory } from '@aitube/clap'
+import { ClapWorkflowProvider } from '@aitube/clap'
 import { RunnableLike } from '@langchain/core/runnables'
 import { ChatPromptValueInterface } from '@langchain/core/prompt_values'
 import {
@@ -28,7 +28,6 @@ import {
   AssistantRequest,
   AssistantSceneSegment,
   AssistantStoryBlock,
-  ComputeProvider,
   ChatEventVisibility,
 } from '@aitube/clapper-services'
 
@@ -65,7 +64,9 @@ export async function askAnyAssistant({
 
   history = [],
 }: AssistantRequest): Promise<AssistantMessage> {
-  const provider = settings.assistantProvider
+  const workflow = settings.assistantWorkflow
+  const provider = workflow.provider
+  const modelName = workflow.data
 
   if (!provider) {
     throw new Error(`Missing assistant provider`)
@@ -74,40 +75,40 @@ export async function askAnyAssistant({
   let coerceable:
     | undefined
     | RunnableLike<ChatPromptValueInterface, AIMessageChunk> =
-    provider === ComputeProvider.GROQ
+    provider === ClapWorkflowProvider.GROQ
       ? new ChatGroq({
           apiKey: settings.groqApiKey,
-          modelName: settings.assistantModel,
+          modelName,
           // temperature: 0.7,
         })
-      : provider === ComputeProvider.OPENAI
+      : provider === ClapWorkflowProvider.OPENAI
         ? new ChatOpenAI({
             openAIApiKey: settings.openaiApiKey,
-            modelName: settings.assistantModel,
+            modelName,
             // temperature: 0.7,
           })
-        : provider === ComputeProvider.ANTHROPIC
+        : provider === ClapWorkflowProvider.ANTHROPIC
           ? new ChatAnthropic({
               anthropicApiKey: settings.anthropicApiKey,
-              modelName: settings.assistantModel,
+              modelName,
               // temperature: 0.7,
             })
-          : provider === ComputeProvider.COHERE
+          : provider === ClapWorkflowProvider.COHERE
             ? new ChatCohere({
                 apiKey: settings.cohereApiKey,
-                model: settings.assistantModel,
+                model: modelName,
                 // temperature: 0.7,
               })
-            : provider === ComputeProvider.MISTRALAI
+            : provider === ClapWorkflowProvider.MISTRALAI
               ? new ChatMistralAI({
                   apiKey: settings.mistralAiApiKey,
-                  modelName: settings.assistantModel,
+                  modelName,
                   // temperature: 0.7,
                 })
-              : provider === ComputeProvider.GOOGLE
+              : provider === ClapWorkflowProvider.GOOGLE
                 ? new ChatVertexAI({
                     apiKey: settings.googleApiKey,
-                    modelName: settings.assistantModel,
+                    modelName,
                     // temperature: 0.7,
                   })
                 : undefined

@@ -15,16 +15,18 @@ import { useSettings } from '@/services/settings'
 import { useUI } from '@/services/ui'
 
 import { RenderingStrategyList } from '../lists/RenderingStrategyList'
-import { ImageGenerationModelList } from '../lists/ImageGenerationModelList'
-import { ImageUpscalingModelList } from '../lists/ImageUpscalingModelList'
+import { ImageGenerationWorkflows } from '../lists/ImageGenerationWorkflows'
+import { ImageUpscalingWorkflows } from '../lists/ImageUpscalingWorkflows'
 import { IsBusy } from '../IsBusy'
 
 import { SettingsCategory } from '@aitube/clapper-services'
 import { useResolver } from '@/services/resolver/useResolver'
-import { ImageDepthModelList } from '../lists/ImageDepthModelList'
-import { ImageSegmentationModelList } from '../lists/ImageSegmentationModelList'
+import { ImageDepthWorkflows } from '../lists/ImageDepthWorkflows'
+import { ImageSegmentationWorkflows } from '../lists/ImageSegmentationWorkflows'
 
 export function TopMenuImage() {
+  const hasBetaAccess = useUI((s) => s.hasBetaAccess)
+
   const nbPendingRequestsForImage = useResolver(
     (s) => s.nbPendingRequestsForImage
   )
@@ -50,10 +52,14 @@ export function TopMenuImage() {
             Show advanced settings
           </MenubarItem>
           <MenubarSeparator />
-          <ImageGenerationModelList />
-          <ImageUpscalingModelList />
-          <ImageDepthModelList />
-          <ImageSegmentationModelList />
+          <ImageGenerationWorkflows />
+          {hasBetaAccess && (
+            <>
+              <ImageUpscalingWorkflows />
+              <ImageDepthWorkflows />
+              <ImageSegmentationWorkflows />
+            </>
+          )}
           <RenderingStrategyList
             current={imageRenderingStrategy}
             setter={setImageRenderingStrategy}

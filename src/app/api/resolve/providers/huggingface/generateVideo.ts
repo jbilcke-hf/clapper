@@ -2,9 +2,9 @@ import { ResolveRequest } from '@aitube/clapper-services'
 import { callGradioApi } from '@/lib/hf/callGradioApi'
 
 export async function generateVideo(request: ResolveRequest): Promise<string> {
-  if (!request.settings.videoGenerationModel) {
+  if (!request.settings.videoGenerationWorkflow.data) {
     throw new Error(
-      `HuggingFace.generateVideo: cannot generate without a valid videoGenerationModel`
+      `HuggingFace.generateVideo: cannot generate without a valid videoGenerationWorkflow.data`
     )
   }
 
@@ -22,7 +22,7 @@ export async function generateVideo(request: ResolveRequest): Promise<string> {
 
   // TODO pass a type to the template function
   const assetUrl = await callGradioApi<string>({
-    url: request.settings.videoGenerationModel,
+    url: request.settings.videoGenerationWorkflow.data,
     inputs: request.prompts.video,
     apiKey: request.settings.huggingFaceApiKey,
   })

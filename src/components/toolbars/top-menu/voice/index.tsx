@@ -15,7 +15,7 @@ import { useSettings } from '@/services/settings'
 import { useUI } from '@/services/ui'
 
 import { RenderingStrategyList } from '../lists/RenderingStrategyList'
-import { VoiceGenerationModelList } from '../lists/VoiceGenerationModelList'
+import { VoiceGenerationWorkflows } from '../lists/VoiceGenerationWorkflows'
 import { SettingsCategory } from '@aitube/clapper-services'
 import { useResolver } from '@/services/resolver/useResolver'
 import { IsBusy } from '../IsBusy'
@@ -45,7 +45,7 @@ export function TopMenuVoice() {
             Show advanced settings
           </MenubarItem>
           <MenubarSeparator />
-          <VoiceGenerationModelList />
+          <VoiceGenerationWorkflows />
           <RenderingStrategyList
             current={voiceRenderingStrategy}
             setter={setVoiceRenderingStrategy}

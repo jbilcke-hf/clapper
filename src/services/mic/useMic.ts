@@ -45,13 +45,13 @@ export const useMic = create<MicStore>((set, get) => ({
 
     const handleResult = (event: SpeechRecognitionEvent) => {
       const currentTime = Date.now()
-      
+
       // Check if it's been more than $cutoffTimeInMs since the last speech
       if (currentTime - lastSpeechTime > cutoffTimeInMs) {
         lastCompleteTranscript = ''
         currentTranscript = ''
       }
-      
+
       lastSpeechTime = currentTime
 
       // Get the most recent result
@@ -63,8 +63,11 @@ export const useMic = create<MicStore>((set, get) => ({
         lastCompleteTranscript = currentTranscript
       }
 
-      const fullTranscript = lastCompleteTranscript + 
-        (currentTranscript !== lastCompleteTranscript ? ' ' + currentTranscript : '')
+      const fullTranscript =
+        lastCompleteTranscript +
+        (currentTranscript !== lastCompleteTranscript
+          ? ' ' + currentTranscript
+          : '')
 
       if (debounceTimer) {
         clearTimeout(debounceTimer)
@@ -88,8 +91,11 @@ export const useMic = create<MicStore>((set, get) => ({
     const handleEnd = () => {
       if (debounceTimer) {
         clearTimeout(debounceTimer)
-        const fullTranscript = lastCompleteTranscript + 
-          (currentTranscript !== lastCompleteTranscript ? ' ' + currentTranscript : '')
+        const fullTranscript =
+          lastCompleteTranscript +
+          (currentTranscript !== lastCompleteTranscript
+            ? ' ' + currentTranscript
+            : '')
         set({ transcript: fullTranscript.trim() })
       }
       set({ isListening: false })

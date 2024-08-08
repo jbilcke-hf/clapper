@@ -3,9 +3,9 @@ import { HfInference, HfInferenceEndpoint } from '@huggingface/inference'
 import { ResolveRequest } from '@aitube/clapper-services'
 
 export async function generateVoice(request: ResolveRequest): Promise<string> {
-  if (!request.settings.voiceGenerationModel) {
+  if (!request.settings.voiceGenerationWorkflow.data) {
     throw new Error(
-      `HuggingFace.generateVoice: cannot generate without a valid voiceGenerationModel`
+      `HuggingFace.generateVoice: cannot generate without a valid voiceGenerationWorkflow`
     )
   }
 
@@ -26,7 +26,7 @@ export async function generateVoice(request: ResolveRequest): Promise<string> {
   )
 
   const blob: Blob = await hf.textToSpeech({
-    model: request.settings.voiceGenerationModel,
+    model: request.settings.voiceGenerationWorkflow.data,
     inputs: request.prompts.voice.positive,
   })
 

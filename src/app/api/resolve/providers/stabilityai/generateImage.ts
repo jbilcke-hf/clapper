@@ -9,7 +9,7 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
     )
   }
 
-  if (!request.settings.imageGenerationModel) {
+  if (!request.settings.imageGenerationWorkflow.data) {
     throw new Error(
       `StabilityAI.generateImage: cannot generate without a valid stabilityAiModelForImage`
     )
@@ -45,7 +45,7 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
   body.set('aspect_ratio', `${aspectRatio || ''}`)
 
   const response = await fetch(
-    `https://api.stability.ai/v2beta/${request.settings.imageGenerationModel}`,
+    `https://api.stability.ai/v2beta/${request.settings.imageGenerationWorkflow.data}`,
     {
       method: 'POST',
       headers: {

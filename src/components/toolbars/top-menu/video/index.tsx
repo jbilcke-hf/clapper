@@ -15,13 +15,13 @@ import { useSettings } from '@/services/settings'
 import { useUI } from '@/services/ui'
 
 import { RenderingStrategyList } from '../lists/RenderingStrategyList'
-import { VideoGenerationModelList } from '../lists/VideoGenerationModelList'
-import { VideoUpscalingModelList } from '../lists/VideoUpscalingModelList'
+import { VideoGenerationWorkflows } from '../lists/VideoGenerationWorkflows'
+import { VideoUpscalingWorkflows } from '../lists/VideoUpscalingWorkflows'
 import { SettingsCategory } from '@aitube/clapper-services'
 import { useResolver } from '@/services/resolver/useResolver'
 import { IsBusy } from '../IsBusy'
-import { VideoDepthModelList } from '../lists/VideoDepthModelList'
-import { VideoSegmentationModelList } from '../lists/VideoSegmentationModelList'
+import { VideoDepthWorkflows } from '../lists/VideoDepthWorkflows'
+import { VideoSegmentationWorkflows } from '../lists/VideoSegmentationWorkflows'
 
 export function TopMenuVideo() {
   const nbPendingRequestsForVideo = useResolver(
@@ -50,10 +50,10 @@ export function TopMenuVideo() {
             Show advanced settings
           </MenubarItem>
           <MenubarSeparator />
-          <VideoGenerationModelList />
-          <VideoUpscalingModelList />
-          <VideoDepthModelList />
-          <VideoSegmentationModelList />
+          <VideoGenerationWorkflows />
+          <VideoUpscalingWorkflows />
+          <VideoDepthWorkflows />
+          <VideoSegmentationWorkflows />
           <RenderingStrategyList
             current={videoRenderingStrategy}
             setter={setVideoRenderingStrategy}

@@ -24,12 +24,16 @@ export async function resolveSegment(
   // like we are doing for Hugging Face (match the fields etc)
   if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
     let params: object = {}
-    if (request.settings.imageGenerationModel === 'fofr/pulid-lightning') {
+    if (
+      request.settings.imageGenerationWorkflow.data === 'fofr/pulid-lightning'
+    ) {
       params = {
         prompt: request.prompts.image.positive,
         face_image: request.prompts.image.identity,
       }
-    } else if (request.settings.imageGenerationModel === 'zsxkib/pulid') {
+    } else if (
+      request.settings.imageGenerationWorkflow.data === 'zsxkib/pulid'
+    ) {
       params = {
         prompt: request.prompts.image.positive,
         main_face_image: request.prompts.image.identity,
@@ -40,13 +44,13 @@ export async function resolveSegment(
       }
     }
     const response = (await replicate.run(
-      request.settings.imageGenerationModel as any,
+      request.settings.imageGenerationWorkflow as any,
       { input: params }
     )) as any
     segment.assetUrl = `${response.output || ''}`
   } else if (request.segment.category === ClapSegmentCategory.DIALOGUE) {
     const response = (await replicate.run(
-      request.settings.voiceGenerationModel as any,
+      request.settings.voiceGenerationWorkflow.data as any,
       {
         input: {
           text: request.prompts.voice.positive,
@@ -57,7 +61,7 @@ export async function resolveSegment(
     segment.assetUrl = `${response.output || ''}`
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
     const response = (await replicate.run(
-      request.settings.videoGenerationModel as any,
+      request.settings.videoGenerationWorkflow.data as any,
       {
         input: {
           image: request.prompts.video.image,

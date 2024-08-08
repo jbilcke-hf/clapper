@@ -1,5 +1,7 @@
 'use client'
 
+import { ClapWorkflowCategory, ClapWorkflowProvider } from '@aitube/clap'
+
 import {
   MenubarCheckboxItem,
   MenubarSub,
@@ -9,25 +11,30 @@ import {
 
 import { TagColor } from '@/components/tags/types'
 import { Tag } from '@/components/tags/Tag'
-import { ComputeProvider } from '@aitube/clapper-services'
-import { availableModelsForAssistant } from '@/components/settings/constants'
 import { useSettings } from '@/services/settings'
-import { ComputeProviderName } from '@/components/core/providers/ComputeProviderName'
-import { ComputeProviderLogo } from '@/components/core/providers/ComputeProviderLogo'
 import { cn } from '@/lib/utils'
 
 import { hasNoPublicAPI } from './hasNoPublicAPI'
+import { useWorkflowEditor } from '@/services/editors'
+import { findWorkflows } from './getWorkflowProviders'
+import {
+  ClapWorkflowProviderLogo,
+  ClapWorkflowProviderName,
+} from '@/components/core/providers'
 
-export function AssistantModelList() {
-  const provider = useSettings((s) => s.assistantProvider)
-  const setProvider = useSettings((s) => s.setAssistantProvider)
-  const model = useSettings((s) => s.assistantModel)
-  const setModel = useSettings((s) => s.setAssistantModel)
+export function AssistantWorkflows() {
+  const workflowId = useSettings((s) => s.assistantWorkflow)
+  const setWorkflowId = useSettings((s) => s.setAssistantWorkflow)
+  const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const availableProviders = Object.keys(
-    availableModelsForAssistant
-  ) as ComputeProvider[]
-  if (!availableProviders) {
+  const { workflows, providers, nbProviders } = findWorkflows(
+    availableWorkflows,
+    { category: ClapWorkflowCategory.ASSISTANT }
+  )
+
+  const { workflow } = findWorkflows(workflows, { workflowId })
+
+  if (!nbProviders) {
     return null
   }
 
@@ -38,40 +45,41 @@ export function AssistantModelList() {
           ai&nbsp;assistant
         </Tag>
         <div className={cn(`flex flex-row items-center space-x-2`)}>
-          <ComputeProviderLogo
-            provider={provider && model ? provider : undefined}
+          <ClapWorkflowProviderLogo
+            provider={workflow?.provider}
             height={18}
             className={cn(`rounded-full`)}
           />
-          <div>{model || 'None'}</div>
+          <div>{workflow?.label || 'None'}</div>
         </div>
       </MenubarSubTrigger>
       <MenubarSubContent>
-        {availableProviders.map((p) => (
+        {Object.entries(providers).map(([p, workflows]) => (
           <MenubarSub key={p}>
             <MenubarSubTrigger>
-              <ComputeProviderName>{p}</ComputeProviderName>
+              <ClapWorkflowProviderName>
+                {p as ClapWorkflowProvider}
+              </ClapWorkflowProviderName>
             </MenubarSubTrigger>
             <MenubarSubContent>
-              {(availableModelsForAssistant[p] || []).map((m) => (
+              {workflows.map((w) => (
                 <MenubarCheckboxItem
-                  key={m}
-                  checked={provider === p && model === m}
-                  disabled={hasNoPublicAPI(m)}
+                  key={w.id}
+                  checked={workflowId === w.id}
+                  disabled={hasNoPublicAPI(w)}
                   onClick={(e) => {
-                    if (hasNoPublicAPI(m)) {
+                    if (hasNoPublicAPI(w)) {
                       e.stopPropagation()
                       e.preventDefault()
                       return false
                     }
-                    setProvider(p)
-                    setModel(m)
+                    setWorkflowId(w.id)
                     e.stopPropagation()
                     e.preventDefault()
                     return false
                   }}
                 >
-                  {m}
+                  {w.label}
                 </MenubarCheckboxItem>
               ))}
             </MenubarSubContent>

@@ -1,4 +1,4 @@
-import { ComputeProvider } from '@aitube/clapper-services'
+import { ClapWorkflowProvider } from '@aitube/clap'
 
 export enum ProviderMetricsEstimationType {
   // the metrics come from the provider's live API,
@@ -34,7 +34,7 @@ export type ProviderMetricsModelStats = {
   totalCost: number
 }
 
-export type ComputeProviderMetrics = {
+export type ClapWorkflowProviderMetrics = {
   // used to estimate live wait times
   averageDurationPerModel: Record<string, number>
 
@@ -48,7 +48,10 @@ export type ComputeProviderMetrics = {
   totalCost: number
 }
 
-export type MetricsPerProvider = Record<ComputeProvider, ComputeProviderMetrics>
+export type MetricsPerProvider = Record<
+  ClapWorkflowProvider,
+  ClapWorkflowProviderMetrics
+>
 
 export type MetricsState = {
   metricsPerProvider: MetricsPerProvider

@@ -1,22 +1,22 @@
 import { cn } from '@aitube/timeline'
 
-import { ComputeProvider } from '@aitube/clapper-services'
 import { formatProvider } from '@/components/toolbars/top-menu/lists/formatProvider'
 
-import { computeProvidersLogos } from './logos'
+import { ClapWorkflowProvidersLogos } from './logos'
+import { ClapWorkflowProvider } from '@aitube/clap'
 
-export function ComputeProviderLogo({
-  provider = ComputeProvider.NONE,
+export function ClapWorkflowProviderLogo({
+  provider = ClapWorkflowProvider.NONE,
   height = 28,
   className = '',
 }: {
-  provider?: ComputeProvider
+  provider?: ClapWorkflowProvider
   height?: number | string
   className?: string
 }) {
   const src =
-    computeProvidersLogos[provider || ComputeProvider.NONE] ||
-    computeProvidersLogos.NONE
+    ClapWorkflowProvidersLogos[provider || ClapWorkflowProvider.NONE] ||
+    ClapWorkflowProvidersLogos.NONE
 
   return (
     <img

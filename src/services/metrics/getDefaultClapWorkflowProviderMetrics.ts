@@ -1,7 +1,7 @@
-import { ComputeProviderMetrics } from './types'
+import { ClapWorkflowProviderMetrics } from './types'
 
-export function getDefaultComputeProviderMetrics(): ComputeProviderMetrics {
-  const metrics: ComputeProviderMetrics = {
+export function getDefaultClapWorkflowProviderMetrics(): ClapWorkflowProviderMetrics {
+  const metrics: ClapWorkflowProviderMetrics = {
     // used to estimate live wait times
     averageDurationPerModel: {},
 

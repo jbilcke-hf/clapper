@@ -1,5 +1,7 @@
 'use client'
 
+import { ClapWorkflowCategory, ClapWorkflowProvider } from '@aitube/clap'
+
 import {
   MenubarCheckboxItem,
   MenubarSub,
@@ -9,26 +11,30 @@ import {
 
 import { TagColor } from '@/components/tags/types'
 import { Tag } from '@/components/tags/Tag'
-import { ComputeProvider } from '@aitube/clapper-services'
-import { availableModelsForMusicGeneration } from '@/components/settings/constants'
 import { useSettings } from '@/services/settings'
-import { ComputeProviderName } from '@/components/core/providers/ComputeProviderName'
-import { ComputeProviderLogo } from '@/components/core/providers/ComputeProviderLogo'
 import { cn } from '@/lib/utils'
 
 import { hasNoPublicAPI } from './hasNoPublicAPI'
-import { formatProvider } from './formatProvider'
+import { useWorkflowEditor } from '@/services/editors'
+import { findWorkflows } from './getWorkflowProviders'
+import {
+  ClapWorkflowProviderLogo,
+  ClapWorkflowProviderName,
+} from '@/components/core/providers'
 
-export function MusicGenerationModelList() {
-  const provider = useSettings((s) => s.musicProvider)
-  const setProvider = useSettings((s) => s.setMusicProvider)
-  const model = useSettings((s) => s.musicGenerationModel)
-  const setModel = useSettings((s) => s.setMusicGenerationModel)
+export function MusicGenerationWorkflows() {
+  const workflowId = useSettings((s) => s.musicGenerationWorkflow)
+  const setWorkflowId = useSettings((s) => s.setMusicGenerationWorkflow)
+  const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const availableProviders = Object.keys(
-    availableModelsForMusicGeneration
-  ) as ComputeProvider[]
-  if (!availableProviders) {
+  const { workflows, providers, nbProviders } = findWorkflows(
+    availableWorkflows,
+    { category: ClapWorkflowCategory.MUSIC_GENERATION }
+  )
+
+  const { workflow } = findWorkflows(workflows, { workflowId })
+
+  if (!nbProviders) {
     return null
   }
 
@@ -39,40 +45,41 @@ export function MusicGenerationModelList() {
           generate&nbsp;music
         </Tag>
         <div className={cn(`flex flex-row items-center space-x-2`)}>
-          <ComputeProviderLogo
-            provider={provider && model ? provider : undefined}
+          <ClapWorkflowProviderLogo
+            provider={workflow?.provider}
             height={18}
             className={cn(`rounded-full`)}
           />
-          <div>{model || 'None'}</div>
+          <div>{workflow?.label || 'None'}</div>
         </div>
       </MenubarSubTrigger>
       <MenubarSubContent>
-        {availableProviders.map((p) => (
+        {Object.entries(providers).map(([p, workflows]) => (
           <MenubarSub key={p}>
             <MenubarSubTrigger>
-              <ComputeProviderName>{p}</ComputeProviderName>
+              <ClapWorkflowProviderName>
+                {p as ClapWorkflowProvider}
+              </ClapWorkflowProviderName>
             </MenubarSubTrigger>
             <MenubarSubContent>
-              {(availableModelsForMusicGeneration[p] || []).map((m) => (
+              {workflows.map((w) => (
                 <MenubarCheckboxItem
-                  key={m}
-                  checked={provider === p && model === m}
-                  disabled={hasNoPublicAPI(m)}
+                  key={w.id}
+                  checked={workflowId === w.id}
+                  disabled={hasNoPublicAPI(w)}
                   onClick={(e) => {
-                    if (hasNoPublicAPI(m)) {
+                    if (hasNoPublicAPI(w)) {
                       e.stopPropagation()
                       e.preventDefault()
                       return false
                     }
-                    setProvider(p)
-                    setModel(m)
+                    setWorkflowId(w.id)
                     e.stopPropagation()
                     e.preventDefault()
                     return false
                   }}
                 >
-                  {m}
+                  {w.label}
                 </MenubarCheckboxItem>
               ))}
             </MenubarSubContent>
