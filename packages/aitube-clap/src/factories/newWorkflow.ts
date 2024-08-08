@@ -1,5 +1,5 @@
-import { ClapWorkflow, ClapWorkflowEngine } from "@/types"
-import { parseWorkflowEngine } from "@/utils"
+import { ClapWorkflow, ClapWorkflowCategory, ClapWorkflowEngine, ClapWorkflowProvider } from "@/types"
+import { parseWorkflowCategory, parseWorkflowEngine, parseWorkflowProvider } from "@/utils"
 import { UUID } from "@/utils/uuid"
 
 export function newWorkflow(maybeWorkflow?: Partial<ClapWorkflow>) {
@@ -12,6 +12,8 @@ export function newWorkflow(maybeWorkflow?: Partial<ClapWorkflow>) {
     author: typeof maybeWorkflow?.author === "string" ? maybeWorkflow.author : "",
     thumbnailUrl: typeof maybeWorkflow?.thumbnailUrl === "string" ? maybeWorkflow.thumbnailUrl : "",
     engine: parseWorkflowEngine(maybeWorkflow?.engine, ClapWorkflowEngine.DEFAULT),
+    category: parseWorkflowCategory(maybeWorkflow?.category, ClapWorkflowCategory.IMAGE_GENERATION),
+    provider: parseWorkflowProvider(maybeWorkflow?.provider, ClapWorkflowProvider.NONE),
     data: typeof maybeWorkflow?.data === "string" ? maybeWorkflow.data : "",
     inputFields: Array.isArray(maybeWorkflow?.inputFields) ? maybeWorkflow.inputFields : [],
     inputValues: typeof maybeWorkflow?.inputValues === "object" ? maybeWorkflow.inputValues : {},
