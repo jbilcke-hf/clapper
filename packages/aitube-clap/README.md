@@ -50,6 +50,8 @@ import {
   ClapInputValue,
   ClapInputValues,
   ClapWorkflowEngine,
+  ClapWorkflowCategory,
+  ClapWorkflowProvider,
   ClapWorkflow,
 
 // defaults

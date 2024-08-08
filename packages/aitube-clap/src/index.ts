@@ -24,7 +24,7 @@ export {
   ClapTracks,
   ClapVoice,
   ClapCompletionMode,
-
+  ClapInputField,
   ClapInputFieldNumber,
   ClapInputFieldString,
   ClapInputFieldBoolean,
@@ -33,6 +33,8 @@ export {
   ClapInputValue,
   ClapInputValues,
   ClapWorkflowEngine,
+  ClapWorkflowCategory,
+  ClapWorkflowProvider,
   ClapWorkflow
 } from './types'
 export {
@@ -60,6 +62,8 @@ export {
   parseMediaOrientation,
   parseOutputType,
   parseWorkflowEngine,
+  parseWorkflowCategory,
+  parseWorkflowProvider,
   parseSegmentCategory,
   parseSegmentStatus,
   UUID
