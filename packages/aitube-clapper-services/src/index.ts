@@ -181,6 +181,8 @@ export {
 } from "./tasks"
 
 export {
+  BaseSettings,
+  RequestSettings,
   SettingsState,
   SettingsControls,
   SettingsStore
