@@ -527,6 +527,7 @@ export enum ClapWorkflowProvider {
 // there are only separated for convenient, to add some semantic
 // to those abstract image-to-image models.
 export enum ClapWorkflowCategory {
+  ASSISTANT = "ASSISTANT",
   IMAGE_GENERATION = "IMAGE_GENERATION",
   IMAGE_FILTERING = "IMAGE_FILTERING",
   IMAGE_UPSCALING = "IMAGE_UPSCALING",
