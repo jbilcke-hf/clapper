@@ -1,6 +1,7 @@
 import { ClapWorkflow } from "@aitube/clap"
 
 import { VersionControls, VersionState } from "./version-control"
+import { Workflow } from "./base-types";
 
 export type WorkflowEditorTheme = {
   bgColor?: string;
@@ -18,11 +19,11 @@ export type WorkflowEditorTheme = {
 }
 
 export type WorkflowEditorState = {
-
+  availableWorkflows: Workflow[]
 } & VersionState<ClapWorkflow>
 
 export type WorkflowEditorControls = {
-  
+  updateAvailableWorkflows: () => Promise<void>
 } & VersionControls<ClapWorkflow>
 
 export type WorkflowEditorStore = WorkflowEditorState & WorkflowEditorControls
