@@ -78,6 +78,20 @@ export type ResolveRequestPrompts = {
     // the positive prompt - elements we don't want in the voice
     negative: string
   }
+  audio: {
+    // the positive prompt - elements we want in the audio
+    positive: string
+
+    // the positive prompt - elements we don't want in the audio
+    negative: string
+  }
+  music: {
+    // the positive prompt - elements we want in the music
+    positive: string
+
+    // the positive prompt - elements we don't want in the music
+    negative: string
+  }
 }
 
 export type ComfyParameter =
