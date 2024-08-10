@@ -54,7 +54,10 @@ export function findWorkflows(
     }
     workflows.push(workflow)
     workflowIds[workflow.id] = workflow
-    providers[workflow.provider] = workflows
+    if (!Array.isArray(providers[workflow.provider])) {
+      providers[workflow.provider] = []
+    }
+    providers[workflow.provider]?.push(workflow)
   }
 
   return {

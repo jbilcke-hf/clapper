@@ -86,12 +86,20 @@ If you find that Clapper is working with a more recent (stable) version of Node,
 
 ### Installing and running the app
 
+Install the dependencies.
+
+`--include=optional` is to make sure optional dependencies are installed (pre-build native modules compatible with your system)
+
 ```bash
 npm i --include=optional
+```
+
+Then run the actual app, the first time you go to localhost:3000 after typing this command, the app will compile, which can take a minute (like, literally: `Compiled / in 52.6s (6372 modules)`)
+
+```bash
 npm run dev
 ```
 
-`--include=optional` is to make sure optional dependencies are installed (pre-build native modules compatible with your system)
 
 ### Building the app
 

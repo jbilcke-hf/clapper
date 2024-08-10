@@ -16,11 +16,14 @@ export type ComfyuiWorkflow = {
 
 export type ComfyuiWorkflowNode = {
   id: number
-  pos: number[]
+  title?: string | null
+  pos: Record<string, number> | number[]
   mode: number
   size: { '0': number; '1': number }
   type: string
   color?: string | null
+  bgcolor?: string | null
+  locked?: boolean
   flags: {
     collapsed?: boolean | null
   }
@@ -33,6 +36,7 @@ export type ComfyuiWorkflowNode = {
 
 export type ComfyuiWorkflowNodeInput = {
   link?: number | null
+  dir?: number | null
   name: string
   type: string
   label?: string | null
@@ -47,7 +51,7 @@ export type ComfyuiWorkflowNodeOutput = {
   type: string
   label?: string | null
   links?: number[] | null
-  shape: number
+  shape?: number | null
   slot_index?: number | null
 }
 

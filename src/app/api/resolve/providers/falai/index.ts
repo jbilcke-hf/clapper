@@ -8,6 +8,7 @@ import {
   FalAiSpeechResponse,
   FalAiVideoResponse,
 } from './types'
+import { getWorkflowInputValues } from '../getWorkflowInputValues'
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -37,13 +38,6 @@ export async function resolveSegment(
       return segment
     }
 
-    const imageSize =
-      request.meta.orientation === ClapMediaOrientation.SQUARE
-        ? FalAiImageSize.SQUARE_HD
-        : request.meta.orientation === ClapMediaOrientation.PORTRAIT
-          ? FalAiImageSize.PORTRAIT_16_9
-          : FalAiImageSize.LANDSCAPE_16_9
-
     let result: FalAiImageResponse | undefined = undefined
 
     if (model === 'fal-ai/pulid') {
@@ -55,6 +49,25 @@ export async function resolveSegment(
         model = 'fal-ai/flux-pro'
       }
     }
+
+    const {
+      workflowDefaultValues,
+      workflowValues
+    } = getWorkflowInputValues(request.settings.imageGenerationWorkflow)
+    
+    // for the moment let's use FAL's predefined sizes
+    const imageSize =
+      request.meta.orientation === ClapMediaOrientation.SQUARE
+        ? FalAiImageSize.SQUARE_HD
+        : request.meta.orientation === ClapMediaOrientation.PORTRAIT
+          ? FalAiImageSize.PORTRAIT_16_9
+          : FalAiImageSize.LANDSCAPE_16_9
+
+    // for the moment let's use FAL's predefined sizes
+    delete workflowDefaultValues.width
+    delete workflowDefaultValues.height
+    delete workflowValues.width
+    delete workflowValues.height
 
     if (model === 'fal-ai/pulid') {
       result = (await fal.run(model, {
@@ -74,11 +87,13 @@ export async function resolveSegment(
     } else {
       result = (await fal.run(model, {
         input: {
+          ...workflowDefaultValues,
+          ...workflowValues,
+
           prompt: request.prompts.image.positive,
+
           image_size: imageSize,
           sync_mode: true,
-          num_inference_steps:
-            model === 'fal-ai/stable-diffusion-v3-medium' ? 40 : 25,
           num_images: 1,
           enable_safety_checker:
             request.settings.censorNotForAllAudiencesContent,
@@ -113,18 +128,12 @@ export async function resolveSegment(
         `cannot generate a video without a storyboard (the concept of Clapper is to use storyboards)`
       )
     }
+
     const result = (await fal.run(model, {
       input: {
+        ...getWorkflowInputValues(request.settings.videoGenerationWorkflow),
+
         image_url: storyboard.assetUrl,
-
-        motion_bucket_id: 55,
-
-        // The conditoning augmentation determines the amount of noise that
-        // will be added to the conditioning frame. The higher the number,
-        // the more noise there will be, and the less the video will look
-        // like the initial image. Increase it for more motion.
-        // Default value: 0.02
-        cond_aug: 0.02,
 
         sync_mode: true,
         enable_safety_checker: request.settings.censorNotForAllAudiencesContent,
@@ -140,17 +149,29 @@ export async function resolveSegment(
     }
 
     segment.assetUrl = result?.video?.url || ''
-  } else if (
-    request.segment.category === ClapSegmentCategory.SOUND ||
-    request.segment.category === ClapSegmentCategory.MUSIC
-  ) {
-    model =
-      request.segment.category === ClapSegmentCategory.MUSIC
-        ? request.settings.musicGenerationWorkflow.data
-        : request.settings.soundGenerationWorkflow.data
+  } else if (request.segment.category === ClapSegmentCategory.SOUND) {
+    model = request.settings.musicGenerationWorkflow.data
 
     const result = (await fal.run(model, {
       input: {
+        ...getWorkflowInputValues(request.settings.soundGenerationWorkflow),
+
+        // note how we use the *segment* prompt for music or sound
+        prompt: request.segment.prompt,
+
+        sync_mode: true,
+        enable_safety_checker: request.settings.censorNotForAllAudiencesContent,
+      },
+    })) as FalAiAudioResponse
+
+    segment.assetUrl = result?.audio_file?.url || ''
+  } else if (request.segment.category === ClapSegmentCategory.MUSIC) {
+    model = request.settings.musicGenerationWorkflow.data
+
+    const result = (await fal.run(model, {
+      input: {
+        ...getWorkflowInputValues(request.settings.soundGenerationWorkflow),
+
         // note how we use the *segment* prompt for music or sound
         prompt: request.segment.prompt,
 
@@ -163,12 +184,19 @@ export async function resolveSegment(
   } else if (request.segment.category === ClapSegmentCategory.DIALOGUE) {
     model = request.settings.voiceGenerationWorkflow.data || ''
 
+
+    let voiceIdentity =
+      request.prompts.voice.identity ||
+      // TODO for the default we should use one of our own voices instea
+      // PS: are you implementing this task? please do a search in the code for speakers/bria.mp3
+      'https://cdn.themetavoice.xyz/speakers/bria.mp3'
+
     const result = (await fal.run(model, {
       input: {
-        text: request.segment.prompt,
+        ...getWorkflowInputValues(request.settings.voiceGenerationWorkflow),
 
-        // todo use the entty audio id, if available
-        audio_url: 'https://cdn.themetavoice.xyz/speakers/bria.mp3',
+        text: request.segment.prompt, // <-- we are using the segment prompt
+        audio_url: voiceIdentity,
 
         sync_mode: true,
         enable_safety_checker: request.settings.censorNotForAllAudiencesContent,

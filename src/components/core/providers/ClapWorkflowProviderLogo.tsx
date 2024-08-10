@@ -21,6 +21,7 @@ export function ClapWorkflowProviderLogo({
   return (
     <img
       src={src}
+      width={height as any}
       height={height as any}
       alt={formatProvider(provider)}
       className={cn(className)}

@@ -6,7 +6,7 @@ import {
 } from '@aitube/clap'
 import {
   genericHeight1024,
-  genericTextPrompt,
+  genericPrompt,
   genericWidth1024,
 } from '../common/defaultValues'
 
@@ -26,14 +26,14 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
     inputFields: [
-      genericTextPrompt,
+      genericPrompt,
       genericWidth1024,
       genericHeight1024,
 
       // TODO: add guidance scale and number of steps
     ],
     inputValues: {
-      prompt: genericTextPrompt.defaultValue,
+      prompt: genericPrompt.defaultValue,
       width: genericWidth1024.defaultValue,
       height: genericHeight1024.defaultValue,
 
@@ -55,14 +55,14 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
     inputFields: [
-      genericTextPrompt,
+      genericPrompt,
       genericWidth1024,
       genericHeight1024,
 
       // TODO: add guidance scale and number of steps
     ],
     inputValues: {
-      prompt: genericTextPrompt.defaultValue,
+      prompt: genericPrompt.defaultValue,
       width: genericWidth1024.defaultValue,
       height: genericHeight1024.defaultValue,
 
@@ -84,14 +84,14 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
     inputFields: [
-      genericTextPrompt,
+      genericPrompt,
       genericWidth1024,
       genericHeight1024,
 
       // TODO: add guidance scale and number of steps
     ],
     inputValues: {
-      prompt: genericTextPrompt.defaultValue,
+      prompt: genericPrompt.defaultValue,
       width: genericWidth1024.defaultValue,
       height: genericHeight1024.defaultValue,
 
@@ -113,14 +113,14 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
     inputFields: [
-      genericTextPrompt,
+      genericPrompt,
       genericWidth1024,
       genericHeight1024,
 
       // TODO: add guidance scale and number of steps
     ],
     inputValues: {
-      prompt: genericTextPrompt.defaultValue,
+      prompt: genericPrompt.defaultValue,
       width: genericWidth1024.defaultValue,
       height: genericHeight1024.defaultValue,
 
