@@ -26,6 +26,7 @@ export {
   ClapCompletionMode,
   ClapInputField,
   ClapInputFieldNumber,
+  ClapInputFieldInteger,
   ClapInputFieldString,
   ClapInputFieldBoolean,
   ClapInputFieldAny,
