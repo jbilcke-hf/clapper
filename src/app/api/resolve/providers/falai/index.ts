@@ -50,11 +50,10 @@ export async function resolveSegment(
       }
     }
 
-    const {
-      workflowDefaultValues,
-      workflowValues
-    } = getWorkflowInputValues(request.settings.imageGenerationWorkflow)
-    
+    const { workflowDefaultValues, workflowValues } = getWorkflowInputValues(
+      request.settings.imageGenerationWorkflow
+    )
+
     // for the moment let's use FAL's predefined sizes
     const imageSize =
       request.meta.orientation === ClapMediaOrientation.SQUARE
@@ -183,7 +182,6 @@ export async function resolveSegment(
     segment.assetUrl = result?.audio_file?.url || ''
   } else if (request.segment.category === ClapSegmentCategory.DIALOGUE) {
     model = request.settings.voiceGenerationWorkflow.data || ''
-
 
     let voiceIdentity =
       request.prompts.voice.identity ||
