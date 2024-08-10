@@ -7,13 +7,15 @@ import {
   ClapWorkflowProvider,
   ClapWorkflow,
   ClapAssetSource,
+  ClapWorkflowEngine,
 } from '@aitube/clap'
 
 import {
   resolveSegmentUsingHuggingFace,
   resolveSegmentUsingComfyReplicate,
   resolveSegmentUsingReplicate,
-  resolveSegmentUsingComfyComfyIcu,
+  resolveSegmentUsingComfyIcu,
+  resolveSegmentUsingComfyDeploy,
   resolveSegmentUsingFalAi,
   resolveSegmentUsingModelsLab,
   resolveSegmentUsingStabilityAi,
@@ -45,32 +47,44 @@ export async function POST(req: NextRequest) {
               ? request.settings.musicGenerationWorkflow
               : undefined
 
+  if (!workflow) {
+    throw new Error(`request to /api/resolve is missing the .workflow field`)
+  }
+
   const provider: ClapWorkflowProvider | undefined =
-    workflow?.provider || undefined
+    workflow.provider || undefined
 
   if (!provider) {
-    throw new Error(
-      `Segments of category ${request.segment.category} are not supported yet`
-    )
+    throw new Error(`request to /api/resolve is missing the .provider field`)
+  }
+
+  const engine: ClapWorkflowEngine | undefined = workflow.engine || undefined
+
+  if (!engine) {
+    throw new Error(`request to /api/resolve is missing the .engine field`)
   }
 
   // console.log(`API ResolveRequest = `, request.settings)
   const resolveSegment =
-    provider === ClapWorkflowProvider.HUGGINGFACE
+    provider === ClapWorkflowProvider.HUGGINGFACE &&
+    engine === ClapWorkflowEngine.REST_API
       ? resolveSegmentUsingHuggingFace
-      : provider === ClapWorkflowProvider.COMFY_HUGGINGFACE
+      : provider === ClapWorkflowProvider.REPLICATE &&
+          engine === ClapWorkflowEngine.COMFYUI_WORKFLOW
         ? resolveSegmentUsingComfyReplicate
         : provider === ClapWorkflowProvider.REPLICATE
           ? resolveSegmentUsingReplicate
-          : provider === ClapWorkflowProvider.COMFY_COMFYICU
-            ? resolveSegmentUsingComfyComfyIcu
-            : provider === ClapWorkflowProvider.STABILITYAI
-              ? resolveSegmentUsingStabilityAi
-              : provider === ClapWorkflowProvider.FALAI
-                ? resolveSegmentUsingFalAi
-                : provider === ClapWorkflowProvider.MODELSLAB
-                  ? resolveSegmentUsingModelsLab
-                  : null
+          : provider === ClapWorkflowProvider.COMFYICU
+            ? resolveSegmentUsingComfyIcu
+            : provider === ClapWorkflowProvider.COMFYDEPLOY
+              ? resolveSegmentUsingComfyDeploy
+              : provider === ClapWorkflowProvider.STABILITYAI
+                ? resolveSegmentUsingStabilityAi
+                : provider === ClapWorkflowProvider.FALAI
+                  ? resolveSegmentUsingFalAi
+                  : provider === ClapWorkflowProvider.MODELSLAB
+                    ? resolveSegmentUsingModelsLab
+                    : null
 
   if (!resolveSegment) {
     throw new Error(`Provider ${provider} is not supported yet`)

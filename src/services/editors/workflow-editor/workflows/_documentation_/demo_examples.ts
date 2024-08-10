@@ -52,7 +52,7 @@ const justAnExample_DoNotUseThis: ClapWorkflow[] = [
     engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
 
     // platform and/or cloud service provider
-    provider: ClapWorkflowProvider.COMFY_COMFYICU,
+    provider: ClapWorkflowProvider.COMFYICU,
 
     // type of workflow (this is important)
     category: ClapWorkflowCategory.IMAGE_GENERATION,
