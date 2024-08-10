@@ -8,6 +8,7 @@ export type BaseSettings = {
   replicateApiKey: string
   comfyIcuApiKey: string
   comfyIcuAccelerator: ComfyIcuAccelerator
+  comfyDeployApiKey: string
   falAiApiKey: string
   modelsLabApiKey: string
   huggingFaceApiKey: string
@@ -118,6 +119,7 @@ export type SettingsControls = {
   setReplicateApiKey: (replicateApiKey?: string) => void
   setComfyIcuApiKey: (comfyIcuApiKey?: string) => void
   setComfyIcuAccelerator: (comfyIcuAccelerator?: ComfyIcuAccelerator) => void
+  setComfyDeployApiKey: (comfyDeployApiKey?: string) => void
   setHuggingFaceApiKey: (huggingFaceApiKey?: string) => void
   setModelsLabApiKey: (modelsLabApiKey?: string) => void
   setFalAiApiKey: (falAiApiKey?: string) => void
