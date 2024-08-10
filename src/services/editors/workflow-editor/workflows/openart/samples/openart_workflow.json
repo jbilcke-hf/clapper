@@ -1,0 +1,77 @@
+{
+  "id": "kfpq7gwn6oE7ygaJTrOX",
+  "creator": {
+    "uid": "0y3EaraLmvz2vAhd90LE",
+    "name": "LIOR ROITER",
+    "bio": "",
+    "avatar": "https://lh3.googleusercontent.com/a/ACg8ocIrkLPmFolGbYnDOYrUJ9jRACooqDRlGQb-u_ilE91G=s96-c",
+    "username": "elephant_gleaming_9"
+  },
+  "updated_at": {
+    "_seconds": 1723063308,
+    "_nanoseconds": 705000000
+  },
+  "cloud_app_id": "wf-17fef4f5716d481983cfd4a8dd87d0c4",
+  "stats": {
+    "num_shares": 0,
+    "rating": 5,
+    "num_reviews": 0,
+    "num_runs": 0,
+    "num_bookmarks": 0,
+    "num_likes": 4,
+    "num_comments": 4,
+    "num_views": 2101,
+    "num_downloads": 719
+  },
+  "nodes_index": [
+    "Note",
+    "Reroute",
+    "FluxGuidance",
+    "Image Comparer (rgthree)",
+    "EmptySD3LatentImage",
+    ".",
+    "ComfyUI",
+    "SaveImage",
+    "UpscaleModelLoader",
+    "VAEDecode",
+    "CLIPTextEncode",
+    "UNETLoader",
+    "KSampler",
+    "VAELoader",
+    "DualCLIPLoader",
+    ",",
+    "pythongosssss/ComfyUI-Custom-Scripts",
+    "MathExpression|pysssss",
+    ",",
+    "ComfyUI Easy Use",
+    "easy float",
+    ",",
+    "comfyui-art-venture",
+    "SDXLAspectRatioSelector",
+    ",",
+    "UltimateSDUpscale",
+    "UltimateSDUpscale",
+    ","
+  ],
+  "name": "Flux + UltimateSDUpscale - fix workflow (from author datou)",
+  "is_public": true,
+  "description": "<p>workflow use flux (flux1-dev-fp8.safetensors) for Image sharpening and upscale.</p><p>i didnt build this workflow. It belongs to the legendary creator datou.</p><p>But his flow didn't work and returned errors due to incorrect settings.</p><p>So I fixed it, and here it is working again</p><p><br></p><p>you need to use:</p><p> flux1-dev-fp8.safetensors</p><p> <a href=\"https://huggingface.co/Comfy-Org/flux1-dev/blob/main/flux1-dev-fp8.safetensors\" target=\"_blank\">https://huggingface.co/Comfy-Org/flux1-dev/blob/main/flux1-dev-fp8.safetensors</a> </p><p>t5xxl_fp16.safetensors</p><p> <a href=\"https://huggingface.co/comfyanonymous/flux_text_encoders/blob/main/t5xxl_fp16.safetensors\" target=\"_blank\">https://huggingface.co/comfyanonymous/flux_text_encoders/blob/main/t5xxl_fp16.safetensors</a> </p><p>clip_l.safetensors</p><p> <a href=\"https://huggingface.co/comfyanonymous/flux_text_encoders/blob/main/clip_l.safetensors\" target=\"_blank\">https://huggingface.co/comfyanonymous/flux_text_encoders/blob/main/clip_l.safetensors</a> </p><p>ae.sft (rename ae.safetensors to ae.sft)</p><p> <a href=\"https://huggingface.co/black-forest-labs/FLUX.1-schnell/tree/main\" target=\"_blank\">https://huggingface.co/black-forest-labs/FLUX.1-schnell/tree/main</a> </p><p><br></p><p><br></p><p><br></p>",
+  "created_at": {
+    "_seconds": 1723063308,
+    "_nanoseconds": 705000000
+  },
+  "categories": ["Upscale", "SDXL"],
+  "thumbnails": [
+    {
+      "width": 1664,
+      "url": "https://cdn.openart.ai/workflow_thumbnails/0y3EaraLmvz2vAhd90LE/image_AJJZt677_1723063305485_raw.jpg",
+      "height": 2432
+    },
+    {
+      "width": 832,
+      "url": "https://cdn.openart.ai/workflow_thumbnails/0y3EaraLmvz2vAhd90LE/image_uduKFf9T_1723063305136_raw.jpg",
+      "height": 1216
+    }
+  ],
+  "key": "flux-ultimatesdupscale---fix-workflow-from-author-datou"
+}

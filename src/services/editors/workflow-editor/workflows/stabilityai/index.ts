@@ -7,12 +7,32 @@ import {
 
 import {
   genericHeight1024,
-  genericTextPrompt,
+  genericImage,
+  genericPrompt,
   genericWidth1024,
   genericWidth2048,
 } from '../common/defaultValues'
 
 export const stabilityaiWorkflows: ClapWorkflow[] = [
+  {
+    id: 'stabilityai://image-to-video',
+    label: 'Image To Video',
+    description: '',
+    tags: ['SVD'],
+    author: 'Stability AI',
+    thumbnailUrl: '',
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.STABILITYAI,
+    category: ClapWorkflowCategory.VIDEO_GENERATION,
+    data: 'image-to-video',
+    /**
+     * Inputs of the workflow (this is used to build an UI for the automatically)
+     */
+    inputFields: [genericImage],
+    inputValues: {
+      image: genericPrompt.defaultValue,
+    },
+  },
   {
     id: 'stabilityai://stable-image/generate/ultra',
     label: 'Stable Image Ultra',
@@ -21,21 +41,21 @@ export const stabilityaiWorkflows: ClapWorkflow[] = [
     author: 'Stability AI',
     thumbnailUrl: '',
     engine: ClapWorkflowEngine.REST_API,
-    provider: ClapWorkflowProvider.FALAI,
+    provider: ClapWorkflowProvider.STABILITYAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'stable-image/generate/ultra',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
     inputFields: [
-      genericTextPrompt,
+      genericPrompt,
       genericWidth1024,
       genericHeight1024,
 
       // TODO: add guidance scale and number of steps
     ],
     inputValues: {
-      prompt: genericTextPrompt.defaultValue,
+      prompt: genericPrompt.defaultValue,
       width: genericWidth1024.defaultValue,
       height: genericHeight1024.defaultValue,
 
@@ -50,21 +70,21 @@ export const stabilityaiWorkflows: ClapWorkflow[] = [
     author: 'Stability AI',
     thumbnailUrl: '',
     engine: ClapWorkflowEngine.REST_API,
-    provider: ClapWorkflowProvider.FALAI,
+    provider: ClapWorkflowProvider.STABILITYAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'stable-image/generate/core',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
     inputFields: [
-      genericTextPrompt,
+      genericPrompt,
       genericWidth1024,
       genericHeight1024,
 
       // TODO: add guidance scale and number of steps
     ],
     inputValues: {
-      prompt: genericTextPrompt.defaultValue,
+      prompt: genericPrompt.defaultValue,
       width: genericWidth1024.defaultValue,
       height: genericHeight1024.defaultValue,
 
@@ -79,21 +99,21 @@ export const stabilityaiWorkflows: ClapWorkflow[] = [
     author: 'Stability AI',
     thumbnailUrl: '',
     engine: ClapWorkflowEngine.REST_API,
-    provider: ClapWorkflowProvider.FALAI,
+    provider: ClapWorkflowProvider.STABILITYAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'stable-image/generate/sd3',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
     inputFields: [
-      genericTextPrompt,
+      genericPrompt,
       genericWidth1024,
       genericHeight1024,
 
       // TODO: add guidance scale and number of steps
     ],
     inputValues: {
-      prompt: genericTextPrompt.defaultValue,
+      prompt: genericPrompt.defaultValue,
       width: genericWidth1024.defaultValue,
       height: genericHeight1024.defaultValue,
 

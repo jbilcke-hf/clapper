@@ -6,6 +6,7 @@ import {
   getClapAssetSourceType,
   ClapWorkflowProvider,
   ClapWorkflow,
+  ClapAssetSource,
 } from '@aitube/clap'
 
 import {
@@ -118,7 +119,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error(`failed to generate a segment: ${err}`)
     segment.assetUrl = ''
-    segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)
+    segment.assetSourceType = ClapAssetSource.EMPTY
     segment.assetDurationInMs = 0
     segment.outputGain = 0
     segment.status = ClapSegmentStatus.TO_GENERATE

@@ -2,6 +2,8 @@ import { HfInference, HfInferenceEndpoint } from '@huggingface/inference'
 
 import { decodeOutput } from '@/lib/utils/decodeOutput'
 import { ResolveRequest } from '@aitube/clapper-services'
+import { blobToBase64DataUri } from '@/lib/utils'
+import { addBase64Header } from '@/lib/utils/addBase64Header'
 
 export async function generateImage(request: ResolveRequest): Promise<string> {
   if (!request.settings.imageGenerationWorkflow.data) {
@@ -32,6 +34,11 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
     parameters: {
       height: request.meta.height,
       width: request.meta.width,
+
+      // this triggers the following exception:
+      // Error: __call__() got an unexpected keyword argument 'negative_prompt'
+      // negative_prompt: request.prompts.image.negative || '',
+
       /**
        * The number of denoising steps. More denoising steps usually lead to a higher quality image at the expense of slower inference.
        */
@@ -43,7 +50,9 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
     },
   })
 
-  console.log('output from Hugging Face Inference API:', blob)
+  // console.log('output from Hugging Face Inference API:', blob)
 
-  throw new Error(`finish me`)
+  const buffer = Buffer.from(await blob.arrayBuffer())
+
+  return `data:${blob.type || 'image/jpeg'};base64,${buffer.toString('base64')}`
 }

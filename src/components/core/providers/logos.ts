@@ -3,6 +3,7 @@ import { ClapWorkflowProvider } from '@aitube/clap'
 const none = '/images/providers/none.png'
 const anthropic = '/images/providers/anthropic.png'
 const cohere = '/images/providers/cohere.png'
+const comfyicu = '/images/providers/comfyicu.png'
 const elevenlabs = '/images/providers/elevenlabs.png'
 const everartai = '/images/providers/everartai.png'
 const falai = '/images/providers/falai.png'
@@ -52,7 +53,7 @@ export const ClapWorkflowProvidersLogos: Record<ClapWorkflowProvider, string> =
     [ClapWorkflowProvider.CUSTOM]: none,
     [ClapWorkflowProvider.COMFY_HUGGINGFACE]: huggingface,
     [ClapWorkflowProvider.COMFY_REPLICATE]: replicate,
-    [ClapWorkflowProvider.COMFY_COMFYICU]: none,
+    [ClapWorkflowProvider.COMFY_COMFYICU]: comfyicu,
     [ClapWorkflowProvider.KUAISHOU]: kuaishou,
     [ClapWorkflowProvider.LEONARDOAI]: leonardoai,
     [ClapWorkflowProvider.EVERARTAI]: everartai,
