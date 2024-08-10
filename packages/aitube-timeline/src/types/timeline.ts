@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { ClapEntity, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapEntity, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -134,7 +134,7 @@ export type ContentSizeMetrics = {
 
 
 export type TimelineStoreProjectState = {
-  clap: ClapProject
+  meta: ClapMeta
 
   segments: TimelineSegment[]
 
@@ -259,6 +259,7 @@ export type TimelineStoreModifiers = {
   setCanvas: (canvas?: HTMLCanvasElement) => void
   clear: () => void
   setClap: (clap?: ClapProject) => Promise<void>
+  getClap: () => Promise<ClapProject>
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => void
   setSegments: (segments?: TimelineSegment[]) => void
   setLoadedSegments: (loadedSegments?: TimelineSegment[]) => void

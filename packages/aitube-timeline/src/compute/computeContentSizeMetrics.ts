@@ -1,4 +1,4 @@
-import { ClapProject, ClapTracks } from "@aitube/clap"
+import { ClapMeta, ClapTracks } from "@aitube/clap"
 
 import { ContentSizeMetrics } from "@/types/timeline"
 
@@ -6,13 +6,13 @@ import { computeCellHeight } from "./computeCellHeight"
 import { DEFAULT_COLUMNS_PER_SLICE, DEFAULT_DURATION_IN_MS_PER_STEP, DEFAULT_NB_TRACKS, NB_MAX_SHOTS, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants/grid"
 
 export function computeContentSizeMetrics({
-  clap,
+  meta,
   tracks,
   cellWidth,
   defaultSegmentDurationInSteps,
   totalDurationInMs,
 }: {
-  clap?: ClapProject
+  meta: ClapMeta
   tracks: ClapTracks
   cellWidth: number
   defaultSegmentDurationInSteps: number
@@ -28,9 +28,8 @@ export function computeContentSizeMetrics({
 
   // TODO: compute the exact image ratio instead of using the media orientation,
   // since it might not match the actual assets
-  const defaultMediaRatio = clap ? (
-    (clap.meta.width || 896) / (clap.meta.height || 512)
-  ) : 1.75
+  const defaultMediaRatio =
+    (meta.width || 896) / (meta.height || 512)
   
   // also storyboards and videos might have different sizes / ratios
   const defaultPreviewHeight = Math.round(
