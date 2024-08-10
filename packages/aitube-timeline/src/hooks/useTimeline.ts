@@ -5,7 +5,7 @@ import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_DURATION_IN_MS_PER_STEP, DEFAULT_NB_TRACKS } from "@/constants"
-import { hslToHex, findFreeTrack, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment } from "@/utils"
+import { hslToHex, findFreeTrack, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment, timelineSegmentToClapSegment } from "@/utils"
 import { ClapSegmentCategoryColors, ClapSegmentColorScheme, ClapTimelineTheme, SegmentResolver } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
@@ -52,6 +52,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       defaultCellHeight,
       cellWidth,
     } = get()
+
+    const meta = clap.meta
 
     // TODO: many of those checks about average duration, nb of tracks, collisions...
     // should be done by the Clap parser and/or serializer
@@ -192,7 +194,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     }
 
     set({
-      clap,
+      meta,
       segments,
       entities: clap.entities,
       entityIndex: clap.entityIndex,
@@ -210,7 +212,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       finalVideo,
 
       ...computeContentSizeMetrics({
-        clap,
+        meta,
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
@@ -222,11 +224,22 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // as this will trigger various stuff in the parent
     get().jumpAt(0)
   },
+  getClap: async (): Promise<ClapProject> => {
+    const { meta, entities, segments: timelineSegments } = get()
+
+    const clap = newClap({
+      meta: { ...meta },
+      entities: [...entities],
+      segments: timelineSegments.map(ts => timelineSegmentToClapSegment(ts))
+    })
+
+    return clap
+  },
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => {
     const {
       minHorizontalZoomLevel,
       maxHorizontalZoomLevel,
-      clap,
+      meta,
       tracks,
       defaultSegmentDurationInSteps,
       cellWidth: previousCellWidth,
@@ -244,7 +257,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       resizeStartedAt,
       isResizing,
       ...computeContentSizeMetrics({
-        clap,
+        meta,
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
@@ -557,7 +570,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   },
   toggleTrackVisibility: (trackId: number) => {
     const {
-      clap,
+      meta,
       tracks,
       cellWidth,
       defaultSegmentDurationInSteps,
@@ -566,7 +579,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     set({
       ...computeContentSizeMetrics({
-        clap,
+        meta,
         tracks: tracks.map(t => (
           t.id === trackId
           ? { ...t, visible: !t.visible }
@@ -648,7 +661,9 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // some extra text to append to the file name
     extraLabel?: string
   } = {}) => {
-    const clap = get().clap || newClap()
+    const { getClap } = get()
+
+    const clap = await getClap()
 
     const blob = await serializeClap(clap)
 
@@ -728,7 +743,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     triggerChange?: boolean
   }): Promise<void> => {
     const {
-      clap,
+      meta,
       cellWidth,
       defaultSegmentDurationInSteps,
       totalDurationInMs,
@@ -767,7 +782,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         allSegmentsChanged: previousAllSegmentsChanged + 1,
         atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
         ...computeContentSizeMetrics({
-          clap,
+          meta,
           tracks,
           cellWidth,
           defaultSegmentDurationInSteps,
@@ -787,7 +802,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   }): Promise<void> => {
     // adding a segment is a bit complicated, lot of stuff might have to be updated
     const {
-      clap,
+      meta,
       findFreeTrack,
       cellWidth,
       tracks,
@@ -858,17 +873,19 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       ? segment.endTimeInMs
       : previousTotalDurationInMs
 
-    clap.meta.durationInMs = totalDurationInMs
-    clap.segments = segments
+    const newMeta = {
+      ...meta,
+      durationInMs: totalDurationInMs
+    }
 
     set({
-      clap,
+      meta: newMeta,
       segments,
       allSegmentsChanged: previousAllSegmentsChanged + 1,
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
       totalDurationInMs,
       ...computeContentSizeMetrics({
-        clap,
+        meta: newMeta,
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
@@ -891,7 +908,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   fitSegmentToAssetDuration: async (segment: TimelineSegment, requestedDurationInMs?: number): Promise<void> => {
     
     const {
-      clap,
+      meta,
       tracks,
       cellWidth,
       defaultSegmentDurationInSteps,
@@ -1031,7 +1048,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       allSegmentsChanged: previousAllSegmentsChanged + 1,
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
       ...computeContentSizeMetrics({
-        clap,
+        meta,
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
@@ -1045,7 +1062,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       allSegmentsChanged,
       atLeastOneSegmentChanged,
       silentChangesInSegment,
-      clap
     } = get()
 
     const deletables = new Set(ids)
@@ -1055,9 +1071,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       return !deletables.has(id)
     })
 
-    // not sure we need to do this, but let's do it anyway for consistency
-    clap.segments = newSegments
-    
     set({
       segments: newSegments,
       allSegmentsChanged: 1 + allSegmentsChanged,

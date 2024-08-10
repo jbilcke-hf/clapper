@@ -64,7 +64,8 @@ export {
   similar,
   sleep,
   sliceSegments,
-  throttle
+  throttle,
+  timelineSegmentToClapSegment
 } from "./utils"
 
 export {

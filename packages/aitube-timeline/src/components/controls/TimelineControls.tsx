@@ -30,7 +30,6 @@ export function TimelineControls({
   // or maybe the useFrame, but it doesn't resize immediately
   useFrame(({ gl, scene, camera }) => {
     let {
-      clap,
       cellWidth,
       scrollX,
       scrollY,
@@ -41,8 +40,6 @@ export function TimelineControls({
       leftBarTrackScale,
       topBarTimeScale,
       resizeStartedAt,
-      width,
-      height,
       cursorTimestampAtInMs,
     } = useTimeline.getState()
 
