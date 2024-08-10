@@ -16,30 +16,33 @@ export async function resolveSegment(
   }
 
   if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
-
-    const workflowId = request.settings.imageGenerationWorkflow.id.split('://').pop() || ''
+    const workflowId =
+      request.settings.imageGenerationWorkflow.id.split('://').pop() || ''
 
     if (!workflowId) {
       throw new Error(`The ComfyICU workflow ID is missing`)
     }
 
-    const inputFields = request.settings.imageGenerationWorkflow.inputFields || []
+    const inputFields =
+      request.settings.imageGenerationWorkflow.inputFields || []
 
     // since this is a random "wild" workflow, it is possible
     // that the field name is a bit different
     // we try to look into the workflow input fields
     // to find the best match
     const promptFields = [
-      inputFields.find(f => f.id === 'prompt'),// exactMatch,
-      inputFields.find(f => f.id.includes('prompt')), // similarName,
-      inputFields.find(f => f.type === 'string') // similarType
-    ].filter(x => typeof x !== 'undefined')
+      inputFields.find((f) => f.id === 'prompt'), // exactMatch,
+      inputFields.find((f) => f.id.includes('prompt')), // similarName,
+      inputFields.find((f) => f.type === 'string'), // similarType
+    ].filter((x) => typeof x !== 'undefined')
 
     const promptField = promptFields[0]
     if (!promptField) {
-      throw new Error(`this workflow doesn't seem to have a parameter called "prompt"`)
+      throw new Error(
+        `this workflow doesn't seem to have a parameter called "prompt"`
+      )
     }
-    
+
     // TODO: modify the serialized workflow payload
     // to inject our params:
     // ...getWorkflowInputValues(request.settings.imageGenerationWorkflow),
@@ -51,20 +54,22 @@ export async function resolveSegment(
       files: {},
     }
 
-
-    const rawResponse = await fetch(`https://comfy.icu/api/v1/workflows/${workflowId}/runs`, {
-      headers: {
-        accept: "application/json",
-        "content-type": "application/json",
-        authorization: `Bearer ${request.settings.comfyIcuApiKey}`,
-      },
-      body: JSON.stringify(payload),
-      method: "POST",
-    });
+    const rawResponse = await fetch(
+      `https://comfy.icu/api/v1/workflows/${workflowId}/runs`,
+      {
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/json',
+          authorization: `Bearer ${request.settings.comfyIcuApiKey}`,
+        },
+        body: JSON.stringify(payload),
+        method: 'POST',
+      }
+    )
 
     const response = await rawResponse.json()
 
-    if (response.status === "error") {
+    if (response.status === 'error') {
       throw new Error(response.message)
     }
 

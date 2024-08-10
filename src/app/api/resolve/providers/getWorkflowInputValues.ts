@@ -1,11 +1,10 @@
-import { ClapInputValues, ClapWorkflow } from "@aitube/clap"
+import { ClapInputValues, ClapWorkflow } from '@aitube/clap'
 
 export function getWorkflowInputValues(workflow: ClapWorkflow): {
   workflowDefaultValues: ClapInputValues
   workflowValues: ClapInputValues
 } {
-  const workflowDefaultValues =
-  workflow.inputFields.reduce(
+  const workflowDefaultValues = workflow.inputFields.reduce(
     (acc, field) => ({
       ...acc,
       [field.id]: field.defaultValue,
@@ -13,11 +12,10 @@ export function getWorkflowInputValues(workflow: ClapWorkflow): {
     {} as ClapInputValues
   )
 
-const workflowValues = workflow
-  .inputValues as ClapInputValues
+  const workflowValues = workflow.inputValues as ClapInputValues
 
   return {
     workflowDefaultValues,
-    workflowValues
+    workflowValues,
   }
 }

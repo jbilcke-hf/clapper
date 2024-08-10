@@ -21,4 +21,3 @@ export type ComfyIcuWorkflowOutput = {
   url: string
   thumbnail_url: string
 }
-

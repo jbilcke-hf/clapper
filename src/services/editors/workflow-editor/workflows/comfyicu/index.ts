@@ -11,7 +11,6 @@ import {
 } from '../common/defaultValues'
 
 export const comfyicuWorkflows: ClapWorkflow[] = [
-
   /*
 
   Unfortunately Comfy.icu doesn't support:
