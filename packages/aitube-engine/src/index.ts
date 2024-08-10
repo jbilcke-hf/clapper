@@ -4,9 +4,12 @@ export {
 } from './renderers'
 
 export {
+  getBackgroundAudioPrompt,
   getCharacterPrompt,
   getCharacterReferencePrompt,
+  getMusicPrompt,
   getPositivePrompt,
+  getSoundPrompt,
   getSpeechBackgroundAudioPrompt,
   getSpeechForegroundAudioPrompt,
   getVideoPrompt,
