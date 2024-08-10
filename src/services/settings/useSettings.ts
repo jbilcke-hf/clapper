@@ -62,6 +62,16 @@ export const useSettings = create<SettingsStore>()(
           ),
         })
       },
+      setComfyDeployApiKey: (comfyDeployApiKey?: string) => {
+        const { comfyDeployApiKey: defaultComfyDeployApiKey } =
+          getDefaultSettingsState()
+        set({
+          comfyDeployApiKey: getValidString(
+            comfyDeployApiKey,
+            defaultComfyDeployApiKey
+          ),
+        })
+      },
       setHuggingFaceApiKey: (huggingFaceApiKey?: string) => {
         const { huggingFaceApiKey: defaultHuggingFaceApiKey } =
           getDefaultSettingsState()
@@ -938,6 +948,9 @@ export const useSettings = create<SettingsStore>()(
             state.comfyIcuApiKey || defaultSettings.comfyIcuApiKey,
           comfyIcuAccelerator:
             state.comfyIcuAccelerator || defaultSettings.comfyIcuAccelerator,
+          comfyDeployApiKey:
+            state.comfyDeployApiKey || defaultSettings.comfyDeployApiKey,
+
           huggingFaceApiKey:
             state.huggingFaceApiKey || defaultSettings.huggingFaceApiKey,
           falAiApiKey: state.falAiApiKey || defaultSettings.falAiApiKey,

@@ -9,6 +9,7 @@ export function getDefaultSettingsState(): SettingsState {
     replicateApiKey: '',
     comfyIcuApiKey: '',
     comfyIcuAccelerator: ComfyIcuAccelerator.L4,
+    comfyDeployApiKey: '',
     huggingFaceApiKey: '',
     modelsLabApiKey: '',
     falAiApiKey: '',

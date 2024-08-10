@@ -27,16 +27,13 @@ export const estimatedMetrics: Record<
   [ClapWorkflowProvider.HUGGINGFACE]: {
     // TODO list the most popular models
   },
-  [ClapWorkflowProvider.COMFY_HUGGINGFACE]: {
-    // TODO list the most popular models
-  },
   [ClapWorkflowProvider.REPLICATE]: {
     // TODO list the most popular models
   },
-  [ClapWorkflowProvider.COMFY_REPLICATE]: {
+  [ClapWorkflowProvider.COMFYDEPLOY]: {
     // TODO list the most popular models
   },
-  [ClapWorkflowProvider.COMFY_COMFYICU]: {
+  [ClapWorkflowProvider.COMFYICU]: {
     // TODO list the most popular models
   },
   [ClapWorkflowProvider.ELEVENLABS]: {

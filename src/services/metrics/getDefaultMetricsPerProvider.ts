@@ -17,16 +17,13 @@ export function getDefaultMetricsPerProvider(): MetricsPerProvider {
     [ClapWorkflowProvider.HUGGINGFACE]: {
       ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ClapWorkflowProvider.COMFY_HUGGINGFACE]: {
-      ...getDefaultClapWorkflowProviderMetrics(),
-    },
     [ClapWorkflowProvider.REPLICATE]: {
       ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ClapWorkflowProvider.COMFY_REPLICATE]: {
+    [ClapWorkflowProvider.COMFYDEPLOY]: {
       ...getDefaultClapWorkflowProviderMetrics(),
     },
-    [ClapWorkflowProvider.COMFY_COMFYICU]: {
+    [ClapWorkflowProvider.COMFYICU]: {
       ...getDefaultClapWorkflowProviderMetrics(),
     },
     [ClapWorkflowProvider.ELEVENLABS]: {
