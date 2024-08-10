@@ -441,6 +441,13 @@ export type ClapInputFieldNumber = {
   defaultValue: number
 }
 
+export type ClapInputFieldInteger = {
+  type: 'integer'
+  minValue: number
+  maxValue: number
+  defaultValue: number
+}
+
 export type ClapInputFieldString = {
   type: 'string'
   allowedValues: string[]
@@ -474,6 +481,7 @@ export type ClapInputField = {
   description: string
 } & (
   | ClapInputFieldNumber
+  | ClapInputFieldInteger
   | ClapInputFieldString
   | ClapInputFieldBoolean
   | ClapInputFieldAny
@@ -493,10 +501,9 @@ export enum ClapWorkflowProvider {
   BUILTIN = "BUILTIN",
   CUSTOM = "CUSTOM",
   HUGGINGFACE = "HUGGINGFACE", // https://huggingface.co
-  COMFY_HUGGINGFACE = "COMFY_HUGGINGFACE", // https://huggingface.co
   REPLICATE = "REPLICATE", // https://replicate.com
-  COMFY_REPLICATE = "COMFY_REPLICATE", // https://replicate.com
-  COMFY_COMFYICU = "COMFY_COMFYICU", // https://comfy.icu
+  COMFYDEPLOY = "COMFYDEPLOY", // https://comfydeploy.com
+  COMFYICU = "COMFYICU", // https://comfy.icu
   ELEVENLABS = "ELEVENLABS", // https://elevenlabs.io
   KITSAI = "KITSAI", // https://kits.ai
   OPENAI = "OPENAI", // https://openai.com
