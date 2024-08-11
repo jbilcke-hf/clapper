@@ -5,7 +5,7 @@ import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
-import { RenderingStrategy, SegmentResolver } from "./rendering"
+import { SegmentResolver } from "./rendering"
 
 export enum SegmentVisibility {
   // the segment is visible, and the user explicitly requested to render it before the others
@@ -135,6 +135,7 @@ export type ContentSizeMetrics = {
 
 export type TimelineStoreProjectState = {
   meta: ClapMeta
+  scenes: ClapScene[]
 
   segments: TimelineSegment[]
 

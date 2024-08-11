@@ -9,6 +9,7 @@ import { NB_MAX_SHOTS } from "@/constants/grid"
 export function getDefaultProjectState(): TimelineStoreProjectState {
   return {
     meta: newClap().meta,
+    scenes: [],
     segments: [],
     totalDurationInMs: 0,
     loadedSegments: [],
