@@ -468,11 +468,7 @@ export const useIO = create<IOStore>((set, get) => ({
   },
   saveClap: async () => {
     const { saveAnyFile } = get()
-    const { clap, entities, entityIndex } = useTimeline.getState()
-
-    if (!clap) {
-      throw new Error(`cannot save a clap.. if there is no clap`)
-    }
+    const { getClap } = useTimeline.getState()
 
     const tasks = useTasks.getState()
 
@@ -486,16 +482,11 @@ export const useIO = create<IOStore>((set, get) => ({
       // max: 100 // default
     })
 
-    // make sure we update the total duration
-    for (const s of clap.segments) {
-      if (s.endTimeInMs > clap.meta.durationInMs) {
-        clap.meta.durationInMs = s.endTimeInMs
-      }
-    }
+    const clap = await getClap()
 
-    // update the clap with the in-memory versions of the entities
-    clap.entities = entities
-    clap.entityIndex = entityIndex
+    if (!clap) {
+      throw new Error(`cannot save a clap.. if there is no clap`)
+    }
 
     // TODO: serializeClap should have a progress callback, so that we can
     // track the progression.
@@ -514,7 +505,18 @@ export const useIO = create<IOStore>((set, get) => ({
 
     const timeline: TimelineStore = useTimeline.getState()
 
-    const { clap, totalDurationInMs, segments: timelineSegments } = timeline
+    const {
+      meta,
+      getClap,
+      totalDurationInMs,
+      segments: timelineSegments,
+    } = timeline
+
+    const clap = await getClap()
+
+    if (!clap) {
+      throw new Error(`cannot save a clap.. if there is no clap`)
+    }
 
     const task = useTasks.getState().add({
       category: TaskCategory.EXPORT,
@@ -603,7 +605,7 @@ export const useIO = create<IOStore>((set, get) => ({
           s.category === ClapSegmentCategory.VIDEO &&
           s.status === ClapSegmentStatus.COMPLETED &&
           s.startTimeInMs === 0 &&
-          s.endTimeInMs === clap.meta.durationInMs &&
+          s.endTimeInMs === meta.durationInMs &&
           s.assetUrl
       )
       .at(0)
@@ -614,14 +616,14 @@ export const useIO = create<IOStore>((set, get) => ({
       alreadyAnEmbeddedFinalVideo.assetUrl = videoDataUrl
     } else {
       console.log(`editing the clap to add a new final video`)
-      clap.segments.push(
+      timelineSegments.push(
         newSegment({
           category: ClapSegmentCategory.VIDEO,
           status: ClapSegmentStatus.COMPLETED,
           startTimeInMs: 0,
-          endTimeInMs: clap.meta.durationInMs,
+          endTimeInMs: meta.durationInMs,
           assetUrl: videoDataUrl,
-          assetDurationInMs: clap.meta.durationInMs,
+          assetDurationInMs: meta.durationInMs,
           assetSourceType: getClapAssetSourceType(videoDataUrl),
           outputGain: 1.0,
         })
@@ -647,16 +649,18 @@ export const useIO = create<IOStore>((set, get) => ({
 
     try {
       const timeline: TimelineStore = useTimeline.getState()
-      const { clap, segments: timelineSegments } = timeline
+
+      const { getClap, meta, segments: timelineSegments } = timeline
+
       const segments: ExportableSegment[] = timelineSegments
         .map((segment, i) => formatSegmentForExport(segment, i))
         .filter(({ isExportableToFile }) => isExportableToFile)
 
       let files: fflate.AsyncZippable = {}
 
-      files['screenplay.txt'] = fflate.strToU8(clap.meta.screenplay)
+      files['screenplay.txt'] = fflate.strToU8(meta.screenplay)
 
-      files['meta.json'] = fflate.strToU8(JSON.stringify(clap.meta, null, 2))
+      files['meta.json'] = fflate.strToU8(JSON.stringify(meta, null, 2))
 
       const shotcutMltXml = await generateMLT()
       files['shotcut_project.mlt'] = fflate.strToU8(shotcutMltXml)
@@ -729,8 +733,8 @@ export const useIO = create<IOStore>((set, get) => ({
         const fullVideo = await createFullVideo(
           videos,
           audios,
-          clap.meta.width,
-          clap.meta.height,
+          meta.width,
+          meta.height,
           timeline.totalDurationInMs,
           (progress, message) => {
             task.setProgress({
@@ -774,7 +778,7 @@ export const useIO = create<IOStore>((set, get) => ({
   saveMLT: async () => {},
   generateMLT: async (): Promise<string> => {
     const timeline: TimelineStore = useTimeline.getState()
-    const { clap, segments: timelineSegments } = timeline
+    const { meta, segments: timelineSegments } = timeline
 
     const segments: ExportableSegment[] = timelineSegments
       .map((segment, i) => formatSegmentForExport(segment, i))
@@ -802,11 +806,11 @@ export const useIO = create<IOStore>((set, get) => ({
 
     // want to see some colors? install es6-string-html in your VSCode
     return /* HTML*/ `<?xml version="1.0" standalone="no"?>
-<mlt LC_NUMERIC="C" version="7.24.0" title="${clap.meta.title}" producer="main_bin">
+<mlt LC_NUMERIC="C" version="7.24.0" title="${meta.title}" producer="main_bin">
   <profile
-    description="${clap.meta.width}:${clap.meta.height}"
-    width="${clap.meta.width}"
-    height="${clap.meta.height}"
+    description="${meta.width}:${meta.height}"
+    width="${meta.width}"
+    height="${meta.height}"
     progressive="0"
     sample_aspect_num="1"
     sample_aspect_den="1"
@@ -824,8 +828,8 @@ export const useIO = create<IOStore>((set, get) => ({
   <playlist id="main_bin">
     <property name="xml_retain">1</property>
   </playlist>
-  <producer id="black" in="00:00:00.000" out="${formatDuration(clap.meta.durationInMs)}">
-    <property name="length">${formatDuration(clap.meta.durationInMs)}</property>
+  <producer id="black" in="00:00:00.000" out="${formatDuration(meta.durationInMs)}">
+    <property name="length">${formatDuration(meta.durationInMs)}</property>
     <property name="eof">pause</property>
     <property name="resource">0</property>
     <property name="aspect_ratio">1</property>
@@ -834,7 +838,7 @@ export const useIO = create<IOStore>((set, get) => ({
     <property name="set.test_audio">0</property>
   </producer>
   <playlist id="background">
-    <entry producer="black" in="00:00:00.000" out="${formatDuration(clap.meta.durationInMs)}" />
+    <entry producer="black" in="00:00:00.000" out="${formatDuration(meta.durationInMs)}" />
   </playlist>
   ${segments
     .map(
@@ -842,8 +846,8 @@ export const useIO = create<IOStore>((set, get) => ({
   <producer
     id="${shortId}"
     in="${formatDuration(0)}"
-    out="${formatDuration(clap.meta.durationInMs)}">
-    <property name="length">${formatDuration(clap.meta.durationInMs)}</property>
+    out="${formatDuration(meta.durationInMs)}">
+    <property name="length">${formatDuration(meta.durationInMs)}</property>
     <property name="eof">pause</property>
     <property name="resource">${filePath}</property>
     <property name="ttl">1</property>
@@ -851,8 +855,8 @@ export const useIO = create<IOStore>((set, get) => ({
     <property name="meta.media.progressive">1</property>
     <property name="seekable">1</property>
     <property name="format">1</property>
-    <property name="meta.media.width">${clap.meta.width}</property>
-    <property name="meta.media.height">${clap.meta.height}</property>
+    <property name="meta.media.width">${meta.width}</property>
+    <property name="meta.media.height">${meta.height}</property>
     <property name="mlt_service">qimage</property>
     <property name="creation_time">${
       segment.createdAt || new Date().toISOString()
@@ -906,8 +910,8 @@ export const useIO = create<IOStore>((set, get) => ({
   </playlist>
   ${[...dialogues, ...sounds, ...music].map(
     ({ segment, filePath, fileName, shortId }) => /* HTML*/ `
-  <chain id="${shortId}" out="${formatDuration(clap.meta.durationInMs)}">
-    <property name="length">${formatDuration(clap.meta.durationInMs)}</property>
+  <chain id="${shortId}" out="${formatDuration(meta.durationInMs)}">
+    <property name="length">${formatDuration(meta.durationInMs)}</property>
     <property name="eof">pause</property>
     <property name="resource">${filePath}</property>
     <property name="mlt_service">avformat-novalidate</property>
@@ -986,7 +990,7 @@ export const useIO = create<IOStore>((set, get) => ({
     id="tractor0"
     title="Shotcut version 24.04.28"
     in="00:00:00.000"
-    out="${formatDuration(clap.meta.durationInMs)}">
+    out="${formatDuration(meta.durationInMs)}">
     <property name="shotcut">1</property>
     <property name="shotcut:projectAudioChannels">2</property>
     <property name="shotcut:projectFolder">1</property>

@@ -109,6 +109,9 @@ export const estimatedMetrics: Record<
       averageCostPerGeneration: 0.015,
     },
   },
+  [ClapWorkflowProvider.AITUBE]: {
+    // TODO list the most popular models
+  },
   [ClapWorkflowProvider.MODELSLAB]: {
     // TODO list the most popular models
   },

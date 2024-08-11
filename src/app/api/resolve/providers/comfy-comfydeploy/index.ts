@@ -15,13 +15,6 @@ export async function resolveSegment(
   }
 
   if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
-    const workflowId =
-      request.settings.imageGenerationWorkflow.id.split('://').pop() || ''
-
-    if (!workflowId) {
-      throw new Error(`The ComfyDeploy workflow ID is missing`)
-    }
-
     const inputFields =
       request.settings.imageGenerationWorkflow.inputFields || []
 

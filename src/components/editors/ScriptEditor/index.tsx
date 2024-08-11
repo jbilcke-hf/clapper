@@ -25,11 +25,14 @@ export function ScriptEditor() {
   const onDidScrollChange = useScriptEditor((s) => s.onDidScrollChange)
   const jumpCursorOnLineClick = useScriptEditor((s) => s.jumpCursorOnLineClick)
 
-  const clap = useTimeline((s: TimelineStore) => s.clap)
+  const getClap = useTimeline((s: TimelineStore) => s.getClap)
 
   useEffect(() => {
-    loadDraftFromClap(clap)
-  }, [clap])
+    const fn = async () => {
+      loadDraftFromClap(await getClap())
+    }
+    fn()
+  }, [getClap])
 
   const scrollHeight = useScriptEditor((s) => s.scrollHeight)
 

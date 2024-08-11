@@ -8,6 +8,7 @@ const comfydeploy = '/images/providers/none.png' // <- feel free to open a PR
 const elevenlabs = '/images/providers/elevenlabs.png'
 const everartai = '/images/providers/everartai.png'
 const falai = '/images/providers/falai.png'
+const aitube = '/images/providers/none.png' // <- TODO
 const fireworks = '/images/providers/fireworks.png'
 const google = '/images/providers/google.png'
 const groq = '/images/providers/groq.png'
@@ -35,6 +36,7 @@ export const ClapWorkflowProvidersLogos: Record<ClapWorkflowProvider, string> =
     [ClapWorkflowProvider.COHERE]: cohere,
     [ClapWorkflowProvider.ELEVENLABS]: elevenlabs,
     [ClapWorkflowProvider.FALAI]: falai,
+    [ClapWorkflowProvider.AITUBE]: aitube,
     [ClapWorkflowProvider.FIREWORKSAI]: fireworks,
     [ClapWorkflowProvider.GOOGLE]: google,
     [ClapWorkflowProvider.GROQ]: groq,

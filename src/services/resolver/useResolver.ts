@@ -463,9 +463,14 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     // note: do NOT use the visibleSegments here
     // that's because resolveSegment is 100% asynchronous,
     // meaning it might be called on invisible segments too!
-    const { clap, segments: allSegments, trackSilentChangeInSegment } = timeline
+    const {
+      meta,
+      entityIndex,
+      segments: allSegments,
+      trackSilentChangeInSegment,
+    } = timeline
 
-    if (!clap?.meta || !allSegments.length) {
+    if (!allSegments.length) {
       return segment
       // throw new Error(`please call setSegmentRender(...) first`)
     }
@@ -483,7 +488,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
     segment.status = ClapSegmentStatus.IN_PROGRESS
 
-    const entities = clap.entityIndex || {}
+    const entities = entityIndex || {}
 
     const speakingCharactersIds = segments
       .map((s) =>
@@ -582,7 +587,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       generalCharactersIds,
       mainCharacterId,
       mainCharacterEntity,
-      meta: clap.meta,
+      meta,
       prompts,
     }
 

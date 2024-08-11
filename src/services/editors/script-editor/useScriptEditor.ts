@@ -175,14 +175,14 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
 
   highlightElements: () => {
     const timeline: TimelineStore = useTimeline.getState()
-    const { clap } = timeline
+    const { entities } = timeline
 
     const { textModel, standaloneCodeEditor, applyClassNameToKeywords } = get()
-    if (!textModel || !standaloneCodeEditor || !clap) {
+    if (!textModel || !standaloneCodeEditor) {
       return
     }
 
-    const characters = clap.entities
+    const characters = entities
       .filter((entity) => entity.category === ClapSegmentCategory.CHARACTER)
       .map((entity) => entity.triggerName)
 
@@ -196,7 +196,7 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
       true
     )
 
-    const locations = clap.entities
+    const locations = entities
       .filter((entity) => entity.category === ClapSegmentCategory.LOCATION)
       .map((entity) => entity.triggerName)
     // any location
@@ -214,11 +214,8 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
     keywords: string[] = [],
     caseSensitive = false
   ) => {
-    const timeline: TimelineStore = useTimeline.getState()
-    const { clap } = timeline
-
     const { textModel, standaloneCodeEditor } = get()
-    if (!textModel || !standaloneCodeEditor || !clap) {
+    if (!textModel || !standaloneCodeEditor) {
       return
     }
 
