@@ -187,11 +187,7 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
       bufferedSegments: { activeSegments },
     } = useRenderer.getState()
     const timeline: TimelineStore = useTimeline.getState()
-    const { clap, addSegment, entityIndex } = timeline
-
-    if (!clap) {
-      return
-    }
+    const { meta, scenes, addSegment, entityIndex } = timeline
 
     // note: here `settings` is not the store's state itself (with methods etc)
     // but a snapshot of the serializable state values only
@@ -218,8 +214,11 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
 
     const referenceSegment: TimelineSegment | undefined = activeSegments.at(0)
 
+    console.log(
+      'uh oh.. where are the scene? TODO @julian add them back to useTimeline'
+    )
     const scene: ClapScene | undefined = referenceSegment?.sceneId
-      ? clap.scenes.find((s) => s.id === referenceSegment.sceneId)
+      ? scenes.find((s) => s.id === referenceSegment.sceneId)
       : undefined
 
     // we should be careful with how we filter and send the segments to the API
@@ -270,7 +269,7 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
       fullScene: scene?.sequenceFullText || '',
       actionLine: scene?.line || '',
       entities: entityIndex,
-      projectInfo: clap.meta.description,
+      projectInfo: meta.description,
       history: get().history,
     }
 

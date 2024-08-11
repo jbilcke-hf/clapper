@@ -13,6 +13,7 @@ export function getDefaultSettingsState(): SettingsState {
     huggingFaceApiKey: '',
     modelsLabApiKey: '',
     falAiApiKey: '',
+    aiTubeApiKey: '',
     openaiApiKey: '',
     googleApiKey: '',
     groqApiKey: '',

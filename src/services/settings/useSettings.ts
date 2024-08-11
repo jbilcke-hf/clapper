@@ -90,6 +90,14 @@ export const useSettings = create<SettingsStore>()(
           ),
         })
       },
+      setAiTubeApiKey: (aiTubeApiKey?: string) => {
+        set({
+          aiTubeApiKey: getValidString(
+            aiTubeApiKey,
+            getDefaultSettingsState().aiTubeApiKey
+          ),
+        })
+      },
       setModelsLabApiKey: (modelsLabApiKey?: string) => {
         set({
           modelsLabApiKey: getValidString(
@@ -953,6 +961,8 @@ export const useSettings = create<SettingsStore>()(
 
           huggingFaceApiKey:
             state.huggingFaceApiKey || defaultSettings.huggingFaceApiKey,
+          aiTubeApiKey: state.aiTubeApiKey || defaultSettings.aiTubeApiKey,
+
           falAiApiKey: state.falAiApiKey || defaultSettings.falAiApiKey,
           modelsLabApiKey:
             state.modelsLabApiKey || defaultSettings.modelsLabApiKey,

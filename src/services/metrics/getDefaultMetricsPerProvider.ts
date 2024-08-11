@@ -44,6 +44,9 @@ export function getDefaultMetricsPerProvider(): MetricsPerProvider {
     [ClapWorkflowProvider.FALAI]: {
       ...getDefaultClapWorkflowProviderMetrics(),
     },
+    [ClapWorkflowProvider.AITUBE]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
+    },
     [ClapWorkflowProvider.MODELSLAB]: {
       ...getDefaultClapWorkflowProviderMetrics(),
     },

@@ -36,11 +36,12 @@
     "electron:make": "npm run build && electron-forge make"
   },
   "dependencies": {
-    "@aitube/broadway": "0.2.1",
-    "@aitube/clap": "0.2.1",
-    "@aitube/clapper-services": "0.2.1",
-    "@aitube/engine": "0.2.1",
-    "@aitube/timeline": "0.2.1",
+    "@aitube/broadway": "0.2.2",
+    "@aitube/clap": "0.2.2",
+    "@aitube/clapper-services": "0.2.2-1",
+    "@aitube/client": "0.2.2",
+    "@aitube/engine": "0.2.2",
+    "@aitube/timeline": "0.2.2-1",
     "@fal-ai/serverless-client": "^0.13.0",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@ffmpeg/util": "^0.12.1",

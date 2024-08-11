@@ -12,8 +12,8 @@ export const useProjectEditor = create<ProjectEditorStore>((set, get) => ({
   setCurrent: (current?: ClapMeta) => {
     const timeline: TimelineStore = useTimeline.getState()
     set({ current })
-    if (current && timeline?.clap?.meta) {
-      Object.assign(timeline.clap.meta, current)
+    if (current && timeline?.meta) {
+      Object.assign(timeline.meta, current)
     }
   },
   undo: () => {},

@@ -17,6 +17,7 @@ import {
   resolveSegmentUsingComfyIcu,
   resolveSegmentUsingComfyDeploy,
   resolveSegmentUsingFalAi,
+  resolveSegmentUsingAiTube,
   resolveSegmentUsingModelsLab,
   resolveSegmentUsingStabilityAi,
 } from './providers'
@@ -84,7 +85,9 @@ export async function POST(req: NextRequest) {
                   ? resolveSegmentUsingFalAi
                   : provider === ClapWorkflowProvider.MODELSLAB
                     ? resolveSegmentUsingModelsLab
-                    : null
+                    : provider === ClapWorkflowProvider.AITUBE
+                      ? resolveSegmentUsingAiTube
+                      : null
 
   if (!resolveSegment) {
     throw new Error(`Provider ${provider} is not supported yet`)
