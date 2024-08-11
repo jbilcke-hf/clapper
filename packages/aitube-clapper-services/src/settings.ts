@@ -9,6 +9,7 @@ export type BaseSettings = {
   comfyIcuApiKey: string
   comfyIcuAccelerator: ComfyIcuAccelerator
   comfyDeployApiKey: string
+  aiTubeApiKey: string
   falAiApiKey: string
   modelsLabApiKey: string
   huggingFaceApiKey: string
@@ -122,6 +123,7 @@ export type SettingsControls = {
   setComfyDeployApiKey: (comfyDeployApiKey?: string) => void
   setHuggingFaceApiKey: (huggingFaceApiKey?: string) => void
   setModelsLabApiKey: (modelsLabApiKey?: string) => void
+  setAiTubeApiKey: (aiTubeApiKey?: string) => void
   setFalAiApiKey: (falAiApiKey?: string) => void
   setOpenaiApiKey: (openaiApiKey?: string) => void
   setGoogleApiKey: (googleApiKey?: string) => void
