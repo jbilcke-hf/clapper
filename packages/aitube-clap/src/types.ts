@@ -500,6 +500,7 @@ export enum ClapWorkflowProvider {
   NONE = "NONE",
   BUILTIN = "BUILTIN",
   CUSTOM = "CUSTOM",
+  AITUBE = "AITUBE", // https://aitube.at
   HUGGINGFACE = "HUGGINGFACE", // https://huggingface.co
   REPLICATE = "REPLICATE", // https://replicate.com
   COMFYDEPLOY = "COMFYDEPLOY", // https://comfydeploy.com
@@ -557,6 +558,9 @@ export enum ClapWorkflowEngine {
   REST_API = "REST_API",
 
   GRADIO_API = "GRADIO_API",
+
+  // for any API that natively accepts OpenClap
+  OPENCLAP = "OPENCLAP",
 
   // the JSON format used by ComfyUI
   COMFYUI_WORKFLOW = "COMFYUI_WORKFLOW",
