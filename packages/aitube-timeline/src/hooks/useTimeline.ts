@@ -31,7 +31,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     clear()
 
-    if (!clap || !Array.isArray(clap?.segments)) {
+    if (!clap) {
       console.log(`useTimeline: no clap to show`)
       return
     }
@@ -195,6 +195,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     set({
       meta,
+      scenes: clap.scenes,
       segments,
       entities: clap.entities,
       entityIndex: clap.entityIndex,
@@ -225,12 +226,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     get().jumpAt(0)
   },
   getClap: async (): Promise<ClapProject> => {
-    const { meta, entities, segments: timelineSegments } = get()
+    const { meta, entities, scenes, segments } = get()
 
     const clap = newClap({
       meta: { ...meta },
       entities: [...entities],
-      segments: timelineSegments.map(ts => timelineSegmentToClapSegment(ts))
+      scenes: [...scenes],
+      segments: segments.map(ts => timelineSegmentToClapSegment(ts))
     })
 
     return clap
