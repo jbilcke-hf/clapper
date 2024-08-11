@@ -12,7 +12,7 @@ import {
 
 export const huggingfaceWorkflows: ClapWorkflow[] = [
   {
-    id: 'huggingface://black-forest-labs/FLUX.1-schnell',
+    id: 'huggingface://models/black-forest-labs/FLUX.1-schnell',
     label: 'FLUX.1 [schnell]',
     description: '',
     tags: ['flux'],
@@ -30,7 +30,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     },
   },
   {
-    id: 'huggingface://black-forest-labs/FLUX.1-dev',
+    id: 'huggingface://models/black-forest-labs/FLUX.1-dev',
     label: 'FLUX.1 [dev]',
     description: '',
     tags: ['flux'],
@@ -59,7 +59,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     },
   },
   {
-    id: 'huggingface://coqui/XTTS-v2',
+    id: 'huggingface://models/coqui/XTTS-v2',
     label: 'Coqui XTTS-v2',
     description: '',
     tags: ['TTS'],
@@ -78,7 +78,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     },
   },
   {
-    id: 'huggingface://myshell-ai/OpenVoiceV2',
+    id: 'huggingface://models/myshell-ai/OpenVoiceV2',
     label: 'MyShell.ai OpenVoiceV2',
     description: '',
     tags: ['TTS'],
@@ -97,7 +97,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     },
   },
   {
-    id: 'huggingface://myshell-ai/OpenVoice',
+    id: 'huggingface://models/myshell-ai/OpenVoice',
     label: 'MyShell.ai OpenVoice',
     description: '',
     tags: ['TTS'],
@@ -116,7 +116,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     },
   },
   {
-    id: 'huggingface://WhisperSpeech/WhisperSpeech',
+    id: 'huggingface://models/WhisperSpeech/WhisperSpeech',
     label: 'WhisperSpeech',
     description: '',
     tags: ['TTS'],
@@ -135,7 +135,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     },
   },
   {
-    id: 'huggingface://metavoiceio/metavoice-1B-v0.1',
+    id: 'huggingface://models/metavoiceio/metavoice-1B-v0.1',
     label: 'MetaVoice 1B v0.1',
     description: '',
     tags: ['TTS'],
@@ -154,7 +154,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     },
   },
   {
-    id: 'huggingface://parler-tts/parler_tts_mini_v0.1',
+    id: 'huggingface://models/parler-tts/parler_tts_mini_v0.1',
     label: 'ParlerTTS Mini v0.1',
     description: '',
     tags: ['TTS'],
@@ -173,7 +173,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     },
   },
   {
-    id: 'huggingface://parler-tts/parler-tts-mini-expresso',
+    id: 'huggingface://models/parler-tts/parler-tts-mini-expresso',
     label: 'ParlerTTS Mini Expresso v0.1',
     description: '',
     tags: ['TTS'],
@@ -191,9 +191,41 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
       prompt: genericPrompt.defaultValue,
     },
   },
+  {
+    id: 'huggingface://models/HuggingFaceH4/zephyr-7b-beta',
+    label: 'Zephyr 7b (beta)',
+    description: '',
+    tags: ['Zephyr'],
+    author: 'Hugging Face H4',
+    thumbnailUrl: '',
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.HUGGINGFACE,
+    category: ClapWorkflowCategory.ASSISTANT,
+    data: 'HuggingFaceH4/zephyr-7b-beta',
+    inputFields: [genericPrompt],
+    inputValues: {
+      prompt: genericPrompt.defaultValue,
+    },
+  },
+  {
+    id: 'huggingface://models/mistralai/Mixtral-8x7B-Instruct-v0.1',
+    label: 'Mixtral 8x7b (Instruct 0.1)',
+    description: '',
+    tags: ['Zephyr'],
+    author: 'Mistral AI',
+    thumbnailUrl: '',
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.HUGGINGFACE,
+    category: ClapWorkflowCategory.ASSISTANT,
+    data: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+    inputFields: [genericPrompt],
+    inputValues: {
+      prompt: genericPrompt.defaultValue,
+    },
+  },
   /*
   {
-    id: 'huggingface://cvssp/audioldm2-music',
+    id: 'huggingface://models/cvssp/audioldm2-music',
     label: 'CVSSP AudioLDM2 Music',
     description: '',
     tags: ['music'],

@@ -127,4 +127,20 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
       // TODO: add guidance scale and number of steps
     },
   },
+  {
+    id: 'fireworksai://fireworks/llama-v3-70b-instruct',
+    label: 'Llama3 70b (Instruct)',
+    description: '',
+    tags: [],
+    author: 'Meta',
+    thumbnailUrl: '',
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.FIREWORKSAI,
+    category: ClapWorkflowCategory.ASSISTANT,
+    data: 'fireworks/llama-v3-70b-instruct',
+    inputFields: [genericPrompt],
+    inputValues: {
+      prompt: genericPrompt.defaultValue,
+    },
+  },
 ]

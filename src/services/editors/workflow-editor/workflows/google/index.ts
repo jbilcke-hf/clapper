@@ -15,8 +15,75 @@ import {
   genericWidth2048,
 } from '../common/defaultValues'
 
-// you can find this list here: https://docs.anthropic.com/en/docs/models-overview
+// you can find the list here: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versioning
+// The auto-updated version of a Gemini model points to the most recent stable version
+// google supports claude so you can also see the ids specific to Vertex AI here:
+// https://docs.anthropic.com/en/docs/models-overview
 export const googleWorkflows: ClapWorkflow[] = [
+  {
+    id: 'google://gemini-1.5-flash-001',
+    label: 'Gemini 1.5 flash (001)',
+    description: '',
+    tags: ['Gemini', 'flash'],
+    author: 'Google (GCP Vertex AI)',
+    thumbnailUrl: '',
+    engine: ClapWorkflowEngine.REST_API,
+    category: ClapWorkflowCategory.ASSISTANT,
+    provider: ClapWorkflowProvider.GOOGLE,
+    data: 'gemini-1.5-flash-001',
+    inputFields: [genericPrompt],
+    inputValues: {
+      prompt: genericPrompt.defaultValue,
+    },
+  },
+  {
+    id: 'google://gemini-1.5-pro-001',
+    label: 'Gemini 1.5 pro (001)',
+    description: '',
+    tags: ['Gemini', 'pro'],
+    author: 'Google (GCP Vertex AI)',
+    thumbnailUrl: '',
+    engine: ClapWorkflowEngine.REST_API,
+    category: ClapWorkflowCategory.ASSISTANT,
+    provider: ClapWorkflowProvider.GOOGLE,
+    data: 'gemini-1.5-pro-001',
+    inputFields: [genericPrompt],
+    inputValues: {
+      prompt: genericPrompt.defaultValue,
+    },
+  },
+  {
+    id: 'google://gemini-1.0-vision-001',
+    label: 'Gemini 1.0 vision (001)',
+    description: '',
+    tags: ['Gemini', 'vision'],
+    author: 'Google (GCP Vertex AI)',
+    thumbnailUrl: '',
+    engine: ClapWorkflowEngine.REST_API,
+    category: ClapWorkflowCategory.ASSISTANT,
+    provider: ClapWorkflowProvider.GOOGLE,
+    data: 'gemini-1.0-vision-001',
+    inputFields: [genericPrompt],
+    inputValues: {
+      prompt: genericPrompt.defaultValue,
+    },
+  },
+  {
+    id: 'google://gemini-1.0-pro-002',
+    label: 'Gemini 1.0 pro (002)',
+    description: '',
+    tags: ['Gemini', 'vision'],
+    author: 'Google (GCP Vertex AI)',
+    thumbnailUrl: '',
+    engine: ClapWorkflowEngine.REST_API,
+    category: ClapWorkflowCategory.ASSISTANT,
+    provider: ClapWorkflowProvider.GOOGLE,
+    data: 'gemini-1.0-pro-002',
+    inputFields: [genericPrompt],
+    inputValues: {
+      prompt: genericPrompt.defaultValue,
+    },
+  },
   {
     id: 'google://claude-3.5-20240620',
     label: 'Claude 3.5 (Sonnet)',
