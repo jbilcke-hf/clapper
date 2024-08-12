@@ -500,6 +500,7 @@ export enum ClapWorkflowProvider {
   NONE = "NONE",
   BUILTIN = "BUILTIN",
   CUSTOM = "CUSTOM",
+  COMFYUI = "COMFUI", // any ComfyUI server (local or remote)
   AITUBE = "AITUBE", // https://aitube.at
   HUGGINGFACE = "HUGGINGFACE", // https://huggingface.co
   REPLICATE = "REPLICATE", // https://replicate.com
