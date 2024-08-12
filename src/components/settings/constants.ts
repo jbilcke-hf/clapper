@@ -3,9 +3,10 @@ import { ClapWorkflowProvider } from '@aitube/clap'
 import { ComfyIcuAccelerator } from '@aitube/clapper-services'
 
 export const ClapWorkflowProviderShortNames = {
-  [ClapWorkflowProvider.BUILTIN]: 'BUilt-in',
+  [ClapWorkflowProvider.BUILTIN]: 'Clapper',
   [ClapWorkflowProvider.ANTHROPIC]: 'Anthropic',
   [ClapWorkflowProvider.COHERE]: 'Cohere',
+  [ClapWorkflowProvider.COMFYUI]: 'ComfyUI',
   [ClapWorkflowProvider.COMFYICU]: 'Comfy.icu',
   [ClapWorkflowProvider.COMFYDEPLOY]: 'ComfyDeploy.com',
   [ClapWorkflowProvider.CUSTOM]: 'Custom API',

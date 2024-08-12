@@ -32,7 +32,6 @@ export async function resolveSegment(
   ).init()
 
   if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
-
     const comfyApiWorkflow = JSON.parse(
       request.settings.imageGenerationWorkflow.data
     )
@@ -91,28 +90,28 @@ export async function resolveSegment(
     // to make things easier, we are going to assume that the ClapWorkflow object
     // is 100% correctly defined, and that we can rely on `inputFields` and `inputValues`
     //
-    // that way, the responsibility of automatically identifying the inputs from a raw JSON workflow 
+    // that way, the responsibility of automatically identifying the inputs from a raw JSON workflow
     // (eg. coming from OpenArt.ai) will be done by a separate pre-processing code
 
     const inputFields =
-    request.settings.imageGenerationWorkflow.inputFields || []
+      request.settings.imageGenerationWorkflow.inputFields || []
 
-  // since this is a random "wild" workflow, it is possible
-  // that the field name is a bit different
-  // we try to look into the workflow input fields
-  // to find the best match
-  const promptFields = [
-    inputFields.find((f) => f.id === 'prompt'), // exactMatch,
-    inputFields.find((f) => f.id.includes('prompt')), // similarName,
-    inputFields.find((f) => f.type === 'string'), // similarType
-  ].filter((x) => typeof x !== 'undefined')
+    // since this is a random "wild" workflow, it is possible
+    // that the field name is a bit different
+    // we try to look into the workflow input fields
+    // to find the best match
+    const promptFields = [
+      inputFields.find((f) => f.id === 'prompt'), // exactMatch,
+      inputFields.find((f) => f.id.includes('prompt')), // similarName,
+      inputFields.find((f) => f.type === 'string'), // similarType
+    ].filter((x) => typeof x !== 'undefined')
 
-  const promptField = promptFields[0]
-  if (!promptField) {
-    throw new Error(
-      `this workflow doesn't seem to have a parameter called "prompt"`
-    )
-  }
+    const promptField = promptFields[0]
+    if (!promptField) {
+      throw new Error(
+        `this workflow doesn't seem to have a parameter called "prompt"`
+      )
+    }
 
     // TODO: modify the serialized workflow payload
     // to inject our params:
