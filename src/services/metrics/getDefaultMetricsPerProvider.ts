@@ -3,6 +3,10 @@ import { ClapWorkflowProvider } from '@aitube/clap'
 import { MetricsPerProvider } from './types'
 import { getDefaultClapWorkflowProviderMetrics } from './getDefaultClapWorkflowProviderMetrics'
 
+/*
+TODO @Julian this data should be stored in the ClapWorkflow instead,
+it will be 100x easier
+*/
 export function getDefaultMetricsPerProvider(): MetricsPerProvider {
   const metricsPerProvider: MetricsPerProvider = {
     [ClapWorkflowProvider.NONE]: {
@@ -12,6 +16,9 @@ export function getDefaultMetricsPerProvider(): MetricsPerProvider {
       ...getDefaultClapWorkflowProviderMetrics(),
     },
     [ClapWorkflowProvider.CUSTOM]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
+    },
+    [ClapWorkflowProvider.COMFYUI]: {
       ...getDefaultClapWorkflowProviderMetrics(),
     },
     [ClapWorkflowProvider.HUGGINGFACE]: {

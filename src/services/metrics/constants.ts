@@ -7,6 +7,11 @@ import {
   ProviderMetricsModelEstimations,
 } from './types'
 
+/*
+TODO @Julian move this to the ClapWorkflow itself
+that will be much easier
+*/
+
 // also note that duration depends on the parameters and image size
 // so generally it only make sense to use the averageCostPerSecond
 //
@@ -22,6 +27,9 @@ export const estimatedMetrics: Record<
     // TODO list the most popular models
   },
   [ClapWorkflowProvider.CUSTOM]: {
+    // TODO list the most popular models
+  },
+  [ClapWorkflowProvider.COMFYUI]: {
     // TODO list the most popular models
   },
   [ClapWorkflowProvider.HUGGINGFACE]: {

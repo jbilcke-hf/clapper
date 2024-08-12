@@ -9,6 +9,7 @@ import {
   FalAiVideoResponse,
 } from './types'
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
+import { sampleVoice } from '@/lib/core/constants'
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -55,6 +56,9 @@ export async function resolveSegment(
     )
 
     // for the moment let's use FAL's predefined sizes
+    // but I've notived that with Flux.1 release they started to add
+    // support for custom sizes as well
+
     const imageSize =
       request.meta.orientation === ClapMediaOrientation.SQUARE
         ? FalAiImageSize.SQUARE_HD
@@ -63,6 +67,7 @@ export async function resolveSegment(
           : FalAiImageSize.LANDSCAPE_16_9
 
     // for the moment let's use FAL's predefined sizes
+    // but see my previous comment above: it's temporary
     delete workflowDefaultValues.width
     delete workflowDefaultValues.height
     delete workflowValues.width
@@ -183,11 +188,7 @@ export async function resolveSegment(
   } else if (request.segment.category === ClapSegmentCategory.DIALOGUE) {
     model = request.settings.voiceGenerationWorkflow.data || ''
 
-    let voiceIdentity =
-      request.prompts.voice.identity ||
-      // TODO for the default we should use one of our own voices instea
-      // PS: are you implementing this task? please do a search in the code for speakers/bria.mp3
-      'https://cdn.themetavoice.xyz/speakers/bria.mp3'
+    let voiceIdentity = request.prompts.voice.identity || sampleVoice
 
     const result = (await fal.run(model, {
       input: {

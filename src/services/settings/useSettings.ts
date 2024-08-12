@@ -25,13 +25,13 @@ export const useSettings = create<SettingsStore>()(
     (set, get) => ({
       ...getDefaultSettingsState(),
 
-      setCustomComfyUiApiKey: (customComfyUiApiKey?: string) => {
-        const { customComfyUiApiKey: defaulCustomComfyUiApiKey } =
+      setComfyUiClientId: (comfyUiClientId?: string) => {
+        const { comfyUiClientId: defaultComfyUiClientId } =
           getDefaultSettingsState()
         set({
-          customComfyUiApiKey: getValidString(
-            customComfyUiApiKey,
-            defaulCustomComfyUiApiKey
+          comfyUiClientId: getValidString(
+            comfyUiClientId,
+            defaultComfyUiClientId
           ),
         })
       },
@@ -610,6 +610,13 @@ export const useSettings = create<SettingsStore>()(
           ),
         })
       },
+      setComfyUiApiUrl: (comfyUiApiUrl?: string) => {
+        const { comfyUiApiUrl: defaultComfyUiApiUrl } =
+          getDefaultSettingsState()
+        set({
+          comfyUiApiUrl: getValidString(comfyUiApiUrl, defaultComfyUiApiUrl),
+        })
+      },
       setGradioApiUrlForAssistant: (gradioApiUrlForAssistant?: string) => {
         set({
           gradioApiUrlForAssistant: getValidString(
@@ -948,8 +955,8 @@ export const useSettings = create<SettingsStore>()(
           // why do we need those fallbacks? because some users will leave the fields empty,
           // eg. an empty model string.. basically we want to allow empty config that still works!
 
-          customComfyUiApiKey:
-            state.customComfyUiApiKey || defaultSettings.customComfyUiApiKey,
+          comfyUiClientId:
+            state.comfyUiClientId || defaultSettings.comfyUiClientId,
           replicateApiKey:
             state.replicateApiKey || defaultSettings.replicateApiKey,
           comfyIcuApiKey:
@@ -1080,6 +1087,9 @@ export const useSettings = create<SettingsStore>()(
           comfyWorkflowForMusic:
             state.comfyWorkflowForMusic ||
             defaultSettings.comfyWorkflowForMusic,
+
+          comfyUiApiUrl: state.comfyUiApiUrl || defaultSettings.comfyUiApiUrl,
+
           gradioApiUrlForAssistant:
             state.gradioApiUrlForAssistant ||
             defaultSettings.gradioApiUrlForAssistant,

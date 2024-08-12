@@ -5,6 +5,7 @@ import { aitubeWorkflows } from './aitube'
 import { cohereWorkflows } from './cohere'
 import { comfydeployWorkflows } from './comfydeploy'
 import { comfyicuWorkflows } from './comfyicu'
+import { comfyuiWorkflows } from './comfyui'
 import { elevenlabsWorkflows } from './elevenlabs'
 import { falaiWorkflows } from './falai'
 import { fireworksaiWorkflows } from './fireworksai'
@@ -26,6 +27,7 @@ export const workflows: ClapWorkflow[] = [
   ...cohereWorkflows,
   ...comfydeployWorkflows,
   ...comfyicuWorkflows,
+  ...comfyuiWorkflows,
   ...elevenlabsWorkflows,
   ...falaiWorkflows,
   ...fireworksaiWorkflows,
