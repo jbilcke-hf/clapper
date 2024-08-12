@@ -4,13 +4,14 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "The engine powering AiTube.at and Clapper.app",
   "scripts": {
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap && bun run build:declaration",
     "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
     "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
-    "publish": "npm publish --access public"
+    "publish": "npm publish --access public",
+        "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build"
   },
   "devDependencies": {
     "bun-types": "latest",
@@ -19,7 +20,7 @@
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.2.2"
+    "@aitube/clap": "0.2.3"
   },
   "repository": {
     "type": "git",
