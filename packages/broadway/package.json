@@ -4,14 +4,15 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Convert a script to a clap file",
   "scripts": {
     "test": "bun test --preload ./src/tests/setup.js",
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap --external=@aitube/colors && bun run build:declaration",
     "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
     "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
-    "publish": "npm publish --access public"
+    "publish": "npm publish --access public",
+    "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build"
   },
   "devDependencies": {
     "@aitube/io": "0.0.1",
@@ -21,8 +22,8 @@
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.2.2",
-    "@aitube/colors": "0.2.2"
+    "@aitube/clap": "0.2.3",
+    "@aitube/colors": "0.2.3"
   },
   "repository": {
     "type": "git",
