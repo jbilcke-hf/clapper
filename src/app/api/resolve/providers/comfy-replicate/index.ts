@@ -1,7 +1,7 @@
 import { ClapSegmentStatus, getClapAssetSourceType } from '@aitube/clap'
 
 import { ResolveRequest } from '@aitube/clapper-services'
-import { getComfyWorkflow } from '../comfy/getComfyWorkflow'
+import { getComfyWorkflow } from '../comfyui/getComfyWorkflow'
 import { runWorkflow } from './runWorkflow'
 import { TimelineSegment } from '@aitube/timeline'
 

@@ -20,6 +20,7 @@ import {
   resolveSegmentUsingAiTube,
   resolveSegmentUsingModelsLab,
   resolveSegmentUsingStabilityAi,
+  resolveSegmentUsingComfyUI,
 } from './providers'
 
 import { ResolveRequest } from '@aitube/clapper-services'
@@ -67,30 +68,34 @@ export async function POST(req: NextRequest) {
 
   // console.log(`API ResolveRequest = `, request.settings)
   const resolveSegment =
-    provider === ClapWorkflowProvider.HUGGINGFACE &&
-    engine === ClapWorkflowEngine.REST_API
-      ? resolveSegmentUsingHuggingFace
-      : provider === ClapWorkflowProvider.REPLICATE &&
-          engine === ClapWorkflowEngine.COMFYUI_WORKFLOW
+    engine === ClapWorkflowEngine.COMFYUI_WORKFLOW
+      ? provider === ClapWorkflowProvider.REPLICATE
         ? resolveSegmentUsingComfyReplicate
-        : provider === ClapWorkflowProvider.REPLICATE
-          ? resolveSegmentUsingReplicate
+        : provider === ClapWorkflowProvider.COMFYUI
+          ? resolveSegmentUsingComfyUI
           : provider === ClapWorkflowProvider.COMFYICU
             ? resolveSegmentUsingComfyIcu
             : provider === ClapWorkflowProvider.COMFYDEPLOY
               ? resolveSegmentUsingComfyDeploy
-              : provider === ClapWorkflowProvider.STABILITYAI
-                ? resolveSegmentUsingStabilityAi
-                : provider === ClapWorkflowProvider.FALAI
-                  ? resolveSegmentUsingFalAi
-                  : provider === ClapWorkflowProvider.MODELSLAB
-                    ? resolveSegmentUsingModelsLab
-                    : provider === ClapWorkflowProvider.AITUBE
-                      ? resolveSegmentUsingAiTube
-                      : null
+              : null
+      : provider === ClapWorkflowProvider.HUGGINGFACE
+        ? resolveSegmentUsingHuggingFace
+        : provider === ClapWorkflowProvider.REPLICATE
+          ? resolveSegmentUsingReplicate
+          : provider === ClapWorkflowProvider.STABILITYAI
+            ? resolveSegmentUsingStabilityAi
+            : provider === ClapWorkflowProvider.FALAI
+              ? resolveSegmentUsingFalAi
+              : provider === ClapWorkflowProvider.MODELSLAB
+                ? resolveSegmentUsingModelsLab
+                : provider === ClapWorkflowProvider.AITUBE
+                  ? resolveSegmentUsingAiTube
+                  : null
 
   if (!resolveSegment) {
-    throw new Error(`Provider ${provider} is not supported yet`)
+    throw new Error(
+      `Engine "${engine}" is not supported by "${provider}" yet. If you believe this is a mistake, please open a Pull Request (with working code) to fix it. Thank you!`
+    )
   }
 
   let segment = request.segment
