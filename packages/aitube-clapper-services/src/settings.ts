@@ -4,7 +4,7 @@ import { RenderingStrategy } from "@aitube/timeline"
 import { ComfyIcuAccelerator } from "./base-types"
 
 export type BaseSettings = {
-  customComfyUiApiKey: string
+  comfyUiClientId: string
   replicateApiKey: string
   comfyIcuApiKey: string
   comfyIcuAccelerator: ComfyIcuAccelerator
@@ -63,8 +63,9 @@ export type BaseSettings = {
   comfyWorkflowForSound: string
   comfyWorkflowForMusic: string
 
-  // ---------- MODELS FOR EACH PROVIDER --------------
+  // ------------ OTHER SETTINGS -----------
 
+  comfyUiApiUrl: string
 
   gradioApiUrlForAssistant: string
   gradioApiUrlForImage: string
@@ -116,7 +117,7 @@ export type RequestSettings = BaseSettings & {
 }
 
 export type SettingsControls = {
-  setCustomComfyUiApiKey: (customComfyUiApiKey?: string) => void
+  setComfyUiClientId: (comfyUiClientId?: string) => void
   setReplicateApiKey: (replicateApiKey?: string) => void
   setComfyIcuApiKey: (comfyIcuApiKey?: string) => void
   setComfyIcuAccelerator: (comfyIcuAccelerator?: ComfyIcuAccelerator) => void
@@ -180,6 +181,8 @@ export type SettingsControls = {
   setComfyWorkflowForVoice: (comfyWorkflowForVoice?: string) => void
   setComfyWorkflowForSound: (comfyWorkflowForSound?: string) => void
   setComfyWorkflowForMusic: (comfyWorkflowForMusic?: string) => void
+
+  setComfyUiApiUrl: (comfyUiApiUrl?: string) => void
 
   setGradioApiUrlForAssistant: (gradioApiUrlForAssistant?: string) => void
   setGradioApiUrlForImage: (gradioApiUrlForImage?: string) => void
