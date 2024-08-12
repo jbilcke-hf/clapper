@@ -4,13 +4,14 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.2.2-1",
+  "version": "0.2.3",
   "description": "Base types for Clapper services",
   "scripts": {
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap --external=@aitube/timeline --external=@monaco-editor/react --external=monaco-editor --external=zustand --external=react --external=react-dom && bun run build:declaration",
     "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
     "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
-    "publish": "bun run build && npm publish --access public"
+    "publish": "bun run build && npm publish --access public",
+    "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build"
   },
   "devDependencies": {
     "@types/react": "*",
@@ -21,8 +22,8 @@
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.2.2",
-    "@aitube/timeline": "0.2.2-1",
+    "@aitube/clap": "0.2.3",
+    "@aitube/timeline": "0.2.3",
     "@monaco-editor/react": "4.6.0",
     "monaco-editor": "0.50.0",
     "react": "*",
