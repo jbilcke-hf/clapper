@@ -55,19 +55,30 @@ export async function resolveSegment(
       request.settings.imageGenerationWorkflow
     )
 
-    // for the moment let's use FAL's predefined sizes
-    // but I've notived that with Flux.1 release they started to add
-    // support for custom sizes as well
+    // previous FAL used predefined sizes
+    // but I've notived that they started to add support for custom sizes as well
+    // so let's use custom sizing now
 
-    const imageSize =
+    const imageSize = {
+      width:
+        request.meta.width ||
+        workflowValues.width ||
+        workflowDefaultValues.width,
+      height:
+        request.meta.width ||
+        workflowValues.height ||
+        workflowDefaultValues.height,
+    }
+
+    // this was the previous system
+    /*
       request.meta.orientation === ClapMediaOrientation.SQUARE
         ? FalAiImageSize.SQUARE_HD
         : request.meta.orientation === ClapMediaOrientation.PORTRAIT
           ? FalAiImageSize.PORTRAIT_16_9
           : FalAiImageSize.LANDSCAPE_16_9
+    */
 
-    // for the moment let's use FAL's predefined sizes
-    // but see my previous comment above: it's temporary
     delete workflowDefaultValues.width
     delete workflowDefaultValues.height
     delete workflowValues.width
@@ -76,6 +87,7 @@ export async function resolveSegment(
     if (model === 'fal-ai/pulid') {
       result = (await fal.run(model, {
         input: {
+          prompt: request.prompts.image.positive,
           reference_images: [
             {
               image_url: request.prompts.image.identity,

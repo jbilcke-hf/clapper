@@ -118,7 +118,7 @@ export function SettingsSectionProvider() {
           onChange={setReplicateApiKey}
           type={apiKeyType}
         />
-        
+
         <FormInput
           label="ComfyUI API URL"
           value={comfyUiApiUrl}
