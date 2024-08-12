@@ -1,5 +1,10 @@
 import { ComfyuiWorkflow } from '@/components/editors/WorkflowEditor/WorkflowViewer/ReactFlowCanvas/formats/comfyui/types'
 
+// note: there are 2 different graph schema for comfy ui
+// a "workflow" schema used in the GUI of comfy (with node size, coordinates etc)
+// and an "api workflow" schema used for API calls
+//
+// what you are seeing here is the GUI workflow schema
 export const fluxUltimateSDUpscale: ComfyuiWorkflow = {
   last_node_id: 58,
   last_link_id: 97,

@@ -1,6 +1,8 @@
 import { ClapWorkflowProvider } from '@aitube/clap'
 
 const none = '/images/providers/none.png'
+const builtin = '/images/providers/none.png' // <-- TODO put Clapper logo here
+const comfyui = '/images/providers/none.png' // <-- TODO put ComfyUI logo here
 const anthropic = '/images/providers/anthropic.png'
 const cohere = '/images/providers/cohere.png'
 const comfyicu = '/images/providers/comfyicu.png'
@@ -31,7 +33,8 @@ const udio = '/images/providers/udio.png'
 export const ClapWorkflowProvidersLogos: Record<ClapWorkflowProvider, string> =
   {
     [ClapWorkflowProvider.NONE]: none,
-    [ClapWorkflowProvider.BUILTIN]: none, // <- TODO: use Clapper logo here
+    [ClapWorkflowProvider.BUILTIN]: builtin,
+    [ClapWorkflowProvider.COMFYUI]: comfyui,
     [ClapWorkflowProvider.ANTHROPIC]: anthropic,
     [ClapWorkflowProvider.COHERE]: cohere,
     [ClapWorkflowProvider.ELEVENLABS]: elevenlabs,

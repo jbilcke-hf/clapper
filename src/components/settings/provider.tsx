@@ -36,6 +36,12 @@ export function SettingsSectionProvider() {
   const replicateApiKey = useSettings((s) => s.replicateApiKey)
   const setReplicateApiKey = useSettings((s) => s.setReplicateApiKey)
 
+  const comfyUiApiUrl = useSettings((s) => s.comfyUiApiUrl)
+  const setComfyUiApiUrl = useSettings((s) => s.setComfyUiApiUrl)
+
+  const comfyUiClientId = useSettings((s) => s.comfyUiClientId)
+  const setComfyUiClientId = useSettings((s) => s.setComfyUiClientId)
+
   const comfyIcuApiKey = useSettings((s) => s.comfyIcuApiKey)
   const setComfyIcuApiKey = useSettings((s) => s.setComfyIcuApiKey)
 
@@ -112,6 +118,23 @@ export function SettingsSectionProvider() {
           onChange={setReplicateApiKey}
           type={apiKeyType}
         />
+        
+        <FormInput
+          label="ComfyUI API URL"
+          value={comfyUiApiUrl}
+          defaultValue={defaultSettings.comfyUiApiUrl}
+          onChange={setComfyIcuApiKey}
+          type="text"
+        />
+
+        <FormInput
+          label="ComfyUI Client ID"
+          value={comfyUiClientId}
+          defaultValue={defaultSettings.comfyUiClientId}
+          onChange={setComfyUiClientId}
+          type={apiKeyType}
+        />
+
         <FormInput
           label="Comfy.icu API key"
           value={comfyIcuApiKey}

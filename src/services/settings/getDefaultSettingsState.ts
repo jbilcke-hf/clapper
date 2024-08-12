@@ -5,7 +5,7 @@ import { defaultWorkflowForImages } from './workflows/image'
 
 export function getDefaultSettingsState(): SettingsState {
   const state: SettingsState = {
-    customComfyUiApiKey: '',
+    comfyUiClientId: '',
     replicateApiKey: '',
     comfyIcuApiKey: '',
     comfyIcuAccelerator: ComfyIcuAccelerator.L4,
@@ -75,6 +75,8 @@ export function getDefaultSettingsState(): SettingsState {
     comfyWorkflowForVoice: '{}',
     comfyWorkflowForSound: '{}',
     comfyWorkflowForMusic: '{}',
+
+    comfyUiApiUrl: 'http://localhost:8189',
 
     // those are not designed for Hugging Face specifically,
     // but to be compatible with any Gradio API URL that the

@@ -22,6 +22,7 @@ import {
   genericOverlappingTiles,
   genericInferenceSteps,
 } from '../common/defaultValues'
+import { sampleDrivingVideo, sampleVoice } from '@/lib/core/constants'
 
 /*
 
@@ -261,16 +262,10 @@ export const defaultWorkflows: ClapWorkflow[] = [
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.VOICE_GENERATION,
     data: 'fal-ai/metavoice-v1',
-    /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
-     */
     inputFields: [genericPrompt, { ...genericAudio, id: 'audio_url' }],
     inputValues: {
       [genericPrompt.id]: genericPrompt.defaultValue,
-
-      // TODO: this should be our own voice instead
-      // PS: are you implementing this task? please do a search in the code for speakers/bria.mp3
-      audio_url: 'https://cdn.themetavoice.xyz/speakers/bria.mp3',
+      audio_url: sampleVoice,
     },
   },
   {
@@ -303,6 +298,33 @@ export const defaultWorkflows: ClapWorkflow[] = [
     inputFields: [genericPrompt],
     inputValues: {
       [genericPrompt.id]: genericPrompt.defaultValue,
+    },
+  },
+  {
+    id: 'falai://fal-ai/live-portrait',
+    label: 'Live Portrait',
+    description: 'For research only',
+    tags: ['live portrait'],
+    author: 'https://github.com/KwaiVGI/LivePortrait',
+    thumbnailUrl:
+      'https://github.com/KwaiVGI/LivePortrait/raw/main/assets/docs/showcase2.gif',
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.FALAI,
+    category: ClapWorkflowCategory.VIDEO_GENERATION,
+    data: 'fal-ai/live-portrait',
+    inputFields: [
+      {
+        ...genericImage,
+        id: 'image_url',
+      },
+      {
+        ...genericVideo,
+        id: 'video_url',
+      },
+    ],
+    inputValues: {
+      image_url: genericImage.defaultValue,
+      video_url: sampleDrivingVideo,
     },
   },
 ]
