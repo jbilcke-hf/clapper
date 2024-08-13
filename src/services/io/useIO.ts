@@ -26,7 +26,12 @@ import {
   clapSegmentToTimelineSegment,
 } from '@aitube/timeline'
 import { ParseScriptProgressUpdate, parseScriptToClap } from '@aitube/broadway'
-import { IOStore, TaskCategory, TaskVisibility } from '@aitube/clapper-services'
+import {
+  IOStore,
+  ScriptEditorStore,
+  TaskCategory,
+  TaskVisibility,
+} from '@aitube/clapper-services'
 import { create } from 'zustand'
 import * as fflate from 'fflate'
 
@@ -52,6 +57,7 @@ import { extractScenesFromVideo } from './extractScenesFromVideo'
 import { base64DataUriToFile } from '@/lib/utils/base64DataUriToFile'
 import { useUI } from '../ui'
 import { getTypeAndExtension } from '@/lib/utils/getTypeAndExtension'
+import { useScriptEditor } from '../editors'
 
 export const useIO = create<IOStore>((set, get) => ({
   ...getDefaultIOState(),
@@ -246,6 +252,7 @@ export const useIO = create<IOStore>((set, get) => ({
         : await new Response(fileContent).text()
 
     const timeline: TimelineStore = useTimeline.getState()
+    const scriptEditor: ScriptEditorStore = useScriptEditor.getState()
     const task = useTasks.getState().add({
       category: TaskCategory.IMPORT,
       visibility: TaskVisibility.BLOCKER,
@@ -296,6 +303,7 @@ export const useIO = create<IOStore>((set, get) => ({
       })
 
       await timeline.setClap(clap)
+      scriptEditor.loadDraftFromClap(clap)
 
       task.setProgress({
         message: 'Nearly there..',
@@ -312,6 +320,7 @@ export const useIO = create<IOStore>((set, get) => ({
   },
   openScreenplayUrl: async (url: string) => {
     const timeline: TimelineStore = useTimeline.getState()
+    const scriptEditor: ScriptEditorStore = useScriptEditor.getState()
 
     const { fileName, projectName } = parseFileName(
       `${url.split('/').pop() || url}`
@@ -355,6 +364,7 @@ export const useIO = create<IOStore>((set, get) => ({
       })
 
       await timeline.setClap(clap)
+      scriptEditor.loadDraftFromClap(clap)
 
       task.setProgress({
         message: 'Nearly there..',
@@ -389,6 +399,7 @@ export const useIO = create<IOStore>((set, get) => ({
 
   openClapUrl: async (url: string) => {
     const timeline: TimelineStore = useTimeline.getState()
+    const scriptEditor: ScriptEditorStore = useScriptEditor.getState()
     const { setClap } = timeline
 
     const { fileName, projectName } = parseFileName(
@@ -426,6 +437,7 @@ export const useIO = create<IOStore>((set, get) => ({
       })
 
       await setClap(clap)
+      scriptEditor.loadDraftFromClap(clap)
 
       task.success()
     } catch (err) {
@@ -435,6 +447,7 @@ export const useIO = create<IOStore>((set, get) => ({
   },
   openClapBlob: async (projectName: string, fileName: string, blob: Blob) => {
     const timeline: TimelineStore = useTimeline.getState()
+    const scriptEditor: ScriptEditorStore = useScriptEditor.getState()
     const { setClap } = timeline
 
     const task = useTasks.getState().add({
@@ -459,6 +472,7 @@ export const useIO = create<IOStore>((set, get) => ({
       })
 
       await setClap(clap)
+      scriptEditor.loadDraftFromClap(clap)
 
       task.success()
     } catch (err) {
