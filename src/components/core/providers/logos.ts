@@ -2,7 +2,7 @@ import { ClapWorkflowProvider } from '@aitube/clap'
 
 const none = '/images/providers/none.png'
 const builtin = '/images/providers/none.png' // <-- TODO put Clapper logo here
-const comfyui = '/images/providers/none.png' // <-- TODO put ComfyUI logo here
+const comfyui = '/images/providers/comfyui.png'
 const anthropic = '/images/providers/anthropic.png'
 const cohere = '/images/providers/cohere.png'
 const comfyicu = '/images/providers/comfyicu.png'
