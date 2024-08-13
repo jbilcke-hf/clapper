@@ -21,18 +21,8 @@ export function ScriptEditor() {
   const current = useScriptEditor((s) => s.current)
   const setCurrent = useScriptEditor((s) => s.setCurrent)
   const publish = useScriptEditor((s) => s.publish)
-  const loadDraftFromClap = useScriptEditor((s) => s.loadDraftFromClap)
   const onDidScrollChange = useScriptEditor((s) => s.onDidScrollChange)
   const jumpCursorOnLineClick = useScriptEditor((s) => s.jumpCursorOnLineClick)
-
-  const getClap = useTimeline((s: TimelineStore) => s.getClap)
-
-  useEffect(() => {
-    const fn = async () => {
-      loadDraftFromClap(await getClap())
-    }
-    fn()
-  }, [getClap])
 
   const scrollHeight = useScriptEditor((s) => s.scrollHeight)
 
