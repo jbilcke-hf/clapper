@@ -28,7 +28,7 @@ export async function resolveSegment(
   // for API doc please see:
   // https://github.com/tctien342/comfyui-sdk/blob/main/examples/example-t2i.ts
   const api = new ComfyApi(
-    request.settings.comfyUiApiUrl || 'http://localhost:8189'
+    request.settings.comfyUiApiUrl || 'http://localhost:8188'
   ).init()
 
   if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
