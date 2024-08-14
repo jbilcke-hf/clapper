@@ -13,8 +13,8 @@ export function Metrics() {
 
   return (
     <div className="flex flex-row space-x-1">
-      <span className="text-stone-500">memory usage:</span>
-      <span className="text-stone-400">
+      <span className="text-neutral-500">memory usage:</span>
+      <span className="text-neutral-400">
         {!bytes ? 'waiting..' : humanReadableString || ''}
       </span>
     </div>

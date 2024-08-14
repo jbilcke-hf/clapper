@@ -58,7 +58,7 @@ export function MoodboardView() {
 
   const onConnect: OnConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
-    []
+    [setEdges]
   )
 
   return (

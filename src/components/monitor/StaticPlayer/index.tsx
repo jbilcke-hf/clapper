@@ -54,7 +54,7 @@ export function StaticPlayer(
   }, [setStaticVideoRef])
 
   const placeholder = (
-    <div className="text-center text-base text-stone-50/90 dark:text-stone-50/90">
+    <div className="text-center text-base text-neutral-50/90 dark:text-neutral-50/90">
       {error ? <span>{error}</span> : <span>No video yet</span>}
     </div>
   )
@@ -85,7 +85,7 @@ export function StaticPlayer(
           // autoPlay
           // muted
           loop
-          className="h-full rounded-lg border border-stone-950 object-cover"
+          className="h-full rounded-lg border border-neutral-950 object-cover"
           style={{}}
         />
       ) : (

@@ -11,7 +11,7 @@ function NodeComponent({
   }
 }) {
   return (
-    <div className="rounded-md border-2 border-stone-400 bg-white px-4 py-2 shadow-md">
+    <div className="rounded-md border-2 border-neutral-400 bg-white px-4 py-2 shadow-md">
       <div className="flex">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
           {data.emoji}

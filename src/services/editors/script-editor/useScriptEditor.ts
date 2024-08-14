@@ -18,7 +18,7 @@ import {
 } from '@aitube/clapper-services'
 
 import { getDefaultScriptEditorState } from './getDefaultScriptEditorState'
-import { useAssistant } from '@/services/assistant/useAssistant'
+// import { useAssistant } from '@/services/assistant/useAssistant'
 
 export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
   ...getDefaultScriptEditorState(),
@@ -85,7 +85,8 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
     // console.log('existingText:', existingText)
     // console.log('newTextAddition:', newTextAddition)
 
-    const assistant = useAssistant.getState()
+    // attention here! the assistant might not be initialized
+    // const assistant = useAssistant.getState()
 
     // call the LLM, with a prompt like:
   },

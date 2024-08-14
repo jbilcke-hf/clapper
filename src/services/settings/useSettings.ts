@@ -17,8 +17,11 @@ import { HARD_LIMIT_NB_MAX_ASSETS_TO_GENERATE_IN_PARALLEL } from '@/lib/core/con
 import { getDefaultSettingsState } from './getDefaultSettingsState'
 import { getValidComfyWorkflowTemplate } from '@/lib/utils/getValidComfyWorkflowTemplate'
 import { parseComfyIcuAccelerator } from '@/lib/utils/parseComfyIcuAccelerator'
+
+// that may not be the best way to do this,
+// and importing useWorkflowEditor here is a bit tricky
 import { findWorkflows } from '@/components/toolbars/top-menu/lists/getWorkflowProviders'
-import { useWorkflowEditor } from '../editors'
+import { useWorkflowEditor } from '../editors/workflow-editor/useWorkflowEditor'
 
 export const useSettings = create<SettingsStore>()(
   persist(
@@ -32,6 +35,26 @@ export const useSettings = create<SettingsStore>()(
           comfyUiClientId: getValidString(
             comfyUiClientId,
             defaultComfyUiClientId
+          ),
+        })
+      },
+      setComfyUiHttpAuthLogin: (comfyUiHttpAuthLogin?: string) => {
+        const { comfyUiHttpAuthLogin: defaultComfyUiHttpAuthLogin } =
+          getDefaultSettingsState()
+        set({
+          comfyUiHttpAuthLogin: getValidString(
+            comfyUiHttpAuthLogin,
+            defaultComfyUiHttpAuthLogin
+          ),
+        })
+      },
+      setComfyUiHttpAuthPassword: (comfyUiHttpAuthPassword?: string) => {
+        const { comfyUiHttpAuthPassword: defaultComfyUiHttpAuthPassword } =
+          getDefaultSettingsState()
+        set({
+          comfyUiHttpAuthPassword: getValidString(
+            comfyUiHttpAuthPassword,
+            defaultComfyUiHttpAuthPassword
           ),
         })
       },
@@ -683,202 +706,15 @@ export const useSettings = create<SettingsStore>()(
           ),
         })
       },
-      /*
-      should we deprecate this? or rename to "default<something>"?
-      setHuggingFaceModelForAssistant: (huggingFaceModelForAssistant?: string) => {
-        set({ huggingFaceModelForAssistant: getValidString(huggingFaceModelForAssistant, getDefaultSettingsState().huggingFaceModelForAssistant) })
-      },
-      setHuggingFaceModelForImage: (huggingFaceModelForImage?: string) => {
-        set({ huggingFaceModelForImage: getValidString(huggingFaceModelForImage, getDefaultSettingsState().huggingFaceModelForImage) })
-      },
-      setHuggingFaceModelForImageDepth: (huggingFaceModelForImageDepth?: string) => {
-        set({ huggingFaceModelForImageDepth: getValidString(huggingFaceModelForImageDepth, getDefaultSettingsState().huggingFaceModelForImageDepth) })
-      },
-      setHuggingFaceModelForImageSegmentation: (huggingFaceModelForImageSegmentation?: string) => {
-        set({ huggingFaceModelForImageSegmentation: getValidString(huggingFaceModelForImageSegmentation, getDefaultSettingsState().huggingFaceModelForImageSegmentation) })
-      },
-      setHuggingFaceModelForImageUpscaling: (huggingFaceModelForImageUpscaling?: string) => {
-        set({ huggingFaceModelForImageUpscaling: getValidString(huggingFaceModelForImageUpscaling, getDefaultSettingsState().huggingFaceModelForImageUpscaling) })
-      },
-      setHuggingFaceModelForVideo: (huggingFaceModelForVideo?: string) => {
-        set({ huggingFaceModelForVideo: getValidString(huggingFaceModelForVideo, getDefaultSettingsState().huggingFaceModelForVideo) })
-      },
-      setHuggingFaceModelForVideoDepth: (huggingFaceModelForVideoDepth?: string) => {
-        set({ huggingFaceModelForVideoDepth: getValidString(huggingFaceModelForVideoDepth, getDefaultSettingsState().huggingFaceModelForVideoDepth) })
-      },
-      setHuggingFaceModelForVideoSegmentation: (huggingFaceModelForVideoSegmentation?: string) => {
-        set({ huggingFaceModelForVideoSegmentation: getValidString(huggingFaceModelForVideoSegmentation, getDefaultSettingsState().huggingFaceModelForVideoSegmentation) })
-      },
-      setHuggingFaceModelForVideoUpscaling: (huggingFaceModelForVideoUpscaling?: string) => {
-        set({ huggingFaceModelForVideoUpscaling: getValidString(huggingFaceModelForVideoUpscaling, getDefaultSettingsState().huggingFaceModelForVideoUpscaling) })
-      },
-      setHuggingFaceModelForVoice: (huggingFaceModelForVoice?: string) => {
-        set({ huggingFaceModelForVoice: getValidString(huggingFaceModelForVoice, getDefaultSettingsState().huggingFaceModelForVoice) })
-      },
-      setHuggingFaceModelForSound: (huggingFaceModelForSound?: string) => {
-        set({ huggingFaceModelForSound: getValidString(huggingFaceModelForSound, getDefaultSettingsState().huggingFaceModelForSound) })
-      },
-      setHuggingFaceModelForMusic: (huggingFaceModelForMusic?: string) => {
-        set({ huggingFaceModelForMusic: getValidString(huggingFaceModelForMusic, getDefaultSettingsState().huggingFaceModelForMusic) })
-      },
-      setReplicateModelForImage: (replicateModelForImage?: string) => {
-        set({ replicateModelForImage: getValidString(replicateModelForImage, getDefaultSettingsState().replicateModelForImage) })
-      },
-      setReplicateModelForImageDepth: (replicateModelForImageDepth?: string) => {
-        set({ replicateModelForImageDepth: getValidString(replicateModelForImageDepth, getDefaultSettingsState().replicateModelForImageDepth) })
-      },
-      setReplicateModelForImageSegmentation: (replicateModelForImageSegmentation?: string) => {
-        set({ replicateModelForImageSegmentation: getValidString(replicateModelForImageSegmentation, getDefaultSettingsState().replicateModelForImageSegmentation) })
-      },
-      setReplicateModelForImageUpscaling: (replicateModelForImageUpscaling?: string) => {
-        set({ replicateModelForImageUpscaling: getValidString(replicateModelForImageUpscaling, getDefaultSettingsState().replicateModelForImageUpscaling) })
-      },
-      setReplicateModelForVideo: (replicateModelForVideo?: string) => {
-        set({ replicateModelForVideo: getValidString(replicateModelForVideo, getDefaultSettingsState().replicateModelForVideo) })
-      },
-      setReplicateModelForVideoDepth: (replicateModelForVideoDepth?: string) => {
-        set({ replicateModelForVideoDepth: getValidString(replicateModelForVideoDepth, getDefaultSettingsState().replicateModelForVideoDepth) })
-      },
-      setReplicateModelForVideoSegmentation: (replicateModelForVideoSegmentation?: string) => {
-        set({ replicateModelForVideoSegmentation: getValidString(replicateModelForVideoSegmentation, getDefaultSettingsState().replicateModelForVideoSegmentation) })
-      },
-      setReplicateModelForVideoUpscaling: (replicateModelForVideoUpscaling?: string) => {
-        set({ replicateModelForVideoUpscaling: getValidString(replicateModelForVideoUpscaling, getDefaultSettingsState().replicateModelForVideoUpscaling) })
-      },
-      setReplicateModelForVoice: (replicateModelForVoice?: string) => {
-        set({ replicateModelForVoice: getValidString(replicateModelForVoice, getDefaultSettingsState().replicateModelForVoice) })
-      },
-      setReplicateModelForSound: (replicateModelForSound?: string) => {
-        set({ replicateModelForSound: getValidString(replicateModelForSound, getDefaultSettingsState().replicateModelForSound) })
-      },
-      setReplicateModelForMusic: (replicateModelForMusic?: string) => {
-        set({ replicateModelForMusic: getValidString(replicateModelForMusic, getDefaultSettingsState().replicateModelForMusic) })
-      },
-      setStabilityAiModelForImage: (stabilityAiModelForImage?: string) => {
-        set({ stabilityAiModelForImage: getValidString(stabilityAiModelForImage, getDefaultSettingsState().stabilityAiModelForImage) })
-      },
-      setStabilityAiModelForVideo: (stabilityAiModelForVideo?: string) => {
-        set({ stabilityAiModelForVideo: getValidString(stabilityAiModelForVideo, getDefaultSettingsState().stabilityAiModelForVideo) })
-      },
-      setStabilityAiModelForVoice: (stabilityAiModelForVoice?: string) => {
-        set({ stabilityAiModelForVoice: getValidString(stabilityAiModelForVoice, getDefaultSettingsState().stabilityAiModelForVoice) })
-      },
-      setStabilityAiModelForSound: (stabilityAiModelForSound?: string) => {
-        set({ stabilityAiModelForSound: getValidString(stabilityAiModelForSound, getDefaultSettingsState().stabilityAiModelForSound) })
-      },
-      setStabilityAiModelForMusic: (stabilityAiModelForMusic?: string) => {
-        set({ stabilityAiModelForMusic: getValidString(stabilityAiModelForMusic, getDefaultSettingsState().stabilityAiModelForMusic) })
-      },
-      setFireworksAiModelForAssistant: (fireworksAiModelForAssistant?: string) => {
-        set({ fireworksAiModelForAssistant: getValidString(fireworksAiModelForAssistant, getDefaultSettingsState().fireworksAiModelForAssistant) })
-      },
-      setFireworksAiModelForImage: (fireworksAiModelForImage?: string) => {
-        set({ fireworksAiModelForImage: getValidString(fireworksAiModelForImage, getDefaultSettingsState().fireworksAiModelForImage) })
-      },
-      setFireworksAiModelForVideo: (fireworksAiModelForVideo?: string) => {
-        set({ fireworksAiModelForVideo: getValidString(fireworksAiModelForVideo, getDefaultSettingsState().fireworksAiModelForVideo) })
-      },
-      setFireworksAiModelForVoice: (fireworksAiModelForVoice?: string) => {
-        set({ fireworksAiModelForVoice: getValidString(fireworksAiModelForVoice, getDefaultSettingsState().fireworksAiModelForVoice) })
-      },
-      setFireworksAiModelForSound: (fireworksAiModelForSound?: string) => {
-        set({ fireworksAiModelForSound: getValidString(fireworksAiModelForSound, getDefaultSettingsState().fireworksAiModelForSound) })
-      },
-      setFireworksAiModelForMusic: (fireworksAiModelForMusic?: string) => {
-        set({ fireworksAiModelForMusic: getValidString(fireworksAiModelForMusic, getDefaultSettingsState().fireworksAiModelForMusic) })
-      },
-      setFalAiModelForImage: (falAiModelForImage?: string) => {
-        set({ falAiModelForImage: getValidString(falAiModelForImage, getDefaultSettingsState().falAiModelForImage) })
-      },
-      setFalAiModelForImageDepth: (falAiModelForImageDepth?: string) => {
-        set({ falAiModelForImageDepth: getValidString(falAiModelForImageDepth, getDefaultSettingsState().falAiModelForImageDepth) })
-      },
-      setFalAiModelForImageSegmentation: (falAiModelForImageSegmentation?: string) => {
-        set({ falAiModelForImageSegmentation: getValidString(falAiModelForImageSegmentation, getDefaultSettingsState().falAiModelForImageSegmentation) })
-      },
-      setFalAiModelForImageUpscaling: (falAiModelForImageUpscaling?: string) => {
-        set({ falAiModelForImageUpscaling: getValidString(falAiModelForImageUpscaling, getDefaultSettingsState().falAiModelForImageUpscaling) })
-      },
-      setFalAiModelForVideo: (falAiModelForVideo?: string) => {
-        set({ falAiModelForVideo: getValidString(falAiModelForVideo, getDefaultSettingsState().falAiModelForVideo) })
-      },
-      setFalAiModelForVoice: (falAiModelForVoice?: string) => {
-        set({ falAiModelForVoice: getValidString(falAiModelForVoice, getDefaultSettingsState().falAiModelForVoice) })
-      },
-      setFalAiModelForSound: (falAiModelForSound?: string) => {
-        set({ falAiModelForSound: getValidString(falAiModelForSound, getDefaultSettingsState().falAiModelForSound) })
-      },
-      setFalAiModelForMusic: (falAiModelForMusic?: string) => {
-        set({ falAiModelForMusic: getValidString(falAiModelForMusic, getDefaultSettingsState().falAiModelForMusic) })
-      },
-      setModelsLabModelForImage: (modelsLabModelForImage?: string) => {
-        set({ modelsLabModelForImage: getValidString(modelsLabModelForImage, getDefaultSettingsState().modelsLabModelForImage) })
-      },
-      setModelsLabModelForVideo: (modelsLabModelForVideo?: string) => {
-        set({ modelsLabModelForVideo: getValidString(modelsLabModelForVideo, getDefaultSettingsState().modelsLabModelForVideo) })
-      },
-      setModelsLabModelForVoice: (modelsLabModelForVoice?: string) => {
-        set({ modelsLabModelForVoice: getValidString(modelsLabModelForVoice, getDefaultSettingsState().modelsLabModelForVoice) })
-      },
-      setModelsLabModelForSound: (modelsLabModelForSound?: string) => {
-        set({ modelsLabModelForSound: getValidString(modelsLabModelForSound, getDefaultSettingsState().modelsLabModelForSound) })
-      },
-      setModelsLabModelForMusic: (modelsLabModelForMusic?: string) => {
-        set({ modelsLabModelForMusic: getValidString(modelsLabModelForMusic, getDefaultSettingsState().modelsLabModelForMusic) })
-      },
-      setOpenaiModelForAssistant: (openaiModelForAssistant?: string) => {
-        set({ openaiModelForAssistant: getValidString(openaiModelForAssistant, getDefaultSettingsState().openaiModelForAssistant) })
-      },
-      setOpenaiModelForImage: (openaiModelForImage?: string) => {
-        set({ openaiModelForImage: getValidString(openaiModelForImage, getDefaultSettingsState().openaiModelForImage) })
-      },
-      setOpenaiModelForVideo: (openaiModelForVideo?: string) => {
-        set({ openaiModelForVideo: getValidString(openaiModelForVideo, getDefaultSettingsState().openaiModelForVideo) })
-      },
-      setOpenaiModelForVoice: (openaiModelForVoice?: string) => {
-        set({ openaiModelForVoice: getValidString(openaiModelForVoice, getDefaultSettingsState().openaiModelForVoice) })
-      },
-      setGroqModelForAssistant: (groqModelForAssistant?: string) => {
-        set({ groqModelForAssistant: getValidString(groqModelForAssistant, getDefaultSettingsState().groqModelForAssistant) })
-      },
-      setGoogleModelForAssistant: (googleModelForAssistant?: string) => {
-        set({ googleModelForAssistant: getValidString(googleModelForAssistant, getDefaultSettingsState().googleModelForAssistant) })
-      },
-      setGoogleModelForImage: (googleModelForImage?: string) => {
-        set({ googleModelForImage: getValidString(googleModelForImage, getDefaultSettingsState().googleModelForImage) })
-      },
-      setGoogleModelForVideo: (googleModelForVideo?: string) => {
-        set({ googleModelForVideo: getValidString(googleModelForVideo, getDefaultSettingsState().googleModelForVideo) })
-      },
-      setGoogleModelForVoice: (googleModelForVoice?: string) => {
-        set({ googleModelForVoice: getValidString(googleModelForVoice, getDefaultSettingsState().googleModelForVoice) })
-      },
-      setGoogleModelForMusic: (googleModelForMusic?: string) => {
-        set({ googleModelForMusic: getValidString(googleModelForMusic, getDefaultSettingsState().googleModelForMusic) })
-      },
-      setAnthropicModelForAssistant: (anthropicModelForAssistant?: string) => {
-        set({ anthropicModelForAssistant: getValidString(anthropicModelForAssistant, getDefaultSettingsState().anthropicModelForAssistant) })
-      },
-      setElevenLabsModelForVoice: (elevenLabsModelForVoice?: string) => {
-        set({ elevenLabsModelForVoice: getValidString(elevenLabsModelForVoice, getDefaultSettingsState().elevenLabsModelForVoice) })
-      },
-      setElevenLabsModelForSound: (elevenLabsModelForSound?: string) => {
-        set({ elevenLabsModelForSound: getValidString(elevenLabsModelForSound, getDefaultSettingsState().elevenLabsModelForSound) })
-      },
-      setCohereModelForAssistant: (cohereModelForAssistant?: string) => {
-        set({ cohereModelForAssistant: getValidString(cohereModelForAssistant, getDefaultSettingsState().cohereModelForAssistant) })
-      },
-      setMistralAiModelForAssistant: (mistralAiModelForAssistant?: string) => {
-        set({ mistralAiModelForAssistant: getValidString(mistralAiModelForAssistant, getDefaultSettingsState().mistralAiModelForAssistant) })
-      },
-      setKitsAiModelForVoice: (kitsAiModelForVoice?: string) => {
-        set({ kitsAiModelForVoice: getValidString(kitsAiModelForVoice, getDefaultSettingsState().kitsAiModelForVoice) })
-      },
-      */
       getRequestSettings: (): RequestSettings => {
         const state = get()
         const defaultSettings = getDefaultSettingsState()
 
+        // I think this is causing some issues,
+        // with the settings having a dependency over the workflows,
+        // which creates a loop
+        //
+        // we should probably this step else where
         const availableWorkflows =
           useWorkflowEditor.getState().availableWorkflows
 
@@ -957,6 +793,11 @@ export const useSettings = create<SettingsStore>()(
 
           comfyUiClientId:
             state.comfyUiClientId || defaultSettings.comfyUiClientId,
+          comfyUiHttpAuthLogin:
+            state.comfyUiHttpAuthLogin || defaultSettings.comfyUiHttpAuthLogin,
+          comfyUiHttpAuthPassword:
+            state.comfyUiHttpAuthPassword ||
+            defaultSettings.comfyUiHttpAuthPassword,
           replicateApiKey:
             state.replicateApiKey || defaultSettings.replicateApiKey,
           comfyIcuApiKey:

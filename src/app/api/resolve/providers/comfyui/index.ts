@@ -1,5 +1,6 @@
 import { ResolveRequest } from '@aitube/clapper-services'
 import {
+  ClapAssetSource,
   ClapSegmentCategory,
   ClapSegmentStatus,
   generateSeed,
@@ -7,6 +8,7 @@ import {
 } from '@aitube/clap'
 import { TimelineSegment } from '@aitube/timeline'
 import {
+  BasicCredentials,
   CallWrapper,
   ComfyApi,
   PromptBuilder,
@@ -15,6 +17,7 @@ import {
 } from '@saintno/comfyui-sdk'
 
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
+import { decodeOutput } from '@/lib/utils/decodeOutput'
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -25,10 +28,25 @@ export async function resolveSegment(
 
   const segment: TimelineSegment = { ...request.segment }
 
+  const credentials: BasicCredentials = {
+    type: 'basic',
+    username: request.settings.comfyUiHttpAuthLogin,
+    password: request.settings.comfyUiHttpAuthPassword,
+  }
+
   // for API doc please see:
   // https://github.com/tctien342/comfyui-sdk/blob/main/examples/example-t2i.ts
   const api = new ComfyApi(
-    request.settings.comfyUiApiUrl || 'http://localhost:8188'
+    request.settings.comfyUiApiUrl || 'http://localhost:8188',
+    request.settings.comfyUiClientId,
+
+    // HTTP Auth is optional
+    // also in the future, we might support other things (bearer tokens?)
+    request.settings.comfyUiHttpAuthLogin
+      ? {
+          credentials,
+        }
+      : undefined
   ).init()
 
   if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
@@ -123,18 +141,38 @@ export async function resolveSegment(
       .onStart(() => console.log('Task is started'))
       .onPreview((blob) => console.log(blob))
       .onFinished((data) => {
-        console.log(
-          data.images?.images.map((img: any) => api.getPathImage(img))
-        )
+        console.log('Pipeline finished')
       })
       .onProgress((info) =>
         console.log('Processing node', info.node, `${info.value}/${info.max}`)
       )
       .onFailed((err) => console.log('Task is failed', err))
 
-    const result = await pipeline.run()
+    const rawOutput = await pipeline.run()
 
-    console.log(`result:`, result)
+    if (!rawOutput) {
+      throw new Error(`failed to run the pipeline (no output)`)
+    }
+
+    const imagePaths = rawOutput.images?.images.map((img: any) =>
+      api.getPathImage(img)
+    )
+
+    console.log(`imagePaths:`, imagePaths)
+
+    const imagePath = imagePaths.at(0)
+    if (!imagePath) {
+      throw new Error(`failed to run the pipeline (no image)`)
+    }
+
+    // TODO: check what the imagePath looks like exactly
+    const assetUrl = await decodeOutput(imagePath)
+
+    console.log(`assetUrl:`, imagePaths)
+    segment.assetUrl = assetUrl
+    segment.assetSourceType = ClapAssetSource.DATA
+
+    // TODO:
   } else {
     throw new Error(
       `Clapper doesn't support ${request.segment.category} generation for provider "ComfyUI". Please open a pull request with (working code) to solve this!`

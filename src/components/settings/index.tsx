@@ -67,7 +67,7 @@ export function SettingsDialog() {
               <Button
                 key={key}
                 variant="ghost"
-                className="flex w-full flex-col items-end text-right text-lg font-thin capitalize text-stone-300"
+                className="flex w-full flex-col items-end text-right text-lg font-thin capitalize text-neutral-300"
                 onClick={() => setShowSettings(key as SettingsCategory)}
               >
                 {panelLabels[key]}
@@ -76,14 +76,14 @@ export function SettingsDialog() {
           </div>
         </ScrollArea>
 
-        <div className="flex h-full max-w-[calc(100%-150px)] flex-grow select-none flex-col justify-between border-l border-stone-800 pl-8">
+        <div className="flex h-full max-w-[calc(100%-150px)] flex-grow select-none flex-col justify-between border-l border-neutral-800 pl-8">
           <ScrollArea className="flex h-full flex-row">
             {panels[showSettings]}
           </ScrollArea>
           <DialogFooter>
             <Button
               variant="outline"
-              className="text-sm font-light dark:border-stone-700 dark:bg-stone-800 dark:text-stone-400"
+              className="text-sm font-light dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400"
               onClick={() => {
                 setShowSettings(SettingsCategory.NONE)
               }}
