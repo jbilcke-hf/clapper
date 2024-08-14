@@ -1,6 +1,6 @@
 import { WorkflowEditorState } from '@aitube/clapper-services'
 
-import { workflows } from './workflows'
+import { staticWorkflows } from './workflows'
 
 export function getDefaultWorkflowEditorState(): WorkflowEditorState {
   const state: WorkflowEditorState = {
@@ -10,7 +10,7 @@ export function getDefaultWorkflowEditorState(): WorkflowEditorState {
     version: 0,
 
     // we clone
-    availableWorkflows: workflows.map((w) => ({ ...w })),
+    availableWorkflows: staticWorkflows.map((w) => ({ ...w })),
   }
 
   return state

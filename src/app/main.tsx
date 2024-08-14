@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { DndProvider, useDrop } from 'react-dnd'
 import { HTML5Backend, NativeTypes } from 'react-dnd-html5-backend'
 import { UIWindowLayout } from '@aitube/clapper-services'
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 
 import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/lib/utils'
@@ -14,12 +15,10 @@ import { Monitor } from '@/components/monitor'
 
 import { SettingsDialog } from '@/components/settings'
 import { LoadingDialog } from '@/components/dialogs/loader/LoadingDialog'
-import { useUI, useIO } from '@/services'
 import { TopBar } from '@/components/toolbars/top-bar'
 import { Timeline } from '@/components/core/timeline'
 import { ChatView } from '@/components/assistant/ChatView'
 import { Editors } from '@/components/editors/Editors'
-import { useTheme } from '@/services/ui/useTheme'
 import { BottomToolbar } from '@/components/toolbars/bottom-bar'
 import { FruityDesktop, FruityWindow } from '@/components/windows'
 import { ScriptEditor } from '@/components/editors/ScriptEditor'
@@ -27,7 +26,10 @@ import { SegmentEditor } from '@/components/editors/SegmentEditor'
 import { EntityEditor } from '@/components/editors/EntityEditor'
 import { WorkflowEditor } from '@/components/editors/WorkflowEditor'
 import { FilterEditor } from '@/components/editors/FilterEditor'
+
+import { useUI, useIO, useTheme } from '@/services'
 import { useRenderLoop } from '@/services/renderer'
+import { useDynamicWorkflows } from '@/services/editors/workflow-editor/useDynamicWorkflows'
 
 type DroppableThing = { files: File[] }
 
@@ -46,6 +48,10 @@ function MainContent() {
   // this has to be done at the root of the app, that way it can
   // perform its routine even when the monitor component is hidden
   useRenderLoop()
+
+  // this has to be done at the root of the app, that way it can
+  // sync workflows even when the workflow component is hidden
+  useDynamicWorkflows()
 
   const [{ isOver, canDrop }, connectFileDrop] = useDrop({
     accept: [NativeTypes.FILE],
@@ -229,7 +235,7 @@ function MainContent() {
           : 'pointer-events-none hidden',
         `fixed top-9 h-[calc(100vh-36px)] w-screen flex-row overflow-hidden`,
         `items-center justify-center`,
-        `bg-stone-950`
+        `bg-neutral-950`
       )}
     >
       <div
@@ -310,11 +316,24 @@ function MainContent() {
   )
 }
 
+function fallbackRender({ error, resetErrorBoundary }: FallbackProps) {
+  // Call resetErrorBoundary() to reset the error boundary and retry the render.
+
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre style={{ color: 'red' }}>{error.message}</pre>
+    </div>
+  )
+}
+
 export function Main() {
   return (
     <TooltipProvider>
       <DndProvider backend={HTML5Backend}>
-        <MainContent />
+        <ErrorBoundary fallbackRender={fallbackRender}>
+          <MainContent />
+        </ErrorBoundary>
       </DndProvider>
     </TooltipProvider>
   )

@@ -11,6 +11,7 @@ import {
   useProjectEditor,
   useScriptEditor,
   useSegmentEditor,
+  useWorkflowEditor,
 } from './editors'
 import { useIO } from './io/useIO'
 import { useMetrics } from './metrics/useMetrics'
@@ -24,6 +25,7 @@ import { useWindows } from './windows/useWindows'
 
 // those are just used for developer convenience
 // to help debug things in the chrome developer console
+
 if (typeof window !== 'undefined') {
   const w = window as any
   w.useTasks = useTasks
@@ -31,13 +33,18 @@ if (typeof window !== 'undefined') {
   w.useMic = useMic
   w.useAudio = useAudio
   w.useBroadcast = useBroadcast
-  w.useEditors = useEditors
+
+  // I think we have a cyclic dependency somewhere,
+  // because uncommenting the following lines will crash the app
+  // w.useEditors = useEditors
+  // w.useWorkflowEditor = useWorkflowEditor
+  // w.useIO = useIO
+
   w.useEntityEditor = useEntityEditor
   w.useFilterEditor = useFilterEditor
   w.useProjectEditor = useProjectEditor
   w.useScriptEditor = useScriptEditor
   w.useSegmentEditor = useSegmentEditor
-  w.useIO = useIO
   w.useMetrics = useMetrics
   w.useMonitor = useMonitor
   w.useRenderer = useRenderer

@@ -27,7 +27,7 @@ export function DeprecatedLoader({
       )}
     >
       <p
-        className={cn('font-sans text-[3vw] font-thin text-stone-100')}
+        className={cn('font-sans text-[3vw] font-thin text-neutral-100')}
         style={{ textShadow: '#000 1px 0 3px' }}
       >
         <span className="">Loading..</span>

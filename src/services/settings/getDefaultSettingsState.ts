@@ -6,6 +6,8 @@ import { defaultWorkflowForImages } from './workflows/image'
 export function getDefaultSettingsState(): SettingsState {
   const state: SettingsState = {
     comfyUiClientId: 'clapper',
+    comfyUiHttpAuthLogin: '',
+    comfyUiHttpAuthPassword: '',
     replicateApiKey: '',
     comfyIcuApiKey: '',
     comfyIcuAccelerator: ComfyIcuAccelerator.L4,

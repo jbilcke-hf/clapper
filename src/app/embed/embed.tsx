@@ -23,7 +23,7 @@ export function Embed() {
       <div
         ref={ref}
         className={cn(
-          `dark fixed flex h-screen w-screen select-none flex-col items-center justify-center overflow-hidden font-light text-stone-900/90 dark:text-stone-100/90`
+          `dark fixed flex h-screen w-screen select-none flex-col items-center justify-center overflow-hidden font-light text-neutral-900/90 dark:text-neutral-100/90`
         )}
         style={{ backgroundImage: theme.wallpaperBgImage }}
       >

@@ -15,7 +15,7 @@ export function FormSection({
     <div
       className={cn(
         '@container', // so that inputs can use container queries
-        `flex h-full w-full flex-col space-y-2 overflow-y-scroll scrollbar scrollbar-track-stone-300 scrollbar-thumb-stone-700 scrollbar-corner-stone-500`,
+        `flex h-full w-full flex-col space-y-2 overflow-y-scroll scrollbar scrollbar-track-neutral-300 scrollbar-thumb-neutral-700 scrollbar-corner-neutral-500`,
         className
       )}
     >

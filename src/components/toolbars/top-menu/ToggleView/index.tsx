@@ -31,7 +31,7 @@ export function ToggleView({
         >
           <div
             className={cn(
-              `flex transition-all duration-200 ease-in-out group-hover:scale-110 group-hover:border-stone-100`,
+              `flex transition-all duration-200 ease-in-out group-hover:scale-110 group-hover:border-neutral-100`,
               isVisible
                 ? `border-neutral-100 bg-neutral-400`
                 : `border-neutral-400`,

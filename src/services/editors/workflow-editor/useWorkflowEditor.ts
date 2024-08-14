@@ -5,6 +5,7 @@ import { WorkflowEditorStore } from '@aitube/clapper-services'
 import { ClapWorkflow } from '@aitube/clap'
 
 import { getDefaultWorkflowEditorState } from './getDefaultWorkflowEditorState'
+import { dynamicWorkflows, staticWorkflows } from './workflows'
 
 export const useWorkflowEditor = create<WorkflowEditorStore>((set, get) => ({
   ...getDefaultWorkflowEditorState(),
@@ -15,6 +16,18 @@ export const useWorkflowEditor = create<WorkflowEditorStore>((set, get) => ({
   redo: () => {},
 
   updateAvailableWorkflows: async () => {
-    // TODO pull data from.. somewhere
+    let availableWorkflows: ClapWorkflow[] = []
+
+    availableWorkflows = availableWorkflows.concat(
+      staticWorkflows.map((w) => ({ ...w }))
+    )
+
+    for (const dynamicWorkflow of dynamicWorkflows) {
+      availableWorkflows = availableWorkflows.concat(await dynamicWorkflow())
+    }
+
+    set({
+      availableWorkflows,
+    })
   },
 }))

@@ -14,7 +14,7 @@ export const tagColorToTailwindClass: Record<TagColor, string> = {
   [TagColor.GRAY]: `bg-gray-800 border-gray-600 text-gray-300`,
   [TagColor.ZINC]: `bg-zinc-800 border-zinc-600 text-zinc-300`,
   [TagColor.NEUTRAL]: `bg-neutral-800 border-neutral-600 text-neutral-300`,
-  [TagColor.STONE]: `bg-stone-800 border-stone-600 text-stone-300`,
+  [TagColor.STONE]: `bg-neutral-800 border-neutral-600 text-neutral-300`,
   [TagColor.RED]: `bg-red-800 border-red-600 text-red-300`,
   [TagColor.ORANGE]: `bg-orange-800 border-orange-600 text-orange-300`,
   [TagColor.AMBER]: `bg-amber-800 border-amber-600 text-amber-300`,

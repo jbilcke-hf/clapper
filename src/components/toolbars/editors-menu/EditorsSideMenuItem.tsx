@@ -63,8 +63,8 @@ export function EditorsSideMenuItem({
             unmanaged || isActive ? '' : `cursor-pointer`,
             `border-l-[2px]`,
             isActive
-              ? 'fill-stone-50/80 text-stone-50 opacity-100 hover:fill-stone-50 hover:text-stone-50'
-              : 'fill-stone-400/80 text-gray-400 opacity-80 hover:fill-stone-200 hover:text-stone-200 hover:opacity-100',
+              ? 'fill-neutral-50/80 text-neutral-50 opacity-100 hover:fill-neutral-50 hover:text-neutral-50'
+              : 'fill-neutral-400/80 text-gray-400 opacity-80 hover:fill-neutral-200 hover:text-neutral-200 hover:opacity-100',
             `group`
           )}
           style={{

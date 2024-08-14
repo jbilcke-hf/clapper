@@ -17,7 +17,7 @@ function GetItHere({ href, children }: { href: string; children: ReactNode }) {
     <span>
       {children} (
       <a
-        className="text-stone-500 underline hover:text-stone-400"
+        className="text-neutral-500 underline hover:text-neutral-400"
         href={href}
         target="_blank"
       >
@@ -41,6 +41,14 @@ export function SettingsSectionProvider() {
 
   const comfyUiClientId = useSettings((s) => s.comfyUiClientId)
   const setComfyUiClientId = useSettings((s) => s.setComfyUiClientId)
+
+  const comfyUiHttpAuthLogin = useSettings((s) => s.comfyUiHttpAuthLogin)
+  const setComfyUiHttpAuthLogin = useSettings((s) => s.setComfyUiHttpAuthLogin)
+
+  const comfyUiHttpAuthPassword = useSettings((s) => s.comfyUiHttpAuthPassword)
+  const setComfyUiHttpAuthPassword = useSettings(
+    (s) => s.setComfyUiHttpAuthPassword
+  )
 
   const comfyIcuApiKey = useSettings((s) => s.comfyIcuApiKey)
   const setComfyIcuApiKey = useSettings((s) => s.setComfyIcuApiKey)
@@ -89,7 +97,7 @@ export function SettingsSectionProvider() {
   return (
     <div className="flex flex-col justify-between space-y-6">
       <FormSection label="Compute providers">
-        <p className="max-w-80 text-sm italic text-stone-500">
+        <p className="max-w-80 text-sm italic text-neutral-500">
           Note: preferences and credentials are stored inside your browser local
           storage.
           <br />
@@ -133,6 +141,22 @@ export function SettingsSectionProvider() {
           defaultValue={defaultSettings.comfyUiClientId}
           onChange={setComfyUiClientId}
           type="text"
+        />
+
+        <FormInput
+          label="ComfyUI HTTP Auth login (optional)"
+          value={comfyUiHttpAuthLogin}
+          defaultValue={defaultSettings.comfyUiHttpAuthLogin}
+          onChange={setComfyUiHttpAuthLogin}
+          type="text"
+        />
+
+        <FormInput
+          label="ComfyUI HTTP Auth password (optional)"
+          value={comfyUiHttpAuthPassword}
+          defaultValue={defaultSettings.comfyUiHttpAuthPassword}
+          onChange={setComfyUiHttpAuthPassword}
+          type={apiKeyType}
         />
 
         <FormInput
