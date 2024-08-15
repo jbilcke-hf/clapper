@@ -20,7 +20,7 @@
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.2.3"
+    "@aitube/clap": "file:../clap"
   },
   "repository": {
     "type": "git",
