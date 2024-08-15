@@ -1,5 +1,5 @@
 {
-    "name": "@clapper/monorepo",
+    "name": "@aitube/clapper-monorepo",
     "version": "1.0.0",
     "private": true,
     "description": "A monorepo for the Clapper project. Individual packages are in the packages directory.",
