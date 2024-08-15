@@ -202,7 +202,7 @@ export async function askAnyAssistant({
     })
     // console.log('Lanchain success on the first time! rawResponse:', rawResponse)
 
-    assistantMessage = parseLangChainResponse(rawResponse)
+    assistantMessage = parseLangChainResponse(rawResponse as any)
     // console.log('assistantMessage:', assistantMessage)
   } catch (err) {
     // LangChain failure (this happens quite often, actually)

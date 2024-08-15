@@ -1,5 +1,5 @@
 import { ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode } from "@/types"
-import { filterSegmentsWithinRange } from "./filterSegmentsWithinRange"
+import { filterSegmentsWithinRange } from "@/utils/filterSegmentsWithinRange"
 
 /**
  * Return all the segments within the provided reference segment, for the given mode:

@@ -1,1 +1,1 @@
-export { defaultMediaOrientation } from "./defaultValues"
+export { defaultMediaOrientation } from "@/constants/defaultValues"

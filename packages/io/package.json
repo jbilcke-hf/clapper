@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.2.4",
   "description": "Collection of useful I/O utilities for NodeJS. Used by AiTube.at",
   "scripts": {
     "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
@@ -19,7 +19,6 @@
     "rimraf": "^5.0.7",
     "typescript": "^5.4.5"
   },
-  "peerDependencies": {},
   "dependencies": {
     "mime-types": "^2.1.35",
     "pure-uuid": "^1.8.1",

@@ -1,7 +1,7 @@
 import YAML from "yaml"
 
-import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment, ClapFormat, ParseClapProgressUpdate, ClapWorkflow } from "../types"
-import { dataUriToBlob } from "../converters/dataUriToBlob"
+import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment, ClapFormat, ParseClapProgressUpdate, ClapWorkflow } from "@/types"
+import { dataUriToBlob } from "@/converters/dataUriToBlob"
 import { buildEntityIndex } from "@/helpers/buildEntityIndex"
 import { sanitizeWorkflows } from "@/sanitizers/sanitizeWorkflows"
 import { sanitizeEntities } from "@/sanitizers/sanitizeEntities"

@@ -1,5 +1,5 @@
 import { ScreenplaySequenceType } from "@/constants/screenplaySequences"
-import { ClapSegmentCategory } from "@aitube/clap"
+// import { ClapSegmentCategory } from "@aitube/clap"
 
 export type NamedEntity = {
   label: string
@@ -7,7 +7,7 @@ export type NamedEntity = {
     en: string[]
   }
   prompts: Omit<
-    Record<ClapSegmentCategory, string[]>,
+    Record<any, string[]>,
     "SPLAT" | "INTERFACE" | "EVENT" | "EFFECT" | "PHENOMENON" | "MESH" | "DEPTH" | "VIDEO" | "STORYBOARD" | "GENERIC"
   >
 }

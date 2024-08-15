@@ -37,22 +37,22 @@ export {
   ClapWorkflowCategory,
   ClapWorkflowProvider,
   ClapWorkflow
-} from './types'
+} from '@/types'
 export {
   defaultMediaOrientation
-} from './constants'
+} from '@/constants'
 export {
   newClap,
   newEntity,
   newSegment,
   newWorkflow
-} from './factories'
+} from '@/factories'
 export {
   parseClap,
   serializeClap,
   fetchClap,
   updateClap
-} from './io'
+} from '@/io'
 export {
   filterSegments,
   filterSegmentsWithinRange,
@@ -68,12 +68,12 @@ export {
   parseSegmentCategory,
   parseSegmentStatus,
   UUID
-} from './utils'
+} from '@/utils'
 export {
   blobToDataUri,
   dataUriToBlob,
   clapToDataUri
-} from './converters'
+} from '@/converters'
 export {
   buildEntityIndex,
   filterAssets,
@@ -81,7 +81,7 @@ export {
   generateClapFromSimpleStory,
   getEmptyClap,
   removeGeneratedAssetUrls,
-} from './helpers'
+} from '@/helpers'
 export {
   sanitizeEntities,
   sanitizeEntity,
@@ -90,4 +90,4 @@ export {
   sanitizeSegments,
   sanitizeWorkflow,
   sanitizeWorkflows,
-} from './sanitizers'
+} from '@/sanitizers'

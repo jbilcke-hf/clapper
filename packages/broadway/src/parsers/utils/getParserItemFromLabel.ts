@@ -1,4 +1,4 @@
-import { ClapSegmentCategory } from "@aitube/clap"
+// import { ClapSegmentCategory } from "@aitube/clap"
 
 import { NamedEntity } from "@/types"
 
@@ -33,7 +33,7 @@ export const getParserItemFromLabel = (database: NamedEntity[]) => {
       return defaultEmptyItem
     }
 
-    const prompts: Partial<Record<ClapSegmentCategory, string[]>> =
+    const prompts: Partial<Record<any, string[]>> =
       typeof item.prompts === "undefined" ?  defaultEmptyItem.prompts! : item.prompts
 
     return {

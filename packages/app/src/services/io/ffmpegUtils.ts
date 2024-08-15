@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { UUID } from '@aitube/clap'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { toBlobURL } from '@ffmpeg/util'

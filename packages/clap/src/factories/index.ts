@@ -1,4 +1,4 @@
-export { newClap } from './newClap'
-export { newEntity } from './newEntity'
-export { newSegment } from './newSegment'
-export { newWorkflow } from './newWorkflow'
+export { newClap } from '@/factories/newClap'
+export { newEntity } from '@/factories/newEntity'
+export { newSegment } from '@/factories/newSegment'
+export { newWorkflow } from '@/factories/newWorkflow'
