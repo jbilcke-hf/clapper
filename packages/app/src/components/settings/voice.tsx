@@ -13,7 +13,7 @@ export function SettingsSectionVoice() {
     <div className="flex flex-col justify-between space-y-6">
       <FormSection label="Voice rendering">
         <FormArea
-          label="Custom ComfyUI workflows for voice"
+          label="Custom ComfyUI workflow for voice"
           value={comfyWorkflowForVoice}
           defaultValue={defaultSettings.comfyWorkflowForVoice}
           onChange={setComfyWorkflowForVoice}

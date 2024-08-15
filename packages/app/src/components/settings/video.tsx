@@ -57,7 +57,7 @@ export function SettingsSectionVideo() {
         />
 
         <FormArea
-          label="Custom ComfyUI workflows for video"
+          label="Custom ComfyUI workflow for video"
           value={comfyWorkflowForVideo}
           defaultValue={defaultSettings.comfyWorkflowForVideo}
           onChange={setComfyWorkflowForVideo}

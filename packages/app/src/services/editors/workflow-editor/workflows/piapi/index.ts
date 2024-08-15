@@ -40,7 +40,7 @@ export const piApiWorkflows: ClapWorkflow[] = [
     thumbnailUrl: '',
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.PIAPI,
-    category: ClapWorkflowCategory.IMAGE_GENERATION,
+    category: ClapWorkflowCategory.VIDEO_GENERATION,
     data: 'luma/v1/video', // <- this value isn't really used, it's just to put something here
     inputFields: [
       genericImageUrl,

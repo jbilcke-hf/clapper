@@ -13,7 +13,7 @@ export function SettingsSectionSound() {
     <div className="flex flex-col justify-between space-y-6">
       <FormSection label="Sound rendering">
         <FormArea
-          label="Custom ComfyUI workflows for sound"
+          label="Custom ComfyUI workflow for sound"
           value={comfyWorkflowForSound}
           defaultValue={defaultSettings.comfyWorkflowForSound}
           onChange={setComfyWorkflowForSound}
