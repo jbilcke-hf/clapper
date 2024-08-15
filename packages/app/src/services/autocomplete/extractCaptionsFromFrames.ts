@@ -3,7 +3,7 @@
 //   AutoTokenizer,
 //   Florence2ForConditionalGeneration,
 //   RawImage,
-// } from '@xenova/transformers'
+// } from '@huggingface/transformers'
 
 export const cache: {
   model?: Promise<any>

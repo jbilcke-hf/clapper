@@ -1,4 +1,4 @@
-importScripts('https://cdn.jsdelivr.net/npm/@xenova/transformers@3.0.0');
+importScripts('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.0');
 
 const { AutoProcessor, AutoTokenizer, Moondream1ForConditionalGeneration, RawImage } = transformers;
 

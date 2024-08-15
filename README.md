@@ -73,6 +73,8 @@ As a prerequisite you need to have [git lfs](https://git-lfs.com/) installed (se
 git lfs install
 ```
 
+You will also need to install [Bun](https://bun.sh/docs/installation)
+
 Clapper has been tested with Node `20.15.1`.
 
 To make sure you use this version, you can use [NVM](https://github.com/nvm-sh/nvm) to activate it:
@@ -84,24 +86,15 @@ nvm use
 
 If you find that Clapper is working with a more recent (stable) version of Node, or have a better version management to suggest, please open a ticket.
 
-### Installing and running the app
+### Installation
 
 Install the dependencies.
 
 `--include=optional` is to make sure optional dependencies are installed (pre-build native modules compatible with your system)
 
 ```bash
-npm i --include=optional
+bun i
 ```
-
-Then run the actual app, the first time you go to localhost:3000 after typing this command, the app will compile, which can take a minute (like, literally: `Compiled / in 52.6s (6372 modules)`)
-
-```bash
-npm run dev
-```
-
-
-### Building the app
 
 You can run the following command to build the app, making sure all the types are consistant and properly set:
 
@@ -109,14 +102,26 @@ You can run the following command to build the app, making sure all the types ar
 npm run build
 ```
 
+### Running the web app
+
+
+Then run the actual app, the first time you go to localhost:3000 after typing this command, the app will compile, which can take a minute (like, literally: `Compiled / in 52.6s (6372 modules)`)
+
+```bash
+bun run dev
+```
+
 ### Running the app with Electron
+
 
 An Electron build is in progress.
 
 There are still some things to debug and figure out, but if you are a developer you can try it out by starting Clapper through Electron like this:
 
+
 ```bash
-npm run electron:start
+cd packages/app
+bun run electron:start
 ```
 
 If that doesn't work for you (issue with node-gyp, setuptools, distutils etc) you might have to run:
@@ -128,7 +133,8 @@ python3 -m pip install --break-system-packages setuptools
 You can also build Clapper for your operating system by typing:
 
 ```bash
-npm run electron:make
+cd packages/app
+bun run electron:make
 ```
 
 You might see a DeprecationWarning message written in red at the end but that's only a warning, just open `./out/make` to check if the build worked.
@@ -141,7 +147,9 @@ I have setup Prettier and ESLint, they use some basic rules (you can propose new
 
 To run all the tests (unit and e2e) please run: 
 
-`npm run test`
+```bash
+bun run test
+```
 
 This is not instantaneous: playwright may seems to do nothing for a while at first.
 
@@ -153,10 +161,18 @@ Note: I've just added Vitest so we only have a few tests for now.
 
 
 To run the test without watching, type:
-`npm run test:unit:ci`
+
+```bash
+cd packages/app
+bun run test:unit:ci
+```
 
 To run the tests with watching, type:
-`npm run test:unit:watch`
+
+```bash
+cd packages/app
+bun run test:unit:watch
+```
 
 #### End-to-end tests
 
@@ -165,30 +181,30 @@ Note: I've just added Playwright, but we don't really have tests yet.
 Please note that due to the app needing to build during 30~60s (depending on the speed of your computer), running those tests may
 take some time to execute.
 
-`npm run test:e2e`
+`bun run test:e2e`
 
 More Playwright commands:
-  `npx playwright test`
+  `bunx playwright test`
     Runs the end-to-end tests.
 
-  `npx playwright test --ui`
+  `bunx playwright test --ui`
     Starts the interactive UI mode.
 
-  `npx playwright test --project=chromium`
+  `bunx playwright test --project=chromium`
     Runs the tests only on Desktop Chrome.
 
-  `npx playwright test example`
+  `bunx playwright test example`
     Runs the tests in a specific file.
 
- ` npx playwright test --debug`
+ ` bunx playwright test --debug`
     Runs the tests in debug mode.
 
-  `npx playwright codegen`
+  `bunx playwright codegen`
     Auto generate tests with Codegen.
 
 We suggest that you begin by typing:
 
-    `npx playwright test`
+    `bunx playwright test`
 
 
 ### Architecture
