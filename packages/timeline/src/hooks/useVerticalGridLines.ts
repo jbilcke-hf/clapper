@@ -31,7 +31,7 @@ export const useVerticalGridLines = () => {
     contentHeight,
     cellWidth,
     nbMaxShots,
-    JSON.stringify(tracks.map(t => `${t.visible}_${t.height}`))
+    JSON.stringify(tracks.map((t: any) => `${t.visible}_${t.height}`))
   ]);
 
   return gridlines;

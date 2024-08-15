@@ -37,7 +37,7 @@ export function computeContentSizeMetrics({
   )
   
   let contentHeight = 0
-  const newTracks: ClapTracks = tracks.map(track => {
+  const newTracks: ClapTracks = tracks.map((track: any) => {
     contentHeight += computeCellHeight({
       trackNumber: track.id,
       tracks,

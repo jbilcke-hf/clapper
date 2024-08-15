@@ -1,3 +1,3 @@
-export { blobToDataUri } from './blobToDataUri'
-export { clapToDataUri } from './clapToDataUri'
-export { dataUriToBlob } from './dataUriToBlob'
+export { blobToDataUri } from '@/converters/blobToDataUri'
+export { clapToDataUri } from '@/converters/clapToDataUri'
+export { dataUriToBlob } from '@/converters/dataUriToBlob'

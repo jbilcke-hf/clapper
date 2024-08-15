@@ -18,13 +18,13 @@ Note: as warned before, this library is not ready for public use yet.
 I cannot provide support until the basic features have been implemented and some critical bugs fixed.
 
 ```bash
-npm i @aitube/timeline
+npm install @aitube/timeline
 ```
 
 Depending on your project configuration and package manager, you may need to install some additional packages manually, such as React, Radix, Tailwind, Three.js, Zustand etc:
 
 ```bash
-npm i @aitube/clap @radix-ui/react-slider @react-spring/three @react-spring/types @react-three/drei @react-three/fiber @types/react @types/react-dom react react-dom tailwindcss three typescript zustand
+npm install @aitube/clap @radix-ui/react-slider @react-spring/three @react-spring/types @react-three/drei @react-three/fiber @types/react @types/react-dom react react-dom tailwindcss three typescript zustand
 ```
 
 If you forget some dependencies you might get weird errors

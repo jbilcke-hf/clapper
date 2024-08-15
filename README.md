@@ -141,7 +141,7 @@ I have setup Prettier and ESLint, they use some basic rules (you can propose new
 
 To run all the tests (unit and e2e) please run: 
 
-`npm test`
+`npm run test`
 
 This is not instantaneous: playwright may seems to do nothing for a while at first.
 

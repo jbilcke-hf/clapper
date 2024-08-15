@@ -85,7 +85,7 @@ export async function renderShotToStoryboard({
 
     // console.log(`we have ${existingClap.entities.length} entities`)
     // check if we have an entity image we can use
-    const identityImage = existingClap.entities.find(e => e.id === shotStoryboardSegment.entityId)?.imageId
+    const identityImage = existingClap.entities.find((e: any) => e.id === shotStoryboardSegment.entityId)?.imageId
     if (identityImage) {
       // if (debug) { console.log(`[@aitube-engine/renderShotToStoryboard] using an entity to generate the storyboard..`) }
     }

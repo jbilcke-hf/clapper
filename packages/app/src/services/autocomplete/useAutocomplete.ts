@@ -133,27 +133,27 @@ export const useAutocomplete = create<AutocompleteStore>((set, get) => ({
           // able to decompose a scene automatically
           for (const sentence of sentences) {
             if (sentence.match(/(?:is wearing|wears)/)) {
-              categories.CHARACTER.push(sentence)
+              categories[ClapSegmentCategory.CHARACTER].push(sentence)
             } else if (sentence.match(/(?:the (?:image|screen) (?:is|has))/)) {
-              categories.STYLE.push(sentence)
+              categories[ClapSegmentCategory.STYLE].push(sentence)
             } else if (
               sentence.match(
                 /(?:the (?:lighting|lights|light|fire|sun|moon)|bright|dim|neon|candle|lit up)/
               )
             ) {
-              categories.LIGHTING.push(sentence)
+              categories[ClapSegmentCategory.LIGHTING].push(sentence)
             } else if (
               sentence.match(
                 /(?:the (?:man|woman|kid|child|person|animal|person|robot)|(?:she|he) (?:has|is))/
               )
             ) {
-              categories.CHARACTER.push(sentence)
+              categories[ClapSegmentCategory.CHARACTER].push(sentence)
             } else if (
               sentence.match(/(?:behind the|background|room|location|place)/)
             ) {
-              categories.LOCATION.push(sentence)
+              categories[ClapSegmentCategory.LOCATION].push(sentence)
             } else {
-              categories.GENERIC.push(sentence)
+              categories[ClapSegmentCategory.GENERIC].push(sentence)
             }
           }
 

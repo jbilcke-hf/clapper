@@ -28,7 +28,7 @@ export const useHorizontaTrackLines = () => {
     setLines(thisLines);
   }, [,
     leftBarTrackScaleWidth,
-    JSON.stringify(tracks.map(t => `${t.visible}_${t.height}`))
+    JSON.stringify(tracks.map((t: any) => `${t.visible}_${t.height}`))
   ]);
 
   return lines;

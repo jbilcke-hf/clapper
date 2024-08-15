@@ -1,4 +1,4 @@
-import { ClapEntity, ClapMeta } from "@aitube/clap"
+// import { ClapEntity, ClapMeta } from "@aitube/clap"
 
 import { TimelineSegment } from "@aitube/timeline"
 
@@ -14,14 +14,14 @@ export type ResolveRequest = {
   // the slice to use for rendering
   segments: TimelineSegment[]
 
-  entities: Record<string, ClapEntity>
+  entities: Record<string, any> // ClapEntity
 
   speakingCharactersIds: string[]
   generalCharactersIds: string[]
   mainCharacterId?: string
-  mainCharacterEntity?: ClapEntity
+  mainCharacterEntity?: any // ClapEntity
 
-  meta: ClapMeta
+  meta: any // ClapMeta
 
   prompts: ResolveRequestPrompts
 }
@@ -41,7 +41,7 @@ export type AssistantRequest = {
   actionLine: string
   
   // used to provide more context
-  entities: Record<string, ClapEntity>
+  entities: Record<string, any> // ClapEntity
 
   // used to provide more context
   projectInfo: string

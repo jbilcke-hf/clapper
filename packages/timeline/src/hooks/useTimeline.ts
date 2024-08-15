@@ -582,7 +582,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     set({
       ...computeContentSizeMetrics({
         meta,
-        tracks: tracks.map(t => (
+        tracks: tracks.map((t: any) => (
           t.id === trackId
           ? { ...t, visible: !t.visible }
           : t

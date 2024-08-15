@@ -3,7 +3,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./",
-    "paths": { 
+    "paths": {
       "@/*": ["src/*"]
     },
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -12,6 +12,7 @@
     "moduleResolution": "bundler",
     "moduleDetection": "force",
     "allowImportingTsExtensions": true,
+    "noImplicitAny": false,
     "noEmit": true,
     "composite": true,
     "strict": true,

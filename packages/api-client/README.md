@@ -1,4 +1,4 @@
-# @aitube/client
+# @aitube/api-client
 
 *Official API client for AiTube.at*
 
@@ -20,7 +20,7 @@ so we need to perform all API calls to `jbilcke-hf-ai-tube.hf.space`.
 To install the package, run the following command:
 
 ```bash
-npm install @aitube/client
+npm install @aitube/api-client
 ```
 
 ## Getting Started
@@ -48,7 +48,7 @@ import {
   ClapEntityPrompt,
   SupportedExportFormat,
   applyClapCompletion,
- } from '@aitube/client'
+ } from '@aitube/api-client'
 
 const ultraSecret = "ultra secret token unavailable to common mortals"
 

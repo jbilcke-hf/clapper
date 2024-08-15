@@ -1,4 +1,4 @@
-import { ClapSegmentCategory } from "@/types"
+import { ClapSegmentCategory } from "../types"
 
 export function parseSegmentCategory(input: any, defaultCategory?: ClapSegmentCategory): ClapSegmentCategory {
   

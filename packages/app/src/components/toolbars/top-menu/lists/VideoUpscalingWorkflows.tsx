@@ -62,7 +62,7 @@ export function VideoUpscalingWorkflows() {
               </ClapWorkflowProviderName>
             </MenubarSubTrigger>
             <MenubarSubContent>
-              {workflows.map((w) => (
+              {workflows?.map((w) => (
                 <MenubarCheckboxItem
                   key={w.id}
                   checked={workflowId === w.id}

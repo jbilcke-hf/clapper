@@ -1,20 +1,17 @@
-import React, { useEffect } from "react"
 import { Plane } from "@react-three/drei"
-import { useFrame, useThree } from "@react-three/fiber"
+import { useThree } from "@react-three/fiber"
+import { useEffect } from "react"
 
-import { DEFAULT_NB_TRACKS } from "@/constants"
 import {
   useTimeline
 } from "@/hooks"
 
 
-import { NB_MAX_SHOTS } from "@/constants/grid"
-import { Grid } from "./Grid"
 import { Cells } from "./Cells"
-import { TopBarTimeScale } from "./TopBarTimeScale"
-import { clamp } from "@/utils/clamp"
-import { LeftBarTrackScale } from "./LeftBarTrackScale"
 import { Cursor } from "./Cursor"
+import { Grid } from "./Grid"
+import { LeftBarTrackScale } from "./LeftBarTrackScale"
+import { TopBarTimeScale } from "./TopBarTimeScale"
 
 export function Timeline({ width, height }: { width: number; height: number }) {
   const { size } = useThree()

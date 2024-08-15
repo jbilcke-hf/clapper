@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.2.3-2",
+  "version": "0.2.4",
   "description": "Base types for Clapper services",
   "scripts": {
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap --external=@aitube/timeline --external=@monaco-editor/react --external=monaco-editor --external=zustand --external=react --external=react-dom && bun run build:declaration",
@@ -22,8 +22,8 @@
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@aitube/clap": "file:../clap",
-    "@aitube/timeline": "file:../timeline",
+    "@aitube/clap": "workspace:*",
+    "@aitube/timeline": "workspace:*",
     "@monaco-editor/react": "4.6.0",
     "monaco-editor": "0.50.0",
     "react": "*",
@@ -32,7 +32,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jbilcke-hf/clapper-services.git"
+    "url": "https://github.com/jbilcke-hf/services.git"
   },
   "keywords": [
     "Clapper",

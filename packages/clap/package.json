@@ -2,9 +2,10 @@
   "name": "@aitube/clap",
   "module": "index.ts",
   "main": "dist/index.js",
+  "private": false,
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Types and helpers to manipulate .clap files",
   "scripts": {
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=yaml && bun run build:declaration",

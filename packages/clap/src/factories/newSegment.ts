@@ -3,7 +3,7 @@ import { isValidNumber } from "@/utils/isValidNumber"
 import { generateSeed } from "@/utils/generateSeed"
 import { UUID } from "@/utils/uuid"
 import { parseSegmentCategory } from "@/utils/parseSegmentCategory"
-import { parseOutputType } from ".."
+import { parseOutputType } from "@/index"
 
 export function newSegment(maybeSegment?: Partial<ClapSegment>) {
 
