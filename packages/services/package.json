@@ -22,8 +22,8 @@
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.2.3",
-    "@aitube/timeline": "0.2.3",
+    "@aitube/clap": "file:../clap",
+    "@aitube/timeline": "file:../timeline",
     "@monaco-editor/react": "4.6.0",
     "monaco-editor": "0.50.0",
     "react": "*",
