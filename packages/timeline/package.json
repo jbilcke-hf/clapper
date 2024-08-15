@@ -1,0 +1,67 @@
+{
+  "name": "@aitube/timeline",
+  "module": "index.tsx",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "private": false,
+  "version": "0.2.4",
+  "description": "React component to display an OpenClap timeline",
+  "scripts": {
+    "build": "NODE_ENV=production bun build ./src/index.tsx --outfile=dist/index.js --external @radix-ui/react-slider --external @react-spring/three --external @react-spring/types --external @react-three/drei --external @react-three/fiber --external @types/react --external @types/react-dom --external react --external react-dom --external tailwindcss --external three --external typescript --external zustand && bun run build:declaration",
+    "build:dev": "bun build ./src/index.tsx --outfile=dist/index.js --external @radix-ui/react-slider --external @react-spring/three --external @react-spring/types --external @react-three/drei --external @react-three/fiber --external @types/react --external @types/react-dom --external react --external react-dom --external tailwindcss --external three --external typescript --external zustand && bun run build:declaration",
+    "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
+    "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
+    "publish": "bun run build && npm publish --access public",
+    "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build",
+    "dev": "vite",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "@typescript-eslint/eslint-plugin": "^7.17.0",
+    "@typescript-eslint/parser": "^7.17.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "bun-types": "latest",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.9",
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.3.4"
+  },
+  "dependencies": {
+    "@aitube/clap": "workspace:*",
+    "@radix-ui/react-slider": "^1.1.2",
+    "@react-spring/three": "^9.7.3",
+    "@react-spring/types": "^9.7.3",
+    "@react-three/drei": "^9.105.4",
+    "@react-three/fiber": "^8.16.2",
+    "clsx": "^2.1.1",
+    "date-fns": "^3.6.0",
+    "react": "*",
+    "react-dom": "*",
+    "react-virtualized-auto-sizer": "^1.0.24",
+    "tailwind-merge": "^2.4.0",
+    "tailwindcss": "^3.4.6",
+    "three": "^0.164.1",
+    "zustand": "4.5.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jbilcke-hf/aitube-timeline.git"
+  },
+  "keywords": [
+    "OpenClap",
+    "AiTube"
+  ],
+  "author": "Julian Bilcke",
+  "license": "MIT",
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/**/*.d.ts"
+  ]
+}

@@ -1,0 +1,7 @@
+export { cleanUTF8Characters } from "./cleanUTF8Characters"
+export { deduplicate } from "./deduplicate"
+export { getEntities } from "./getEntities"
+export { isAllCaps } from "./isAllCaps"
+export { onlyContainsStrangeNumber } from "./onlyContainsStrangeNumber"
+export { pick } from "./pick"
+export { sleep } from "./sleep"

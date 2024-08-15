@@ -1,0 +1,1 @@
+export { defaultMediaOrientation } from "@/constants/defaultValues"

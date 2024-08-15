@@ -1,0 +1,48 @@
+{
+  "name": "@aitube/clapper-services",
+  "module": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "version": "0.2.4",
+  "description": "Base types for Clapper services",
+  "scripts": {
+    "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap --external=@aitube/timeline --external=@monaco-editor/react --external=monaco-editor --external=zustand --external=react --external=react-dom && bun run build:declaration",
+    "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
+    "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
+    "publish": "bun run build && npm publish --access public",
+    "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build"
+  },
+  "devDependencies": {
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "bun-types": "latest",
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.4"
+  },
+  "peerDependencies": {
+    "@aitube/clap": "workspace:*",
+    "@aitube/timeline": "workspace:*",
+    "@monaco-editor/react": "4.6.0",
+    "monaco-editor": "0.50.0",
+    "react": "*",
+    "react-dom": "*",
+    "zustand": "4.5.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jbilcke-hf/services.git"
+  },
+  "keywords": [
+    "Clapper",
+    "Clapper.app"
+  ],
+  "author": "Julian Bilcke",
+  "license": "MIT",
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/**/*.d.ts"
+  ]
+}
