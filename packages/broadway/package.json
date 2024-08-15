@@ -1,0 +1,51 @@
+{
+  "name": "@aitube/broadway",
+  "module": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "version": "0.2.3",
+  "description": "Convert a script to a clap file",
+  "scripts": {
+    "test": "bun test --preload ./src/tests/setup.js",
+    "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap --external=@aitube/colors && bun run build:declaration",
+    "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
+    "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
+    "publish": "npm publish --access public",
+    "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build"
+  },
+  "devDependencies": {
+    "@aitube/io": "0.0.1",
+    "bun-types": "latest",
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.4"
+  },
+  "peerDependencies": {
+    "@aitube/clap": "0.2.3",
+    "@aitube/colors": "0.2.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jbilcke-hf/aitube-broadway.git"
+  },
+  "keywords": [
+    "OpenClap",
+    "AiTube",
+    "AI cinema",
+    "file format",
+    "specification"
+  ],
+  "author": "Julian Bilcke",
+  "license": "MIT",
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/**/*.d.ts"
+  ],
+  "dependencies": {
+    "@datagica/parse-entities": "^0.3.0",
+    "@datagica/parse-names": "^0.0.8",
+    "indexeddb-fs": "^2.1.5"
+  }
+}
