@@ -57,7 +57,7 @@ export function SettingsSectionImage() {
         />
 
         <FormArea
-          label="Custom ComfyUI workflows for images"
+          label="Custom ComfyUI workflow for images"
           value={comfyWorkflowForImage}
           defaultValue={defaultSettings.comfyWorkflowForImage}
           onChange={setComfyWorkflowForImage}
