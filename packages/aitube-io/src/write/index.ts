@@ -1,0 +1,1 @@
+export { writeBase64ToFile } from "./writeBase64ToFile"
