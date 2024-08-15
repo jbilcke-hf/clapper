@@ -3,7 +3,8 @@ import {
   AutoTokenizer,
   Moondream1ForConditionalGeneration,
   RawImage,
-} from '@xenova/transformers'
+  Tensor,
+} from '@huggingface/transformers'
 
 export async function extractCaptionFromFrameMoondream(
   imageInBase64DataUri: string
@@ -51,12 +52,13 @@ Linux experimental support also requires launching the browser with --enable-fea
   const vision_inputs = await processor(image)
 
   // Generate response
-  const output = await model.generate({
+  const output = (await model.generate({
     ...text_inputs,
     ...vision_inputs,
     do_sample: false,
     max_new_tokens: 177,
-  })
+  })) as Tensor // is that alright? I'm not sure..
+
   const decoded = tokenizer.batch_decode(output, { skip_special_tokens: false })
   console.log(decoded)
   // [

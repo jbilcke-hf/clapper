@@ -86,7 +86,7 @@
     "@tailwindcss/container-queries": "^0.1.1",
     "@types/dom-speech-recognition": "^0.0.4",
     "@types/pngjs": "^6.0.5",
-    "@xenova/transformers": "github:xenova/transformers.js#v3",
+    "@huggingface/transformers": "3.0.0-alpha.5",
     "@xyflow/react": "^12.0.3",
     "autoprefixer": "10.4.19",
     "base64-arraybuffer": "^1.0.2",

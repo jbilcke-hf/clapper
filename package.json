@@ -21,7 +21,7 @@
     "dev": "bun run --cwd packages/app dev",
     "start": "bun run --cwd packages/app start",
     "build": "bun run build:all",
-    "build:all": "bun run build:clap && bun run build:timeline && bun run build:api-client && bun run build:io && bun run build:colors && bun run build:engine && bun run build:broadway && bun run build:services && bun run build:app",
+    "build:all": "bun run build:clap && bun run build:timeline && bun run build:api-client && bun run build:io && bun run build:colors && bun run build:engine && bun run build:broadway && bun run build:clapper-services && bun run build:app",
     "build:clap": "bun run --cwd packages/clap build",
     "build:timeline": "bun run --cwd packages/timeline build",
     "build:api-client": "bun run --cwd packages/api-client build",
