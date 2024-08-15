@@ -1,0 +1,4 @@
+# Ignore everything
+*
+# Except the dist directory
+!dist/
