@@ -136,10 +136,7 @@ export async function resolveSegment(
       )
     }
 
-    const storyboard = request.segments.find(
-      (s) => s.category === ClapSegmentCategory.STORYBOARD
-    )
-    if (!storyboard) {
+    if (!request.prompts.video.image) {
       throw new Error(
         `cannot generate a video without a storyboard (the concept of Clapper is to use storyboards)`
       )
@@ -149,7 +146,7 @@ export async function resolveSegment(
       input: {
         ...getWorkflowInputValues(request.settings.videoGenerationWorkflow),
 
-        image_url: storyboard.assetUrl,
+        image_url: request.prompts.video.image,
 
         sync_mode: true,
         enable_safety_checker: request.settings.censorNotForAllAudiencesContent,

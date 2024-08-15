@@ -92,6 +92,15 @@ export function SettingsSectionProvider() {
   const kitsAiApiKey = useSettings((s) => s.kitsAiApiKey)
   const setKitsAiApiKey = useSettings((s) => s.setKitsAiApiKey)
 
+  const letzAiApiKey = useSettings((s) => s.letzAiApiKey)
+  const setLetzAiApiKey = useSettings((s) => s.setLetzAiApiKey)
+
+  const bigModelApiKey = useSettings((s) => s.bigModelApiKey)
+  const setBigModelApiKey = useSettings((s) => s.setBigModelApiKey)
+
+  const piApiApiKey = useSettings((s) => s.piApiApiKey)
+  const setPiApiApiKey = useSettings((s) => s.setPiApiApiKey)
+
   const apiKeyType = showApiKeys ? 'text' : 'password'
 
   return (
@@ -294,6 +303,30 @@ export function SettingsSectionProvider() {
           value={kitsAiApiKey}
           defaultValue={defaultSettings.kitsAiApiKey}
           onChange={setKitsAiApiKey}
+          type={apiKeyType}
+        />
+
+        <FormInput
+          label="LetzAI API Key"
+          value={letzAiApiKey}
+          defaultValue={defaultSettings.letzAiApiKey}
+          onChange={setLetzAiApiKey}
+          type={apiKeyType}
+        />
+
+        <FormInput
+          label="BigModel API Key"
+          value={bigModelApiKey}
+          defaultValue={defaultSettings.bigModelApiKey}
+          onChange={setBigModelApiKey}
+          type={apiKeyType}
+        />
+
+        <FormInput
+          label="PiApi API Key"
+          value={piApiApiKey}
+          defaultValue={defaultSettings.piApiApiKey}
+          onChange={setPiApiApiKey}
           type={apiKeyType}
         />
       </FormSection>

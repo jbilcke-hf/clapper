@@ -21,6 +21,9 @@ import {
   resolveSegmentUsingModelsLab,
   resolveSegmentUsingStabilityAi,
   resolveSegmentUsingComfyUI,
+  resolveSegmentUsingLetzAi,
+  resolveSegmentUsingBigModel,
+  resolveSegmentUsingPiApi,
 } from './providers'
 
 import { ResolveRequest } from '@aitube/clapper-services'
@@ -88,9 +91,15 @@ export async function POST(req: NextRequest) {
               ? resolveSegmentUsingFalAi
               : provider === ClapWorkflowProvider.MODELSLAB
                 ? resolveSegmentUsingModelsLab
-                : provider === ClapWorkflowProvider.AITUBE
-                  ? resolveSegmentUsingAiTube
-                  : null
+                : provider === ClapWorkflowProvider.LETZAI
+                  ? resolveSegmentUsingLetzAi
+                  : provider === ClapWorkflowProvider.BIGMODEL
+                    ? resolveSegmentUsingBigModel
+                    : provider === ClapWorkflowProvider.PIAPI
+                      ? resolveSegmentUsingPiApi
+                      : provider === ClapWorkflowProvider.AITUBE
+                        ? resolveSegmentUsingAiTube
+                        : null
 
   if (!resolveSegment) {
     throw new Error(

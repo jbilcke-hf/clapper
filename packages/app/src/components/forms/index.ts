@@ -1,3 +1,4 @@
+export { FormArea } from './FormArea'
 export { FormDir } from './FormDir'
 export { FormField } from './FormField'
 export { FormFile } from './FormFile'

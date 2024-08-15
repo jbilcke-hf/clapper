@@ -1,10 +1,13 @@
-import { FormSection } from '@/components/forms/FormSection'
+import { FormArea, FormInput, FormSection } from '@/components/forms'
 import { getDefaultSettingsState, useSettings } from '@/services/settings'
-
-import { FormInput } from '../forms/FormInput'
 
 export function SettingsSectionImage() {
   const defaultSettings = getDefaultSettingsState()
+
+  const comfyWorkflowForImage = useSettings((s) => s.comfyWorkflowForImage)
+  const setComfyWorkflowForImage = useSettings(
+    (s) => s.setComfyWorkflowForImage
+  )
 
   const imagePromptPrefix = useSettings((s) => s.imagePromptPrefix)
   const setImagePromptPrefix = useSettings((s) => s.setImagePromptPrefix)
@@ -51,6 +54,14 @@ export function SettingsSectionImage() {
           value={imageNegativePrompt}
           defaultValue={defaultSettings.imageNegativePrompt}
           onChange={setImageNegativePrompt}
+        />
+
+        <FormArea
+          label="Custom ComfyUI workflows for images"
+          value={comfyWorkflowForImage}
+          defaultValue={defaultSettings.comfyWorkflowForImage}
+          onChange={setComfyWorkflowForImage}
+          rows={8}
         />
       </FormSection>
     </div>

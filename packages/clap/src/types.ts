@@ -527,6 +527,9 @@ export enum ClapWorkflowProvider {
   HEDRA = "HEDRA",
   LEONARDOAI = "LEONARDOAI",
   EVERARTAI = "EVERARTAI",
+  LETZAI = "LETZAI",
+  BIGMODEL = "BIGMODEL",
+  PIAPI = "PIAPI",
 }
 
   

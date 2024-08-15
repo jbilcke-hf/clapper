@@ -59,6 +59,25 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     },
   },
   {
+    id: 'huggingface://models/jbilcke-hf/flux-dev-panorama-lora-2',
+    label: 'FLUX.1-[dev] Panorama Lora (v2)',
+    description: 'Generate 360° panoramas using Flux (non-commercial use)',
+    tags: ['flux', '360°', 'panorama'],
+    author: '@jbilcke-hf',
+    // TODO add specific field about licensing?
+    thumbnailUrl: '',
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.HUGGINGFACE,
+    category: ClapWorkflowCategory.IMAGE_GENERATION,
+    data: 'jbilcke-hf/flux-dev-panorama-lora-2',
+    inputFields: [genericPrompt, genericWidth2048, genericHeight2048],
+    inputValues: {
+      prompt: genericPrompt.defaultValue,
+      width: genericWidth2048.defaultValue,
+      height: genericHeight2048.defaultValue,
+    },
+  },
+  {
     id: 'huggingface://models/coqui/XTTS-v2',
     label: 'Coqui XTTS-v2',
     description: '',

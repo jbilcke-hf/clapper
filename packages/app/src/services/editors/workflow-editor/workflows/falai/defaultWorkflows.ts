@@ -13,7 +13,7 @@ import {
   genericInput,
   genericSeed,
   genericPrompt,
-  genericVideo,
+  genericVideoUrl,
   genericWidth1024,
   genericWidth2048,
   genericMotionBucketId,
@@ -21,6 +21,7 @@ import {
   genericUpscalingFactor,
   genericOverlappingTiles,
   genericInferenceSteps,
+  genericImageUrl,
 } from '../common/defaultValues'
 import { sampleDrivingVideo, sampleVoice } from '@/lib/core/constants'
 
@@ -48,10 +49,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     category: ClapWorkflowCategory.VIDEO_GENERATION,
     data: 'fal-ai/stable-video',
     inputFields: [
-      {
-        ...genericImage,
-        id: 'image_url',
-      },
+      genericImageUrl,
       genericSeed,
       genericMotionBucketId,
       {
@@ -60,7 +58,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
       },
     ],
     inputValues: {
-      image_url: genericImage.defaultValue,
+      [genericImageUrl.id]: genericImageUrl.defaultValue,
       [genericMotionBucketId.id]: 55,
       cond_aug: 0.02,
     },
@@ -238,15 +236,12 @@ export const defaultWorkflows: ClapWorkflow[] = [
     category: ClapWorkflowCategory.IMAGE_UPSCALING,
     data: 'fal-ai/aura-sr',
     inputFields: [
-      {
-        ...genericImage,
-        id: 'image_url',
-      },
+      genericImageUrl,
       genericUpscalingFactor,
       genericOverlappingTiles,
     ],
     inputValues: {
-      image_url: genericImage.defaultValue,
+      [genericImageUrl.id]: genericImageUrl.defaultValue,
       [genericUpscalingFactor.id]: genericUpscalingFactor.defaultValue,
       [genericOverlappingTiles.id]: genericOverlappingTiles.defaultValue,
     },
@@ -312,19 +307,10 @@ export const defaultWorkflows: ClapWorkflow[] = [
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.VIDEO_GENERATION,
     data: 'fal-ai/live-portrait',
-    inputFields: [
-      {
-        ...genericImage,
-        id: 'image_url',
-      },
-      {
-        ...genericVideo,
-        id: 'video_url',
-      },
-    ],
+    inputFields: [genericImageUrl, genericVideoUrl],
     inputValues: {
-      image_url: genericImage.defaultValue,
-      video_url: sampleDrivingVideo,
+      [genericImageUrl.id]: genericImageUrl.defaultValue,
+      [genericVideoUrl.id]: sampleDrivingVideo,
     },
   },
 ]
