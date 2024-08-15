@@ -26,6 +26,9 @@ export function getDefaultSettingsState(): SettingsState {
     mistralAiApiKey: '',
     stabilityAiApiKey: '',
     fireworksAiApiKey: '',
+    letzAiApiKey: '',
+    bigModelApiKey: '',
+    piApiApiKey: '',
 
     broadcastObsServerHost: '192.168.1.22',
     broadcastObsServerPort: 4455,

@@ -32,6 +32,15 @@ export const genericPrompt: ClapInputField = {
   defaultValue: '',
 }
 
+export const genericRatio: ClapInputField = {
+  id: 'ratio',
+  label: 'Image ratio',
+  description: 'Image ratio (default to 1:1)',
+  type: 'string',
+  allowedValues: ['1:1', '16:9', '9:16'],
+  defaultValue: '1:1',
+}
+
 export const genericSeed: ClapInputField = {
   id: 'seed',
   label: 'Seed',
@@ -51,10 +60,28 @@ export const genericImage: ClapInputField = {
   defaultValue: '',
 }
 
+export const genericImageUrl: ClapInputField = {
+  id: 'image_url',
+  label: 'Image URL',
+  description: 'Image URL',
+  type: 'string',
+  allowedValues: [],
+  defaultValue: '',
+}
+
 export const genericVideo: ClapInputField = {
   id: 'video',
   label: 'Video',
   description: 'Video',
+  type: 'string',
+  allowedValues: [],
+  defaultValue: '',
+}
+
+export const genericVideoUrl: ClapInputField = {
+  id: 'video_url',
+  label: 'Video URL',
+  description: 'Video URL',
   type: 'string',
   allowedValues: [],
   defaultValue: '',

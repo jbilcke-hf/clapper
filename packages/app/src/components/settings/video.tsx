@@ -1,9 +1,13 @@
-import { FormSection } from '@/components/forms/FormSection'
+import { FormArea, FormInput, FormSection } from '@/components/forms'
 import { getDefaultSettingsState, useSettings } from '@/services/settings'
-import { FormInput } from '../forms/FormInput'
 
 export function SettingsSectionVideo() {
   const defaultSettings = getDefaultSettingsState()
+
+  const comfyWorkflowForVideo = useSettings((s) => s.comfyWorkflowForVideo)
+  const setComfyWorkflowForVideo = useSettings(
+    (s) => s.setComfyWorkflowForVideo
+  )
 
   const videoPromptPrefix = useSettings((s) => s.videoPromptPrefix)
   const setVideoPromptPrefix = useSettings((s) => s.setVideoPromptPrefix)
@@ -50,6 +54,14 @@ export function SettingsSectionVideo() {
           value={videoNegativePrompt}
           defaultValue={defaultSettings.videoNegativePrompt}
           onChange={setVideoNegativePrompt}
+        />
+
+        <FormArea
+          label="Custom ComfyUI workflows for video"
+          value={comfyWorkflowForVideo}
+          defaultValue={defaultSettings.comfyWorkflowForVideo}
+          onChange={setComfyWorkflowForVideo}
+          rows={8}
         />
       </FormSection>
     </div>

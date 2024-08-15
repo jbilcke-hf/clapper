@@ -25,6 +25,9 @@ export type BaseSettings = {
   mistralAiApiKey: string
   stabilityAiApiKey: string
   fireworksAiApiKey: string
+  letzAiApiKey: string
+  bigModelApiKey: string
+  piApiApiKey: string
 
   broadcastObsServerHost: string
   broadcastObsServerPort: number
@@ -140,6 +143,9 @@ export type SettingsControls = {
   setMistralAiApiKey: (mistralAiApiKey?: string) => void
   setKitsAiApiKey: (kitsAiApiKey?: string) => void
   setStabilityAiApiKey: (stabilityAiApiKey?: string) => void
+  setLetzAiApiKey: (letzAiApiKey?: string) =>  void
+  setBigModelApiKey: (bigModelApiKey?: string) =>  void
+  setPiApiApiKey: (piApiApiKey?: string) =>  void
 
   setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => void
   setImagePromptPrefix: (imagePromptPrefix?: string) => void

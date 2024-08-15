@@ -210,6 +210,31 @@ export const useSettings = create<SettingsStore>()(
         })
       },
 
+      setLetzAiApiKey: (letzAiApiKey?: string) => {
+        set({
+          letzAiApiKey: getValidString(
+            letzAiApiKey,
+            getDefaultSettingsState().letzAiApiKey
+          ),
+        })
+      },
+      setBigModelApiKey: (bigModelApiKey?: string) => {
+        set({
+          bigModelApiKey: getValidString(
+            bigModelApiKey,
+            getDefaultSettingsState().bigModelApiKey
+          ),
+        })
+      },
+      setPiApiApiKey: (piApiApiKey?: string) => {
+        set({
+          piApiApiKey: getValidString(
+            piApiApiKey,
+            getDefaultSettingsState().piApiApiKey
+          ),
+        })
+      },
+
       setBroadcastObsServerHost: (broadcastObsServerHost: string) => {
         set({ broadcastObsServerHost })
       },
@@ -829,7 +854,10 @@ export const useSettings = create<SettingsStore>()(
             state.fireworksAiApiKey || defaultSettings.fireworksAiApiKey,
           stabilityAiApiKey:
             state.stabilityAiApiKey || defaultSettings.stabilityAiApiKey,
-
+          letzAiApiKey: state.letzAiApiKey || defaultSettings.letzAiApiKey,
+          bigModelApiKey:
+            state.bigModelApiKey || defaultSettings.bigModelApiKey,
+          piApiApiKey: state.piApiApiKey || defaultSettings.piApiApiKey,
           broadcastObsServerHost:
             state.broadcastObsServerHost ||
             defaultSettings.broadcastObsServerHost,
