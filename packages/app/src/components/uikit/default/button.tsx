@@ -6,7 +6,7 @@ import {
   DefaultProperties,
 } from '@react-three/uikit'
 import React, { ReactNode, RefAttributes, forwardRef } from 'react'
-import { borderRadius, colors } from './theme.js'
+import { borderRadius, colors } from './theme.jsx'
 
 const buttonVariants = {
   default: {

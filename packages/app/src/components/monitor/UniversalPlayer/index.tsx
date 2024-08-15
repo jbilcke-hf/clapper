@@ -1,7 +1,7 @@
 import { ClapSegment } from '@aitube/clap'
 import { useTimeline } from '@aitube/timeline'
 
-import { StaticPlayer } from '../../monitor/StaticPlayer'
+import { StaticPlayer } from '../StaticPlayer'
 import { DynamicPlayer } from '../DynamicPlayer'
 
 // TODO: put this in a separate component eg @aitube-player or @aitube/monitor
