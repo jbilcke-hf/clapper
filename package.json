@@ -7,10 +7,9 @@
       "packages/*"
     ],
     "scripts": {
-        "install": "npm install --verbose --workspaces",
-        "dev": "npm install && npm run dev --workspaces",
+        "dev": "npm install --verbose && npm run dev --workspaces",
         "start": "npm run start --workspaces",
-        "build": "npm install && npm run build --workspaces",
+        "build": "npm install --verbose && npm run build --workspaces",
         "test": "npm run test --workspaces",
         "format": "npm run format --workspaces"
     }
