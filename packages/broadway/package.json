@@ -15,15 +15,15 @@
     "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build"
   },
   "devDependencies": {
-    "@aitube/io": "0.0.1",
+    "@aitube/io": "file:../io",
     "bun-types": "latest",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
-    "@aitube/clap": "0.2.3",
-    "@aitube/colors": "0.2.3"
+    "@aitube/clap": "file:../clap",
+    "@aitube/colors": "file:../colors"
   },
   "repository": {
     "type": "git",
