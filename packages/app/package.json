@@ -36,7 +36,7 @@
     "electron:make": "npm run build && electron-forge make"
   },
   "dependencies": {
-    "@aitube/broadway": "0.2.3",
+    "@aitube/broadway": "file:../broadway",
     "@aitube/clap": "0.2.3",
     "@aitube/clapper-services": "0.2.3-2",
     "@aitube/client": "0.2.3",
