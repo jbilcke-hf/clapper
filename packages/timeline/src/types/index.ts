@@ -1,11 +1,14 @@
 
-export {
+export type {
   RenderedCell
 } from "./grid"
 
 export {
   SegmentVisibility,
   SegmentEditionStatus,
+} from "./timeline"
+
+export type {
   BrowserOnlySegmentData,
   TimelineSegment,
   ContentSizeMetrics,
@@ -14,7 +17,7 @@ export {
   TimelineStoreModifiers
 } from "./timeline"
 
-export {
+export type {
   ClapTimelineTheme,
   ClapSegmentCategoryHSL,
   ClapSegmentCategoryColors,
@@ -22,6 +25,9 @@ export {
 } from "./theme"
 
 export {
-  RenderingStrategy,
+  RenderingStrategy
+} from "./rendering"
+
+export type {
   SegmentResolver
 } from "./rendering"
