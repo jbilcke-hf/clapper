@@ -18,6 +18,7 @@ import {
 
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
 import { decodeOutput } from '@/lib/utils/decodeOutput'
+import { ComfyUIWorkflowApiUtils } from './utils'
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -54,50 +55,21 @@ export async function resolveSegment(
       request.settings.imageGenerationWorkflow.data
     )
 
-    const txt2ImgPrompt = new PromptBuilder(
-      comfyApiWorkflow,
-      // TODO: this list should be detect/filled automatically (see line 86)
-      [
-        'positive',
-        'negative',
-        'checkpoint',
-        'seed',
-        'batch',
-        'step',
-        'cfg',
-        'sampler',
-        'sheduler',
-        'width',
-        'height',
-      ],
-      // TODO: this list should be detect/filled automatically (see line 86)
-      ['images']
-    )
-      // TODO: those input sets should be detect/filled automatically (see line 86)
-      .setInputNode('checkpoint', '4.inputs.ckpt_name')
-      .setInputNode('seed', '3.inputs.seed')
-      .setInputNode('batch', '5.inputs.batch_size')
-      .setInputNode('negative', '7.inputs.text')
-      .setInputNode('positive', '6.inputs.text')
-      .setInputNode('cfg', '3.inputs.cfg')
-      .setInputNode('sampler', '3.inputs.sampler_name')
-      .setInputNode('sheduler', '3.inputs.scheduler')
-      .setInputNode('step', '3.inputs.steps')
-      .setInputNode('width', '5.inputs.width')
-      .setInputNode('height', '5.inputs.height')
-      .setOutputNode('images', '9')
+    const txt2ImgPrompt = new ComfyUIWorkflowApiUtils(
+      comfyApiWorkflow
+    ).createPromptBuilder()
 
     const workflow = txt2ImgPrompt
       // TODO: this mapping should be detect/filled automatically (see line 86)
-      .input('checkpoint', 'SDXL/realvisxlV40_v40LightningBakedvae.safetensors')
+      .input('ckpt_name', 'SDXL/realvisxlV40_v40LightningBakedvae.safetensors')
       .input('seed', generateSeed())
-      .input('step', 6)
+      .input('steps', 6)
       .input('cfg', 1)
-      .input<TSamplerName>('sampler', 'dpmpp_2m_sde_gpu')
-      .input<TSchedulerName>('sheduler', 'sgm_uniform')
+      .input<TSamplerName>('sampler_name', 'dpmpp_2m_sde_gpu')
+      .input<TSchedulerName>('scheduler', 'sgm_uniform')
       .input('width', request.meta.width)
       .input('height', request.meta.height)
-      .input('batch', 1)
+      .input('batch_size', 1)
       .input('positive', request.prompts.image.positive)
 
     // for the moment we only have non-working "mock" sample code,
@@ -154,7 +126,7 @@ export async function resolveSegment(
       throw new Error(`failed to run the pipeline (no output)`)
     }
 
-    const imagePaths = rawOutput.images?.images.map((img: any) =>
+    const imagePaths = rawOutput.output?.images.map((img: any) =>
       api.getPathImage(img)
     )
 
