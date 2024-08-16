@@ -1,2 +1,2 @@
 export { TimelineCamera } from "./TimelineCamera"
-export { TimelineCameraImpl } from "./types"
+export type { TimelineCameraImpl } from "./types"
