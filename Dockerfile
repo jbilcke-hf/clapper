@@ -1,5 +1,4 @@
-# And Node 20
-FROM node:20-alpine
+FROM oven/bun:canary-alpine
 
 ARG DEBIAN_FRONTEND=noninteractive
 
