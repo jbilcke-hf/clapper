@@ -71,6 +71,10 @@ export {
 export {
   SegmentVisibility,
   SegmentEditionStatus,
+  RenderingStrategy,
+} from "./types"
+
+export type {
   BrowserOnlySegmentData,
   TimelineSegment,
   ContentSizeMetrics,
@@ -82,8 +86,7 @@ export {
   ClapSegmentCategoryHSL,
   ClapSegmentCategoryColors,
   ClapSegmentColorScheme,
-  RenderingStrategy,
- type SegmentResolver,
+  SegmentResolver,
 } from "./types"
 
 export { ClapTimeline } from "./ClapTimeline"
