@@ -20,6 +20,7 @@
   "scripts": {
     "dev": "bun run --cwd packages/app dev",
     "start": "bun run --cwd packages/app start",
+    "start:prod": "bun run --cwd packages/app start:prod",
     "build": "bun run build:all",
     "build:all": "bun run build:clap && bun run build:timeline && bun run build:api-client && bun run build:io && bun run build:colors && bun run build:engine && bun run build:broadway && bun run build:clapper-services && bun run build:app",
     "build:clap": "bun run --cwd packages/clap build",
