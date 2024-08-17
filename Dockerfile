@@ -18,7 +18,8 @@ RUN apk add font-arabic-misc font-inconsolata font-dejavu font-awesome
 RUN apk add ttf-opensans
 
 # For Puppeteer
-RUN apk add build-base gcompat udev chromium
+# DISABLEd - we don't actually need Puppeteer on Clapper right now
+# RUN apk add build-base gcompat udev chromium
 
 RUN apk add --no-cache ffmpeg
 
