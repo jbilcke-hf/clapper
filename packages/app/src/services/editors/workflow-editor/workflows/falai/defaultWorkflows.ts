@@ -44,10 +44,12 @@ export const defaultWorkflows: ClapWorkflow[] = [
     tags: ['video'],
     author: '',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.VIDEO_GENERATION,
     data: 'fal-ai/stable-video',
+    schema: '',
     inputFields: [
       genericImageUrl,
       genericSeed,
@@ -70,10 +72,12 @@ export const defaultWorkflows: ClapWorkflow[] = [
     tags: ['flux', 'LoRA', 'realism'],
     author: '',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'fal-ai/flux-realism',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -97,10 +101,12 @@ export const defaultWorkflows: ClapWorkflow[] = [
     tags: ['flux'],
     author: 'BFL (https://BlackForestLabs.ai)',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'fal-ai/flux-pro',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -126,10 +132,12 @@ export const defaultWorkflows: ClapWorkflow[] = [
     tags: ['flux'],
     author: 'BFL (https://BlackForestLabs.ai)',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'fal-ai/flux-schnell',
+    schema: '',
     inputFields: [genericPrompt, genericWidth2048, genericHeight2048],
     inputValues: {
       prompt: genericPrompt.defaultValue,
@@ -144,10 +152,12 @@ export const defaultWorkflows: ClapWorkflow[] = [
     tags: ['flux'],
     author: 'BFL (https://BlackForestLabs.ai)',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'fal-ai/flux-dev',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -173,10 +183,12 @@ export const defaultWorkflows: ClapWorkflow[] = [
     tags: ['SD3'],
     author: 'Stability AI',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'fal-ai/fast-sdxl',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -202,10 +214,12 @@ export const defaultWorkflows: ClapWorkflow[] = [
     tags: ['SD3'],
     author: 'Stability AI',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'fal-ai/stable-diffusion-v3-medium',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -231,10 +245,12 @@ export const defaultWorkflows: ClapWorkflow[] = [
     tags: ['upscaling'],
     author: 'AuraSR',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_UPSCALING,
     data: 'fal-ai/aura-sr',
+    schema: '',
     inputFields: [
       genericImageUrl,
       genericUpscalingFactor,

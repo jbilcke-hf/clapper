@@ -14,10 +14,12 @@ export const bigModelWorkflows: ClapWorkflow[] = [
     tags: ['video'],
     author: '',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.BIGMODEL,
     category: ClapWorkflowCategory.VIDEO_GENERATION,
     data: 'cogvideox', // <- "code" of the model, see: https://bigmodel.cn/dev/api#cogvideox
+    schema: '',
     inputFields: [genericImageUrl],
     inputValues: {
       [genericImageUrl.id]: genericImageUrl.defaultValue,

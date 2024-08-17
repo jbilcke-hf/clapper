@@ -40,7 +40,7 @@ WORKDIR /app
 COPY --chown=user package*.json /app
 
 # make sure the .env is copied as well
-COPY --chown=user .env.example /app/.env
+COPY --chown=user packages/app/.env.example /app/.env
 
 RUN ffmpeg -version
 

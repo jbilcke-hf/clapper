@@ -11,10 +11,12 @@ export function newWorkflow(maybeWorkflow?: Partial<ClapWorkflow>) {
     tags: Array.isArray(maybeWorkflow?.tags) ? maybeWorkflow?.tags : [],
     author: typeof maybeWorkflow?.author === "string" ? maybeWorkflow.author : "",
     thumbnailUrl: typeof maybeWorkflow?.thumbnailUrl === "string" ? maybeWorkflow.thumbnailUrl : "",
+    nonCommercial: !!maybeWorkflow?.nonCommercial,
     engine: parseWorkflowEngine(maybeWorkflow?.engine, ClapWorkflowEngine.DEFAULT),
     category: parseWorkflowCategory(maybeWorkflow?.category, ClapWorkflowCategory.IMAGE_GENERATION),
     provider: parseWorkflowProvider(maybeWorkflow?.provider, ClapWorkflowProvider.NONE),
     data: typeof maybeWorkflow?.data === "string" ? maybeWorkflow.data : "",
+    schema: typeof maybeWorkflow?.schema === "string" ? maybeWorkflow.schema : "",
     inputFields: Array.isArray(maybeWorkflow?.inputFields) ? maybeWorkflow.inputFields : [],
     inputValues: typeof maybeWorkflow?.inputValues === "object" ? maybeWorkflow.inputValues : {},
   }

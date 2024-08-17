@@ -619,6 +619,11 @@ export type ClapWorkflow = {
    */
   thumbnailUrl: string
 
+  /**
+   * Whether the workflow forbids commercial usage or not
+   */
+  nonCommercial: boolean
+
   engine: ClapWorkflowEngine
 
   category: ClapWorkflowCategory
@@ -632,6 +637,14 @@ export type ClapWorkflow = {
    * depending on which engine is used (YAML, base64, or even an ID to a proprietary commercial platform)
    */
   data: string
+
+  /**
+   * The workflow schema (optional)
+   * 
+   * This is used to visualize the workflow in our workflow editor
+   * 
+   */
+  schema: string
 
   /**
    * Inputs of the workflow (this is used to build an UI for the automatically)
