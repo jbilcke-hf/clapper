@@ -18,10 +18,12 @@ export const elevenlabsWorkflows: ClapWorkflow[] = [
     tags: ['TTS'],
     author: 'ElevenLabs',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.ELEVENLABS,
     category: ClapWorkflowCategory.VOICE_GENERATION,
     data: 'v1/text-to-speech',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -37,10 +39,12 @@ export const elevenlabsWorkflows: ClapWorkflow[] = [
     tags: ['sound'],
     author: 'ElevenLabs',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.ELEVENLABS,
     category: ClapWorkflowCategory.SOUND_GENERATION,
     data: 'v1/sound-generation',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
