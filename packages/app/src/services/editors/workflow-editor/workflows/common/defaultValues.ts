@@ -137,6 +137,16 @@ export const genericAudio: ClapInputField = {
   defaultValue: '',
 }
 
+export const genericLoras: ClapInputField = {
+  id: 'loras',
+  label: 'LoRAs',
+  description: 'Comma-separated LoRAs',
+  category: ClapInputCategory.LORA,
+  type: 'string',
+  allowedValues: [],
+  defaultValue: '',
+}
+
 export const genericInferenceSteps: ClapInputField = {
   id: 'num_inference_steps',
   label: 'Inference steps',
