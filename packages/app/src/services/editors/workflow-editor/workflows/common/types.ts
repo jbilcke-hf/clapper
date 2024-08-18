@@ -32,4 +32,7 @@ export type Lora = {
   // name of the model repository on Hugging Face
   // or direct URL to the weights
   repoOrUrl: string
+
+  // optional filename
+  fileName: string
 }

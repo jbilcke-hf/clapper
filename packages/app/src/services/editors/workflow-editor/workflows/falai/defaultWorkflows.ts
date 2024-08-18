@@ -23,6 +23,7 @@ import {
   genericInferenceSteps,
   genericImageUrl,
   genericLora,
+  genericLoras,
 } from '../common/defaultValues'
 import { sampleDrivingVideo, sampleVoice } from '@/lib/core/constants'
 
@@ -66,7 +67,6 @@ export const defaultWorkflows: ClapWorkflow[] = [
       cond_aug: 0.02,
     },
   },
-  /*
   {
     id: 'falai://fal-ai/flux-general',
     label: 'Flux.1-[DEV] with LoRAs',
@@ -85,18 +85,18 @@ export const defaultWorkflows: ClapWorkflow[] = [
       genericWidth2048,
       genericHeight2048,
       genericInferenceSteps,
+      genericLoras,
     ],
     inputValues: {
       [genericPrompt.id]: genericPrompt.defaultValue,
       [genericWidth2048.id]: genericWidth2048.defaultValue,
       [genericHeight2048.id]: genericHeight2048.defaultValue,
       [genericInferenceSteps.id]: genericInferenceSteps.defaultValue,
-
+      genericLoras: genericInferenceSteps.defaultValue,
       // support LoRA for this model is a bit tricky, as the parameter must be in JSON
       // (this is an array of LoraWeight objects, see: https://fal.ai/models/fal-ai/flux-general/playground)
     },
   },
-  */
   {
     id: 'falai://fal-ai/flux-realism',
     label: 'Flux Realism LoRA',

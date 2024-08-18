@@ -10,6 +10,7 @@ import {
 } from './types'
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
 import { sampleVoice } from '@/lib/core/constants'
+import { getWorkflowLora } from '@/services/editors/workflow-editor/workflows/common/loras/getWorkflowLora'
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -65,7 +66,7 @@ export async function resolveSegment(
         workflowValues.width ||
         workflowDefaultValues.width,
       height:
-        request.meta.width ||
+        request.meta.height ||
         workflowValues.height ||
         workflowDefaultValues.height,
     }
@@ -91,6 +92,44 @@ export async function resolveSegment(
           reference_images: [
             {
               image_url: request.prompts.image.identity,
+            },
+          ],
+          image_size: imageSize,
+          num_images: 1,
+          sync_mode: true,
+          enable_safety_checker:
+            request.settings.censorNotForAllAudiencesContent,
+        },
+      })) as FalAiImageResponse
+    } else if (model === 'fal-ai/flux-general') {
+      // note: this isn't the right place to do this, because maybe the LoRAs are dynamic
+      const loraModel = getWorkflowLora(
+        request.settings.imageGenerationWorkflow
+      )
+      if (!loraModel) {
+        throw new Error(`this model cannot be used without a valid LoRA`)
+      }
+
+      const url = loraModel.repoOrUrl.startsWith('http')
+        ? loraModel.repoOrUrl
+        : `https://huggingface.co/${
+        loraModel.repoOrUrl
+        }/resolve/main/${
+        loraModel.fileName || 'lora_weights.safetensors'
+        }?download=true`
+
+      const prompt = [
+        loraModel.trigger, request.prompts.image.positive]
+        .filter((x) => x)
+        .join(' ')
+
+      result = (await fal.run(model, {
+        input: {
+          prompt,
+          loras: [
+            {
+              path: url,
+              scale: 1.0, // between 0 and 4
             },
           ],
           image_size: imageSize,

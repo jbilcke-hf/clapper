@@ -24,6 +24,8 @@ export const defaultLoraModels: Lora[] = [
       'kodachrome, blurry, realistic, still life, depth of field, scenery, no humans, monochrome, greyscale, traditional media, horizon, looking at viewer, light particles, shadow',
 
     repoOrUrl: 'alvdansen/flux-koda',
+
+    fileName: 'araminta_k_flux_koda.safetensors',
   },
   {
     id: 'lora://hf.co/models/veryVANYA/ps1-style-flux',
@@ -47,6 +49,8 @@ trained on 15 gpt4o captioned and adjusted ps1/n64 game screenshots using https:
     extensions: 'ps1 game screenshot',
 
     repoOrUrl: 'veryVANYA/ps1-style-flux',
+
+    fileName: 'ps1_style_flux_v1.safetensors'
   },
   /*
   {
