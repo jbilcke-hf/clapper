@@ -50,7 +50,7 @@ export async function resolveSegment(
       const loraModel = getWorkflowLora(
         request.settings.imageGenerationWorkflow
       )
-      
+
       if (!loraModel) {
         throw new Error(`this model cannot be used without a valid LoRA`)
       }

@@ -50,7 +50,7 @@ trained on 15 gpt4o captioned and adjusted ps1/n64 game screenshots using https:
 
     repoOrUrl: 'veryVANYA/ps1-style-flux',
 
-    fileName: 'ps1_style_flux_v1.safetensors'
+    fileName: 'ps1_style_flux_v1.safetensors',
   },
   /*
   {
