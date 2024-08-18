@@ -4,15 +4,14 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import {
   getValidNumber,
-  ClapWorkflowProvider,
   ClapWorkflow,
   ClapWorkflowCategory,
+  ClapWorkflowEngine,
 } from '@aitube/clap'
 import { parseRenderingStrategy, RenderingStrategy } from '@aitube/timeline'
 import {
   ComfyIcuAccelerator,
   RequestSettings,
-  SettingsState,
   SettingsStore,
 } from '@aitube/clapper-services'
 
@@ -24,6 +23,7 @@ import { getValidComfyWorkflowTemplate } from '@/lib/utils/getValidComfyWorkflow
 import { parseComfyIcuAccelerator } from '@/lib/utils/parseComfyIcuAccelerator'
 
 import { parseWorkflow } from './workflows/parseWorkflow'
+import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/utils'
 
 export const useSettings = create<SettingsStore>()(
   persist(
@@ -627,12 +627,30 @@ export const useSettings = create<SettingsStore>()(
         })
       },
       setComfyWorkflowForImage: (comfyWorkflowForImage?: string) => {
-        set({
-          comfyWorkflowForImage: getValidComfyWorkflowTemplate(
-            comfyWorkflowForImage,
-            getDefaultSettingsState().comfyWorkflowForImage
-          ),
-        })
+        try {
+          if (!comfyWorkflowForImage) throw new Error('Invalid workflow')
+          const currentWorkflowString = get().imageGenerationWorkflow
+          const currentWorkflow = parseWorkflow(
+            currentWorkflowString,
+            ClapWorkflowCategory.IMAGE_GENERATION
+          )
+          const clapWorkflow = convertComfyUiWorkflowApiToClapWorkflow(
+            comfyWorkflowForImage
+          )
+          set({
+            comfyWorkflowForImage: getValidComfyWorkflowTemplate(
+              clapWorkflow.data,
+              getDefaultSettingsState().comfyWorkflowForImage
+            ),
+          })
+          if (currentWorkflow.engine === ClapWorkflowEngine.COMFYUI_WORKFLOW) {
+            set({
+              imageGenerationWorkflow: JSON.stringify(clapWorkflow),
+            })
+          }
+        } catch (e) {
+          console.error(e)
+        }
       },
       setComfyWorkflowForVideo: (comfyWorkflowForVideo?: string) => {
         set({
