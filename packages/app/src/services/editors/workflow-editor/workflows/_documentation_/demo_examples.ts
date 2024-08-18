@@ -97,5 +97,8 @@ const justAnExample_DoNotUseThis: ClapWorkflow[] = [
 
       custom_field: 0.042, // <-- a value curated/suggested by Clapper
     },
+
+    nonCommercial: true,
+    schema: 'a workflow json string',
   },
 ]

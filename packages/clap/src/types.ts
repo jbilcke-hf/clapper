@@ -622,7 +622,7 @@ export type ClapWorkflow = {
   /**
    * Whether the workflow forbids commercial usage or not
    */
-  nonCommercial: boolean
+  nonCommercial?: boolean
 
   engine: ClapWorkflowEngine
 
@@ -644,7 +644,7 @@ export type ClapWorkflow = {
    * This is used to visualize the workflow in our workflow editor
    * 
    */
-  schema: string
+  schema?: string
 
   /**
    * Inputs of the workflow (this is used to build an UI for the automatically)
