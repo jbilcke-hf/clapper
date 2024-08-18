@@ -99,6 +99,15 @@ export function getDefaultMetricsPerProvider(): MetricsPerProvider {
     [ClapWorkflowProvider.EVERARTAI]: {
       ...getDefaultClapWorkflowProviderMetrics(),
     },
+    [ClapWorkflowProvider.LETZAI]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
+    },
+    [ClapWorkflowProvider.BIGMODEL]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
+    },
+    [ClapWorkflowProvider.PIAPI]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
+    },
   }
   return metricsPerProvider
 }
