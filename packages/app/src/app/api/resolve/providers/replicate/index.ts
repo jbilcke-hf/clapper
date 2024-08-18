@@ -18,7 +18,6 @@ export async function resolveSegment(
   const segment = request.segment
 
   if (request.segment.category == ClapSegmentCategory.STORYBOARD) {
-
     const { workflowValues } = getWorkflowInputValues(
       request.settings.imageGenerationWorkflow
     )
@@ -31,11 +30,11 @@ export async function resolveSegment(
     }
 
     const aspectRatio =
-    request.meta.orientation === ClapMediaOrientation.SQUARE
-      ? "1:1"
-      : request.meta.orientation === ClapMediaOrientation.PORTRAIT
-        ? "9:16"
-        : "16:9"
+      request.meta.orientation === ClapMediaOrientation.SQUARE
+        ? '1:1'
+        : request.meta.orientation === ClapMediaOrientation.PORTRAIT
+          ? '9:16'
+          : '16:9'
 
     if (
       request.settings.imageGenerationWorkflow.data === 'fofr/pulid-lightning'
@@ -47,9 +46,10 @@ export async function resolveSegment(
     } else if (
       request.settings.imageGenerationWorkflow.data === 'lucataco/flux-dev-lora'
     ) {
-
       // note: this isn't the right place to do this, because maybe the LoRAs are dynamic
-      const loraModel = getWorkflowLora(request.settings.imageGenerationWorkflow)
+      const loraModel = getWorkflowLora(
+        request.settings.imageGenerationWorkflow
+      )
 
       params = {
         // for some reason this model doesn't support arbitrary width and height,
@@ -58,14 +58,13 @@ export async function resolveSegment(
 
         hf_lora: workflowValues['hf_lora'] || '',
 
-        prompt: [
-          loraModel?.trigger,
-          request.prompts.image.positive
-        ].filter(x => x).join(' '),
+        prompt: [loraModel?.trigger, request.prompts.image.positive]
+          .filter((x) => x)
+          .join(' '),
 
-        disable_safety_checker: !request.settings.censorNotForAllAudiencesContent,
+        disable_safety_checker:
+          !request.settings.censorNotForAllAudiencesContent,
       }
-  
     } else if (
       request.settings.imageGenerationWorkflow.data === 'zsxkib/pulid'
     ) {
@@ -86,9 +85,7 @@ export async function resolveSegment(
       { input: params }
     )) as any
 
-
     segment.assetUrl = `${response[0] || ''}`
-
   } else if (request.segment.category === ClapSegmentCategory.DIALOGUE) {
     const response = (await replicate.run(
       request.settings.voiceGenerationWorkflow.data as any,
@@ -96,7 +93,8 @@ export async function resolveSegment(
         input: {
           text: request.prompts.voice.positive,
           audio: request.prompts.voice.identity,
-          disable_safety_checker: !request.settings.censorNotForAllAudiencesContent,
+          disable_safety_checker:
+            !request.settings.censorNotForAllAudiencesContent,
         },
       }
     )) as any
@@ -107,7 +105,8 @@ export async function resolveSegment(
       {
         input: {
           image: request.prompts.video.image,
-          disable_safety_checker: !request.settings.censorNotForAllAudiencesContent,
+          disable_safety_checker:
+            !request.settings.censorNotForAllAudiencesContent,
         },
       }
     )) as any

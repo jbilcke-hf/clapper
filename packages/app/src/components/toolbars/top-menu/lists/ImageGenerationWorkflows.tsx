@@ -89,7 +89,6 @@ export function ImageGenerationWorkflows() {
                       workflow={w}
                       currentLora={workflowLora}
                       onChange={(newLora?: Lora) => {
-
                         console.log(`onChange:`, {
                           w,
                           newLora,

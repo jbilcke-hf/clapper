@@ -21,10 +21,12 @@ export const stabilityaiWorkflows: ClapWorkflow[] = [
     tags: ['SVD'],
     author: 'Stability AI',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.STABILITYAI,
     category: ClapWorkflowCategory.VIDEO_GENERATION,
     data: 'image-to-video',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -40,10 +42,12 @@ export const stabilityaiWorkflows: ClapWorkflow[] = [
     tags: ['SD', 'Ultra'],
     author: 'Stability AI',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.STABILITYAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'stable-image/generate/ultra',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -69,10 +73,12 @@ export const stabilityaiWorkflows: ClapWorkflow[] = [
     tags: ['SD', 'Core'],
     author: 'Stability AI',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.STABILITYAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'stable-image/generate/core',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -98,10 +104,12 @@ export const stabilityaiWorkflows: ClapWorkflow[] = [
     tags: ['SD', 'SD3'],
     author: 'Stability AI',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.STABILITYAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'stable-image/generate/sd3',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */

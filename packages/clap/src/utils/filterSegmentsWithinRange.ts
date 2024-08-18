@@ -17,13 +17,17 @@ import { ClapSegment, ClapSegmentCategory, ClapSegmentFilteringMode } from "@/ty
  * @param category optional, to also filter by category
  * @returns 
  */
-export function filterSegmentsWithinRange(
+export function filterSegmentsWithinRange<T extends {
+  startTimeInMs: number;
+  endTimeInMs: number;
+  category?: ClapSegmentCategory;
+}>(
   mode: ClapSegmentFilteringMode,
   startTimeInMs: number,
   endTimeInMs: number,
-  segments?: ClapSegment[],
+  segments?: T[],
   category?: ClapSegmentCategory
-): ClapSegment[] {
+): T[] {
 
   const array = Array.isArray(segments) ? segments : []
 

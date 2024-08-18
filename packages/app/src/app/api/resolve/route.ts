@@ -132,8 +132,6 @@ export async function POST(req: NextRequest) {
       segment.outputType === ClapOutputType.AUDIO ||
       segment.outputType === ClapOutputType.VIDEO
     ) {
-
-
       // TODO this should be down in the browser side, so that we can scale better
       const { durationInMs, hasAudio } = await getMediaInfo(segment.assetUrl)
       segment.assetDurationInMs = durationInMs

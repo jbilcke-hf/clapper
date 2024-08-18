@@ -30,7 +30,9 @@ export function LoraModelList({
       <MenubarSubTrigger>
         <div className="pl-6">
           <span>{workflow.label}</span>
-          <span className="ml-1 opacity-70">{currentLora ? `(${currentLora.label})` : `(no lora selected)`}</span>
+          <span className="ml-1 opacity-70">
+            {currentLora ? `(${currentLora.label})` : `(no lora selected)`}
+          </span>
         </div>
       </MenubarSubTrigger>
       <MenubarSubContent>

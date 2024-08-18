@@ -2,17 +2,18 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import './demo.css'
 
-import { ClapTimeline, useTimeline } from '.'
+import { ClapTimeline, SegmentEditionStatus, SegmentVisibility, TimelineSegment, useTimeline } from '.'
+import { ClapAssetSource, ClapOutputType, ClapSegmentCategory, ClapSegmentStatus } from '@aitube/clap'
 
 const container = document.getElementById('root')
 const root = createRoot(container!)
 
-const segment = {
+const segment: TimelineSegment = {
   id: '105246fd-7be3-4dfa-9596-01068ad858e9',
   track: 1,
   startTimeInMs: 0,
   endTimeInMs: 500 * 4,
-  category: 'VIDEO',
+  category: ClapSegmentCategory.VIDEO,
   entityId: '',
   workflowId: '',
   sceneId: '7d12441e-e002-4882-80e0-37c09fde5dc9',
@@ -20,12 +21,12 @@ const segment = {
   endTimeInLines: 0,
   prompt: 'movie',
   label: 'movie',
-  outputType: 'VIDEO',
+  outputType: ClapOutputType.VIDEO,
   renderId: '',
-  status: 'TO_GENERATE',
+  status: ClapSegmentStatus.TO_GENERATE,
   assetUrl: '',
   assetDurationInMs: 1000,
-  assetSourceType: 'EMPTY',
+  assetSourceType: ClapAssetSource.EMPTY,
   assetFileFormat: '',
   revision: 0,
   createdAt: '2024-08-15T21:08:38.438Z',
@@ -33,7 +34,7 @@ const segment = {
   editedBy: 'auto',
   outputGain: 0,
   seed: 1523799474,
-  visibility: 'VISIBLE',
+  visibility: SegmentVisibility.VISIBLE,
   textures: {},
   isSelected: false,
   isHovered: false,
@@ -45,7 +46,7 @@ const segment = {
   isGrabbedOnBody: false,
   isGrabbedOnLeftHandle: false,
   isGrabbedOnRightHandle: false,
-  editionStatus: 'EDITABLE',
+  editionStatus: SegmentEditionStatus.EDITABLE,
 }
 
 useTimeline.setState({
@@ -202,7 +203,6 @@ useTimeline.setState({
       hue: 0,
       occupied: false,
       visible: true,
-      contentHeight: 48,
     },
     {
       id: 1,
@@ -212,7 +212,6 @@ useTimeline.setState({
       hue: 0,
       occupied: true,
       visible: true,
-      contentHeight: 100,
     },
   ],
   segments: [segment],

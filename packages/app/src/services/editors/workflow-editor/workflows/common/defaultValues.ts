@@ -141,7 +141,7 @@ export const genericInferenceSteps: ClapInputField = {
   id: 'num_inference_steps',
   label: 'Inference steps',
   description: 'Number of inference steps',
-  category: ClapInputCategory.INFERENCE_STEPS,
+  category: ClapInputCategory.ITERATION_STEPS,
   type: 'number',
   minValue: 1,
   maxValue: 50,
@@ -164,7 +164,7 @@ export const genericOverlappingTiles: ClapInputField = {
   label: 'Overlapping Tiles',
   description:
     'Overlapping tiles should reduce visible seams, but doubles the inference time.',
-  category: ClapInputCategory.CUSTOM,
+  category: ClapInputCategory.UNKNOWN,
   type: 'boolean',
   defaultValue: true,
 }
@@ -174,7 +174,7 @@ export const genericMotionBucketId: ClapInputField = {
   label: 'Motion Bucket ID',
   description:
     'The motion bucket ID determines the motion of the generated video. The higher the number, the more motion there will be.',
-  category: ClapInputCategory.CUSTOM,
+  category: ClapInputCategory.UNKNOWN,
   type: 'number', // <-- TODO: replace by 'integer' (might break stuff)
   minValue: 0,
   maxValue: 255,
@@ -186,7 +186,7 @@ export const genericConditioningAugmentation: ClapInputField = {
   label: 'Conditioning Augmentation',
   description:
     'The conditoning augmentation determines the amount of noise that will be added to the conditioning frame. The higher the number, the more noise there will be, and the less the video will look like the initial image. Increase it for more motion.',
-  category: ClapInputCategory.CUSTOM,
+  category: ClapInputCategory.UNKNOWN,
   type: 'number',
   minValue: 0,
   maxValue: 1,

@@ -11,15 +11,15 @@ export function getWorkflowLora(workflow: ClapWorkflow): Lora | undefined {
     return undefined
   }
 
-  const loraRepoOrUrl: string = workflow.inputValues[inputField.id]
+  const loraRepoOrUrl: string = `${workflow.inputValues[inputField.id] || ''}`
 
   if (!loraRepoOrUrl) {
     return undefined
   }
 
-  const loraModel = defaultLoraModels.find((lora) => (
-    lora.repoOrUrl === loraRepoOrUrl
-  ))
+  const loraModel = defaultLoraModels.find(
+    (lora) => lora.repoOrUrl === loraRepoOrUrl
+  )
 
   if (!loraModel) {
     return undefined
