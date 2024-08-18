@@ -170,7 +170,7 @@ export async function analyzeScreenplay(
       }
       if (!entitiesByScreenplayLabel[uppercaseAssetName]) {
         const newEnt = newEntity({
-          category: "location",
+          category: ClapSegmentCategory.LOCATION,
           triggerName: uppercaseAssetName, // uppercase
           label: uppercaseAssetName,
 

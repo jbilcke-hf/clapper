@@ -10,14 +10,16 @@ export const piApiWorkflows: ClapWorkflow[] = [
   {
     id: 'piapi://Midjourney/Imagine',
     label: 'Midjourne Imagine',
-    image: '',
+    description: '',
     tags: ['Midjourney'],
     author: '',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.PIAPI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'mj/v2/imagine', // <- this value isn't really used, it's just to put something here
+    schema: '',
     inputFields: [
       genericPrompt,
       // genericRatio
@@ -34,14 +36,16 @@ export const piApiWorkflows: ClapWorkflow[] = [
   {
     id: 'piapi://LumaLabs/DreamMachine',
     label: 'Luma Labs Dream Machine',
-    image: '',
+    description: '',
     tags: ['Dream Machine'],
     author: '',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.PIAPI,
     category: ClapWorkflowCategory.VIDEO_GENERATION,
     data: 'luma/v1/video', // <- this value isn't really used, it's just to put something here
+    schema: '',
     inputFields: [
       genericImageUrl,
       // genericRatio

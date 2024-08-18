@@ -193,7 +193,7 @@ export const useIO = create<IOStore>((set, get) => ({
           height: 576,
 
           defaultVideoModel: '', // <-- we should deprecate this no?
-          extraPositivePrompt: '',
+          extraPositivePrompt: [],
           screenplay: '',
           isLoop: false,
           isInteractive: false,
@@ -631,16 +631,18 @@ export const useIO = create<IOStore>((set, get) => ({
     } else {
       console.log(`editing the clap to add a new final video`)
       timelineSegments.push(
-        newSegment({
-          category: ClapSegmentCategory.VIDEO,
-          status: ClapSegmentStatus.COMPLETED,
-          startTimeInMs: 0,
-          endTimeInMs: meta.durationInMs,
-          assetUrl: videoDataUrl,
-          assetDurationInMs: meta.durationInMs,
-          assetSourceType: getClapAssetSourceType(videoDataUrl),
-          outputGain: 1.0,
-        })
+        await clapSegmentToTimelineSegment(
+          newSegment({
+            category: ClapSegmentCategory.VIDEO,
+            status: ClapSegmentStatus.COMPLETED,
+            startTimeInMs: 0,
+            endTimeInMs: meta.durationInMs,
+            assetUrl: videoDataUrl,
+            assetDurationInMs: meta.durationInMs,
+            assetSourceType: getClapAssetSourceType(videoDataUrl),
+            outputGain: 1.0,
+          })
+        )
       )
     }
 

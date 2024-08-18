@@ -23,7 +23,6 @@ export function parseWorkflow(
     author: '',
     thumbnailUrl: '',
     nonCommercial: false,
-    canSupportLora: false,
     engine: ClapWorkflowEngine.DEFAULT,
     category,
     provider: ClapWorkflowProvider.NONE,
@@ -40,7 +39,7 @@ export function parseWorkflow(
       typeof input === 'string'
         ? (JSON.parse(input) as ClapWorkflow)
         : (input as ClapWorkflow) // fallback in case some users had a bad version which didn't serialize to JSON
-      // console.log("maybeWorkflow:", { maybeWorkflow })
+    // console.log("maybeWorkflow:", { maybeWorkflow })
     const looksValid =
       typeof maybeWorkflow?.id === 'string' &&
       typeof maybeWorkflow?.label === 'string' &&

@@ -150,4 +150,13 @@ export const estimatedMetrics: Record<
   [ClapWorkflowProvider.EVERARTAI]: {
     // TODO list the most popular models
   },
+  [ClapWorkflowProvider.LETZAI]: {
+    // TODO list the most popular models
+  },
+  [ClapWorkflowProvider.BIGMODEL]: {
+    // TODO list the most popular models
+  },
+  [ClapWorkflowProvider.PIAPI]: {
+    // TODO list the most popular models
+  },
 }

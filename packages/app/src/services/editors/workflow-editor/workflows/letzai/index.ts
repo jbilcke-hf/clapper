@@ -14,14 +14,16 @@ export const letzAiWorkflows: ClapWorkflow[] = [
   {
     id: 'letzai://api/images',
     label: 'Create image with LetzAI',
-    image: '',
+    description: '',
     tags: ['image'],
     author: '',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.LETZAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'api/images', // <- this value isn't really used, it's just to put something here
+    schema: '',
     inputFields: [genericPrompt, genericWidth1024, genericHeight1024],
     inputValues: {
       [genericPrompt.id]: genericPrompt.defaultValue,

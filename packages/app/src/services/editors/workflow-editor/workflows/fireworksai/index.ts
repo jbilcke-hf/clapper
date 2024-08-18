@@ -18,10 +18,12 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
     tags: [],
     author: 'Stability AI',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FIREWORKSAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'stability/sd3',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -47,10 +49,12 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
     tags: [],
     author: 'Stability AI',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FIREWORKSAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'accounts/stability/models/sd3-turbo',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -76,10 +80,12 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
     tags: [],
     author: 'Stability AI',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FIREWORKSAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'fireworks/stable-diffusion-xl-1024-v1-0',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -105,10 +111,12 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
     tags: [],
     author: 'Stability AI',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FIREWORKSAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'accounts/fireworks/models/playground-v2-5-1024px-aesthetic',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -134,10 +142,12 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
     tags: [],
     author: 'Meta',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FIREWORKSAI,
     category: ClapWorkflowCategory.ASSISTANT,
     data: 'fireworks/llama-v3-70b-instruct',
+    schema: '',
     inputFields: [genericPrompt],
     inputValues: {
       prompt: genericPrompt.defaultValue,

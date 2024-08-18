@@ -64,7 +64,7 @@ export const useAutocomplete = create<AutocompleteStore>((set, get) => ({
     set({ isRunning: true })
 
     try {
-      const storyboards = filterSegments(
+      const storyboards = filterSegments<TimelineSegment>(
         ClapSegmentFilteringMode.ANY,
         range,
         timeline.segments,

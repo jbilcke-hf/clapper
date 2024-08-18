@@ -1,18 +1,22 @@
-import { ClapSegmentFilteringMode, filterSegmentsWithinRange } from "@aitube/clap"
+import { ClapSegmentCategory, ClapSegmentFilteringMode, filterSegmentsWithinRange } from "@aitube/clap"
 
 import { TimelineSegment } from "@/types"
 
 // TODO put this in a web workers for smoother operations?
-export function sliceSegments({
+export function sliceSegments<T extends {
+  startTimeInMs: number
+  endTimeInMs: number
+  category?: ClapSegmentCategory
+}>({
   segments,
   afterTimeInMs,
   beforeTimeInMs,
 }: {
-  segments: TimelineSegment[]
+  segments: T[]
   afterTimeInMs: number
   beforeTimeInMs: number
-}): TimelineSegment[] {
-  const result = filterSegmentsWithinRange(
+}): T[] {
+  const result = filterSegmentsWithinRange<T>(
     ClapSegmentFilteringMode.ANY,
     afterTimeInMs,
     beforeTimeInMs,

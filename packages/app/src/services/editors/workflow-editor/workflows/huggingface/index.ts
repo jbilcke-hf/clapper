@@ -18,10 +18,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     tags: ['flux'],
     author: 'BFL (https://BlackForestLabs.ai)',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'black-forest-labs/FLUX.1-schnell',
+    schema: '',
     inputFields: [genericPrompt, genericWidth2048, genericHeight2048],
     inputValues: {
       prompt: genericPrompt.defaultValue,
@@ -36,10 +38,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     tags: ['flux'],
     author: 'BFL (https://BlackForestLabs.ai)',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'black-forest-labs/FLUX.1-dev',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -66,10 +70,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     author: '@jbilcke-hf',
     // TODO add specific field about licensing?
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
     data: 'jbilcke-hf/flux-dev-panorama-lora-2',
+    schema: '',
     inputFields: [genericPrompt, genericWidth2048, genericHeight2048],
     inputValues: {
       prompt: genericPrompt.defaultValue,
@@ -84,10 +90,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     tags: ['TTS'],
     author: 'Coqui',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.VOICE_GENERATION,
     data: 'coqui/XTTS-v2',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -103,10 +111,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     tags: ['TTS'],
     author: 'MyShell.ai',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.VOICE_GENERATION,
     data: 'myshell-ai/OpenVoiceV2',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -122,10 +132,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     tags: ['TTS'],
     author: 'MyShell.ai',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.VOICE_GENERATION,
     data: 'myshell-ai/OpenVoice',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -141,10 +153,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     tags: ['TTS'],
     author: 'WhisperSpeech',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.VOICE_GENERATION,
     data: 'WhisperSpeech/WhisperSpeech',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -160,10 +174,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     tags: ['TTS'],
     author: 'MetaVoice (themetavoice.xyz)',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.VOICE_GENERATION,
     data: 'metavoiceio/metavoice-1B-v0.1',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -179,10 +195,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     tags: ['TTS'],
     author: 'ParlerTTS',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.VOICE_GENERATION,
     data: 'parler-tts/parler_tts_mini_v0.1',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -198,10 +216,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     tags: ['TTS'],
     author: 'ParlerTTS',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.VOICE_GENERATION,
     data: 'parler-tts/parler-tts-mini-expresso',
+    schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)
      */
@@ -217,10 +237,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     tags: ['Zephyr'],
     author: 'Hugging Face H4',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.ASSISTANT,
     data: 'HuggingFaceH4/zephyr-7b-beta',
+    schema: '',
     inputFields: [genericPrompt],
     inputValues: {
       prompt: genericPrompt.defaultValue,
@@ -233,10 +255,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     tags: ['Zephyr'],
     author: 'Mistral AI',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.ASSISTANT,
     data: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+    schema: '',
     inputFields: [genericPrompt],
     inputValues: {
       prompt: genericPrompt.defaultValue,
@@ -250,10 +274,12 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     tags: ['music'],
     author: 'CVSSP',
     thumbnailUrl: '',
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.HUGGINGFACE,
     category: ClapWorkflowCategory.MUSIC_GENERATION,
     data: 'cvssp/audioldm2-music',
+    schema: '',
     // Inputs of the workflow (this is used to build an UI for the automatically)
     inputFields: [
       genericPrompt,
