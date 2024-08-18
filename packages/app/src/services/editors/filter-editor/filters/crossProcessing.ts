@@ -1,3 +1,4 @@
+import { ClapInputCategory } from '@aitube/clap'
 import { Filter } from '@aitube/clapper-services'
 
 export const crossProcessing: Filter = {
@@ -9,6 +10,7 @@ export const crossProcessing: Filter = {
       label: 'Intensity',
       description: 'Intensity of the cross-processing effect',
       type: 'number',
+      category: ClapInputCategory.UNKNOWN,
       minValue: 0,
       maxValue: 1,
       defaultValue: 0.5,
@@ -17,6 +19,7 @@ export const crossProcessing: Filter = {
       id: 'contrastBoost',
       label: 'Contrast boost',
       description: 'Amount of contrast boost',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -26,6 +29,7 @@ export const crossProcessing: Filter = {
       id: 'colorShift',
       label: 'Color shift',
       description: 'Direction of color shift',
+      category: ClapInputCategory.UNKNOWN,
       type: 'string',
       allowedValues: ['Cool', 'Warm'],
       defaultValue: 'Cool',

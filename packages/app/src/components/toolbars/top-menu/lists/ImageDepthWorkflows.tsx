@@ -21,18 +21,20 @@ import {
   ClapWorkflowProviderLogo,
   ClapWorkflowProviderName,
 } from '@/components/core/providers'
+import { parseWorkflow } from '@/services/settings/workflows/parseWorkflow'
+
+const category = ClapWorkflowCategory.IMAGE_DEPTH_MAPPING
 
 export function ImageDepthWorkflows() {
-  const workflowId = useSettings((s) => s.imageDepthWorkflow)
-  const setWorkflowId = useSettings((s) => s.setImageDepthWorkflow)
+  const imageDepthWorkflow = useSettings((s) => s.imageDepthWorkflow)
+  const setImageDepthWorkflow = useSettings((s) => s.setImageDepthWorkflow)
   const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const { workflows, providers, nbProviders } = findWorkflows(
-    availableWorkflows,
-    { category: ClapWorkflowCategory.IMAGE_DEPTH_MAPPING }
-  )
+  const { providers, nbProviders } = findWorkflows(availableWorkflows, {
+    category,
+  })
 
-  const { workflow } = findWorkflows(workflows, { workflowId })
+  const workflow = parseWorkflow(imageDepthWorkflow, category)
 
   if (!nbProviders) {
     return null
@@ -65,7 +67,7 @@ export function ImageDepthWorkflows() {
               {workflows?.map((w) => (
                 <MenubarCheckboxItem
                   key={w.id}
-                  checked={workflowId === w.id}
+                  checked={workflow.id === w.id}
                   disabled={hasNoPublicAPI(w)}
                   onClick={(e) => {
                     if (hasNoPublicAPI(w)) {
@@ -73,7 +75,7 @@ export function ImageDepthWorkflows() {
                       e.preventDefault()
                       return false
                     }
-                    setWorkflowId(w.id)
+                    setImageDepthWorkflow(w)
                     e.stopPropagation()
                     e.preventDefault()
                     return false

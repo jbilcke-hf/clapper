@@ -21,18 +21,20 @@ import {
   ClapWorkflowProviderLogo,
   ClapWorkflowProviderName,
 } from '@/components/core/providers'
+import { parseWorkflow } from '@/services/settings/workflows/parseWorkflow'
+
+const category = ClapWorkflowCategory.VIDEO_DEPTH_MAPPING
 
 export function VideoDepthWorkflows() {
-  const workflowId = useSettings((s) => s.videoDepthWorkflow)
-  const setWorkflowId = useSettings((s) => s.setVideoDepthWorkflow)
+  const videoDepthWorkflow = useSettings((s) => s.videoDepthWorkflow)
+  const setVideoDepthWorkflow = useSettings((s) => s.setVideoDepthWorkflow)
   const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const { workflows, providers, nbProviders } = findWorkflows(
-    availableWorkflows,
-    { category: ClapWorkflowCategory.VIDEO_DEPTH_MAPPING }
-  )
+  const { providers, nbProviders } = findWorkflows(availableWorkflows, {
+    category,
+  })
 
-  const { workflow } = findWorkflows(workflows, { workflowId })
+  const workflow = parseWorkflow(videoDepthWorkflow, category)
 
   if (!nbProviders) {
     return null
@@ -65,7 +67,7 @@ export function VideoDepthWorkflows() {
               {workflows?.map((w) => (
                 <MenubarCheckboxItem
                   key={w.id}
-                  checked={workflowId === w.id}
+                  checked={workflow.id === w.id}
                   disabled={hasNoPublicAPI(w)}
                   onClick={(e) => {
                     if (hasNoPublicAPI(w)) {
@@ -73,7 +75,7 @@ export function VideoDepthWorkflows() {
                       e.preventDefault()
                       return false
                     }
-                    setWorkflowId(w.id)
+                    setVideoDepthWorkflow(w)
                     e.stopPropagation()
                     e.preventDefault()
                     return false

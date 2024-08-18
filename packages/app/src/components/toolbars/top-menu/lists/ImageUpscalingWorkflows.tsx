@@ -21,18 +21,22 @@ import {
   ClapWorkflowProviderLogo,
   ClapWorkflowProviderName,
 } from '@/components/core/providers'
+import { parseWorkflow } from '@/services/settings/workflows/parseWorkflow'
+
+const category = ClapWorkflowCategory.IMAGE_UPSCALING
 
 export function ImageUpscalingWorkflows() {
-  const workflowId = useSettings((s) => s.imageUpscalingWorkflow)
-  const setWorkflowId = useSettings((s) => s.setImageUpscalingWorkflow)
+  const imageUpscalingWorkflow = useSettings((s) => s.imageUpscalingWorkflow)
+  const setImageUpscalingWorkflow = useSettings(
+    (s) => s.setImageUpscalingWorkflow
+  )
   const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const { workflows, providers, nbProviders } = findWorkflows(
-    availableWorkflows,
-    { category: ClapWorkflowCategory.IMAGE_UPSCALING }
-  )
+  const { providers, nbProviders } = findWorkflows(availableWorkflows, {
+    category,
+  })
 
-  const { workflow } = findWorkflows(workflows, { workflowId })
+  const workflow = parseWorkflow(imageUpscalingWorkflow, category)
 
   if (!nbProviders) {
     return null
@@ -65,7 +69,7 @@ export function ImageUpscalingWorkflows() {
               {workflows?.map((w) => (
                 <MenubarCheckboxItem
                   key={w.id}
-                  checked={workflowId === w.id}
+                  checked={workflow.id === w.id}
                   disabled={hasNoPublicAPI(w)}
                   onClick={(e) => {
                     if (hasNoPublicAPI(w)) {
@@ -73,7 +77,7 @@ export function ImageUpscalingWorkflows() {
                       e.preventDefault()
                       return false
                     }
-                    setWorkflowId(w.id)
+                    setImageUpscalingWorkflow(w)
                     e.stopPropagation()
                     e.preventDefault()
                     return false

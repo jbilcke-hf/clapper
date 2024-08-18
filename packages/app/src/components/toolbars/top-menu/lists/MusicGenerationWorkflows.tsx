@@ -21,18 +21,22 @@ import {
   ClapWorkflowProviderLogo,
   ClapWorkflowProviderName,
 } from '@/components/core/providers'
+import { parseWorkflow } from '@/services/settings/workflows/parseWorkflow'
+
+const category = ClapWorkflowCategory.MUSIC_GENERATION
 
 export function MusicGenerationWorkflows() {
-  const workflowId = useSettings((s) => s.musicGenerationWorkflow)
-  const setWorkflowId = useSettings((s) => s.setMusicGenerationWorkflow)
+  const musicGenerationWorkflow = useSettings((s) => s.musicGenerationWorkflow)
+  const setMusicGenerationWorkflow = useSettings(
+    (s) => s.setMusicGenerationWorkflow
+  )
   const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const { workflows, providers, nbProviders } = findWorkflows(
-    availableWorkflows,
-    { category: ClapWorkflowCategory.MUSIC_GENERATION }
-  )
+  const { providers, nbProviders } = findWorkflows(availableWorkflows, {
+    category,
+  })
 
-  const { workflow } = findWorkflows(workflows, { workflowId })
+  const workflow = parseWorkflow(musicGenerationWorkflow, category)
 
   if (!nbProviders) {
     return null
@@ -65,7 +69,7 @@ export function MusicGenerationWorkflows() {
               {workflows?.map((w) => (
                 <MenubarCheckboxItem
                   key={w.id}
-                  checked={workflowId === w.id}
+                  checked={workflow.id === w.id}
                   disabled={hasNoPublicAPI(w)}
                   onClick={(e) => {
                     if (hasNoPublicAPI(w)) {
@@ -73,7 +77,7 @@ export function MusicGenerationWorkflows() {
                       e.preventDefault()
                       return false
                     }
-                    setWorkflowId(w.id)
+                    setMusicGenerationWorkflow(w)
                     e.stopPropagation()
                     e.preventDefault()
                     return false

@@ -1,3 +1,4 @@
+import { ClapInputCategory } from '@aitube/clap'
 import { Filter } from '@aitube/clapper-services'
 
 export const hdrToneMapping: Filter = {
@@ -8,6 +9,7 @@ export const hdrToneMapping: Filter = {
       id: 'exposure',
       label: 'Exposure',
       description: 'Exposure adjustment',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: -2,
       maxValue: 2,
@@ -17,6 +19,7 @@ export const hdrToneMapping: Filter = {
       id: 'contrast',
       label: 'Contrast',
       description: 'Contrast adjustment',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0.5,
       maxValue: 2,
@@ -26,6 +29,7 @@ export const hdrToneMapping: Filter = {
       id: 'saturation',
       label: 'Saturation',
       description: 'Color saturation',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 2,
@@ -35,6 +39,7 @@ export const hdrToneMapping: Filter = {
       id: 'highlights',
       label: 'Highlights',
       description: 'Highlight adjustment',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: -1,
       maxValue: 1,
@@ -44,6 +49,7 @@ export const hdrToneMapping: Filter = {
       id: 'shadows',
       label: 'Shadows',
       description: 'Shadow adjustment',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: -1,
       maxValue: 1,

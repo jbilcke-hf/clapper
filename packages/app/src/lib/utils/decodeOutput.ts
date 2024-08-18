@@ -14,6 +14,7 @@ export async function decodeOutput(input: any): Promise<string> {
     ? urlOrBase64
     : await fetchContentToBase64(urlOrBase64)
 
+
   if (base64Url.startsWith('data:image/')) {
     if (
       base64Url.startsWith('data:image/jpeg') ||

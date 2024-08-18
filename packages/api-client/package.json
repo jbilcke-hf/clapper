@@ -39,6 +39,8 @@
     "dist/**/*.d.ts"
   ],
   "dependencies": {
+    "@aitube/clap": "workspace:*",
+    "@types/bun": "latest",
     "query-string": "^9.0.0"
   }
 }

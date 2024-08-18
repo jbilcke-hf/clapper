@@ -434,6 +434,28 @@ export type ClapSegment = {
   seed: number
 }
 
+// to help automatically map Clapper fields to any kind of workflows,
+// we are going to use those enums
+// that will help determine the semantic meaning of each field
+export enum ClapInputCategory {
+  PROMPT = "PROMPT",
+  IMAGE_URL = "IMAGE_URL",
+  SOUND_URL = "SOUND_URL",
+  VIDEO_URL = "VIDEO_URL",
+  WIDTH = "WIDTH",
+  HEIGHT = "HEIGHT",
+  SEED = "SEED",
+  LORA = "LORA",
+  //LORA_HF_MODEL = "LORA_HF_MODEL",
+  //LORA_WEIGHT_URL = "LORA_WEIGHT_URL",
+  //MISC_HF_MODEL = "MISC_HF_MODEL",
+  // MISC_WEIGHT_URL = "MISC_WEIGHT_URL",
+  ITERATION_STEPS = "ITERATION_STEPS",
+  GUIDANCE_SCALE = "GUIDANCE_SCALE",
+  UPSCALING_FACTOR = "UPSCALING_FACTOR",
+  UNKNOWN = "UNKNOWN",
+}
+
 export type ClapInputFieldNumber = {
   type: 'number'
   minValue: number
@@ -479,6 +501,15 @@ export type ClapInputField = {
    * Description of what the input field does
    */
   description: string
+
+  /**
+   * The category of the input
+   * This helps us associate an arbitrary parameter name
+   * to one of the category recognized by clapper
+   * 
+   * eg "hf_model", "hf_model_repo" -> ClapInputCategory.LORA
+   */
+  category: ClapInputCategory
 } & (
   | ClapInputFieldNumber
   | ClapInputFieldInteger
@@ -629,7 +660,7 @@ export type ClapWorkflow = {
   category: ClapWorkflowCategory
 
   provider: ClapWorkflowProvider
-
+  
   /**
    * The workflow data itself
    * 

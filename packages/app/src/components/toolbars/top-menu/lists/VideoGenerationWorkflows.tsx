@@ -21,18 +21,22 @@ import {
   ClapWorkflowProviderLogo,
   ClapWorkflowProviderName,
 } from '@/components/core/providers'
+import { parseWorkflow } from '@/services/settings/workflows/parseWorkflow'
+
+const category = ClapWorkflowCategory.VIDEO_GENERATION
 
 export function VideoGenerationWorkflows() {
-  const workflowId = useSettings((s) => s.videoGenerationWorkflow)
-  const setWorkflowId = useSettings((s) => s.setVideoGenerationWorkflow)
+  const videoGenerationWorkflow = useSettings((s) => s.videoGenerationWorkflow)
+  const setVideoGenerationWorkflow = useSettings(
+    (s) => s.setVideoGenerationWorkflow
+  )
   const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const { workflows, providers, nbProviders } = findWorkflows(
-    availableWorkflows,
-    { category: ClapWorkflowCategory.VIDEO_GENERATION }
-  )
+  const { providers, nbProviders } = findWorkflows(availableWorkflows, {
+    category,
+  })
 
-  const { workflow } = findWorkflows(workflows, { workflowId })
+  const workflow = parseWorkflow(videoGenerationWorkflow, category)
 
   if (!nbProviders) {
     return null
@@ -65,7 +69,7 @@ export function VideoGenerationWorkflows() {
               {workflows?.map((w) => (
                 <MenubarCheckboxItem
                   key={w.id}
-                  checked={workflowId === w.id}
+                  checked={workflow.id === w.id}
                   disabled={hasNoPublicAPI(w)}
                   onClick={(e) => {
                     if (hasNoPublicAPI(w)) {
@@ -73,7 +77,7 @@ export function VideoGenerationWorkflows() {
                       e.preventDefault()
                       return false
                     }
-                    setWorkflowId(w.id)
+                    setVideoGenerationWorkflow(w)
                     e.stopPropagation()
                     e.preventDefault()
                     return false

@@ -1,3 +1,4 @@
+import { ClapInputCategory } from '@aitube/clap'
 import { Filter } from '@aitube/clapper-services'
 
 export const colorTemperature: Filter = {
@@ -9,6 +10,7 @@ export const colorTemperature: Filter = {
       label: 'Temperature',
       description: 'Color temperature in Kelvin',
       type: 'number',
+      category: ClapInputCategory.UNKNOWN,
       minValue: 1000,
       maxValue: 40000,
       defaultValue: 6500,
@@ -17,6 +19,7 @@ export const colorTemperature: Filter = {
       id: 'tint',
       label: 'Tint',
       description: 'Green-Magenta tint',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: -100,
       maxValue: 100,

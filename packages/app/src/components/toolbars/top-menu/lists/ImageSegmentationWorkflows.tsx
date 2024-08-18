@@ -21,18 +21,24 @@ import {
   ClapWorkflowProviderLogo,
   ClapWorkflowProviderName,
 } from '@/components/core/providers'
+import { parseWorkflow } from '@/services/settings/workflows/parseWorkflow'
+
+const category = ClapWorkflowCategory.IMAGE_SEGMENTATION
 
 export function ImageSegmentationWorkflows() {
-  const workflowId = useSettings((s) => s.imageSegmentationWorkflow)
-  const setWorkflowId = useSettings((s) => s.setImageSegmentationWorkflow)
+  const imageSegmentationWorkflow = useSettings(
+    (s) => s.imageSegmentationWorkflow
+  )
+  const setImageSegmentationWorkflow = useSettings(
+    (s) => s.setImageSegmentationWorkflow
+  )
   const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const { workflows, providers, nbProviders } = findWorkflows(
-    availableWorkflows,
-    { category: ClapWorkflowCategory.IMAGE_SEGMENTATION }
-  )
+  const { providers, nbProviders } = findWorkflows(availableWorkflows, {
+    category,
+  })
 
-  const { workflow } = findWorkflows(workflows, { workflowId })
+  const workflow = parseWorkflow(imageSegmentationWorkflow, category)
 
   if (!nbProviders) {
     return null
@@ -65,7 +71,7 @@ export function ImageSegmentationWorkflows() {
               {workflows?.map((w) => (
                 <MenubarCheckboxItem
                   key={w.id}
-                  checked={workflowId === w.id}
+                  checked={workflow.id === w.id}
                   disabled={hasNoPublicAPI(w)}
                   onClick={(e) => {
                     if (hasNoPublicAPI(w)) {
@@ -73,7 +79,7 @@ export function ImageSegmentationWorkflows() {
                       e.preventDefault()
                       return false
                     }
-                    setWorkflowId(w.id)
+                    setImageSegmentationWorkflow(w)
                     e.stopPropagation()
                     e.preventDefault()
                     return false

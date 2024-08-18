@@ -9,6 +9,7 @@ import {
   genericHeight1024,
   genericHeight2048,
   genericImage,
+  genericLora,
   genericPrompt,
   genericVideo,
   genericWidth1024,
@@ -17,8 +18,39 @@ import {
 
 export const defaultWorkflows: ClapWorkflow[] = [
   {
+    id: 'replicate://lucataco/flux-dev-lora',
+    label: 'Flux-dev-lora',
+    description: '',
+    tags: ['flux'],
+    author: '@lucataco',
+    thumbnailUrl: '',
+    engine: ClapWorkflowEngine.REST_API,
+    category: ClapWorkflowCategory.IMAGE_GENERATION,
+    provider: ClapWorkflowProvider.REPLICATE,
+    data: 'lucataco/flux-dev-lora',
+    // data: 'lucataco/flux-dev-lora:94a0c19e55e36f75d657ecf9eada9f16a233b5329fb9cdf8e2b9ecd093e5c97e',
+    /**
+     * Inputs of the workflow (this is used to build an UI for the automatically)
+     */
+    inputFields: [
+      genericPrompt,
+      genericWidth2048,
+      genericHeight2048,
+      {
+        ...genericLora,
+        id: 'hf_lora',
+      },
+    ],
+    inputValues: {
+      prompt: genericPrompt.defaultValue,
+      width: genericWidth2048.defaultValue,
+      height: genericHeight2048.defaultValue,
+      hf_lora: genericLora.defaultValue,
+    },
+  },
+  {
     id: 'replicate://black-forest-labs/flux-pro',
-    label: 'FLUX.1 [pro]',
+    label: 'Flux-pro',
     description: '',
     tags: ['flux'],
     author: 'BFL (https://BlackForestLabs.ai)',
@@ -47,7 +79,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
   },
   {
     id: 'replicate://black-forest-labs/flux-schnell',
-    label: 'FLUX.1 [schnell]',
+    label: 'Flux-schnell',
     description: '',
     tags: ['flux'],
     author: 'BFL (https://BlackForestLabs.ai)',
@@ -68,7 +100,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
   },
   {
     id: 'replicate://black-forest-labs/flux-dev',
-    label: 'FLUX.1 [dev]',
+    label: 'Flux-dev',
     description: '',
     tags: ['flux'],
     author: 'BFL (https://BlackForestLabs.ai)',

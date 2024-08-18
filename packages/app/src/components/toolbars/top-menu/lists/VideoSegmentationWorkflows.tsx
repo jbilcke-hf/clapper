@@ -21,18 +21,24 @@ import {
   ClapWorkflowProviderLogo,
   ClapWorkflowProviderName,
 } from '@/components/core/providers'
+import { parseWorkflow } from '@/services/settings/workflows/parseWorkflow'
+
+const category = ClapWorkflowCategory.VIDEO_SEGMENTATION
 
 export function VideoSegmentationWorkflows() {
-  const workflowId = useSettings((s) => s.videoSegmentationWorkflow)
-  const setWorkflowId = useSettings((s) => s.setVideoSegmentationWorkflow)
+  const videoSegmentationWorkflow = useSettings(
+    (s) => s.videoSegmentationWorkflow
+  )
+  const setVideoSegmentationWorkflow = useSettings(
+    (s) => s.setVideoSegmentationWorkflow
+  )
   const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const { workflows, providers, nbProviders } = findWorkflows(
-    availableWorkflows,
-    { category: ClapWorkflowCategory.VIDEO_SEGMENTATION }
-  )
+  const { providers, nbProviders } = findWorkflows(availableWorkflows, {
+    category: ClapWorkflowCategory.VIDEO_SEGMENTATION,
+  })
 
-  const { workflow } = findWorkflows(workflows, { workflowId })
+  const workflow = parseWorkflow(videoSegmentationWorkflow, category)
 
   if (!nbProviders) {
     return null
@@ -65,7 +71,7 @@ export function VideoSegmentationWorkflows() {
               {workflows?.map((w) => (
                 <MenubarCheckboxItem
                   key={w.id}
-                  checked={workflowId === w.id}
+                  checked={workflow.id === w.id}
                   disabled={hasNoPublicAPI(w)}
                   onClick={(e) => {
                     if (hasNoPublicAPI(w)) {
@@ -73,7 +79,7 @@ export function VideoSegmentationWorkflows() {
                       e.preventDefault()
                       return false
                     }
-                    setWorkflowId(w.id)
+                    setVideoSegmentationWorkflow(w)
                     e.stopPropagation()
                     e.preventDefault()
                     return false

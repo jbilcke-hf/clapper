@@ -2,7 +2,12 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { getValidNumber, ClapWorkflowProvider } from '@aitube/clap'
+import {
+  getValidNumber,
+  ClapWorkflowProvider,
+  ClapWorkflow,
+  ClapWorkflowCategory,
+} from '@aitube/clap'
 import { parseRenderingStrategy, RenderingStrategy } from '@aitube/timeline'
 import {
   ComfyIcuAccelerator,
@@ -18,10 +23,7 @@ import { getDefaultSettingsState } from './getDefaultSettingsState'
 import { getValidComfyWorkflowTemplate } from '@/lib/utils/getValidComfyWorkflowTemplate'
 import { parseComfyIcuAccelerator } from '@/lib/utils/parseComfyIcuAccelerator'
 
-// that may not be the best way to do this,
-// and importing useWorkflowEditor here is a bit tricky
-import { findWorkflows } from '@/components/toolbars/top-menu/lists/getWorkflowProviders'
-import { useWorkflowEditor } from '../editors/workflow-editor/useWorkflowEditor'
+import { parseWorkflow } from './workflows/parseWorkflow'
 
 export const useSettings = create<SettingsStore>()(
   persist(
@@ -303,147 +305,137 @@ export const useSettings = create<SettingsStore>()(
           ),
         })
       },
-      setAssistantWorkflow: (assistantWorkflow?: string) => {
+      setAssistantWorkflow: (assistantWorkflow?: ClapWorkflow) => {
         const { assistantWorkflow: defaultAssistantWorkflow } =
           getDefaultSettingsState()
         set({
-          assistantWorkflow: getValidString(
-            assistantWorkflow,
-            defaultAssistantWorkflow
-          ),
+          assistantWorkflow: assistantWorkflow
+            ? JSON.stringify(assistantWorkflow)
+            : defaultAssistantWorkflow,
         })
       },
-      setAssistantTurboWorkflow: (assistantTurboWorkflow?: string) => {
+      setAssistantTurboWorkflow: (assistantTurboWorkflow?: ClapWorkflow) => {
         const { assistantTurboWorkflow: defaultAssistantTurboWorkflow } =
           getDefaultSettingsState()
         set({
-          assistantTurboWorkflow: getValidString(
-            assistantTurboWorkflow,
-            defaultAssistantTurboWorkflow
-          ),
+          assistantTurboWorkflow: assistantTurboWorkflow
+            ? JSON.stringify(assistantTurboWorkflow)
+            : defaultAssistantTurboWorkflow,
         })
       },
-      setImageGenerationWorkflow: (imageGenerationWorkflow?: string) => {
+      setImageGenerationWorkflow: (imageGenerationWorkflow?: ClapWorkflow) => {
         const { imageGenerationWorkflow: defaultImageGenerationWorkflow } =
           getDefaultSettingsState()
         set({
-          imageGenerationWorkflow: getValidString(
-            imageGenerationWorkflow,
-            defaultImageGenerationWorkflow
-          ),
+          imageGenerationWorkflow: imageGenerationWorkflow
+            ? JSON.stringify(imageGenerationWorkflow)
+            : defaultImageGenerationWorkflow,
         })
       },
       setImageGenerationTurboWorkflow: (
-        imageGenerationTurboWorkflow?: string
+        imageGenerationTurboWorkflow?: ClapWorkflow
       ) => {
         const {
           imageGenerationTurboWorkflow: defaultImageGenerationTurboWorkflow,
         } = getDefaultSettingsState()
         set({
-          imageGenerationTurboWorkflow: getValidString(
-            imageGenerationTurboWorkflow,
-            defaultImageGenerationTurboWorkflow
-          ),
+          imageGenerationTurboWorkflow: imageGenerationTurboWorkflow
+            ? JSON.stringify(imageGenerationTurboWorkflow)
+            : defaultImageGenerationTurboWorkflow,
         })
       },
-      setImageUpscalingWorkflow: (imageUpscalingWorkflow?: string) => {
+      setImageUpscalingWorkflow: (imageUpscalingWorkflow?: ClapWorkflow) => {
         const { imageUpscalingWorkflow: defaultImageUpscalingWorkflow } =
           getDefaultSettingsState()
         set({
-          imageUpscalingWorkflow: getValidString(
-            imageUpscalingWorkflow,
-            defaultImageUpscalingWorkflow
-          ),
+          imageUpscalingWorkflow: imageUpscalingWorkflow
+            ? JSON.stringify(imageUpscalingWorkflow)
+            : defaultImageUpscalingWorkflow,
         })
       },
-      setImageDepthWorkflow: (imageDepthWorkflow?: string) => {
+      setImageDepthWorkflow: (imageDepthWorkflow?: ClapWorkflow) => {
         const { imageDepthWorkflow: defaultImageDepthWorkflow } =
           getDefaultSettingsState()
         set({
-          imageDepthWorkflow: getValidString(
-            imageDepthWorkflow,
-            defaultImageDepthWorkflow
-          ),
+          imageDepthWorkflow: imageDepthWorkflow
+            ? JSON.stringify(imageDepthWorkflow)
+            : defaultImageDepthWorkflow,
         })
       },
-      setImageSegmentationWorkflow: (imageSegmentationWorkflow?: string) => {
+      setImageSegmentationWorkflow: (
+        imageSegmentationWorkflow?: ClapWorkflow
+      ) => {
         const { imageSegmentationWorkflow: defaultImageSegmentationWorkflow } =
           getDefaultSettingsState()
         set({
-          imageSegmentationWorkflow: getValidString(
-            imageSegmentationWorkflow,
-            defaultImageSegmentationWorkflow
-          ),
+          imageSegmentationWorkflow: imageSegmentationWorkflow
+            ? JSON.stringify(imageSegmentationWorkflow)
+            : defaultImageSegmentationWorkflow,
         })
       },
-      setVideoGenerationWorkflow: (videoGenerationWorkflow?: string) => {
+      setVideoGenerationWorkflow: (videoGenerationWorkflow?: ClapWorkflow) => {
         const { videoGenerationWorkflow: defaultVideoGenerationWorkflow } =
           getDefaultSettingsState()
         set({
-          videoGenerationWorkflow: getValidString(
-            videoGenerationWorkflow,
-            defaultVideoGenerationWorkflow
-          ),
+          videoGenerationWorkflow: videoGenerationWorkflow
+            ? JSON.stringify(videoGenerationWorkflow)
+            : defaultVideoGenerationWorkflow,
         })
       },
-      setVideoUpscalingWorkflow: (videoUpscalingWorkflow?: string) => {
+      setVideoUpscalingWorkflow: (videoUpscalingWorkflow?: ClapWorkflow) => {
         const { videoUpscalingWorkflow: defaultVideoUpscalingWorkflow } =
           getDefaultSettingsState()
         set({
-          videoUpscalingWorkflow: getValidString(
-            videoUpscalingWorkflow,
-            defaultVideoUpscalingWorkflow
-          ),
+          videoUpscalingWorkflow: videoUpscalingWorkflow
+            ? JSON.stringify(videoUpscalingWorkflow)
+            : defaultVideoUpscalingWorkflow,
         })
       },
-      setVideoDepthWorkflow: (videoDepthWorkflow?: string) => {
+      setVideoDepthWorkflow: (videoDepthWorkflow?: ClapWorkflow) => {
         const { videoDepthWorkflow: defaultVideoDepthWorkflow } =
           getDefaultSettingsState()
         set({
-          videoDepthWorkflow: getValidString(
-            videoDepthWorkflow,
-            defaultVideoDepthWorkflow
-          ),
+          videoDepthWorkflow: videoDepthWorkflow
+            ? JSON.stringify(videoDepthWorkflow)
+            : defaultVideoDepthWorkflow,
         })
       },
-      setVideoSegmentationWorkflow: (videoSegmentationWorkflow?: string) => {
+      setVideoSegmentationWorkflow: (
+        videoSegmentationWorkflow?: ClapWorkflow
+      ) => {
         const { videoSegmentationWorkflow: defaultVideoSegmentationWorkflow } =
           getDefaultSettingsState()
         set({
-          videoSegmentationWorkflow: getValidString(
-            videoSegmentationWorkflow,
-            defaultVideoSegmentationWorkflow
-          ),
+          videoSegmentationWorkflow: videoSegmentationWorkflow
+            ? JSON.stringify(videoSegmentationWorkflow)
+            : defaultVideoSegmentationWorkflow,
         })
       },
-      setSoundGenerationWorkflow: (soundGenerationWorkflow?: string) => {
+      setSoundGenerationWorkflow: (soundGenerationWorkflow?: ClapWorkflow) => {
         const { soundGenerationWorkflow: defaultSoundGenerationWorkflow } =
           getDefaultSettingsState()
         set({
-          soundGenerationWorkflow: getValidString(
-            soundGenerationWorkflow,
-            defaultSoundGenerationWorkflow
-          ),
+          soundGenerationWorkflow: soundGenerationWorkflow
+            ? JSON.stringify(soundGenerationWorkflow)
+            : defaultSoundGenerationWorkflow,
         })
       },
-      setVoiceGenerationWorkflow: (voiceGenerationWorkflow?: string) => {
+      setVoiceGenerationWorkflow: (voiceGenerationWorkflow?: ClapWorkflow) => {
         const { voiceGenerationWorkflow: defaultVoiceGenerationWorkflow } =
           getDefaultSettingsState()
         set({
-          voiceGenerationWorkflow: getValidString(
-            voiceGenerationWorkflow,
-            defaultVoiceGenerationWorkflow
-          ),
+          voiceGenerationWorkflow: voiceGenerationWorkflow
+            ? JSON.stringify(voiceGenerationWorkflow)
+            : defaultVoiceGenerationWorkflow,
         })
       },
-      setMusicGenerationWorkflow: (musicGenerationWorkflow?: string) => {
+      setMusicGenerationWorkflow: (musicGenerationWorkflow?: ClapWorkflow) => {
         const { musicGenerationWorkflow: defaultVoiceGenerationWorkflow } =
           getDefaultSettingsState()
         set({
-          musicGenerationWorkflow: getValidString(
-            musicGenerationWorkflow,
-            defaultVoiceGenerationWorkflow
-          ),
+          musicGenerationWorkflow: musicGenerationWorkflow
+            ? JSON.stringify(musicGenerationWorkflow)
+            : defaultVoiceGenerationWorkflow,
         })
       },
       setImageRenderingStrategy: (
@@ -735,82 +727,86 @@ export const useSettings = create<SettingsStore>()(
         const state = get()
         const defaultSettings = getDefaultSettingsState()
 
-        // I think this is causing some issues,
-        // with the settings having a dependency over the workflows,
-        // which creates a loop
-        //
-        // we should probably this step else where
-        const availableWorkflows =
-          useWorkflowEditor.getState().availableWorkflows
+        const assistantWorkflow = parseWorkflow(
+          state.assistantWorkflow || defaultSettings.assistantWorkflow,
+          ClapWorkflowCategory.ASSISTANT
+        )
 
-        const assistantWorkflowId =
-          state.assistantWorkflow || defaultSettings.assistantWorkflow
+        const assistantTurboWorkflow = parseWorkflow(
+          state.assistantTurboWorkflow ||
+            defaultSettings.assistantTurboWorkflow,
+          ClapWorkflowCategory.ASSISTANT
+        )
 
-        const assistantTurboWorkflowId =
-          state.assistantTurboWorkflow || defaultSettings.assistantTurboWorkflow
-
-        const imageGenerationWorkflowId =
+        const imageGenerationWorkflow = parseWorkflow(
           state.imageGenerationWorkflow ||
-          defaultSettings.imageGenerationWorkflow
+            defaultSettings.imageGenerationWorkflow,
+          ClapWorkflowCategory.IMAGE_GENERATION
+        )
 
-        const imageGenerationTurboWorkflowId =
+        const imageGenerationTurboWorkflow = parseWorkflow(
           state.imageGenerationTurboWorkflow ||
-          defaultSettings.imageGenerationTurboWorkflow
+            defaultSettings.imageGenerationTurboWorkflow,
+          ClapWorkflowCategory.IMAGE_GENERATION
+        )
 
-        const imageUpscalingWorkflowId =
-          state.imageUpscalingWorkflow || defaultSettings.imageUpscalingWorkflow
+        const imageUpscalingWorkflow = parseWorkflow(
+          state.imageUpscalingWorkflow ||
+            defaultSettings.imageUpscalingWorkflow,
+          ClapWorkflowCategory.IMAGE_UPSCALING
+        )
 
-        const imageDepthWorkflowId =
-          state.imageDepthWorkflow || defaultSettings.imageDepthWorkflow
+        const imageDepthWorkflow = parseWorkflow(
+          state.imageDepthWorkflow || defaultSettings.imageDepthWorkflow,
+          ClapWorkflowCategory.IMAGE_DEPTH_MAPPING
+        )
 
-        const imageSegmentationWorkflowId =
+        const imageSegmentationWorkflow = parseWorkflow(
           state.imageSegmentationWorkflow ||
-          defaultSettings.imageSegmentationWorkflow
+            defaultSettings.imageSegmentationWorkflow,
+          ClapWorkflowCategory.IMAGE_SEGMENTATION
+        )
 
-        const videoGenerationWorkflowId =
+        const videoGenerationWorkflow = parseWorkflow(
           state.videoGenerationWorkflow ||
-          defaultSettings.videoGenerationWorkflow
+            defaultSettings.videoGenerationWorkflow,
+          ClapWorkflowCategory.VIDEO_GENERATION
+        )
 
-        const videoDepthWorkflowId =
-          state.videoDepthWorkflow || defaultSettings.videoDepthWorkflow
+        const videoDepthWorkflow = parseWorkflow(
+          state.videoDepthWorkflow || defaultSettings.videoDepthWorkflow,
+          ClapWorkflowCategory.VIDEO_DEPTH_MAPPING
+        )
 
-        const videoSegmentationWorkflowId =
+        const videoSegmentationWorkflow = parseWorkflow(
           state.videoSegmentationWorkflow ||
-          defaultSettings.videoSegmentationWorkflow
+            defaultSettings.videoSegmentationWorkflow,
+          ClapWorkflowCategory.VIDEO_SEGMENTATION
+        )
 
-        const videoUpscalingWorkflowId =
-          state.videoUpscalingWorkflow || defaultSettings.videoUpscalingWorkflow
+        const videoUpscalingWorkflow = parseWorkflow(
+          state.videoUpscalingWorkflow ||
+            defaultSettings.videoUpscalingWorkflow,
+          ClapWorkflowCategory.VIDEO_UPSCALING
+        )
 
-        const soundGenerationWorkflowId =
+        const soundGenerationWorkflow = parseWorkflow(
           state.soundGenerationWorkflow ||
-          defaultSettings.soundGenerationWorkflow
+            defaultSettings.soundGenerationWorkflow,
+          ClapWorkflowCategory.SOUND_GENERATION
+        )
 
-        const voiceGenerationWorkflowId =
+        const voiceGenerationWorkflow = parseWorkflow(
           state.voiceGenerationWorkflow ||
-          defaultSettings.voiceGenerationWorkflow
+            defaultSettings.voiceGenerationWorkflow,
+          ClapWorkflowCategory.VOICE_GENERATION
+        )
 
-        const musicGenerationWorkflowId =
+        const musicGenerationWorkflow = parseWorkflow(
           state.musicGenerationWorkflow ||
-          defaultSettings.musicGenerationWorkflow
-
-        const { workflowIds } = findWorkflows(availableWorkflows, {
-          workflowIds: [
-            assistantWorkflowId,
-            assistantTurboWorkflowId,
-            imageGenerationWorkflowId,
-            imageGenerationTurboWorkflowId,
-            imageUpscalingWorkflowId,
-            imageDepthWorkflowId,
-            imageSegmentationWorkflowId,
-            videoGenerationWorkflowId,
-            videoDepthWorkflowId,
-            videoSegmentationWorkflowId,
-            videoUpscalingWorkflowId,
-            soundGenerationWorkflowId,
-            voiceGenerationWorkflowId,
-            musicGenerationWorkflowId,
-          ],
-        })
+            defaultSettings.musicGenerationWorkflow,
+          ClapWorkflowCategory.MUSIC_GENERATION
+        )
 
         return {
           // why do we need those fallbacks? because some users will leave the fields empty,
@@ -884,21 +880,20 @@ export const useSettings = create<SettingsStore>()(
           videoNegativePrompt:
             state.videoNegativePrompt || defaultSettings.videoNegativePrompt,
 
-          assistantWorkflow: workflowIds[assistantWorkflowId],
-          assistantTurboWorkflow: workflowIds[assistantTurboWorkflowId],
-          imageGenerationWorkflow: workflowIds[imageGenerationWorkflowId],
-          imageGenerationTurboWorkflow:
-            workflowIds[imageGenerationTurboWorkflowId],
-          imageUpscalingWorkflow: workflowIds[imageUpscalingWorkflowId],
-          imageDepthWorkflow: workflowIds[imageDepthWorkflowId],
-          imageSegmentationWorkflow: workflowIds[imageSegmentationWorkflowId],
-          videoGenerationWorkflow: workflowIds[videoGenerationWorkflowId],
-          videoDepthWorkflow: workflowIds[videoDepthWorkflowId],
-          videoSegmentationWorkflow: workflowIds[videoSegmentationWorkflowId],
-          videoUpscalingWorkflow: workflowIds[videoUpscalingWorkflowId],
-          soundGenerationWorkflow: workflowIds[soundGenerationWorkflowId],
-          voiceGenerationWorkflow: workflowIds[voiceGenerationWorkflowId],
-          musicGenerationWorkflow: workflowIds[musicGenerationWorkflowId],
+          assistantWorkflow,
+          assistantTurboWorkflow,
+          imageGenerationWorkflow,
+          imageGenerationTurboWorkflow,
+          imageUpscalingWorkflow,
+          imageDepthWorkflow,
+          imageSegmentationWorkflow,
+          videoGenerationWorkflow,
+          videoDepthWorkflow,
+          videoSegmentationWorkflow,
+          videoUpscalingWorkflow,
+          soundGenerationWorkflow,
+          voiceGenerationWorkflow,
+          musicGenerationWorkflow,
 
           imageRenderingStrategy:
             state.imageRenderingStrategy ||

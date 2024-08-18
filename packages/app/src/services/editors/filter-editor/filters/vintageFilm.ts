@@ -1,3 +1,4 @@
+import { ClapInputCategory } from '@aitube/clap'
 import { Filter } from '@aitube/clapper-services'
 
 export const vintageFilm: Filter = {
@@ -8,6 +9,7 @@ export const vintageFilm: Filter = {
       id: 'preset',
       label: 'Preset',
       description: 'Vintage film stock preset',
+      category: ClapInputCategory.UNKNOWN,
       type: 'string',
       allowedValues: [
         'Kodachrome 64',
@@ -47,6 +49,7 @@ export const vintageFilm: Filter = {
       id: 'intensity',
       label: 'Intensity',
       description: 'Intensity of the film stock effect',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -56,6 +59,7 @@ export const vintageFilm: Filter = {
       id: 'grain',
       label: 'Grain',
       description: 'Film grain intensity',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -65,6 +69,7 @@ export const vintageFilm: Filter = {
       id: 'ageEffect',
       label: 'Age effect',
       description: 'Simulated age of the film',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -74,6 +79,7 @@ export const vintageFilm: Filter = {
       id: 'colorShift',
       label: 'Color shift',
       description: 'Color shift adjustment',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: -1,
       maxValue: 1,
@@ -83,6 +89,7 @@ export const vintageFilm: Filter = {
       id: 'contrast',
       label: 'Contrast',
       description: 'Contrast adjustment',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0.5,
       maxValue: 2,
@@ -92,6 +99,7 @@ export const vintageFilm: Filter = {
       id: 'saturation',
       label: 'Saturation',
       description: 'Saturation adjustment',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 2,

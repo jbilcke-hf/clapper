@@ -5,6 +5,15 @@ import {
   ClapWorkflowProvider,
 } from '@aitube/clap'
 
+export type WorkflowSearchResults = {
+  workflow?: ClapWorkflow
+  workflows: ClapWorkflow[]
+  nbWorkflows: number
+  providers: Partial<Record<ClapWorkflowProvider, ClapWorkflow[]>>
+  nbProviders: number
+  workflowIds: Record<string, ClapWorkflow>
+}
+
 /**
  * Helper to find workflows by id, category, provider or engine
  *
@@ -21,14 +30,7 @@ export function findWorkflows(
     provider?: ClapWorkflowProvider
     engine?: ClapWorkflowEngine
   }
-): {
-  workflow?: ClapWorkflow
-  workflows: ClapWorkflow[]
-  nbWorkflows: number
-  providers: Partial<Record<ClapWorkflowProvider, ClapWorkflow[]>>
-  nbProviders: number
-  workflowIds: Record<string, ClapWorkflow>
-} {
+): WorkflowSearchResults {
   const workflows: ClapWorkflow[] = []
   const providers: Partial<Record<ClapWorkflowProvider, ClapWorkflow[]>> = {}
   const workflowIds: Record<string, ClapWorkflow> = {}

@@ -21,8 +21,18 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["@webgpu/types", "@types/dom-speech-recognition"]
+    "types": [
+      "@types/fluent-ffmpeg",
+      "@webgpu/types",
+      "@types/dom-speech-recognition"
+    ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "vitest.config.mts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "vitest.config.mts"
+  ],
   "exclude": ["node_modules"]
 }
