@@ -112,14 +112,11 @@ export async function resolveSegment(
 
       const url = loraModel.repoOrUrl.startsWith('http')
         ? loraModel.repoOrUrl
-        : `https://huggingface.co/${
-        loraModel.repoOrUrl
-        }/resolve/main/${
-        loraModel.fileName || 'lora_weights.safetensors'
-        }?download=true`
+        : `https://huggingface.co/${loraModel.repoOrUrl}/resolve/main/${
+            loraModel.fileName || 'lora_weights.safetensors'
+          }?download=true`
 
-      const prompt = [
-        loraModel.trigger, request.prompts.image.positive]
+      const prompt = [loraModel.trigger, request.prompts.image.positive]
         .filter((x) => x)
         .join(' ')
 
