@@ -18,5 +18,6 @@ export function sliceSegments({
     beforeTimeInMs,
     segments
   )
-  return result
+  // FIXME: typings
+  return result as TimelineSegment[];
 }

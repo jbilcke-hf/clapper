@@ -36,7 +36,8 @@ export async function resolveSegment(
 
     // https://bigmodel.cn/dev/api#cogvideox
     const result = await callCogVideoX(request.settings.bigModelApiKey, {
-      model: request.settings.videoGenerationWorkflow,
+      // FIXME: typings
+      model: request.settings.videoGenerationWorkflow as any,
       image_url: request.prompts.video.image,
     })
 

@@ -475,11 +475,12 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       // throw new Error(`please call setSegmentRender(...) first`)
     }
 
+    // FIXME: typings
     const segments: TimelineSegment[] = filterSegments(
       ClapSegmentFilteringMode.ANY,
       segment,
       allSegments
-    )
+    ) as TimelineSegment[]
 
     if (segment.status === ClapSegmentStatus.IN_PROGRESS) {
       // console.log(`useResolver.resolveSegment(): warning: this segment is already being generated!`)

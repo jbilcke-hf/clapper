@@ -10,7 +10,9 @@ export const piApiWorkflows: ClapWorkflow[] = [
   {
     id: 'piapi://Midjourney/Imagine',
     label: 'Midjourne Imagine',
-    image: '',
+    description: '',
+    // FIXME: typings
+    // image: '',
     tags: ['Midjourney'],
     author: '',
     thumbnailUrl: '',
@@ -34,7 +36,9 @@ export const piApiWorkflows: ClapWorkflow[] = [
   {
     id: 'piapi://LumaLabs/DreamMachine',
     label: 'Luma Labs Dream Machine',
-    image: '',
+    description: '',
+    // FIXME: typings
+    // image: '',
     tags: ['Dream Machine'],
     author: '',
     thumbnailUrl: '',

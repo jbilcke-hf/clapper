@@ -14,7 +14,9 @@ export const letzAiWorkflows: ClapWorkflow[] = [
   {
     id: 'letzai://api/images',
     label: 'Create image with LetzAI',
-    image: '',
+    description: '',
+    // FIXME: typings
+    // image: '',
     tags: ['image'],
     author: '',
     thumbnailUrl: '',
