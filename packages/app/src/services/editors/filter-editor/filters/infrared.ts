@@ -1,3 +1,4 @@
+import { ClapInputCategory } from '@aitube/clap'
 import { Filter } from '@aitube/clapper-services'
 
 export const infraredBlackAndWhite: Filter = {
@@ -8,6 +9,7 @@ export const infraredBlackAndWhite: Filter = {
       id: 'contrast',
       label: 'Contrast',
       description: 'Image contrast',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0.5,
       maxValue: 2.0,
@@ -17,6 +19,7 @@ export const infraredBlackAndWhite: Filter = {
       id: 'grain',
       label: 'Grain',
       description: 'Film grain intensity',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -26,6 +29,7 @@ export const infraredBlackAndWhite: Filter = {
       id: 'glow',
       label: 'Glow',
       description: 'Infrared glow effect',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,

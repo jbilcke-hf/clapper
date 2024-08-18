@@ -22,6 +22,7 @@ import {
   genericOverlappingTiles,
   genericInferenceSteps,
   genericImageUrl,
+  genericLora,
 } from '../common/defaultValues'
 import { sampleDrivingVideo, sampleVoice } from '@/lib/core/constants'
 
@@ -45,6 +46,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     author: '',
     thumbnailUrl: '',
     nonCommercial: false,
+    canSupportLora: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.VIDEO_GENERATION,
@@ -65,6 +67,38 @@ export const defaultWorkflows: ClapWorkflow[] = [
       cond_aug: 0.02,
     },
   },
+  /*
+  {
+    id: 'falai://fal-ai/flux-general',
+    label: 'Flux.1-[DEV] with LoRAs',
+    description: '',
+    tags: ['Flux', 'LoRA'],
+    author: '',
+    thumbnailUrl: '',
+    nonCommercial: false,
+    canSupportLora: false,
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.FALAI,
+    category: ClapWorkflowCategory.IMAGE_GENERATION,
+    data: 'fal-ai/flux-general',
+    schema: '',
+    inputFields: [
+      genericPrompt,
+      genericWidth2048,
+      genericHeight2048,
+      genericInferenceSteps,
+    ],
+    inputValues: {
+      [genericPrompt.id]: genericPrompt.defaultValue,
+      [genericWidth2048.id]: genericWidth2048.defaultValue,
+      [genericHeight2048.id]: genericHeight2048.defaultValue,
+      [genericInferenceSteps.id]: genericInferenceSteps.defaultValue,
+
+      // support LoRA for this model is a bit tricky, as the parameter must be in JSON
+      // (this is an array of LoraWeight objects, see: https://fal.ai/models/fal-ai/flux-general/playground)
+    },
+  },
+  */
   {
     id: 'falai://fal-ai/flux-realism',
     label: 'Flux Realism LoRA',
@@ -73,6 +107,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     author: '',
     thumbnailUrl: '',
     nonCommercial: false,
+    canSupportLora: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
@@ -102,6 +137,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     author: 'BFL (https://BlackForestLabs.ai)',
     thumbnailUrl: '',
     nonCommercial: false,
+    canSupportLora: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
@@ -133,6 +169,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     author: 'BFL (https://BlackForestLabs.ai)',
     thumbnailUrl: '',
     nonCommercial: false,
+    canSupportLora: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
@@ -153,6 +190,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     author: 'BFL (https://BlackForestLabs.ai)',
     thumbnailUrl: '',
     nonCommercial: false,
+    canSupportLora: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
@@ -184,6 +222,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     author: 'Stability AI',
     thumbnailUrl: '',
     nonCommercial: false,
+    canSupportLora: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
@@ -215,6 +254,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     author: 'Stability AI',
     thumbnailUrl: '',
     nonCommercial: false,
+    canSupportLora: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
@@ -246,6 +286,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     author: 'AuraSR',
     thumbnailUrl: '',
     nonCommercial: false,
+    canSupportLora: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_UPSCALING,

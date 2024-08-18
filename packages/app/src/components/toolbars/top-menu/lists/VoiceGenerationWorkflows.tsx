@@ -21,18 +21,22 @@ import {
   ClapWorkflowProviderLogo,
   ClapWorkflowProviderName,
 } from '@/components/core/providers'
+import { parseWorkflow } from '@/services/settings/workflows/parseWorkflow'
+
+const category = ClapWorkflowCategory.VOICE_GENERATION
 
 export function VoiceGenerationWorkflows() {
-  const workflowId = useSettings((s) => s.voiceGenerationWorkflow)
-  const setWorkflowId = useSettings((s) => s.setVoiceGenerationWorkflow)
+  const voiceGenerationWorkflow = useSettings((s) => s.voiceGenerationWorkflow)
+  const setVoiceGenerationWorkflow = useSettings(
+    (s) => s.setVoiceGenerationWorkflow
+  )
   const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const { workflows, providers, nbProviders } = findWorkflows(
-    availableWorkflows,
-    { category: ClapWorkflowCategory.VOICE_GENERATION }
-  )
+  const { providers, nbProviders } = findWorkflows(availableWorkflows, {
+    category,
+  })
 
-  const { workflow } = findWorkflows(workflows, { workflowId })
+  const workflow = parseWorkflow(voiceGenerationWorkflow, category)
 
   if (!nbProviders) {
     return null
@@ -65,7 +69,7 @@ export function VoiceGenerationWorkflows() {
               {workflows?.map((w) => (
                 <MenubarCheckboxItem
                   key={w.id}
-                  checked={workflowId === w.id}
+                  checked={workflow.id === w.id}
                   disabled={hasNoPublicAPI(w)}
                   onClick={(e) => {
                     if (hasNoPublicAPI(w)) {
@@ -73,7 +77,7 @@ export function VoiceGenerationWorkflows() {
                       e.preventDefault()
                       return false
                     }
-                    setWorkflowId(w.id)
+                    setVoiceGenerationWorkflow(w)
                     e.stopPropagation()
                     e.preventDefault()
                     return false

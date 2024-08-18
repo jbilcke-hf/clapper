@@ -21,18 +21,22 @@ import {
   ClapWorkflowProviderLogo,
   ClapWorkflowProviderName,
 } from '@/components/core/providers'
+import { parseWorkflow } from '@/services/settings/workflows/parseWorkflow'
+
+const category = ClapWorkflowCategory.VIDEO_UPSCALING
 
 export function VideoUpscalingWorkflows() {
-  const workflowId = useSettings((s) => s.videoUpscalingWorkflow)
-  const setWorkflowId = useSettings((s) => s.setVideoUpscalingWorkflow)
+  const videoUpscalingWorkflow = useSettings((s) => s.videoUpscalingWorkflow)
+  const setVideoUpscalingWorkflow = useSettings(
+    (s) => s.setVideoUpscalingWorkflow
+  )
   const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const { workflows, providers, nbProviders } = findWorkflows(
-    availableWorkflows,
-    { category: ClapWorkflowCategory.VIDEO_UPSCALING }
-  )
+  const { providers, nbProviders } = findWorkflows(availableWorkflows, {
+    category,
+  })
 
-  const { workflow } = findWorkflows(workflows, { workflowId })
+  const workflow = parseWorkflow(videoUpscalingWorkflow, category)
 
   if (!nbProviders) {
     return null
@@ -65,7 +69,7 @@ export function VideoUpscalingWorkflows() {
               {workflows?.map((w) => (
                 <MenubarCheckboxItem
                   key={w.id}
-                  checked={workflowId === w.id}
+                  checked={workflow.id === w.id}
                   disabled={hasNoPublicAPI(w)}
                   onClick={(e) => {
                     if (hasNoPublicAPI(w)) {
@@ -73,7 +77,7 @@ export function VideoUpscalingWorkflows() {
                       e.preventDefault()
                       return false
                     }
-                    setWorkflowId(w.id)
+                    setVideoUpscalingWorkflow(w)
                     e.stopPropagation()
                     e.preventDefault()
                     return false

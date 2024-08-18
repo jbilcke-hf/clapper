@@ -1,22 +1,12 @@
 {
   "name": "@aitube/clapper-monorepo",
   "version": "0.2.4",
-  "private": true,
   "description": "A monorepo for the Clapper project. Individual packages are in the packages directory.",
-  "workspaces": [
-    "packages/clap",
-    "packages/timeline",
-    "packages/api-client",
-    "packages/io",
-    "packages/colors",
-    "packages/engine",
-    "packages/broadway",
-    "packages/clapper-services",
-    "packages/app"
-  ],
   "engines": {
     "bun": ">=1.0.0"
   },
+  "packageManager": "bun@1.0.25",
+  "private": true,
   "scripts": {
     "dev": "bun run --cwd packages/app dev",
     "start": "bun run --cwd packages/app start",
@@ -36,10 +26,20 @@
     "test:all": "bun run --cwd packages/clap test && bun run --cwd packages/timeline test && bun run --cwd packages/api-client test && bun run --cwd packages/io test && bun run --cwd packages/colors test && bun run --cwd packages/engine test && bun run --cwd packages/broadway test && bun run --cwd packages/clapper-services test && bun run --cwd packages/app test",
     "format": "bun run --cwd packages/app format"
   },
-  "packageManager": "bun@1.0.25",
   "trustedDependencies": [
     "@aitube/clapper",
     "onnxruntime-node",
     "protobufjs"
+  ],
+  "workspaces": [
+    "packages/clap",
+    "packages/timeline",
+    "packages/api-client",
+    "packages/io",
+    "packages/colors",
+    "packages/engine",
+    "packages/broadway",
+    "packages/clapper-services",
+    "packages/app"
   ]
 }

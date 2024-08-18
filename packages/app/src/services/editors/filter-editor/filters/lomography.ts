@@ -1,3 +1,4 @@
+import { ClapInputCategory } from '@aitube/clap'
 import { Filter } from '@aitube/clapper-services'
 
 export const lomography: Filter = {
@@ -8,6 +9,7 @@ export const lomography: Filter = {
       id: 'saturation',
       label: 'Saturation',
       description: 'Color saturation',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 2,
@@ -17,6 +19,7 @@ export const lomography: Filter = {
       id: 'contrast',
       label: 'Contrast',
       description: 'Image contrast',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0.5,
       maxValue: 2,
@@ -26,6 +29,7 @@ export const lomography: Filter = {
       id: 'vignetteIntensity',
       label: 'Vignette intensity',
       description: 'Intensity of vignette effect',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -35,6 +39,7 @@ export const lomography: Filter = {
       id: 'lightLeakIntensity',
       label: 'Light leak intensity',
       description: 'Intensity of light leak effect',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,

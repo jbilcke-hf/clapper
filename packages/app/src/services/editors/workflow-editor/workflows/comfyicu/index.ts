@@ -30,6 +30,7 @@ export const comfyicuWorkflows: ClapWorkflow[] = [
     author: 'BFL (https://BlackForestLabs.ai)',
     thumbnailUrl: '',
     nonCommercial: false,
+    canSupportLora: false,
     engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
     provider: ClapWorkflowProvider.COMFYICU,
     category: ClapWorkflowCategory.IMAGE_GENERATION,

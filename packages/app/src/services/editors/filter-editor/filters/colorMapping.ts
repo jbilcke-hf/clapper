@@ -1,3 +1,4 @@
+import { ClapInputCategory } from '@aitube/clap'
 import { Filter } from '@aitube/clapper-services'
 
 export const colorMapping: Filter = {
@@ -8,6 +9,7 @@ export const colorMapping: Filter = {
       id: 'redMultiplier',
       label: 'Red multiplier',
       description: 'Red channel multiplier',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 2,
@@ -17,6 +19,7 @@ export const colorMapping: Filter = {
       id: 'greenMultiplier',
       label: 'Green multiplier',
       description: 'Green channel multiplier',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 2,
@@ -26,6 +29,7 @@ export const colorMapping: Filter = {
       id: 'blueMultiplier',
       label: 'Blue multiplier',
       description: 'Blue channel multiplier',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 2,

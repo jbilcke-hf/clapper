@@ -24,6 +24,7 @@ export {
   ClapTracks,
   ClapVoice,
   ClapCompletionMode,
+  ClapInputCategory,
   ClapInputField,
   ClapInputFieldNumber,
   ClapInputFieldInteger,

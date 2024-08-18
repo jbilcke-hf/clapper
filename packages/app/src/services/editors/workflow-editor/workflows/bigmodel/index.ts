@@ -15,6 +15,7 @@ export const bigModelWorkflows: ClapWorkflow[] = [
     author: '',
     thumbnailUrl: '',
     nonCommercial: false,
+    canSupportLora: false,
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.BIGMODEL,
     category: ClapWorkflowCategory.VIDEO_GENERATION,

@@ -41,7 +41,7 @@
     "@aitube/clapper-services": "workspace:*",
     "@aitube/engine": "workspace:*",
     "@aitube/timeline": "workspace:*",
-    "@fal-ai/serverless-client": "^0.13.0",
+    "@fal-ai/serverless-client": "^0.14.2",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@ffmpeg/util": "^0.12.1",
     "@gradio/client": "^1.5.0",

@@ -1,3 +1,4 @@
+import { ClapInputCategory } from '@aitube/clap'
 import { Filter } from '@aitube/clapper-services'
 
 export const filmDegradation: Filter = {
@@ -8,6 +9,7 @@ export const filmDegradation: Filter = {
       id: 'scratchesIntensity',
       label: 'Scratches intensity',
       description: 'Intensity of film scratches',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -17,6 +19,7 @@ export const filmDegradation: Filter = {
       id: 'dustIntensity',
       label: 'Dust intensity',
       description: 'Intensity of dust and spots',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -26,6 +29,7 @@ export const filmDegradation: Filter = {
       id: 'grainIntensity',
       label: 'Grain intensity',
       description: 'Intensity of film grain',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -35,6 +39,7 @@ export const filmDegradation: Filter = {
       id: 'colorFading',
       label: 'Color fading',
       description: 'Color fading effect',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -44,6 +49,7 @@ export const filmDegradation: Filter = {
       id: 'vignettingIntensity',
       label: 'Vignetting intensity',
       description: 'Intensity of vignetting effect',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -53,6 +59,7 @@ export const filmDegradation: Filter = {
       id: 'flickerIntensity',
       label: 'Flicker intensity',
       description: 'Intensity of light flickering',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -62,6 +69,7 @@ export const filmDegradation: Filter = {
       id: 'lightLeakIntensity',
       label: 'Light leak intensity',
       description: 'Intensity of light leaks',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -71,6 +79,7 @@ export const filmDegradation: Filter = {
       id: 'filmType',
       label: 'Film type',
       description: 'Type of film to simulate',
+      category: ClapInputCategory.UNKNOWN,
       type: 'string',
       allowedValues: ['color', 'blackAndWhite', 'sepia'],
       defaultValue: 'color',

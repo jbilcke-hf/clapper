@@ -21,18 +21,20 @@ import {
   ClapWorkflowProviderLogo,
   ClapWorkflowProviderName,
 } from '@/components/core/providers'
+import { parseWorkflow } from '@/services/settings/workflows/parseWorkflow'
+
+const category = ClapWorkflowCategory.ASSISTANT
 
 export function AssistantWorkflows() {
-  const workflowId = useSettings((s) => s.assistantWorkflow)
-  const setWorkflowId = useSettings((s) => s.setAssistantWorkflow)
+  const assistantWorkflow = useSettings((s) => s.assistantWorkflow)
+  const setAssistantWorkflow = useSettings((s) => s.setAssistantWorkflow)
   const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const { workflows, providers, nbProviders } = findWorkflows(
-    availableWorkflows,
-    { category: ClapWorkflowCategory.ASSISTANT }
-  )
+  const { providers, nbProviders } = findWorkflows(availableWorkflows, {
+    category,
+  })
 
-  const { workflow } = findWorkflows(workflows, { workflowId })
+  const workflow = parseWorkflow(assistantWorkflow, category)
 
   if (!nbProviders) {
     return null
@@ -65,7 +67,7 @@ export function AssistantWorkflows() {
               {workflows?.map((w) => (
                 <MenubarCheckboxItem
                   key={w.id}
-                  checked={workflowId === w.id}
+                  checked={workflow.id === w.id}
                   disabled={hasNoPublicAPI(w)}
                   onClick={(e) => {
                     if (hasNoPublicAPI(w)) {
@@ -73,7 +75,7 @@ export function AssistantWorkflows() {
                       e.preventDefault()
                       return false
                     }
-                    setWorkflowId(w.id)
+                    setAssistantWorkflow(w)
                     e.stopPropagation()
                     e.preventDefault()
                     return false

@@ -1,3 +1,4 @@
+import { ClapInputCategory } from '@aitube/clap'
 import { Filter } from '@aitube/clapper-services'
 
 export const splitToning: Filter = {
@@ -8,6 +9,7 @@ export const splitToning: Filter = {
       id: 'highlightColor',
       label: 'Highlight color',
       description: 'Color for highlights',
+      category: ClapInputCategory.UNKNOWN,
       type: 'string',
       allowedValues: ['Red', 'Green', 'Blue', 'Yellow', 'Cyan', 'Magenta'],
       defaultValue: 'Yellow',
@@ -16,6 +18,7 @@ export const splitToning: Filter = {
       id: 'shadowColor',
       label: 'Shadow color',
       description: 'Color for shadows',
+      category: ClapInputCategory.UNKNOWN,
       type: 'string',
       allowedValues: ['Red', 'Green', 'Blue', 'Yellow', 'Cyan', 'Magenta'],
       defaultValue: 'Blue',
@@ -24,6 +27,7 @@ export const splitToning: Filter = {
       id: 'balance',
       label: 'Balance',
       description: 'Balance between highlights and shadows',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: -1,
       maxValue: 1,
@@ -33,6 +37,7 @@ export const splitToning: Filter = {
       id: 'intensity',
       label: 'Intensity',
       description: 'Intensity of the split toning effect',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,

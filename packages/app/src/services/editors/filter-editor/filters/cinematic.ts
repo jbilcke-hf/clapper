@@ -1,3 +1,4 @@
+import { ClapInputCategory } from '@aitube/clap'
 import { Filter } from '@aitube/clapper-services'
 
 export const cinematic: Filter = {
@@ -8,6 +9,7 @@ export const cinematic: Filter = {
       id: 'preset',
       label: 'Preset',
       description: 'Cinematic color preset',
+      category: ClapInputCategory.UNKNOWN,
       type: 'string',
       allowedValues: [
         'Blade Runner',
@@ -22,6 +24,7 @@ export const cinematic: Filter = {
       id: 'intensity',
       label: 'Intensity',
       description: 'Intensity of the cinematic effect',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -31,6 +34,7 @@ export const cinematic: Filter = {
       id: 'contrast',
       label: 'Contrast',
       description: 'Image contrast',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0.5,
       maxValue: 2,
@@ -40,6 +44,7 @@ export const cinematic: Filter = {
       id: 'grain',
       label: 'Film Grain',
       description: 'Intensity of film grain effect',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,
@@ -49,6 +54,7 @@ export const cinematic: Filter = {
       id: 'blur',
       label: 'Blur',
       description: 'Slight blur effect',
+      category: ClapInputCategory.UNKNOWN,
       type: 'number',
       minValue: 0,
       maxValue: 1,

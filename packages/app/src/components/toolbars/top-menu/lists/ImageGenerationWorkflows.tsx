@@ -1,6 +1,10 @@
 'use client'
 
-import { ClapWorkflowCategory, ClapWorkflowProvider } from '@aitube/clap'
+import {
+  ClapInputCategory,
+  ClapWorkflowCategory,
+  ClapWorkflowProvider,
+} from '@aitube/clap'
 
 import {
   MenubarCheckboxItem,
@@ -21,22 +25,32 @@ import {
   ClapWorkflowProviderLogo,
   ClapWorkflowProviderName,
 } from '@/components/core/providers'
+import { parseWorkflow } from '@/services/settings/workflows/parseWorkflow'
+import { Lora } from '@/services/editors/workflow-editor/workflows/common/types'
+import { getWorkflowLora } from '@/services/editors/workflow-editor/workflows/common/loras/getWorkflowLora'
+import { getWorkflowInputField } from '@/services/editors/workflow-editor/workflows/common/loras/getWorkflowInputField'
+
+import { LoraModelList } from './LoraModelList'
+
+const category = ClapWorkflowCategory.IMAGE_GENERATION
 
 export function ImageGenerationWorkflows() {
-  const workflowId = useSettings((s) => s.imageGenerationWorkflow)
-  const setWorkflowId = useSettings((s) => s.setImageGenerationWorkflow)
+  const imageGenerationWorkflow = useSettings((s) => s.imageGenerationWorkflow)
+  const setImageGenerationWorkflow = useSettings(
+    (s) => s.setImageGenerationWorkflow
+  )
   const availableWorkflows = useWorkflowEditor((s) => s.availableWorkflows)
 
-  const { workflows, providers, nbProviders } = findWorkflows(
-    availableWorkflows,
-    { category: ClapWorkflowCategory.IMAGE_GENERATION }
-  )
-
-  const { workflow } = findWorkflows(workflows, { workflowId })
+  const { providers, nbProviders } = findWorkflows(availableWorkflows, {
+    category,
+  })
 
   if (!nbProviders) {
     return null
   }
+
+  const workflow = parseWorkflow(imageGenerationWorkflow, category)
+  const workflowLora = getWorkflowLora(workflow)
 
   return (
     <MenubarSub>
@@ -62,26 +76,66 @@ export function ImageGenerationWorkflows() {
               </ClapWorkflowProviderName>
             </MenubarSubTrigger>
             <MenubarSubContent>
-              {workflows?.map((w) => (
-                <MenubarCheckboxItem
-                  key={w.id}
-                  checked={workflowId === w.id}
-                  disabled={hasNoPublicAPI(w)}
-                  onClick={(e) => {
-                    if (hasNoPublicAPI(w)) {
+              {workflows?.map((w) => {
+                // if this workflow has at least one field of type lora
+                const loraFieldName = getWorkflowInputField(
+                  w,
+                  ClapInputCategory.LORA
+                )?.id
+                if (loraFieldName) {
+                  return (
+                    <LoraModelList
+                      key={`wf_${w.id}`}
+                      workflow={w}
+                      currentLora={workflowLora}
+                      onChange={(newLora?: Lora) => {
+
+                        console.log(`onChange:`, {
+                          w,
+                          newLora,
+                          loraFieldName,
+                          repoUrl: newLora?.repoOrUrl,
+                          newWorkflowValue: {
+                            ...w,
+                            inputValues: {
+                              ...w.inputValues,
+                              [loraFieldName]: newLora?.repoOrUrl || '',
+                            },
+                          },
+                        })
+                        setImageGenerationWorkflow({
+                          ...w,
+                          inputValues: {
+                            ...w.inputValues,
+                            [loraFieldName]: newLora?.repoOrUrl || '',
+                          },
+                        })
+                      }}
+                    />
+                  )
+                }
+
+                return (
+                  <MenubarCheckboxItem
+                    key={`wf_${w.id}`}
+                    checked={workflow.id === w.id}
+                    disabled={hasNoPublicAPI(w)}
+                    onClick={(e) => {
+                      if (hasNoPublicAPI(w)) {
+                        e.stopPropagation()
+                        e.preventDefault()
+                        return false
+                      }
+                      setImageGenerationWorkflow(w)
                       e.stopPropagation()
                       e.preventDefault()
                       return false
-                    }
-                    setWorkflowId(w.id)
-                    e.stopPropagation()
-                    e.preventDefault()
-                    return false
-                  }}
-                >
-                  {w.label}
-                </MenubarCheckboxItem>
-              ))}
+                    }}
+                  >
+                    {w.label}
+                  </MenubarCheckboxItem>
+                )
+              })}
             </MenubarSubContent>
           </MenubarSub>
         ))}
