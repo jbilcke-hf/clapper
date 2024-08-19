@@ -5,6 +5,7 @@ import { DynamicClapWorkflow } from './common/types'
 import { aitubeWorkflows } from './aitube'
 import { anthropicWorkflows } from './anthropic'
 import { bigModelWorkflows } from './bigmodel'
+import { civitaiWorkflows } from './civitai'
 import { cohereWorkflows } from './cohere'
 import { comfydeployWorkflows } from './comfydeploy'
 import { comfyicuWorkflows } from './comfyicu'
@@ -14,6 +15,7 @@ import { falaiWorkflows } from './falai'
 import { fireworksaiWorkflows } from './fireworksai'
 import { googleWorkflows } from './google'
 import { groqWorkflows } from './groq'
+import { hotshotWorkflows } from './hotshot'
 import { huggingfaceWorkflows } from './huggingface'
 import { letzAiWorkflows } from './letzai'
 import { mistralaiWorkflows } from './mistralai'
@@ -30,6 +32,7 @@ export const staticWorkflows: ClapWorkflow[] = [
   ...aitubeWorkflows,
   ...anthropicWorkflows,
   ...bigModelWorkflows,
+  ...civitaiWorkflows,
   ...cohereWorkflows,
   ...comfydeployWorkflows,
   ...comfyicuWorkflows,
@@ -39,6 +42,7 @@ export const staticWorkflows: ClapWorkflow[] = [
   ...fireworksaiWorkflows,
   ...googleWorkflows,
   ...groqWorkflows,
+  ...hotshotWorkflows,
   ...huggingfaceWorkflows,
   ...letzAiWorkflows,
   ...mistralaiWorkflows,

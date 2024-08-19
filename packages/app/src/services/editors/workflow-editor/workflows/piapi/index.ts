@@ -8,7 +8,7 @@ import { genericImageUrl, genericPrompt } from '../common/defaultValues'
 
 export const piApiWorkflows: ClapWorkflow[] = [
   {
-    id: 'piapi://Midjourney/Imagine',
+    id: 'piapi://mj/v2/imagine',
     label: 'Midjourne Imagine',
     description: '',
     tags: ['Midjourney'],
@@ -34,7 +34,7 @@ export const piApiWorkflows: ClapWorkflow[] = [
     },
   },
   {
-    id: 'piapi://LumaLabs/DreamMachine',
+    id: 'piapi://luma/v1/video',
     label: 'Luma Labs Dream Machine',
     description: '',
     tags: ['Dream Machine'],
@@ -44,7 +44,33 @@ export const piApiWorkflows: ClapWorkflow[] = [
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.PIAPI,
     category: ClapWorkflowCategory.VIDEO_GENERATION,
-    data: 'luma/v1/video', // <- this value isn't really used, it's just to put something here
+    data: 'luma/v1/video',
+    schema: '',
+    inputFields: [
+      genericImageUrl,
+      // genericRatio
+      //genericWidth1024,
+      //genericHeight1024,
+    ],
+    inputValues: {
+      [genericImageUrl.id]: genericImageUrl.defaultValue,
+      // genericRatio
+      //[genericWidth1024.id]: genericWidth1024.defaultValue,
+      //[genericHeight1024.id]: genericHeight1024.defaultValue,
+    },
+  },
+  {
+    id: 'piapi://kling/v1/video',
+    label: 'Kling',
+    description: '',
+    tags: ['Kling'],
+    author: 'Kling',
+    thumbnailUrl: '',
+    nonCommercial: false,
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.PIAPI,
+    category: ClapWorkflowCategory.VIDEO_GENERATION,
+    data: 'kling/v1/video',
     schema: '',
     inputFields: [
       genericImageUrl,

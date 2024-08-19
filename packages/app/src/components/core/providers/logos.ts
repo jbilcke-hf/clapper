@@ -8,6 +8,7 @@ const aitube = '/images/providers/none.png' // <- TODO
 const anthropic = '/images/providers/anthropic.png'
 const bigmodel = '/images/providers/bigmodel.jpeg'
 const builtin = '/images/providers/none.png' // <-- TODO put Clapper logo here
+const civitai = '/images/providers/civitai.png'
 const cohere = '/images/providers/cohere.png'
 const comfydeploy = '/images/providers/none.png' // <- feel free to open a PR
 const comfyicu = '/images/providers/comfyicu.png'
@@ -19,6 +20,7 @@ const fireworks = '/images/providers/fireworks.png'
 const google = '/images/providers/google.png'
 const groq = '/images/providers/groq.png'
 const hedra = '/images/providers/hedra.png'
+const hotshot = '/images/providers/hotshot.png'
 const huggingface = '/images/providers/huggingface.png'
 const kitsai = '/images/providers/kitsai.png'
 const kuaishou = '/images/providers/kuaishou.png'
@@ -44,6 +46,7 @@ export const ClapWorkflowProvidersLogos: Record<ClapWorkflowProvider, string> =
     [ClapWorkflowProvider.ANTHROPIC]: anthropic,
     [ClapWorkflowProvider.BIGMODEL]: bigmodel,
     [ClapWorkflowProvider.BUILTIN]: builtin,
+    [ClapWorkflowProvider.CIVITAI]: civitai,
     [ClapWorkflowProvider.COHERE]: cohere,
     [ClapWorkflowProvider.COMFYDEPLOY]: comfydeploy,
     [ClapWorkflowProvider.COMFYICU]: comfyicu,
@@ -56,6 +59,7 @@ export const ClapWorkflowProvidersLogos: Record<ClapWorkflowProvider, string> =
     [ClapWorkflowProvider.GOOGLE]: google,
     [ClapWorkflowProvider.GROQ]: groq,
     [ClapWorkflowProvider.HEDRA]: hedra,
+    [ClapWorkflowProvider.HOTSHOT]: hotshot,
     [ClapWorkflowProvider.HUGGINGFACE]: huggingface,
     [ClapWorkflowProvider.KITSAI]: kitsai,
     [ClapWorkflowProvider.KUAISHOU]: kuaishou,

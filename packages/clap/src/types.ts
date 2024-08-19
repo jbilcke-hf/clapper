@@ -531,36 +531,41 @@ export enum ClapWorkflowProvider {
   NONE = "NONE",
   BUILTIN = "BUILTIN",
   CUSTOM = "CUSTOM",
-  COMFYUI = "COMFUI", // any ComfyUI server (local or remote)
+
+  // providers are sorted alphabetically
+
   AITUBE = "AITUBE", // https://aitube.at
-  HUGGINGFACE = "HUGGINGFACE", // https://huggingface.co
-  REPLICATE = "REPLICATE", // https://replicate.com
+  ANTHROPIC = "ANTHROPIC", // https://anthropic.com
+  BIGMODEL = "BIGMODEL",
+  CIVITAI = "CIVITAI", // https://civitai.com
+  COHERE = "COHERE", // https://cohere.com
   COMFYDEPLOY = "COMFYDEPLOY", // https://comfydeploy.com
   COMFYICU = "COMFYICU", // https://comfy.icu
+  COMFYUI = "COMFUI", // any ComfyUI server (local or remote)
   ELEVENLABS = "ELEVENLABS", // https://elevenlabs.io
-  KITSAI = "KITSAI", // https://kits.ai
-  OPENAI = "OPENAI", // https://openai.com
-  STABILITYAI = "STABILITYAI", // https://stability.ai
-  FIREWORKSAI = "FIREWORKSAI", // https://fireworks.ai
-  GROQ = "GROQ", // https://groq.com
-  ANTHROPIC = "ANTHROPIC", // https://anthropic.com
-  GOOGLE = "GOOGLE", // https://google.com (in case you didn't know)
-  MISTRALAI = "MISTRALAI", // https://mistral.ai
-  COHERE = "COHERE", // https://cohere.com
+  EVERARTAI = "EVERARTAI",
   FALAI = "FALAI", // https://fal.ai
-  MODELSLAB = "MODELSLAB", // https://modelslab.com
+  FIREWORKSAI = "FIREWORKSAI", // https://fireworks.ai
+  GOOGLE = "GOOGLE", // https://google.com (in case you didn't know)
+  GROQ = "GROQ", // https://groq.com
+  HEDRA = "HEDRA",
+  HOTSHOT = "HOTSHOT", // https://hotshot.co
+  HUGGINGFACE = "HUGGINGFACE", // https://huggingface.co
+  KITSAI = "KITSAI", // https://kits.ai
+  KUAISHOU = "KUAISHOU",
+  LEONARDOAI = "LEONARDOAI",
+  LETZAI = "LETZAI",
+  LUMALABS = "LUMALABS", // https://lumalabs.ai (Dream Machine etc)
   MIDJOURNEY = "MIDJOURNEY",
+  MISTRALAI = "MISTRALAI", // https://mistral.ai
+  MODELSLAB = "MODELSLAB", // https://modelslab.com
+  OPENAI = "OPENAI", // https://openai.com
+  PIAPI = "PIAPI", // (Kling etc)
+  REPLICATE = "REPLICATE", // https://replicate.com
+  RUNWAYML = "RUNWAYML",
+  STABILITYAI = "STABILITYAI", // https://stability.ai
   SUNO = "SUNO",
   UDIO = "UDIO",
-  LUMALABS = "LUMALABS",
-  KUAISHOU = "KUAISHOU",
-  RUNWAYML = "RUNWAYML",
-  HEDRA = "HEDRA",
-  LEONARDOAI = "LEONARDOAI",
-  EVERARTAI = "EVERARTAI",
-  LETZAI = "LETZAI",
-  BIGMODEL = "BIGMODEL",
-  PIAPI = "PIAPI",
 }
 
   

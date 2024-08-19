@@ -28,6 +28,8 @@ export type BaseSettings = {
   letzAiApiKey: string
   bigModelApiKey: string
   piApiApiKey: string
+  civitaiApiKey: string
+  hotshotApiKey: string
 
   broadcastObsServerHost: string
   broadcastObsServerPort: number
@@ -146,6 +148,8 @@ export type SettingsControls = {
   setLetzAiApiKey: (letzAiApiKey?: string) =>  void
   setBigModelApiKey: (bigModelApiKey?: string) =>  void
   setPiApiApiKey: (piApiApiKey?: string) =>  void
+  setCivitaiApiKey: (civitaiApiKey?: string) =>  void
+  setHotshotApiKey: (hotshotApiKey?: string) =>  void
 
   setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => void
   setImagePromptPrefix: (imagePromptPrefix?: string) => void
