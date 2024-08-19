@@ -108,6 +108,12 @@ export function getDefaultMetricsPerProvider(): MetricsPerProvider {
     [ClapWorkflowProvider.PIAPI]: {
       ...getDefaultClapWorkflowProviderMetrics(),
     },
+    [ClapWorkflowProvider.CIVITAI]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
+    },
+    [ClapWorkflowProvider.HOTSHOT]: {
+      ...getDefaultClapWorkflowProviderMetrics(),
+    },
   }
   return metricsPerProvider
 }

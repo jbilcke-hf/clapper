@@ -24,12 +24,17 @@ import {
   resolveSegmentUsingLetzAi,
   resolveSegmentUsingBigModel,
   resolveSegmentUsingPiApi,
+  resolveSegmentUsingHotshot,
+  resolveSegmentUsingCivitai,
 } from './providers'
 
 import { ResolveRequest } from '@aitube/clapper-services'
 import { decodeOutput } from '@/lib/utils/decodeOutput'
 import { getTypeAndExtension } from '@/lib/utils/getTypeAndExtension'
 import { getMediaInfo } from '@/lib/ffmpeg/getMediaInfo'
+import { TimelineSegment } from '@aitube/timeline'
+
+type ProviderFn = (request: ResolveRequest) => Promise<TimelineSegment>
 
 export async function POST(req: NextRequest) {
   // do we really need to secure it?
@@ -69,39 +74,35 @@ export async function POST(req: NextRequest) {
     throw new Error(`request to /api/resolve is missing the .engine field`)
   }
 
-  // console.log(`API ResolveRequest = `, request.settings)
-  const resolveSegment =
-    engine === ClapWorkflowEngine.COMFYUI_WORKFLOW
-      ? provider === ClapWorkflowProvider.REPLICATE
-        ? resolveSegmentUsingComfyReplicate
-        : provider === ClapWorkflowProvider.COMFYUI
-          ? resolveSegmentUsingComfyUI
-          : provider === ClapWorkflowProvider.COMFYICU
-            ? resolveSegmentUsingComfyIcu
-            : provider === ClapWorkflowProvider.COMFYDEPLOY
-              ? resolveSegmentUsingComfyDeploy
-              : null
-      : provider === ClapWorkflowProvider.HUGGINGFACE
-        ? resolveSegmentUsingHuggingFace
-        : provider === ClapWorkflowProvider.REPLICATE
-          ? resolveSegmentUsingReplicate
-          : provider === ClapWorkflowProvider.STABILITYAI
-            ? resolveSegmentUsingStabilityAi
-            : provider === ClapWorkflowProvider.FALAI
-              ? resolveSegmentUsingFalAi
-              : provider === ClapWorkflowProvider.MODELSLAB
-                ? resolveSegmentUsingModelsLab
-                : provider === ClapWorkflowProvider.LETZAI
-                  ? resolveSegmentUsingLetzAi
-                  : provider === ClapWorkflowProvider.BIGMODEL
-                    ? resolveSegmentUsingBigModel
-                    : provider === ClapWorkflowProvider.PIAPI
-                      ? resolveSegmentUsingPiApi
-                      : provider === ClapWorkflowProvider.AITUBE
-                        ? resolveSegmentUsingAiTube
-                        : null
+  const comfyProviders: Partial<Record<ClapWorkflowProvider, ProviderFn>> = {
+    [ClapWorkflowProvider.REPLICATE]: resolveSegmentUsingComfyReplicate,
+    [ClapWorkflowProvider.COMFYUI]: resolveSegmentUsingComfyUI,
+    [ClapWorkflowProvider.COMFYICU]: resolveSegmentUsingComfyIcu,
+    [ClapWorkflowProvider.COMFYDEPLOY]: resolveSegmentUsingComfyDeploy,
+  }
 
-  if (!resolveSegment) {
+  const providers: Partial<Record<ClapWorkflowProvider, ProviderFn>> = {
+    [ClapWorkflowProvider.HUGGINGFACE]: resolveSegmentUsingHuggingFace,
+    [ClapWorkflowProvider.REPLICATE]: resolveSegmentUsingReplicate,
+    [ClapWorkflowProvider.STABILITYAI]: resolveSegmentUsingStabilityAi,
+    [ClapWorkflowProvider.FALAI]: resolveSegmentUsingFalAi,
+    [ClapWorkflowProvider.MODELSLAB]: resolveSegmentUsingModelsLab,
+    // [ClapWorkflowProvider.ELEVENLABS]: resolveSegmentUsingElevenLabs,
+    [ClapWorkflowProvider.LETZAI]: resolveSegmentUsingLetzAi,
+    [ClapWorkflowProvider.HOTSHOT]: resolveSegmentUsingHotshot,
+    [ClapWorkflowProvider.CIVITAI]: resolveSegmentUsingCivitai,
+    [ClapWorkflowProvider.BIGMODEL]: resolveSegmentUsingBigModel,
+    [ClapWorkflowProvider.PIAPI]: resolveSegmentUsingPiApi,
+    [ClapWorkflowProvider.AITUBE]: resolveSegmentUsingAiTube,
+  }
+
+  // console.log(`API ResolveRequest = `, request.settings)
+  const resolveSegment: ProviderFn | undefined =
+    engine === ClapWorkflowEngine.COMFYUI_WORKFLOW
+      ? comfyProviders[engine] || undefined
+      : providers[engine] || undefined
+
+  if (!resolveSegment || typeof resolveSegment !== 'function') {
     throw new Error(
       `Engine "${engine}" is not supported by "${provider}" yet. If you believe this is a mistake, please open a Pull Request (with working code) to fix it. Thank you!`
     )

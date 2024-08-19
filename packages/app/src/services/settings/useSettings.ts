@@ -236,6 +236,22 @@ export const useSettings = create<SettingsStore>()(
           ),
         })
       },
+      setCivitaiApiKey: (civitaiApiKey?: string) => {
+        set({
+          civitaiApiKey: getValidString(
+            civitaiApiKey,
+            getDefaultSettingsState().civitaiApiKey
+          ),
+        })
+      },
+      setHotshotApiKey: (hotshotApiKey?: string) => {
+        set({
+          hotshotApiKey: getValidString(
+            hotshotApiKey,
+            getDefaultSettingsState().hotshotApiKey
+          ),
+        })
+      },
 
       setBroadcastObsServerHost: (broadcastObsServerHost: string) => {
         set({ broadcastObsServerHost })
@@ -854,6 +870,9 @@ export const useSettings = create<SettingsStore>()(
           bigModelApiKey:
             state.bigModelApiKey || defaultSettings.bigModelApiKey,
           piApiApiKey: state.piApiApiKey || defaultSettings.piApiApiKey,
+          civitaiApiKey: state.civitaiApiKey || defaultSettings.civitaiApiKey,
+          hotshotApiKey: state.hotshotApiKey || defaultSettings.hotshotApiKey,
+
           broadcastObsServerHost:
             state.broadcastObsServerHost ||
             defaultSettings.broadcastObsServerHost,

@@ -101,6 +101,12 @@ export function SettingsSectionProvider() {
   const piApiApiKey = useSettings((s) => s.piApiApiKey)
   const setPiApiApiKey = useSettings((s) => s.setPiApiApiKey)
 
+  const civitaiApiKey = useSettings((s) => s.civitaiApiKey)
+  const setCivitaiApiKey = useSettings((s) => s.setCivitaiApiKey)
+
+  const hotshotApiKey = useSettings((s) => s.hotshotApiKey)
+  const setHotshotApiKey = useSettings((s) => s.setHotshotApiKey)
+
   const apiKeyType = showApiKeys ? 'text' : 'password'
 
   return (
@@ -327,6 +333,22 @@ export function SettingsSectionProvider() {
           value={piApiApiKey}
           defaultValue={defaultSettings.piApiApiKey}
           onChange={setPiApiApiKey}
+          type={apiKeyType}
+        />
+
+        <FormInput
+          label="Civitai API Key"
+          value={civitaiApiKey}
+          defaultValue={defaultSettings.civitaiApiKey}
+          onChange={setCivitaiApiKey}
+          type={apiKeyType}
+        />
+
+        <FormInput
+          label="Hotshot API Key"
+          value={hotshotApiKey}
+          defaultValue={defaultSettings.hotshotApiKey}
+          onChange={setHotshotApiKey}
           type={apiKeyType}
         />
       </FormSection>

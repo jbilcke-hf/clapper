@@ -158,7 +158,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     },
   },
   {
-    id: 'falai://fal-ai/flux-schnell',
+    id: 'falai://fal-ai/flux/schnell',
     label: 'FLUX.1 [schnell]',
     description: '',
     tags: ['flux'],
@@ -168,7 +168,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
-    data: 'fal-ai/flux-schnell',
+    data: 'fal-ai/flux/schnell',
     schema: '',
     inputFields: [genericPrompt, genericWidth2048, genericHeight2048],
     inputValues: {
@@ -178,7 +178,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     },
   },
   {
-    id: 'falai://fal-ai/flux-dev',
+    id: 'falai://fal-ai/flux/dev',
     label: 'FLUX.1 [dev]',
     description: '',
     tags: ['flux'],
@@ -188,7 +188,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
-    data: 'fal-ai/flux-dev',
+    data: 'fal-ai/flux/dev',
     schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the automatically)

@@ -159,4 +159,10 @@ export const estimatedMetrics: Record<
   [ClapWorkflowProvider.PIAPI]: {
     // TODO list the most popular models
   },
+  [ClapWorkflowProvider.CIVITAI]: {
+    // TODO list the most popular models
+  },
+  [ClapWorkflowProvider.HOTSHOT]: {
+    // TODO list the most popular models
+  },
 }

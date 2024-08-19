@@ -1,10 +1,11 @@
 import { TimelineSegment } from '@aitube/timeline'
 import { ResolveRequest } from '@aitube/clapper-services'
-import { ClapSegmentCategory } from '@aitube/clap'
+import { ClapMediaOrientation, ClapSegmentCategory } from '@aitube/clap'
 
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
 import { createImage } from './midjourney/createImage'
 import { createAndFetchDreamMachineVideo } from './lumalabs/createAndFetchDreamMachineVideo'
+import { createAndFetchKlingVideo } from './kling/createAndFetchKlingVideo'
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -58,7 +59,9 @@ export async function resolveSegment(
 
     segment.assetUrl = `${result.task_result.image_url || ''}`
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
-    model = request.settings.videoGenerationWorkflow.data || ''
+    const workflow = request.settings.videoGenerationWorkflow
+
+    model = workflow.data || ''
 
     if (!request.prompts.video.image) {
       console.error(
@@ -71,28 +74,88 @@ export async function resolveSegment(
       request.settings.videoGenerationWorkflow
     )
 
-    const result = await createAndFetchDreamMachineVideo(
-      request.settings.piApiApiKey,
-      {
-        prompt: request.prompts.image.positive,
-        expand_prompt: false,
-        image_url: request.prompts.video.image,
+    if (workflow.id === 'piapi://kling/v1/video') {
+      // can only be 16:9,9:16,1:1
+      const aspectRatio =
+        request.meta.orientation === ClapMediaOrientation.SQUARE
+          ? '1:1'
+          : request.meta.orientation === ClapMediaOrientation.PORTRAIT
+            ? '9:16'
+            : '16:9'
 
-        // nice feature! we should use it :)
-        // image_end_url?: string;
+      const result = await createAndFetchKlingVideo(
+        request.settings.piApiApiKey,
+        {
+          prompt: request.prompts.image.positive,
+          negative_prompt: request.prompts.image.negative,
+
+          // a number between 0 to 1, the lower the more creative
+          // creativity?: number
+
+          // can only be 5 or 10, defaults to 5
+          duration: 5,
+
+          aspect_ratio: aspectRatio,
+
+          // PAID KLING PLAN NEEDED. Default to false, visit Kling AI official product to get the definition of professional mode
+          // professional_mode?: boolean
+
+          // initial frame of the video, DO NOT pass this param if you just want text-to-video
+          image_url: request.prompts.video.image,
+
+          // PAID KLING PLAN NEEDED. End frame of the video, DO NOT pass this param if you just want text-to-video
+          // tail_image_url?: string
+
+          // camera control of the video, effective in text-to-image ONLY. TRY it on Kling official website before using this param
+          // camera?: {
+          //   type?: string
+          //   horizontal?: number
+          //   vertical?: number
+          //   zoom?: number
+          //   tilt?: number
+          //   pan?: number
+          //   roll?: number
+          // }
+        }
+      )
+
+      const work = result.data.works[0]
+
+      if (!work) {
+        throw new Error(`Failed to generate at least one video`)
       }
-    )
 
-    result.data.generation.video
+      if (!work.resource) {
+        throw new Error(`the generated resource seems empty`)
+      }
 
-    if (!result.data.generation.video) {
-      throw new Error(`Failed to generate at least one video`)
+      segment.assetUrl = `${work.resource || ''}`
+    } else if (workflow.id === 'piapi://luma/v1/video') {
+      const result = await createAndFetchDreamMachineVideo(
+        request.settings.piApiApiKey,
+        {
+          prompt: request.prompts.image.positive,
+          expand_prompt: false,
+          image_url: request.prompts.video.image,
+
+          // nice feature! we should use it :)
+          // image_end_url?: string;
+        }
+      )
+
+      if (!result.data.generation.video) {
+        throw new Error(`Failed to generate at least one video`)
+      }
+
+      segment.assetUrl = `${result.data.generation.video || ''}`
+    } else {
+      throw new Error(
+        `Clapper doesn't support workflow "${workflow.id}" for provider "PiApi". Please open a pull request with (working code) to solve this!`
+      )
     }
-
-    segment.assetUrl = `${result.data.generation.video || ''}`
   } else {
     throw new Error(
-      `Clapper doesn't support ${request.segment.category} generation for provider "Fal.ai". Please open a pull request with (working code) to solve this!`
+      `Clapper doesn't support ${request.segment.category} generation for provider "PiApi". Please open a pull request with (working code) to solve this!`
     )
   }
 

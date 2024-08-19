@@ -29,6 +29,8 @@ export function getDefaultSettingsState(): SettingsState {
     letzAiApiKey: '',
     bigModelApiKey: '',
     piApiApiKey: '',
+    civitaiApiKey: '',
+    hotshotApiKey: '',
 
     broadcastObsServerHost: '192.168.1.22',
     broadcastObsServerPort: 4455,

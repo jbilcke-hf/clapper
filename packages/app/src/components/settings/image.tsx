@@ -1,4 +1,9 @@
-import { FormArea, FormInput, FormSection } from '@/components/forms'
+import {
+  FormArea,
+  FormInput,
+  FormSection,
+  FormSwitch,
+} from '@/components/forms'
 import { getDefaultSettingsState, useSettings } from '@/services/settings'
 
 export function SettingsSectionImage() {
@@ -25,9 +30,26 @@ export function SettingsSectionImage() {
     (s) => s.setMaxImagesToGenerateInParallel
   )
 
+  const censorNotForAllAudiencesContent = useSettings(
+    (s) => s.censorNotForAllAudiencesContent
+  )
+  const setCensorNotForAllAudiencesContent = useSettings(
+    (s) => s.setCensorNotForAllAudiencesContent
+  )
+
   return (
     <div className="flex flex-col justify-between space-y-6">
       <FormSection label="Image rendering">
+        <FormSwitch
+          label="Hide NFAA content (not for all audiences)"
+          checked={!censorNotForAllAudiencesContent}
+          onCheckedChange={setCensorNotForAllAudiencesContent}
+        />
+        <p>
+          Note: the request will be sent to the compute providers, which may or
+          may not censor the output.
+        </p>
+
         <FormInput
           label="Number of images to render in parallel (not used yet)"
           value={maxImagesToGenerateInParallel}
