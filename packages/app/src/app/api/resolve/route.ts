@@ -96,11 +96,10 @@ export async function POST(req: NextRequest) {
     [ClapWorkflowProvider.AITUBE]: resolveSegmentUsingAiTube,
   }
 
-  // console.log(`API ResolveRequest = `, request.settings)
   const resolveSegment: ProviderFn | undefined =
     engine === ClapWorkflowEngine.COMFYUI_WORKFLOW
-      ? comfyProviders[engine] || undefined
-      : providers[engine] || undefined
+      ? comfyProviders[provider] || undefined
+      : providers[provider] || undefined
 
   if (!resolveSegment || typeof resolveSegment !== 'function') {
     throw new Error(
