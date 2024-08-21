@@ -13,6 +13,8 @@ import { Input } from '../ui/input'
 import { FormField } from './FormField'
 import { useTheme } from '@/services'
 import { Textarea } from '../ui/textarea'
+import { MdError } from 'react-icons/md'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 
 export function FormArea<T>(
   {
@@ -27,6 +29,7 @@ export function FormArea<T>(
     onChange,
     type,
     rows = 4,
+    error,
     ...props
   }: {
     label?: ReactNode
@@ -41,6 +44,7 @@ export function FormArea<T>(
     type?: HTMLInputTypeAttribute
     rows?: number
     props?: any
+    error?: string | null
   }
   //  & Omit<ComponentProps<typeof Input>, "value" | "defaultValue" | "placeholder" | "type" | "className" | "disabled" | "onChange">
   // & ComponentProps<typeof Input>
@@ -66,11 +70,18 @@ export function FormArea<T>(
   )
 
   return (
-    <FormField label={label}>
+    <FormField label={label} className="relative flex flex-col items-start">
       <Textarea
         ref={ref}
         placeholder={`${placeholder || defaultValue || ''}`}
-        className={cn(`w-full`, `font-mono text-xs font-light`, className)}
+        className={cn(
+          `w-full`,
+          `font-mono text-xs font-light`,
+          {
+            'border-red-500 dark:border-red-800': error,
+          },
+          className
+        )}
         disabled={disabled}
         onChange={handleChange}
         rows={rows}
@@ -84,6 +95,18 @@ export function FormArea<T>(
         }}
         {...props}
       />
+      {error && (
+        <Tooltip delayDuration={0}>
+          <TooltipTrigger asChild>
+            <div className="absolute right-0 top-0 m-2 h-4 w-4">
+              <MdError color="red" className="h-full w-full" />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="left">
+            <p className="text-xs font-bold text-red-500">{error}</p>
+          </TooltipContent>
+        </Tooltip>
+      )}
     </FormField>
   )
 }

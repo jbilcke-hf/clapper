@@ -1,5 +1,11 @@
 import { expect, test } from 'vitest'
-import { ComfyUIWorkflowApiUtils } from './utils'
+import {
+  ClapperComfyUiInputIds,
+  ComfyUIWorkflowApiGraph,
+  createPromptBuilder,
+  findNegativePromptInputsFromWorkflow,
+  findPromptInputsFromWorkflow,
+} from './utils'
 
 // Default workflow used by ComfyUI, downloaded for API
 const workflowRaw = {
@@ -166,7 +172,7 @@ const workflowRawWithTokens = {
 }
 
 test('should return all nodes that have inputs', () => {
-  const nodesWithInputs = new ComfyUIWorkflowApiUtils(
+  const nodesWithInputs = new ComfyUIWorkflowApiGraph(
     workflowRaw
   ).getNodesWithInputs()
 
@@ -186,7 +192,7 @@ test('should return all nodes that have inputs', () => {
 })
 
 test('should return the correct output node', () => {
-  const outputNode = new ComfyUIWorkflowApiUtils(workflowRaw).getOutputNode()
+  const outputNode = new ComfyUIWorkflowApiGraph(workflowRaw).getOutputNode()
 
   expect(outputNode).toEqual({
     id: '9',
@@ -202,7 +208,7 @@ test('should return the correct output node', () => {
 })
 
 test('should build the correct graph from the workflow', () => {
-  const { adjList, dependencyList, inDegree } = new ComfyUIWorkflowApiUtils(
+  const { adjList, dependencyList, inDegree } = new ComfyUIWorkflowApiGraph(
     workflowRaw
   ).getGraphData()
 
@@ -225,43 +231,43 @@ test('should build the correct graph from the workflow', () => {
 })
 
 test('should return the correct inputs by node id', () => {
-  const workflow = new ComfyUIWorkflowApiUtils(workflowRaw)
+  const workflow = new ComfyUIWorkflowApiGraph(workflowRaw)
 
   expect(workflow.getInputsByNodeId('3')).toEqual([
     {
       type: 'number',
       name: 'seed',
       value: 156680208700286,
-      key: '3.inputs.seed',
+      id: '3.inputs.seed',
       nodeId: '3',
     },
     {
       type: 'number',
       name: 'steps',
       value: 20,
-      key: '3.inputs.steps',
+      id: '3.inputs.steps',
       nodeId: '3',
     },
-    { type: 'number', name: 'cfg', value: 8, key: '3.inputs.cfg', nodeId: '3' },
+    { type: 'number', name: 'cfg', value: 8, id: '3.inputs.cfg', nodeId: '3' },
     {
       type: 'string',
       name: 'sampler_name',
       value: 'euler',
-      key: '3.inputs.sampler_name',
+      id: '3.inputs.sampler_name',
       nodeId: '3',
     },
     {
       type: 'string',
       name: 'scheduler',
       value: 'normal',
-      key: '3.inputs.scheduler',
+      id: '3.inputs.scheduler',
       nodeId: '3',
     },
     {
       type: 'number',
       name: 'denoise',
       value: 1,
-      key: '3.inputs.denoise',
+      id: '3.inputs.denoise',
       nodeId: '3',
     },
   ])
@@ -271,7 +277,7 @@ test('should return the correct inputs by node id', () => {
       type: 'string',
       name: 'ckpt_name',
       value: 'v1-5-pruned-emaonly.ckpt',
-      key: '4.inputs.ckpt_name',
+      id: '4.inputs.ckpt_name',
       nodeId: '4',
     },
   ])
@@ -281,21 +287,21 @@ test('should return the correct inputs by node id', () => {
       type: 'number',
       name: 'width',
       value: 512,
-      key: '5.inputs.width',
+      id: '5.inputs.width',
       nodeId: '5',
     },
     {
       type: 'number',
       name: 'height',
       value: 512,
-      key: '5.inputs.height',
+      id: '5.inputs.height',
       nodeId: '5',
     },
     {
       type: 'number',
       name: 'batch_size',
       value: 1,
-      key: '5.inputs.batch_size',
+      id: '5.inputs.batch_size',
       nodeId: '5',
     },
   ])
@@ -306,7 +312,7 @@ test('should return the correct inputs by node id', () => {
       name: 'text',
       value:
         'beautiful scenery nature glass bottle landscape, , purple galaxy bottle,',
-      key: '6.inputs.text',
+      id: '6.inputs.text',
       nodeId: '6',
     },
   ])
@@ -315,104 +321,174 @@ test('should return the correct inputs by node id', () => {
   expect(nonExistentNodeInputs).toBeNull()
 })
 
-test('should detect the correct main inputs', () => {
-  const mainInputs = new ComfyUIWorkflowApiUtils(workflowRaw).detectMainInputs()
-
-  expect(mainInputs).toEqual([
-    {
-      nodeId: '6',
-      name: 'text',
-      value:
-        'beautiful scenery nature glass bottle landscape, , purple galaxy bottle,',
-    },
-    { nodeId: '7', name: 'text', value: 'text, watermark' },
-  ])
-
-  expect(mainInputs).not.toEqual(
-    expect.arrayContaining([
-      expect.objectContaining({ name: 'width' }),
-      expect.objectContaining({ name: 'cfg' }),
-    ])
-  )
-})
-
 test('should detect the correct positive and negative prompt inputs', () => {
-  const workflow = new ComfyUIWorkflowApiUtils(workflowRaw)
-  const positivePrompts = workflow.detectPositivePromptInput()
-  const negativePrompts = workflow.detectNegativePromptInput()
+  const workflow = new ComfyUIWorkflowApiGraph(workflowRaw)
+  const positivePromptInput = findPromptInputsFromWorkflow(workflow)
+  const negativePromptInput = findNegativePromptInputsFromWorkflow(workflow)
 
-  expect(positivePrompts).toEqual([
+  expect(positivePromptInput).toEqual([
     {
+      id: '6.inputs.text',
       nodeId: '6',
       name: 'text',
-      type: 'positive',
+      type: 'string',
       value:
         'beautiful scenery nature glass bottle landscape, , purple galaxy bottle,',
     },
   ])
 
-  expect(negativePrompts).toEqual([
-    { nodeId: '7', name: 'text', type: 'negative', value: 'text, watermark' },
+  expect(negativePromptInput).toEqual([
+    {
+      id: '7.inputs.text',
+      nodeId: '7',
+      name: 'text',
+      type: 'string',
+      value: 'text, watermark',
+    },
   ])
 
-  expect(positivePrompts).not.toEqual(
+  expect(positivePromptInput).not.toEqual(
     expect.arrayContaining([expect.objectContaining({ name: 'steps' })])
   )
-  expect(negativePrompts).not.toEqual(
+
+  expect(negativePromptInput).not.toEqual(
     expect.arrayContaining([expect.objectContaining({ name: 'cfg' })])
   )
 })
 
 test('should detect the correct positive and negative prompt inputs using clapper tokens', () => {
-  const workflow = new ComfyUIWorkflowApiUtils(workflowRawWithTokens)
-  const positivePrompts = workflow.detectPositivePromptInput()
-  const negativePrompts = workflow.detectNegativePromptInput()
+  const workflow = new ComfyUIWorkflowApiGraph(workflowRawWithTokens)
+  const positivePromptInput = findPromptInputsFromWorkflow(workflow)
+  const negativePromptInput = findNegativePromptInputsFromWorkflow(workflow)
 
-  expect(positivePrompts).toEqual([
+  expect(positivePromptInput).toEqual([
     {
+      id: '6.inputs.text',
       nodeId: '6',
-      type: 'positive',
+      type: 'string',
       name: 'text',
       value: '@clapper/prompt',
     },
   ])
 
-  expect(negativePrompts).toEqual([
-    { nodeId: '7', type: 'negative', name: 'text', value: '@clapper/negative' },
+  expect(negativePromptInput).toEqual([
+    {
+      id: '7.inputs.text',
+      nodeId: '7',
+      type: 'string',
+      name: 'text',
+      value: '@clapper/negative',
+    },
   ])
 
-  expect(positivePrompts).not.toEqual(
+  expect(positivePromptInput).not.toEqual(
     expect.arrayContaining([expect.objectContaining({ name: 'steps' })])
   )
-  expect(negativePrompts).not.toEqual(
+  expect(negativePromptInput).not.toEqual(
     expect.arrayContaining([expect.objectContaining({ name: 'cfg' })])
   )
 })
 
+test('should correctly search workflow inputs', () => {
+  const workflow = new ComfyUIWorkflowApiGraph(workflowRaw)
+  expect(
+    workflow.findInput({
+      name: 'text',
+    })
+  ).toEqual([
+    {
+      id: '6.inputs.text',
+      nodeId: '6',
+      name: 'text',
+      type: 'string',
+      value:
+        'beautiful scenery nature glass bottle landscape, , purple galaxy bottle,',
+    },
+    {
+      id: '7.inputs.text',
+      nodeId: '7',
+      name: 'text',
+      type: 'string',
+      value: 'text, watermark',
+    },
+  ])
+  expect(
+    workflow.findInput({
+      name: 'text',
+      type: 'string',
+      nodeOutputToNodeInput: 'positive',
+    })
+  ).toEqual([
+    {
+      id: '6.inputs.text',
+      nodeId: '6',
+      name: 'text',
+      type: 'string',
+      value:
+        'beautiful scenery nature glass bottle landscape, , purple galaxy bottle,',
+    },
+  ])
+  expect(
+    workflow.findInput({
+      name: /tex.*/,
+      type: /str.*/,
+      nodeOutputToNodeInput: /posi.*/,
+    })
+  ).toEqual([
+    {
+      id: '6.inputs.text',
+      nodeId: '6',
+      name: 'text',
+      type: 'string',
+      value:
+        'beautiful scenery nature glass bottle landscape, , purple galaxy bottle,',
+    },
+  ])
+})
+
 test('should create the PromptBuilder', () => {
-  const promptBuilder = new ComfyUIWorkflowApiUtils(
-    workflowRaw
-  ).createPromptBuilder()
+  const promptBuilder = createPromptBuilder(
+    new ComfyUIWorkflowApiGraph(workflowRaw)
+  )
   expect(promptBuilder.mapOutputKeys).toEqual({
-    output: '9',
+    [ClapperComfyUiInputIds.OUTPUT]: '9',
   })
   expect(promptBuilder.mapInputKeys).toEqual({
-    seed: '3.inputs.seed',
-    steps: '3.inputs.steps',
-    cfg: '3.inputs.cfg',
-    sampler_name: '3.inputs.sampler_name',
-    scheduler: '3.inputs.scheduler',
-    denoise: '3.inputs.denoise',
-    ckpt_name: '4.inputs.ckpt_name',
-    width: '5.inputs.width',
-    height: '5.inputs.height',
-    batch_size: '5.inputs.batch_size',
-    text: '7.inputs.text',
-    filename_prefix: '9.inputs.filename_prefix',
-    positive: '6.inputs.text',
-    negative: '7.inputs.text',
+    '3.inputs.seed': '3.inputs.seed',
+    '3.inputs.steps': '3.inputs.steps',
+    '3.inputs.cfg': '3.inputs.cfg',
+    '3.inputs.sampler_name': '3.inputs.sampler_name',
+    '3.inputs.scheduler': '3.inputs.scheduler',
+    '3.inputs.denoise': '3.inputs.denoise',
+    '4.inputs.ckpt_name': '4.inputs.ckpt_name',
+    '5.inputs.width': '5.inputs.width',
+    '5.inputs.height': '5.inputs.height',
+    '5.inputs.batch_size': '5.inputs.batch_size',
+    '7.inputs.text': '7.inputs.text',
+    '9.inputs.filename_prefix': '9.inputs.filename_prefix',
+    '6.inputs.text': '6.inputs.text',
+    [ClapperComfyUiInputIds.PROMPT]: ClapperComfyUiInputIds.PROMPT,
+    [ClapperComfyUiInputIds.NEGATIVE_PROMPT]:
+      ClapperComfyUiInputIds.NEGATIVE_PROMPT,
+    [ClapperComfyUiInputIds.WIDTH]: ClapperComfyUiInputIds.WIDTH,
+    [ClapperComfyUiInputIds.HEIGHT]: ClapperComfyUiInputIds.HEIGHT,
   })
   expect(promptBuilder.prompt).toEqual(workflowRaw)
+})
+
+test('should convert correctly the workflow to string', () => {
+  const workflow = new ComfyUIWorkflowApiGraph(workflowRaw)
+  expect(workflow.toJson()).toEqual(workflowRaw)
+})
+
+test('should edit correctly an input of the workflow', () => {
+  const workflow = new ComfyUIWorkflowApiGraph(workflowRaw)
+  workflow.setInputValue('3.inputs.seed', 1121)
+  workflowRaw['3'].inputs.seed = 1111
+  expect(workflow.toJson()).not.toEqual(workflowRaw)
+  workflow.setInputValue('3.inputs.seed', 3333)
+  workflowRaw['3'].inputs.seed = 3333
+  expect(workflow.toJson()).toEqual(workflowRaw)
 })
 
 /**
@@ -435,7 +511,7 @@ const workflowRawWithCycles = {
 
 test('should fail if workflow has cycles', () => {
   expect(() => {
-    new ComfyUIWorkflowApiUtils(workflowRawWithCycles)
+    new ComfyUIWorkflowApiGraph(workflowRawWithCycles)
   }).toThrow(
     'The provided workflow has cycles, impossible to get the output node.'
   )

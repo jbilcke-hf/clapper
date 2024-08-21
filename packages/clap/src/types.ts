@@ -486,7 +486,7 @@ export type ClapInputFieldAny = {
   defaultValue: any
 }
 
-export type ClapInputField = {
+export type ClapInputField<T = Record<string, any>> = {
   /**
    * Machine readable input field name or identifier
    */
@@ -510,6 +510,18 @@ export type ClapInputField = {
    * eg "hf_model", "hf_model_repo" -> ClapInputCategory.LORA
    */
   category: ClapInputCategory
+
+  /**
+   * If the input is composed by other inputs, useful
+   * for grouping the inputs
+   */
+  inputFields?: ClapInputField<T>[],
+
+  /**
+   * Additional extension info about the input to better
+   * handling of complex scenearios such as grouping inputs, etc
+   */
+  metadata?: T;
 } & (
   | ClapInputFieldNumber
   | ClapInputFieldInteger
@@ -520,8 +532,12 @@ export type ClapInputField = {
 
 export type ClapInputFields = ClapInputField[]
 
+export interface ClapInputValueObject {
+  [key: string]: ClapInputValue;
+}
+
 export type ClapInputValue =
-  number | string | boolean | string[] | number[] | null | undefined
+  number | string | boolean | string[] | number[] | null | undefined | ClapInputValueObject
 
 export type ClapInputValues =
   Record<string, ClapInputValue>

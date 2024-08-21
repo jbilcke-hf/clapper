@@ -1,3 +1,4 @@
+import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/utils'
 import {
   findWorkflows,
   WorkflowSearchResults,
@@ -51,6 +52,12 @@ export function parseWorkflow(
       typeof maybeWorkflow?.inputValues === 'object'
     if (!looksValid) {
       throw new Error(`the workflow data seems invalid`)
+    }
+    if (maybeWorkflow.engine == ClapWorkflowEngine.COMFYUI_WORKFLOW) {
+      const { inputFields, inputValues } =
+        convertComfyUiWorkflowApiToClapWorkflow(maybeWorkflow.data)
+      maybeWorkflow.inputFields = inputFields
+      maybeWorkflow.inputValues = inputValues
     }
     return maybeWorkflow
   } catch (err) {
