@@ -457,7 +457,6 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     segment: TimelineSegment
   ): Promise<TimelineSegment> => {
     const settings = useSettings.getState().getRequestSettings()
-
     const timeline: TimelineStore = useTimeline.getState()
 
     // note: do NOT use the visibleSegments here

@@ -1,24 +1,13 @@
 import { ResolveRequest } from '@aitube/clapper-services'
-import {
-  ClapAssetSource,
-  ClapSegmentCategory,
-  ClapSegmentStatus,
-  generateSeed,
-  getClapAssetSourceType,
-} from '@aitube/clap'
+import { ClapAssetSource, ClapSegmentCategory, generateSeed } from '@aitube/clap'
 import { TimelineSegment } from '@aitube/timeline'
-import {
-  BasicCredentials,
-  CallWrapper,
-  ComfyApi,
-  PromptBuilder,
-  TSamplerName,
-  TSchedulerName,
-} from '@saintno/comfyui-sdk'
-
-import { getWorkflowInputValues } from '../getWorkflowInputValues'
+import { BasicCredentials, CallWrapper, ComfyApi } from '@saintno/comfyui-sdk'
 import { decodeOutput } from '@/lib/utils/decodeOutput'
-import { ComfyUIWorkflowApiUtils } from './utils'
+import {
+  ClapperComfyUiInputIds,
+  ComfyUIWorkflowApiGraph,
+  createPromptBuilder,
+} from './utils'
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -51,64 +40,64 @@ export async function resolveSegment(
   ).init()
 
   if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
-    const comfyApiWorkflow = JSON.parse(
-      request.settings.imageGenerationWorkflow.data
-    )
+    const imageGenerationWorkflow = request.settings.imageGenerationWorkflow
 
-    const txt2ImgPrompt = new ComfyUIWorkflowApiUtils(
-      comfyApiWorkflow
-    ).createPromptBuilder()
-
-    const workflow = txt2ImgPrompt
-      // TODO: this mapping should be detect/filled automatically (see line 86)
-      .input('ckpt_name', 'SDXL/realvisxlV40_v40LightningBakedvae.safetensors')
-      .input('seed', generateSeed())
-      .input('steps', 6)
-      .input('cfg', 1)
-      .input<TSamplerName>('sampler_name', 'dpmpp_2m_sde_gpu')
-      .input<TSchedulerName>('scheduler', 'sgm_uniform')
-      .input('width', request.meta.width)
-      .input('height', request.meta.height)
-      .input('batch_size', 1)
-      .input('positive', request.prompts.image.positive)
-
-    // for the moment we only have non-working "mock" sample code,
-    // to fully implement the comfyui client, we need to work on a system
-    // to automatically detect the architecture of the workflow, its parameters,
-    // the default values, and fill them
-    //
-    // to make things easier, we are going to assume that the ClapWorkflow object
-    // is 100% correctly defined, and that we can rely on `inputFields` and `inputValues`
-    //
-    // that way, the responsibility of automatically identifying the inputs from a raw JSON workflow
-    // (eg. coming from OpenArt.ai) will be done by a separate pre-processing code
-
-    const inputFields =
-      request.settings.imageGenerationWorkflow.inputFields || []
-
-    // since this is a random "wild" workflow, it is possible
-    // that the field name is a bit different
-    // we try to look into the workflow input fields
-    // to find the best match
-    const promptFields = [
-      inputFields.find((f) => f.id === 'prompt'), // exactMatch,
-      inputFields.find((f) => f.id.includes('prompt')), // similarName,
-      inputFields.find((f) => f.type === 'string'), // similarType
-    ].filter((x) => typeof x !== 'undefined')
-
-    const promptField = promptFields[0]
-    if (!promptField) {
+    if (!imageGenerationWorkflow.inputValues[ClapperComfyUiInputIds.PROMPT]) {
       throw new Error(
-        `this workflow doesn't seem to have a parameter called "prompt"`
+        `This workflow doesn't seem to have an input required by Clapper (e.g. a node with an input called "prompt")`
       )
     }
 
-    // TODO: modify the serialized workflow payload
-    // to inject our params:
-    // ...getWorkflowInputValues(request.settings.imageGenerationWorkflow),
-    // [promptField.id]: request.prompts.image.positive,
+    if (!imageGenerationWorkflow.inputValues[ClapperComfyUiInputIds.OUTPUT]) {
+      throw new Error(
+        `This workflow doesn't seem to have a node output required by Clapper (e.g. a 'Save Image' node)`
+      )
+    }
 
-    const pipeline = new CallWrapper<typeof workflow>(api, workflow)
+    const comfyApiWorkflowPromptBuilder = createPromptBuilder(
+      ComfyUIWorkflowApiGraph.fromString(imageGenerationWorkflow.data)
+    )
+
+    const { inputFields, inputValues } =
+      request.settings.imageGenerationWorkflow
+
+    inputFields.forEach((inputField) => {
+      comfyApiWorkflowPromptBuilder.input(
+        inputField.id,
+        inputValues[inputField.id]
+      )
+    })
+
+    // Set main inputs
+    comfyApiWorkflowPromptBuilder
+      .input(
+        (inputValues[ClapperComfyUiInputIds.PROMPT] as any).id,
+        request.prompts.image.positive
+      )
+      .input(
+        (inputValues[ClapperComfyUiInputIds.NEGATIVE_PROMPT] as any).id,
+        request.prompts.image.negative
+      )
+      .input(
+        (inputValues[ClapperComfyUiInputIds.WIDTH] as any).id,
+        request.meta.width
+      )
+      .input(
+        (inputValues[ClapperComfyUiInputIds.HEIGHT] as any).id,
+        request.meta.height
+      )
+      .input(
+        (inputValues[ClapperComfyUiInputIds.SEED] as any).id,
+        generateSeed()
+      )
+
+    // Set output
+    comfyApiWorkflowPromptBuilder.setOutputNode(
+      ClapperComfyUiInputIds.OUTPUT,
+      (inputValues[ClapperComfyUiInputIds.OUTPUT] as any).id
+    )
+
+    const pipeline = new CallWrapper(api, comfyApiWorkflowPromptBuilder)
       .onPending(() => console.log('Task is pending'))
       .onStart(() => console.log('Task is started'))
       .onPreview((blob) => console.log(blob))
@@ -126,8 +115,8 @@ export async function resolveSegment(
       throw new Error(`failed to run the pipeline (no output)`)
     }
 
-    const imagePaths = rawOutput.output?.images.map((img: any) =>
-      api.getPathImage(img)
+    const imagePaths = rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images.map(
+      (img: any) => api.getPathImage(img)
     )
 
     console.log(`imagePaths:`, imagePaths)

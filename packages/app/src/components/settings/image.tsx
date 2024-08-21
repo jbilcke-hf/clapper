@@ -1,17 +1,24 @@
-import {
-  FormArea,
-  FormInput,
-  FormSection,
-  FormSwitch,
-} from '@/components/forms'
+import { FormInput, FormSection, FormSwitch } from '@/components/forms'
+import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/utils'
 import { getDefaultSettingsState, useSettings } from '@/services/settings'
+import { useMemo } from 'react'
+import { FormComfyUIWorkflowSettings } from '../forms/FormComfyUIWorkflowSettings'
+import { ClapWorkflow } from '@aitube/clap'
 
 export function SettingsSectionImage() {
   const defaultSettings = getDefaultSettingsState()
-
-  const comfyWorkflowForImage = useSettings((s) => s.comfyWorkflowForImage)
-  const setComfyWorkflowForImage = useSettings(
-    (s) => s.setComfyWorkflowForImage
+  const comfyUiWorkflow = useSettings((s) => s.comfyWorkflowForImage)
+  const setComfyUiWorkflow = useSettings((s) => s.setComfyWorkflowForImage)
+  const comfyUiClapWorkflow = useMemo(
+    () => convertComfyUiWorkflowApiToClapWorkflow(comfyUiWorkflow),
+    [comfyUiWorkflow]
+  )
+  const defaultComfyUiClapWorkflow = useMemo(
+    () =>
+      convertComfyUiWorkflowApiToClapWorkflow(
+        defaultSettings.comfyWorkflowForImage
+      ),
+    [defaultSettings.comfyWorkflowForImage]
   )
 
   const imagePromptPrefix = useSettings((s) => s.imagePromptPrefix)
@@ -36,6 +43,9 @@ export function SettingsSectionImage() {
   const setCensorNotForAllAudiencesContent = useSettings(
     (s) => s.setCensorNotForAllAudiencesContent
   )
+  const onChangeComfyUiWorkflow = (clapWorkflowUpdated: ClapWorkflow) => {
+    setComfyUiWorkflow(clapWorkflowUpdated.data)
+  }
 
   return (
     <div className="flex flex-col justify-between space-y-6">
@@ -78,12 +88,11 @@ export function SettingsSectionImage() {
           onChange={setImageNegativePrompt}
         />
 
-        <FormArea
-          label="Custom ComfyUI workflow for images"
-          value={comfyWorkflowForImage}
-          defaultValue={defaultSettings.comfyWorkflowForImage}
-          onChange={setComfyWorkflowForImage}
-          rows={8}
+        <FormComfyUIWorkflowSettings
+          className="pt-4"
+          clapWorkflow={comfyUiClapWorkflow}
+          defaultClapWorkflow={defaultComfyUiClapWorkflow}
+          onChange={onChangeComfyUiWorkflow}
         />
       </FormSection>
     </div>
