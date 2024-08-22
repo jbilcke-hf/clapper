@@ -31,6 +31,8 @@ import { FilterEditor } from '@/components/editors/FilterEditor'
 import { useUI, useIO, useTheme, useMonitor } from '@/services'
 import { useRenderLoop } from '@/services/renderer'
 import { useDynamicWorkflows } from '@/services/editors/workflow-editor/useDynamicWorkflows'
+
+import { useQueryStringLoader } from '@/components/toolbars/top-menu/file/useQueryStringLoader'
 import { useSetupIframeOnce } from './embed/useSetupIframeOnce'
 
 export enum ClapperIntegrationMode {
@@ -53,6 +55,8 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
   const windowLayout = useUI((s) => s.windowLayout)
 
   const isIframe = mode === ClapperIntegrationMode.IFRAME
+
+  useQueryStringLoader()
 
   // this has to be done at the root of the app, that way it can
   // perform its routine even when the monitor component is hidden
