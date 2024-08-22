@@ -7,6 +7,7 @@ import { DndProvider, useDrop } from 'react-dnd'
 import { HTML5Backend, NativeTypes } from 'react-dnd-html5-backend'
 import { UIWindowLayout } from '@aitube/clapper-services'
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
+import { Bellhop } from 'bellhop-iframe'
 
 import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/lib/utils'
@@ -27,13 +28,19 @@ import { EntityEditor } from '@/components/editors/EntityEditor'
 import { WorkflowEditor } from '@/components/editors/WorkflowEditor'
 import { FilterEditor } from '@/components/editors/FilterEditor'
 
-import { useUI, useIO, useTheme } from '@/services'
+import { useUI, useIO, useTheme, useMonitor } from '@/services'
 import { useRenderLoop } from '@/services/renderer'
 import { useDynamicWorkflows } from '@/services/editors/workflow-editor/useDynamicWorkflows'
+import { useSetupIframeOnce } from './embed/useSetupIframeOnce'
 
-type DroppableThing = { files: File[] }
+export enum ClapperIntegrationMode {
+  APP = 'APP',
+  IFRAME = 'IFRAME',
+}
 
-function MainContent() {
+export type DroppableThing = { files: File[] }
+
+function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
   const ref = useRef<HTMLDivElement>(null)
   const showWelcomeScreen = useUI((s) => s.showWelcomeScreen)
   const showExplorer = useUI((s) => s.showExplorer)
@@ -45,6 +52,8 @@ function MainContent() {
   const isTopMenuOpen = useUI((s) => s.isTopMenuOpen)
   const windowLayout = useUI((s) => s.windowLayout)
 
+  const isIframe = mode === ClapperIntegrationMode.IFRAME
+
   // this has to be done at the root of the app, that way it can
   // perform its routine even when the monitor component is hidden
   useRenderLoop()
@@ -52,6 +61,9 @@ function MainContent() {
   // this has to be done at the root of the app, that way it can
   // sync workflows even when the workflow component is hidden
   useDynamicWorkflows()
+
+  // also has to be done here
+  useSetupIframeOnce(isIframe)
 
   const [{ isOver, canDrop }, connectFileDrop] = useDrop({
     accept: [NativeTypes.FILE],
@@ -74,6 +86,13 @@ function MainContent() {
   useEffect(() => {
     setHasBetaAccess(hasBetaAccess)
   }, [hasBetaAccess, setHasBetaAccess])
+
+  const iframeLayout = (
+    <>
+      <Monitor />
+      <Timeline className="fixed bottom-96" />
+    </>
+  )
 
   const gridLayout = (
     <ReflexContainer orientation="vertical">
@@ -289,29 +308,35 @@ function MainContent() {
         `dark fixed flex h-screen w-screen select-none flex-col overflow-hidden font-light text-neutral-900/90 dark:text-neutral-100/90`
       )}
     >
-      <TopBar />
+      <TopBar className={isIframe ? 'fixed scale-0 opacity-0' : ''} />
       <div
         className={cn(
           `flex w-screen flex-row overflow-hidden`,
-          windowLayout === UIWindowLayout.GRID
-            ? 'h-[calc(100vh-64px)]'
-            : 'h-[calc(100vh-36px)]'
+          isIframe
+            ? 'h-screen'
+            : windowLayout === UIWindowLayout.GRID
+              ? 'h-[calc(100vh-64px)]'
+              : 'h-[calc(100vh-36px)]'
         )}
         style={
-          windowLayout === UIWindowLayout.GRID
+          isIframe || windowLayout === UIWindowLayout.GRID
             ? { backgroundColor: theme.defaultBgColor }
             : { backgroundImage: theme.wallpaperBgImage }
         }
       >
-        {windowLayout === UIWindowLayout.FLYING ? flyingLayout : gridLayout}
+        {isIframe
+          ? iframeLayout
+          : windowLayout === UIWindowLayout.FLYING
+            ? flyingLayout
+            : gridLayout}
       </div>
 
-      {welcomeScreen}
+      {!isIframe && welcomeScreen}
 
       <SettingsDialog />
       <LoadingDialog />
       <Toaster />
-      {windowLayout === UIWindowLayout.GRID && <BottomToolbar />}
+      {!isIframe && windowLayout === UIWindowLayout.GRID && <BottomToolbar />}
     </div>
   )
 }
@@ -327,12 +352,20 @@ function fallbackRender({ error, resetErrorBoundary }: FallbackProps) {
   )
 }
 
-export function Main() {
+export function Main(
+  {
+    mode = ClapperIntegrationMode.APP,
+  }: {
+    mode: ClapperIntegrationMode
+  } = {
+    mode: ClapperIntegrationMode.APP,
+  }
+) {
   return (
     <TooltipProvider>
       <DndProvider backend={HTML5Backend}>
         <ErrorBoundary fallbackRender={fallbackRender}>
-          <MainContent />
+          <MainContent mode={mode} />
         </ErrorBoundary>
       </DndProvider>
     </TooltipProvider>

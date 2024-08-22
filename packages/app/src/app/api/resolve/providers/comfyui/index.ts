@@ -1,5 +1,9 @@
 import { ResolveRequest } from '@aitube/clapper-services'
-import { ClapAssetSource, ClapSegmentCategory, generateSeed } from '@aitube/clap'
+import {
+  ClapAssetSource,
+  ClapSegmentCategory,
+  generateSeed,
+} from '@aitube/clap'
 import { TimelineSegment } from '@aitube/timeline'
 import { BasicCredentials, CallWrapper, ComfyApi } from '@saintno/comfyui-sdk'
 import { decodeOutput } from '@/lib/utils/decodeOutput'

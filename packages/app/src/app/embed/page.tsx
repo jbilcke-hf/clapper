@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Script from 'next/script'
 
-import { Embed } from './embed'
+import { ClapperIntegrationMode, Main } from '../main'
 
 // https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 
@@ -44,7 +44,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           style={{ display: 'none', visibility: 'hidden' }}
         ></iframe>
       </noscript>
-      <main>{isLoaded && <Embed />}</main>
+      <main>{isLoaded && <Main mode={ClapperIntegrationMode.IFRAME} />}</main>
     </>
   )
 }

@@ -5,12 +5,20 @@ import { cn } from '@/lib/utils'
 
 import { TopMenu } from '../top-menu'
 
-export function TopBar() {
+export function TopBar(
+  {
+    className = '',
+  }: {
+    className: string
+  } = {
+    className: '',
+  }
+) {
   const theme = useTheme()
 
   return (
     <div
-      className={cn(`h-9 w-full`)}
+      className={cn(`h-9 w-full`, className)}
       style={{
         backgroundColor: theme.defaultBgColor || '#000000',
       }}
