@@ -21,12 +21,6 @@ import { newClap } from '@aitube/clap'
 import { getDemoGame } from '@/experiments/samples/demo'
 
 export function TopMenuFile() {
-  const { clapUrl } = useQueryStringParams({
-    // clapUrl: `/samples/test.clap`,
-    // clapUrl: `/samples/Afterglow%20v10%20X%20Rewrite%20Bryan%20E.%20Harris%202023.clap`,
-    clapUrl: '',
-  })
-
   const isTimelineLoading: boolean = useTimeline((s) => s.isLoading)
   const clap = useTimeline((s) => s.clap)
   const setClap = useTimeline((s) => s.setClap)
@@ -48,16 +42,6 @@ export function TopMenuFile() {
 
   const showWelcomeScreen = useUI((s) => s.showWelcomeScreen)
   const setShowWelcomeScreen = useUI((s) => s.setShowWelcomeScreen)
-
-  useEffect(() => {
-    ;(async () => {
-      if (!clapUrl) {
-        console.log('No clap URL provided')
-        return
-      }
-      await openClapUrl(clapUrl)
-    })()
-  }, [openClapUrl, clapUrl])
 
   // const setShowSettings = useUISettings(s => s.setShowSettings)
   useHotkeys('ctrl+o', () => openFilePicker(), { preventDefault: true }, [])
