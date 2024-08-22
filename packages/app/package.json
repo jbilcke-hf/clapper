@@ -89,6 +89,8 @@
     "@xyflow/react": "^12.0.3",
     "autoprefixer": "10.4.19",
     "base64-arraybuffer": "^1.0.2",
+    "bellhop-iframe": "^3.5.0",
+    "civitai": "^0.1.15",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^0.2.1",
