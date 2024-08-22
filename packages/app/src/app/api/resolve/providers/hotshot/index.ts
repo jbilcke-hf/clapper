@@ -13,6 +13,8 @@ export async function resolveSegment(
   // TODO: implement the Hotshot API
   // (current status: waiting to hear back)
 
+  // createHotshotVideo(...)
+
   throw new Error(
     `Clapper doesn't support ${request.segment.category} generation for provider "Hotshot". Please open a pull request with (working code) to solve this!`
   )
