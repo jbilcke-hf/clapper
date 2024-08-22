@@ -56,8 +56,6 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
 
   const isIframe = mode === ClapperIntegrationMode.IFRAME
 
-  useQueryStringLoader()
-
   // this has to be done at the root of the app, that way it can
   // perform its routine even when the monitor component is hidden
   useRenderLoop()
@@ -90,6 +88,9 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
   useEffect(() => {
     setHasBetaAccess(hasBetaAccess)
   }, [hasBetaAccess, setHasBetaAccess])
+
+
+  useQueryStringLoader()
 
   const iframeLayout = (
     <>
