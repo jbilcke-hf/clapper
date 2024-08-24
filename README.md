@@ -36,7 +36,7 @@ The whole the project is open-source.
 
 To participate, please join us on [Discord](https://discord.com/invite/AEruz9B92B).
 
-The roadmap is public, too: [Clapper roadmap](https://github.com/users/jbilcke-hf/projects/6/views/1).
+The roadmap is public, too: [Clapper roadmap](https://github.com/users/jbilcke-hf/projects/6/views/4).
 
 # Badges
 
