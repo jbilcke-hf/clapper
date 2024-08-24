@@ -49,6 +49,12 @@ export const useMonitor = create<MonitorStore>((set, get) => ({
     })
   },
 
+  setIsEmbedded: (isEmbedded: boolean) => {
+    set({
+      isEmbedded,
+    })
+  },
+
   checkIfPlaying: (): boolean => {
     return get().isPlaying
   },

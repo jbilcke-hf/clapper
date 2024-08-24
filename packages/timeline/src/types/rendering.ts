@@ -23,6 +23,19 @@ export enum RenderingStrategy {
   // !! this is hardcore! only GPU-rich people shoud use this feature! !!
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   ON_SCREEN_THEN_ALL = "ON_SCREEN_THEN_ALL",
+
+  // a special mode which only renders what is under the current playback cursor,
+  // plus also pre-generates the following videos according to a given buffer size,
+  // to try to ensure smooth streaming (smooth loading is only possible of the hardware
+  // is fast other. Otherwise we will have to display a loader or progression bar).
+  //
+  // - if the user watches the whole video, then it will cost as much as the ON_SCREEN_THEN_ALL option
+  //
+  // - but if the user only watches 10%, then they only have to pay for 10% (+ the buffer)
+  //
+  // - if the user clicks somewhere in the timeline during playback, the it buffers again,
+  //   but they also saves money (it won't compute the skipped segments)
+  BUFFERED_PLAYBACK_STREAMING = "BUFFERED_PLAYBACK_STREAMING"
 }
 
 export type SegmentResolver = (segment: TimelineSegment) => Promise<TimelineSegment>

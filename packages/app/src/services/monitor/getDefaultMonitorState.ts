@@ -6,6 +6,7 @@ export function getDefaultMonitorState(): MonitorState {
     lastTimelineUpdateAtInMs: 0,
     isPlaying: false,
     staticVideoRef: undefined,
+    isEmbedded: false,
   }
 
   return state

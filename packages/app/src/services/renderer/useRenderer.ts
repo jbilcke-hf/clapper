@@ -2,12 +2,23 @@
 
 import { create } from 'zustand'
 import { ClapOutputType, ClapSegmentCategory } from '@aitube/clap'
-import { BufferedSegments, RendererStore } from '@aitube/clapper-services'
-import { TimelineStore, useTimeline, TimelineSegment } from '@aitube/timeline'
+import {
+  BufferedSegments,
+  RendererStore,
+  RenderingStrategies,
+} from '@aitube/clapper-services'
+import {
+  TimelineStore,
+  useTimeline,
+  TimelineSegment,
+  RenderingStrategy,
+} from '@aitube/timeline'
 
 import { getDefaultRendererState } from './getDefaultRendererState'
 import { getSegmentCacheKey } from './getSegmentCacheKey'
 import { getDefaultBufferedSegments } from './getDefaultBufferedSegments'
+import { useMonitor } from '../monitor/useMonitor'
+import { useSettings } from '../settings'
 
 export const useRenderer = create<RendererStore>((set, get) => ({
   ...getDefaultRendererState(),
@@ -15,6 +26,42 @@ export const useRenderer = create<RendererStore>((set, get) => ({
   clear: () => {
     set({
       ...getDefaultRendererState(),
+    })
+  },
+
+  setUserDefinedRenderingStrategies: ({
+    imageRenderingStrategy: userDefinedImageRenderingStrategy,
+    videoRenderingStrategy: userDefinedVideoRenderingStrategy,
+    soundRenderingStrategy: userDefinedSoundRenderingStrategy,
+    voiceRenderingStrategy: userDefinedVoiceRenderingStrategy,
+    musicRenderingStrategy: userDefinedMusicRenderingStrategy,
+  }: RenderingStrategies) => {
+    // if the monitor is embedded, the imageRenderingStrategy is temporary bypassed
+    // to try to render all the segments in advance, to create a buffer
+    // this is a potentially expensive solution, so we might want to put
+    // some limits to that ex. the first 64 or something
+    const { isEmbedded } = useMonitor.getState()
+
+    // What we are doing here is that when we are in "embedded" video player mode,
+    // we bypass the image rendering strategy to render all the segments in advance
+    const imageRenderingStrategy = isEmbedded
+      ? RenderingStrategy.BUFFERED_PLAYBACK_STREAMING
+      : userDefinedImageRenderingStrategy
+    const videoRenderingStrategy =
+      /* isEmbedded ? RenderingStrategy.ON_SCREEN_THEN_ALL : */ userDefinedVideoRenderingStrategy
+    const soundRenderingStrategy =
+      /* isEmbedded ? RenderingStrategy.ON_SCREEN_THEN_ALL : */ userDefinedSoundRenderingStrategy
+    const voiceRenderingStrategy =
+      /* isEmbedded ? RenderingStrategy.ON_SCREEN_THEN_ALL : */ userDefinedVoiceRenderingStrategy
+    const musicRenderingStrategy =
+      /* isEmbedded ? RenderingStrategy.ON_SCREEN_THEN_ALL : */ userDefinedMusicRenderingStrategy
+
+    set({
+      imageRenderingStrategy,
+      videoRenderingStrategy,
+      soundRenderingStrategy,
+      voiceRenderingStrategy,
+      musicRenderingStrategy,
     })
   },
 

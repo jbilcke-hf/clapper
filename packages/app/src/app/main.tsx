@@ -89,7 +89,6 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
     setHasBetaAccess(hasBetaAccess)
   }, [hasBetaAccess, setHasBetaAccess])
 
-
   useQueryStringLoader()
 
   const iframeLayout = (
