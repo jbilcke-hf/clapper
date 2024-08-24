@@ -1,4 +1,4 @@
-import { ClapEntity } from "@aitube/clap"
+import { ClapEntity, ClapOutputType, ClapSegmentCategory } from "@aitube/clap"
 import { TimelineSegment } from "@aitube/timeline"
 
 export type ResolverState = {
@@ -48,13 +48,17 @@ export type ResolverControls = {
   /**
    * This resolve an entity (eg. a character or a location)
    * 
-   * This will generate for instance an image and a voice 
+   * This will generate for instance an image for the face and/or an audio file for the voice 
    * for the entity, based on the entity description.
    * 
-   * @param segment 
+   * By default, both the face and the voice will be generated.
+   * But this can be override
+   * 
+   * @param entity
+   * @param field (optional) 
    * @returns 
    */
-  resolveEntity: (entity: ClapEntity) => Promise<ClapEntity>
+  resolveEntity: (entity: ClapEntity, field?: 'face' | 'voice') => Promise<ClapEntity>
 
   /**
    * This resolve a segment

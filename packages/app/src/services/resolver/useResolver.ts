@@ -479,49 +479,68 @@ export const useResolver = create<ResolverStore>((set, get) => ({
    * @param entity
    * @returns
    */
-  resolveEntity: async (entity: ClapEntity): Promise<ClapEntity> => {
-    // note: if the entity has an image id or an audio id, we proceeed anyway.
+  resolveEntity: async (
+    entity: ClapEntity,
+    field?: 'face' | 'voice'
+  ): Promise<ClapEntity> => {
+    // note: if the entity has an image id or an audio id, we proceed anyway.
+    
     // that way the parent function can decide to re-generate the entity at any time.
 
-    // we create a segment that will only be used to create an identity
-    // picture of our character
-    const segment: TimelineSegment = await clapSegmentToTimelineSegment(
-      newSegment({
-        category: ClapSegmentCategory.STORYBOARD,
-        prompt: getCharacterReferencePrompt(entity),
-      })
-    )
-
-    let imageId = ''
-
-    try {
-      const newSegmentData = await resolve({
-        segment,
-        prompts: getDefaultResolveRequestPrompts({
-          image: { positive: segment.prompt },
-        }),
-      })
-      imageId = `${newSegmentData.assetUrl || ''}`
-    } catch (err) {
-      console.error(`useResolver.resolveEntity(): error: ${err}`)
+    if (!field || field === 'face') {
+      try {
+        const prompt = getCharacterReferencePrompt(entity)
+        const newSegmentData = await resolve({
+          segment: await clapSegmentToTimelineSegment(
+            newSegment({
+              category: ClapSegmentCategory.STORYBOARD,
+              prompt,
+            })
+          ),
+          prompts: getDefaultResolveRequestPrompts({
+            image: { positive: prompt },
+          }),
+        })
+        entity.imageId = `${newSegmentData.assetUrl || ''}`
+      } catch (err) {
+        console.error(
+          `useResolver.resolveEntity(): error when generating the face: ${err}`
+        )
+      }
     }
 
-    /*
-    try {
-      const newSegmentData = await resolve({
-        segment,
-        prompts: getDefaultResolveRequestPrompts({
-          TODO : do the audio!
-          image: { positive: segment.prompt }
-        }),
-      })
-      imageId = `${newSegmentData.assetUrl || ''}`
-    } catch (err) {
-      console.error(`useResolver.resolveEntity(): error: ${err}`)
-    }
-    */
+    if (!field || field === 'voice') {
+      try {
+        // we generate a random, novel voice
+        // TODO use the gender
+        const characterVoicePrompt = `A ${entity.age} years old ${entity.gender} is talking`
 
-    Object.assign(entity, { imageId })
+        const sampleDialoguePrompt = `The quick brown fox jumps over the lazy dog.
+A number of panicked Europeans appear to have reckoned the
+wildly volatile, vulnerable, and tiny bitcoin market a
+preferable alternative to their own banking system, even
+temporarily, signals a serious widening of the cracks
+between the northern and southern E.U. countries in the
+wake of the euro-zone debt crisis.`
+
+        const newSegmentData = await resolve({
+          segment: await clapSegmentToTimelineSegment(
+            newSegment({
+              category: ClapSegmentCategory.DIALOGUE,
+              prompt: sampleDialoguePrompt,
+            })
+          ),
+          prompts: getDefaultResolveRequestPrompts({
+            voice: { positive: characterVoicePrompt },
+          }),
+        })
+        entity.audioId = `${newSegmentData.assetUrl || ''}`
+      } catch (err) {
+        console.error(
+          `useResolver.resolveEntity(): error when generating the voice: ${err}`
+        )
+      }
+    }
 
     return entity
   },
