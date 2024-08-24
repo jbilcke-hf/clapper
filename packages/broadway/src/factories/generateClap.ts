@@ -43,9 +43,6 @@ export async function generateClap({
 
   const useCompactMode = !embedded
 
-  // const win = (window as any)
-  // win.debugJulian = segments
-
   let highestEndTimeInMs = 0
 
   const clapSegments: ClapSegment[] = segments.map(maybeSegment => {
