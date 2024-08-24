@@ -2,12 +2,16 @@
 
 import { create } from 'zustand'
 import {
+  ClapAssetSource,
   ClapEntity,
   ClapOutputType,
   ClapSegmentCategory,
   ClapSegmentFilteringMode,
   ClapSegmentStatus,
   filterSegments,
+  generateSeed,
+  newSegment,
+  UUID,
 } from '@aitube/clap'
 import {
   RenderingStrategy,
@@ -17,6 +21,7 @@ import {
   SegmentVisibility,
   segmentVisibilityPriority,
   TimelineSegment,
+  clapSegmentToTimelineSegment,
 } from '@aitube/timeline'
 import {
   getBackgroundAudioPrompt,
@@ -24,13 +29,23 @@ import {
   getMusicPrompt,
   getSpeechForegroundAudioPrompt,
   getVideoPrompt,
+  getCharacterReferencePrompt,
 } from '@aitube/engine'
-import { ResolverStore } from '@aitube/clapper-services'
+import {
+  RendererState,
+  RenderingBufferSizes,
+  RenderingStrategies,
+  ResolverStore,
+} from '@aitube/clapper-services'
 
 import { getDefaultResolverState } from './getDefaultResolverState'
 import { useSettings } from '../settings'
 import { DEFAULT_WAIT_TIME_IF_NOTHING_TO_DO_IN_MS } from './constants'
 import { ResolveRequest, ResolveRequestPrompts } from '@aitube/clapper-services'
+import { useMonitor } from '../monitor/useMonitor'
+import { useRenderer } from '../renderer'
+import { getDefaultResolveRequestPrompts } from './getDefaultResolveRequestPrompts'
+import { resolve } from '../api/resolve'
 
 export const useResolver = create<ResolverStore>((set, get) => ({
   ...getDefaultResolverState(),
@@ -59,13 +74,32 @@ export const useResolver = create<ResolverStore>((set, get) => ({
    * @returns
    */
   runLoop: async (): Promise<void> => {
+    const renderer: RendererState = useRenderer.getState()
+    const timeline: TimelineStore = useTimeline.getState()
+
+    // note: we read the rendering strategies from the renderer, not from the settings
+    // that's because ultimately it is Clapper and the Renderer module which decide which
+    // strategy to use, and override user settings (eg. playback takes precedence over
+    // whatever the user set)
     const {
       imageRenderingStrategy,
       videoRenderingStrategy,
       soundRenderingStrategy,
       voiceRenderingStrategy,
       musicRenderingStrategy,
-    } = useSettings.getState()
+    }: RenderingStrategies = renderer
+
+    // Tells how many segments should be renderer in advanced during playback, for each segment category
+    const {
+      imageBufferSize,
+      videoBufferSize,
+      soundBufferSize,
+      voiceBufferSize,
+      musicBufferSize,
+    }: RenderingBufferSizes = renderer
+
+    // TODO @julian-hf: we have the buffer sizes, but we don't yet have a way to tell how much the buffer
+    // are filled. This could be done simply by counting each time we run the loop
 
     const runLoopAgain = (
       waitTimeIfNothingToDoInMs = DEFAULT_WAIT_TIME_IF_NOTHING_TO_DO_IN_MS
@@ -79,13 +113,13 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     // otherwise we won't be able to get the status of current tasks
 
     // console.log(`useResolver.runLoop()`)
-    const timelineState: TimelineStore = useTimeline.getState()
+
     const {
       visibleSegments,
       loadedSegments,
       segments: allSegments,
       resolveSegment,
-    } = timelineState
+    } = timeline
 
     // ------------------------------------------------------------------------------------------------
     //
@@ -164,7 +198,9 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
         if (
           s.visibility === SegmentVisibility.HIDDEN &&
-          videoRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
+          videoRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL &&
+          videoRenderingStrategy !==
+            RenderingStrategy.BUFFERED_PLAYBACK_STREAMING
         ) {
           continue
         } else if (
@@ -212,7 +248,9 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
         if (
           s.visibility === SegmentVisibility.HIDDEN &&
-          imageRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
+          imageRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL &&
+          imageRenderingStrategy !==
+            RenderingStrategy.BUFFERED_PLAYBACK_STREAMING
         ) {
           continue
         } else if (
@@ -258,7 +296,9 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
         if (
           s.visibility === SegmentVisibility.HIDDEN &&
-          voiceRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
+          voiceRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL &&
+          voiceRenderingStrategy !==
+            RenderingStrategy.BUFFERED_PLAYBACK_STREAMING
         ) {
           continue
         } else if (
@@ -301,7 +341,9 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
         if (
           s.visibility === SegmentVisibility.HIDDEN &&
-          soundRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
+          soundRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL &&
+          soundRenderingStrategy !==
+            RenderingStrategy.BUFFERED_PLAYBACK_STREAMING
         ) {
           continue
         } else if (
@@ -344,7 +386,9 @@ export const useResolver = create<ResolverStore>((set, get) => ({
 
         if (
           s.visibility === SegmentVisibility.HIDDEN &&
-          musicRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL
+          musicRenderingStrategy !== RenderingStrategy.ON_SCREEN_THEN_ALL &&
+          musicRenderingStrategy !==
+            RenderingStrategy.BUFFERED_PLAYBACK_STREAMING
         ) {
           continue
         } else if (
@@ -432,11 +476,54 @@ export const useResolver = create<ResolverStore>((set, get) => ({
    * This will generate for instance an image and a voice
    * for the entity, based on the entity description.
    *
-   * @param segment
+   * @param entity
    * @returns
    */
   resolveEntity: async (entity: ClapEntity): Promise<ClapEntity> => {
-    throw new Error('Not implemented (TODO by @Julian)')
+    // note: if the entity has an image id or an audio id, we proceeed anyway.
+    // that way the parent function can decide to re-generate the entity at any time.
+
+    // we create a segment that will only be used to create an identity
+    // picture of our character
+    const segment: TimelineSegment = await clapSegmentToTimelineSegment(
+      newSegment({
+        category: ClapSegmentCategory.STORYBOARD,
+        prompt: getCharacterReferencePrompt(entity),
+      })
+    )
+
+    let imageId = ''
+
+    try {
+      const newSegmentData = await resolve({
+        segment,
+        prompts: getDefaultResolveRequestPrompts({
+          image: { positive: segment.prompt },
+        }),
+      })
+      imageId = `${newSegmentData.assetUrl || ''}`
+    } catch (err) {
+      console.error(`useResolver.resolveEntity(): error: ${err}`)
+    }
+
+    /*
+    try {
+      const newSegmentData = await resolve({
+        segment,
+        prompts: getDefaultResolveRequestPrompts({
+          TODO : do the audio!
+          image: { positive: segment.prompt }
+        }),
+      })
+      imageId = `${newSegmentData.assetUrl || ''}`
+    } catch (err) {
+      console.error(`useResolver.resolveEntity(): error: ${err}`)
+    }
+    */
+
+    Object.assign(entity, { imageId })
+
+    return entity
   },
 
   /**
@@ -463,7 +550,6 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     // that's because resolveSegment is 100% asynchronous,
     // meaning it might be called on invisible segments too!
     const {
-      meta,
       entityIndex,
       segments: allSegments,
       trackSilentChangeInSegment,
@@ -542,67 +628,50 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     // note: not all AI models will support those parameters.
     // in 2024, even the "best" proprietary video models like Sora, Veo, Kling, Gen-3, Dream Machine etc..
     // don't support voice input for lip syncing, for instance.
-    const prompts: ResolveRequestPrompts = {
+    const prompts: ResolveRequestPrompts = getDefaultResolveRequestPrompts({
       image: {
         // the "identification picture" of the character, if available
-        identity: `${mainCharacterEntity?.imageId || ''}`,
+        identity: mainCharacterEntity?.imageId,
         positive: positiveImagePrompt,
         negative: negativeImagePrompt,
       },
       video: {
         // image to animate
-        image: `${storyboard?.assetUrl || ''}`,
+        image: storyboard?.assetUrl,
 
         // dialogue line to lip-sync
-        voice: `${dialogue?.assetUrl || ''}`,
+        voice: dialogue?.assetUrl,
       },
       voice: {
-        identity: `${mainCharacterEntity?.audioId || ''}`,
+        identity: mainCharacterEntity?.audioId,
         positive: positiveVoicePrompt,
-        negative: '',
+        // negative: '',
       },
       audio: {
         positive: positiveAudioPrompt,
-        negative: '',
+        // negative: '',
       },
       music: {
         positive: positiveMusicPrompt,
-        negative: '',
+        // negative: '',
       },
-    }
-
-    const serializableSegment = { ...segment }
-    // we delete things that cannot be serialized properly
-    delete serializableSegment.scene
-    delete serializableSegment.audioBuffer
-    serializableSegment.textures = {}
-
-    const request: ResolveRequest = {
-      settings,
-      segment: serializableSegment,
-      segments,
-      entities,
-      speakingCharactersIds,
-      generalCharactersIds,
-      mainCharacterId,
-      mainCharacterEntity,
-      meta,
-      prompts,
-    }
+    })
 
     try {
-      const res = await fetch('/api/resolve', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(request),
-      })
-      // console.log(`useResolver.resolveSegment(): result from /api.render:`, res)
-
       // note: this isn't really a "full" TimelineSegment,
       // it will miss some data that cannot be serialized
-      const newSegmentData = (await res.json()) as TimelineSegment
+      const newSegmentData = await resolve({
+        segment,
+        segments,
+        entities,
+        speakingCharactersIds,
+        generalCharactersIds,
+        mainCharacterId,
+        mainCharacterEntity,
+        prompts,
+      })
+
+      // console.log(`useResolver.resolveSegment(): result from /api.render:`, res)
 
       // console.log(`useResolver.resolveSegment(): newSegmentData`, newSegmentData)
 

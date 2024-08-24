@@ -153,6 +153,8 @@ export {
   ActiveSegments,
   UpcomingSegments,
   BufferedSegments,
+  RenderingStrategies,
+  RenderingBufferSizes,
   RendererState,
   RendererControls,
   RendererStore,

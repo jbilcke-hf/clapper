@@ -6,12 +6,13 @@ import { useQueryStringParams } from '@/lib/hooks'
 import { useAssistant, useIO } from '@/services'
 
 export function useQueryStringLoader() {
-  const { clapUrl, startAt, interactive, prompt, imageStrategy } = useQueryStringParams({
-    // clapUrl: `/samples/test.clap`,
-    // clapUrl: `/samples/Afterglow%20v10%20X%20Rewrite%20Bryan%20E.%20Harris%202023.clap`,
-  })
+  const { clapUrl, startAt, interactive, prompt, imageStrategy } =
+    useQueryStringParams({
+      // clapUrl: `/samples/test.clap`,
+      // clapUrl: `/samples/Afterglow%20v10%20X%20Rewrite%20Bryan%20E.%20Harris%202023.clap`,
+    })
 
-  const processUserMessage = useAssistant(s => s.processUserMessage)
+  const processUserMessage = useAssistant((s) => s.processUserMessage)
   const openClapUrl = useIO((s) => s.openClapUrl)
 
   useEffect(() => {

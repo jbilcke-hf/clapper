@@ -34,7 +34,12 @@ export enum ClapSegmentCategory {
   // otherwise some web browsers might not be able to display it
   VIDEO = "VIDEO",
 
-  // a storyboard image, eg. jpg, png, webp, heic (note: most of the apps compatible with .clap prefer to work with jpg and png)
+  // the name of this field is a bit confusing,
+  // we are going to rename it to IMAGE = "IMAGE"
+  // (because the storyboard is the board and timeline of drawing and picutes)
+  //
+  // format can currently be jpg, png, webp, heic
+  // (note: most of the apps compatible with .clap prefer to work with jpg and png)
   STORYBOARD = "STORYBOARD",
 
   // a transition between two shots (eg. a cross-fade)

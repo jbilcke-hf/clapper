@@ -10,6 +10,8 @@ import { useRenderer } from './useRenderer'
 import { useAudio } from '@/services/audio/useAudio'
 import { useMonitor } from '../monitor/useMonitor'
 import { useEffect, useRef } from 'react'
+import { useSettings } from '../settings'
+import { set } from 'date-fns'
 
 /**
  * Runs a rendering loop
@@ -33,6 +35,33 @@ export function useRenderLoop(): void {
   const preloadSegmentKey = useRenderer((s) => s.preloadSegmentKey)
 
   const timeoutRef = useRef<NodeJS.Timeout>()
+
+  const setUserDefinedRenderingStrategies = useRenderer(
+    (s) => s.setUserDefinedRenderingStrategies
+  )
+
+  // those are the currently active rendering strategies determined by the renderer
+  // this is different from the image rendering preferences (what the user has set)
+  const imageRenderingStrategy = useSettings((s) => s.imageRenderingStrategy)
+  const videoRenderingStrategy = useSettings((s) => s.videoRenderingStrategy)
+  const soundRenderingStrategy = useSettings((s) => s.soundRenderingStrategy)
+  const voiceRenderingStrategy = useSettings((s) => s.voiceRenderingStrategy)
+  const musicRenderingStrategy = useSettings((s) => s.musicRenderingStrategy)
+  useEffect(() => {
+    setUserDefinedRenderingStrategies({
+      imageRenderingStrategy,
+      videoRenderingStrategy,
+      soundRenderingStrategy,
+      voiceRenderingStrategy,
+      musicRenderingStrategy,
+    })
+  }, [
+    imageRenderingStrategy,
+    videoRenderingStrategy,
+    soundRenderingStrategy,
+    voiceRenderingStrategy,
+    musicRenderingStrategy,
+  ])
 
   // used to control transitions between buffers
   useEffect(() => {

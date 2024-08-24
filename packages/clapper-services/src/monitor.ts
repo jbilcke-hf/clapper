@@ -3,6 +3,7 @@ export type MonitorState = {
   lastTimelineUpdateAtInMs: number
   isPlaying: boolean
   staticVideoRef?: HTMLVideoElement
+  isEmbedded: boolean
 }
 
 export type MonitorControls = {
@@ -10,6 +11,8 @@ export type MonitorControls = {
 
   setStaticVideoRef: (staticVideoRef: HTMLVideoElement) => void
 
+  setIsEmbedded: (isEmbedded: boolean) => void
+  
   checkIfPlaying: () => boolean
   /**
    *  Play/pause the project timeline (video and audio)

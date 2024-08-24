@@ -24,6 +24,8 @@ export function parseRenderingStrategy(input: any, defaultStrategy?: RenderingSt
   }
   else if (unknownString === "on_screen_then_all") {
     strategy = RenderingStrategy.ON_SCREEN_THEN_ALL
+  } else if (unknownString === "buffered_playback_streaming") {
+    strategy = RenderingStrategy.BUFFERED_PLAYBACK_STREAMING
   } else {
     strategy = RenderingStrategy.ON_DEMAND
   }

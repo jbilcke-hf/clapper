@@ -11,7 +11,7 @@ export type ResolverState = {
   // request have have already be sent to the API providers
   // will still be honored, which is why the number of pending
   // requests won't drop to 0 immediately
-  isPaused: boolean
+  isPaused: boolean 
 
   defaultParallelismQuotas: {
     video: number

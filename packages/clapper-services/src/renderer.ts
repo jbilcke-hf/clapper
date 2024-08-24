@@ -1,4 +1,28 @@
-import { TimelineSegment } from "@aitube/timeline"
+import { RenderingStrategy, TimelineSegment } from "@aitube/timeline"
+
+/**
+ * those are the currently active rendering strategies determined by the renderer
+ * this is different from the image rendering preferences (what the user has set)
+ */
+export type RenderingStrategies = {
+  imageRenderingStrategy: RenderingStrategy
+  videoRenderingStrategy: RenderingStrategy
+  soundRenderingStrategy: RenderingStrategy
+  voiceRenderingStrategy: RenderingStrategy
+  musicRenderingStrategy: RenderingStrategy
+}
+
+/**
+ * Tells how many segments should be renderer in advanced during playback,
+ * for each segment category
+ */
+export type RenderingBufferSizes = {
+  imageBufferSize: number
+  videoBufferSize: number
+  soundBufferSize: number
+  voiceBufferSize: number
+  musicBufferSize: number
+}
 
 export type ActiveSegments = {
   activeSegmentsCacheKey: string
@@ -17,7 +41,8 @@ export type UpcomingSegments = {
 
 export type BufferedSegments = ActiveSegments & UpcomingSegments
 
-export type RendererState = {
+export type RendererState = RenderingStrategies & RenderingBufferSizes & {
+  
   bufferedSegments: BufferedSegments
 
   // various helpers to manage buffering,
@@ -34,6 +59,8 @@ export type RendererState = {
 }
 
 export type RendererControls = {
+
+  setUserDefinedRenderingStrategies: (strategies: RenderingStrategies) => void
 
   // used to clear the renderer eg. when we load a new project
   clear: () => void
