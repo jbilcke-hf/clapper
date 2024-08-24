@@ -39,6 +39,7 @@ if (typeof window !== 'undefined') {
   // w.useEditors = useEditors
   // w.useWorkflowEditor = useWorkflowEditor
   // w.useIO = useIO
+  // w.useSettings = useSettings
 
   w.useEntityEditor = useEntityEditor
   w.useFilterEditor = useFilterEditor
@@ -49,7 +50,6 @@ if (typeof window !== 'undefined') {
   w.useMonitor = useMonitor
   w.useRenderer = useRenderer
   w.useResolver = useResolver
-  w.useSettings = useSettings
   w.useSimulator = useSimulator
   w.useUI = useUI
   w.useWindows = useWindows

@@ -36,8 +36,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       return
     }
     
-    (window as any).useTimeline = useTimeline
-
     set({ isLoading: true })
 
     // actually you know what.. let's drop the concept of final video for the moment

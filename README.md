@@ -30,6 +30,14 @@ To this end I am also working on a Director's Mode, where you can just put the v
 
 A public instance of Clapper is currently hosted on [Hugging Face](https://huggingface.co/spaces/jbilcke-hf/clapper/tree/main), you can try it at [Clapper.app](https://clapper.app/)
 
+# Open-source philosophy
+
+The whole the project is open-source.
+
+To participate, please join us on [Discord](https://discord.com/invite/AEruz9B92B).
+
+The roadmap is public, too: [https://github.com/users/jbilcke-hf/projects/6/views/1](Clapper roadmap).
+
 # Badges
 
 - Build and tests status: [![E2E & Unit Tests](https://github.com/jbilcke-hf/clapper/actions/workflows/tests.yml/badge.svg)](https://github.com/jbilcke-hf/clapper/actions/workflows/tests.yml)
@@ -49,12 +57,6 @@ Those generous sponsors are paying for code bounties:
 ### Sponsor specific features
 
 !!  ATTENTION: there is currently an issue with the platform we initially used for bounties. We are looking for an alternative solution. !!
-
-If you wish to sponsor the project, help attract new developers, or promote a specific feature faster, you can open a bounty for a specific ticket (eg `"fix music segment duration"`, `"add support for Adobe Premiere Pro export"`, `"finish .fbx integration"`) and open-source community members will be able to submit pull requests to solve them.
-
-If you submit (to pay) or take on (to earn) a bounty, please post a message in the GitHub thread and/or on [Discord](https://discord.com/invite/AEruz9B92B) to help everyone coordinate around it.
-
-I am currently working to add documentation to help onboard new developers, this should help new people taking on bounties.
 
 ## For developers
 
