@@ -23,6 +23,7 @@ import { SettingsCategory } from '@aitube/clapper-services'
 import { useResolver } from '@/services/resolver/useResolver'
 import { ImageDepthWorkflows } from '../lists/ImageDepthWorkflows'
 import { ImageSegmentationWorkflows } from '../lists/ImageSegmentationWorkflows'
+import { ImageFaceswapWorkflows } from '../lists/ImageFaceswapWorkflows'
 
 export function TopMenuImage() {
   const hasBetaAccess = useUI((s) => s.hasBetaAccess)
@@ -53,6 +54,7 @@ export function TopMenuImage() {
           </MenubarItem>
           <MenubarSeparator />
           <ImageGenerationWorkflows />
+          <ImageFaceswapWorkflows />
           {hasBetaAccess && (
             <>
               <ImageUpscalingWorkflows />

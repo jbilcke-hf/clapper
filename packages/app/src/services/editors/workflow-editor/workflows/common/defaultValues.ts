@@ -97,6 +97,26 @@ export const genericImageUrl: ClapInputField = {
   defaultValue: '',
 }
 
+export const genericBaseImageUrl: ClapInputField = {
+  id: 'base_image_url',
+  label: 'Base Image URL',
+  description: 'Base Image URL',
+  category: ClapInputCategory.IMAGE_URL,
+  type: 'string',
+  allowedValues: [],
+  defaultValue: '',
+}
+
+export const genericSwapImageUrl: ClapInputField = {
+  id: 'swap_image_url',
+  label: 'Swap Image URL',
+  description: 'Swap Image URL',
+  category: ClapInputCategory.IMAGE_URL,
+  type: 'string',
+  allowedValues: [],
+  defaultValue: '',
+}
+
 export const genericVideo: ClapInputField = {
   id: 'video',
   label: 'Video',
@@ -145,6 +165,15 @@ export const genericLoras: ClapInputField = {
   type: 'string',
   allowedValues: [],
   defaultValue: '',
+}
+
+export const genericReferenceImages: ClapInputField = {
+  id: 'reference_images',
+  label: 'Reference Images',
+  description: 'List of images to use as reference',
+  category: ClapInputCategory.IMAGE_URLS,
+  type: 'string[]',
+  defaultValue: [],
 }
 
 export const genericInferenceSteps: ClapInputField = {

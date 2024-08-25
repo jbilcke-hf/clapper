@@ -24,6 +24,9 @@ import {
   genericImageUrl,
   genericLora,
   genericLoras,
+  genericReferenceImages,
+  genericBaseImageUrl,
+  genericSwapImageUrl,
 } from '../common/defaultValues'
 import { sampleDrivingVideo, sampleVoice } from '@/lib/core/constants'
 
@@ -32,13 +35,54 @@ import { sampleDrivingVideo, sampleVoice } from '@/lib/core/constants'
 TODO: add those as well
 
 "fal-ai/photomaker",
-"fal-ai/pulid",
 "fal-ai/image-to-image",
 "fal-ai/omni-zero",
 
 */
 
 export const defaultWorkflows: ClapWorkflow[] = [
+  {
+    id: 'falai://fal-ai/face-swap',
+    label: 'Face Swap',
+    description: '',
+    tags: ['image'],
+    author: '',
+    thumbnailUrl: '',
+
+    // they are using Roop, no? is it why it's for "research only"?
+    // https://fal.ai/models/fal-ai/face-swap
+    nonCommercial: true,
+
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.FALAI,
+    category: ClapWorkflowCategory.IMAGE_FACESWAP,
+    data: 'fal-ai/face-swap',
+    schema: '',
+    inputFields: [genericBaseImageUrl, genericSwapImageUrl],
+    inputValues: {
+      [genericBaseImageUrl.id]: genericBaseImageUrl.defaultValue,
+      [genericSwapImageUrl.id]: genericSwapImageUrl.defaultValue,
+    },
+  },
+  {
+    id: 'falai://fal-ai/pulid',
+    label: 'PuLID (with Flux Schnell fallback)',
+    description: '',
+    tags: ['image'],
+    author: '',
+    thumbnailUrl: '',
+    nonCommercial: false,
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.FALAI,
+    category: ClapWorkflowCategory.IMAGE_GENERATION,
+    data: 'fal-ai/pulid',
+    schema: '',
+    inputFields: [genericPrompt, genericReferenceImages],
+    inputValues: {
+      [genericPrompt.id]: genericPrompt.defaultValue,
+      [genericReferenceImages.id]: genericReferenceImages.defaultValue,
+    },
+  },
   {
     id: 'falai://fal-ai/stable-video',
     label: 'Stable Video Diffusion',
@@ -69,7 +113,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
   },
   {
     id: 'falai://fal-ai/flux-general',
-    label: 'Flux.1-[DEV] with LoRAs',
+    label: 'Flux.1-[DEV] LoRA',
     description: '',
     tags: ['Flux', 'LoRA'],
     author: '',
@@ -241,7 +285,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
   },
   {
     id: 'falai://fal-ai/stable-diffusion-v3-medium',
-    label: 'Stable Diffusion 3 (Medium)',
+    label: 'SD3 (Medium)',
     description: '',
     tags: ['SD3'],
     author: 'Stability AI',

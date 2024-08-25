@@ -1,4 +1,4 @@
-export type FalAiImageResponse = {
+export type FalAiImagesResponse = {
   prompt: string
   timings: { inference: number }
   has_nsfw_concepts: boolean[]
@@ -7,8 +7,25 @@ export type FalAiImageResponse = {
     url: string
     width: number
     height: number
+    file_name: string
+    file_size: string
     content_type: string
   }[]
+}
+
+export type FalAiImageResponse = {
+  prompt: string
+  timings: { inference: number }
+  has_nsfw_concepts: boolean[]
+  seed: number
+  image: {
+    url: string
+    width: number
+    height: number
+    file_name: string
+    file_size: string
+    content_type: string
+  }
 }
 
 export type FalAiVideoResponse = {

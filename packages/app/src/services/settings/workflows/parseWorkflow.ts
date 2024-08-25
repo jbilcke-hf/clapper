@@ -1,16 +1,11 @@
 import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/utils'
-import {
-  findWorkflows,
-  WorkflowSearchResults,
-} from '@/components/toolbars/top-menu/lists/getWorkflowProviders'
-import { useWorkflowEditor } from '@/services/editors'
+
 import {
   ClapWorkflow,
   ClapWorkflowCategory,
   ClapWorkflowEngine,
   ClapWorkflowProvider,
 } from '@aitube/clap'
-import { WorkflowEditorStore } from '@aitube/clapper-services'
 
 export function parseWorkflow(
   input: string,
@@ -61,22 +56,6 @@ export function parseWorkflow(
     }
     return maybeWorkflow
   } catch (err) {
-    // console.log("error:", err)
-    // MIGRATION OF OLDER SETTINGS
-    // in case the user has an old version of the settings, the "workflow"
-    // will be a simple ID. So we try to recover that
-    const results: WorkflowSearchResults = findWorkflows(
-      useWorkflowEditor.getState().availableWorkflows,
-      { workflowId: input }
-    )
-
-    if (results.workflow) {
-      return results.workflow
-    }
-
-    // for now let's assume we ave two cases:
-    // 1. the user has an old version of the settings, and we need to migrate it
-    // 2. the user has an empty
     return noWorkflow
   }
 }

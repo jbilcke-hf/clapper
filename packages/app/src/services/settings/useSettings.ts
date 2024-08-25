@@ -360,6 +360,15 @@ export const useSettings = create<SettingsStore>()(
             : defaultImageGenerationTurboWorkflow,
         })
       },
+      setImageFaceswapWorkflow: (imageFaceswapWorkflow?: ClapWorkflow) => {
+        const { imageFaceswapWorkflow: defaultImageFaceswapWorkflow } =
+          getDefaultSettingsState()
+        set({
+          imageFaceswapWorkflow: imageFaceswapWorkflow
+            ? JSON.stringify(imageFaceswapWorkflow)
+            : defaultImageFaceswapWorkflow,
+        })
+      },
       setImageUpscalingWorkflow: (imageUpscalingWorkflow?: ClapWorkflow) => {
         const { imageUpscalingWorkflow: defaultImageUpscalingWorkflow } =
           getDefaultSettingsState()
@@ -396,6 +405,15 @@ export const useSettings = create<SettingsStore>()(
           videoGenerationWorkflow: videoGenerationWorkflow
             ? JSON.stringify(videoGenerationWorkflow)
             : defaultVideoGenerationWorkflow,
+        })
+      },
+      setVideoFaceswapWorkflow: (videoFaceswapWorkflow?: ClapWorkflow) => {
+        const { videoFaceswapWorkflow: defaultVideoFaceswapWorkflow } =
+          getDefaultSettingsState()
+        set({
+          videoFaceswapWorkflow: videoFaceswapWorkflow
+            ? JSON.stringify(videoFaceswapWorkflow)
+            : defaultVideoFaceswapWorkflow,
         })
       },
       setVideoUpscalingWorkflow: (videoUpscalingWorkflow?: ClapWorkflow) => {
@@ -784,6 +802,11 @@ export const useSettings = create<SettingsStore>()(
           ClapWorkflowCategory.IMAGE_GENERATION
         )
 
+        const imageFaceswapWorkflow = parseWorkflow(
+          state.imageFaceswapWorkflow || defaultSettings.imageFaceswapWorkflow,
+          ClapWorkflowCategory.IMAGE_FACESWAP
+        )
+
         const imageUpscalingWorkflow = parseWorkflow(
           state.imageUpscalingWorkflow ||
             defaultSettings.imageUpscalingWorkflow,
@@ -805,6 +828,11 @@ export const useSettings = create<SettingsStore>()(
           state.videoGenerationWorkflow ||
             defaultSettings.videoGenerationWorkflow,
           ClapWorkflowCategory.VIDEO_GENERATION
+        )
+
+        const videoFaceswapWorkflow = parseWorkflow(
+          state.videoFaceswapWorkflow || defaultSettings.videoFaceswapWorkflow,
+          ClapWorkflowCategory.VIDEO_FACESWAP
         )
 
         const videoDepthWorkflow = parseWorkflow(
@@ -921,10 +949,12 @@ export const useSettings = create<SettingsStore>()(
           assistantTurboWorkflow,
           imageGenerationWorkflow,
           imageGenerationTurboWorkflow,
+          imageFaceswapWorkflow,
           imageUpscalingWorkflow,
           imageDepthWorkflow,
           imageSegmentationWorkflow,
           videoGenerationWorkflow,
+          videoFaceswapWorkflow,
           videoDepthWorkflow,
           videoSegmentationWorkflow,
           videoUpscalingWorkflow,

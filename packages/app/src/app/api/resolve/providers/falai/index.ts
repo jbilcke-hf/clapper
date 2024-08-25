@@ -5,6 +5,7 @@ import { ClapMediaOrientation, ClapSegmentCategory } from '@aitube/clap'
 import {
   FalAiAudioResponse,
   FalAiImageResponse,
+  FalAiImagesResponse,
   FalAiSpeechResponse,
   FalAiVideoResponse,
 } from './types'
@@ -40,7 +41,9 @@ export async function resolveSegment(
       return segment
     }
 
-    let result: FalAiImageResponse | undefined = undefined
+    let result: FalAiImagesResponse | undefined = undefined
+
+    let isUsingIntegratedFaceId = false
 
     if (model === 'fal-ai/pulid') {
       if (!request.prompts.image.identity) {
@@ -48,7 +51,9 @@ export async function resolveSegment(
         // console.log(`warning: user selected model ${request.settings.falAiModelForImage}, but no character was found. Falling back to fal-ai/flux-pro`)
 
         // dirty fix to fallback to a non-face model
-        model = 'fal-ai/flux-pro'
+        model = 'fal-ai/flux/schnell'
+      } else {
+        isUsingIntegratedFaceId = true
       }
     }
 
@@ -100,7 +105,7 @@ export async function resolveSegment(
           enable_safety_checker:
             request.settings.censorNotForAllAudiencesContent,
         },
-      })) as FalAiImageResponse
+      })) as FalAiImagesResponse
     } else if (model === 'fal-ai/flux-general') {
       // note: this isn't the right place to do this, because maybe the LoRAs are dynamic
       const loraModel = getWorkflowLora(
@@ -135,7 +140,7 @@ export async function resolveSegment(
           enable_safety_checker:
             request.settings.censorNotForAllAudiencesContent,
         },
-      })) as FalAiImageResponse
+      })) as FalAiImagesResponse
     } else {
       result = (await fal.run(model, {
         input: {
@@ -150,11 +155,14 @@ export async function resolveSegment(
           enable_safety_checker:
             request.settings.censorNotForAllAudiencesContent,
         },
-      })) as FalAiImageResponse
+      })) as FalAiImagesResponse
     }
 
     if (request.settings.censorNotForAllAudiencesContent) {
-      if (result.has_nsfw_concepts.includes(true)) {
+      if (
+        Array.isArray(result.has_nsfw_concepts) &&
+        result.has_nsfw_concepts.includes(true)
+      ) {
         throw new Error(
           `The generated content has been filtered according to your safety settings`
         )
@@ -162,6 +170,47 @@ export async function resolveSegment(
     }
 
     segment.assetUrl = result.images[0]?.url || ''
+
+    const imageFaceswapWorkflowModel =
+      request.settings.imageFaceswapWorkflow.data || ''
+
+    if (!isUsingIntegratedFaceId && imageFaceswapWorkflowModel) {
+      try {
+        const faceSwapResult = (await fal.run(imageFaceswapWorkflowModel, {
+          input: {
+            base_image_url: segment.assetUrl,
+            swap_image_url: request.prompts.image.identity,
+
+            sync_mode: true,
+            num_images: 1,
+            enable_safety_checker:
+              request.settings.censorNotForAllAudiencesContent,
+          },
+        })) as FalAiImageResponse
+
+        // note how it is
+        const imageResult = faceSwapResult.image?.url || ''
+
+        if (!imageResult) {
+          throw new Error(`the generate image is empty`)
+        }
+
+        if (request.settings.censorNotForAllAudiencesContent) {
+          if (
+            Array.isArray(result.has_nsfw_concepts) &&
+            result.has_nsfw_concepts.includes(true)
+          ) {
+            throw new Error(
+              `The generated content has been filtered according to your safety settings`
+            )
+          }
+        }
+
+        segment.assetUrl = imageResult
+      } catch (err) {
+        console.error(`failed to run a face-swap using Fal.ai:`, err)
+      }
+    }
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
     model = request.settings.videoGenerationWorkflow.data || ''
 
@@ -190,7 +239,10 @@ export async function resolveSegment(
     })) as FalAiVideoResponse
 
     if (request.settings.censorNotForAllAudiencesContent) {
-      if (result.has_nsfw_concepts.includes(true)) {
+      if (
+        Array.isArray(result.has_nsfw_concepts) &&
+        result.has_nsfw_concepts.includes(true)
+      ) {
         throw new Error(
           `The generated content has been filtered according to your safety settings`
         )

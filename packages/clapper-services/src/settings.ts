@@ -92,10 +92,12 @@ export type SettingsState = BaseSettings & {
   assistantTurboWorkflow: string
   imageGenerationWorkflow: string
   imageGenerationTurboWorkflow: string
+  imageFaceswapWorkflow: string
   imageUpscalingWorkflow: string
   imageDepthWorkflow: string
   imageSegmentationWorkflow: string
   videoGenerationWorkflow: string
+  videoFaceswapWorkflow: string
   videoUpscalingWorkflow: string
   videoDepthWorkflow: string
   videoSegmentationWorkflow: string
@@ -111,10 +113,12 @@ export type RequestSettings = BaseSettings & {
   assistantTurboWorkflow: ClapWorkflow
   imageGenerationWorkflow: ClapWorkflow
   imageGenerationTurboWorkflow: ClapWorkflow
+  imageFaceswapWorkflow: ClapWorkflow
   imageUpscalingWorkflow: ClapWorkflow
   imageDepthWorkflow: ClapWorkflow
   imageSegmentationWorkflow: ClapWorkflow
   videoGenerationWorkflow: ClapWorkflow
+  videoFaceswapWorkflow: ClapWorkflow
   videoUpscalingWorkflow: ClapWorkflow
   videoDepthWorkflow: ClapWorkflow
   videoSegmentationWorkflow: ClapWorkflow
@@ -163,10 +167,12 @@ export type SettingsControls = {
   setAssistantTurboWorkflow: (assistantTurboWorkflow?: ClapWorkflow) => void
   setImageGenerationWorkflow: (imageGenerationWorkflow?: ClapWorkflow) => void
   setImageGenerationTurboWorkflow: (imageGenerationTurboWorkflow?: ClapWorkflow) => void
+  setImageFaceswapWorkflow: (imageFaceswapWorkflow?: ClapWorkflow) => void
   setImageUpscalingWorkflow: (imageUpscalingWorkflow?: ClapWorkflow) => void
   setImageDepthWorkflow: (imageDepthWorkflow?: ClapWorkflow) => void
   setImageSegmentationWorkflow: (imageSegmentationWorkflow?: ClapWorkflow) => void
   setVideoGenerationWorkflow: (videoGenerationWorkflow?: ClapWorkflow) => void
+  setVideoFaceswapWorkflow: (videoFaceswapWorkflow?: ClapWorkflow) => void
   setVideoDepthWorkflow: (videoDepthWorkflow?: ClapWorkflow) => void
   setVideoSegmentationWorkflow: (videoSegmentationWorkflow?: ClapWorkflow) => void
   setVideoUpscalingWorkflow: (videoUpscalingWorkflow?: ClapWorkflow) => void

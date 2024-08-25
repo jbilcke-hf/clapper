@@ -539,6 +539,10 @@ export async function analyzeScreenplay(
                 // TODO: put any other info we can get from the script
                 description: `${name} is a ${gender}`,
 
+                audioPrompt: `a ${age}yo american ${gender} called ${name}`,
+
+                imagePrompt: `a ${age}yo american ${gender} called ${name}`,
+
                 category: ClapSegmentCategory.CHARACTER,
                 age,
                 gender,
