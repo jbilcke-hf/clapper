@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
   const { workflow, provider, engine } =
     getSegmentWorkflowProviderAndEngine(request)
 
-    /*
+  /*
   console.log(`Resolving a ${request.segment.category} segment using:`, {
     workflow,
     provider,

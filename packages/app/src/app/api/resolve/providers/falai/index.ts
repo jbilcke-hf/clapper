@@ -12,6 +12,7 @@ import {
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
 import { sampleVoice } from '@/lib/core/constants'
 import { getWorkflowLora } from '@/services/editors/workflow-editor/workflows/common/loras/getWorkflowLora'
+import { runImageFaceSwap } from './runImageFaceSwap'
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -171,45 +172,10 @@ export async function resolveSegment(
 
     segment.assetUrl = result.images[0]?.url || ''
 
-    const imageFaceswapWorkflowModel =
-      request.settings.imageFaceswapWorkflow.data || ''
-
-    if (!isUsingIntegratedFaceId && imageFaceswapWorkflowModel) {
-      try {
-        const faceSwapResult = (await fal.run(imageFaceswapWorkflowModel, {
-          input: {
-            base_image_url: segment.assetUrl,
-            swap_image_url: request.prompts.image.identity,
-
-            sync_mode: true,
-            num_images: 1,
-            enable_safety_checker:
-              request.settings.censorNotForAllAudiencesContent,
-          },
-        })) as FalAiImageResponse
-
-        // note how it is
-        const imageResult = faceSwapResult.image?.url || ''
-
-        if (!imageResult) {
-          throw new Error(`the generate image is empty`)
-        }
-
-        if (request.settings.censorNotForAllAudiencesContent) {
-          if (
-            Array.isArray(result.has_nsfw_concepts) &&
-            result.has_nsfw_concepts.includes(true)
-          ) {
-            throw new Error(
-              `The generated content has been filtered according to your safety settings`
-            )
-          }
-        }
-
-        segment.assetUrl = imageResult
-      } catch (err) {
-        console.error(`failed to run a face-swap using Fal.ai:`, err)
-      }
+    // TODO move this to the router, so that we can use the Fal.ai
+    // face swap with other image providers
+    if (!isUsingIntegratedFaceId) {
+      await runImageFaceSwap(request)
     }
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
     model = request.settings.videoGenerationWorkflow.data || ''
