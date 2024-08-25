@@ -12,7 +12,12 @@ import {
   SettingsStore,
 } from '@aitube/clapper-services'
 import { useSettings } from '../settings'
-import { ClapSegmentCategory, newSegment } from '@aitube/clap'
+import {
+  ClapSegmentCategory,
+  ClapWorkflowEngine,
+  ClapWorkflowProvider,
+  newSegment,
+} from '@aitube/clap'
 import { getDefaultResolveRequestPrompts } from '../resolver/getDefaultResolveRequestPrompts'
 
 export async function resolve(
@@ -64,6 +69,18 @@ export async function resolve(
     mainCharacterEntity: req.mainCharacterEntity || undefined,
     meta,
     prompts: getDefaultResolveRequestPrompts(req.prompts),
+  }
+
+  if (
+    request.settings.imageGenerationWorkflow.provider ===
+      ClapWorkflowProvider.ANTHROPIC &&
+    request.settings.imageGenerationWorkflow.engine ===
+      ClapWorkflowEngine.REST_API
+  ) {
+    console.log(
+      `The request looks weird, as if your codebase just got re-generated using NextJS hot reload?`
+    )
+    return segment
   }
 
   const res = await fetch('/api/resolve', {

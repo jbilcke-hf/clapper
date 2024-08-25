@@ -447,6 +447,7 @@ export enum ClapInputCategory {
   IMAGE_URL = "IMAGE_URL",
   SOUND_URL = "SOUND_URL",
   VIDEO_URL = "VIDEO_URL",
+  IMAGE_URLS = "IMAGE_URLS",
   WIDTH = "WIDTH",
   HEIGHT = "HEIGHT",
   SEED = "SEED",
@@ -479,6 +480,11 @@ export type ClapInputFieldString = {
   type: 'string'
   allowedValues: string[]
   defaultValue: string
+}
+
+export type ClapInputFieldStrings = {
+  type: 'string[]'
+  defaultValue: string[]
 }
 
 export type ClapInputFieldBoolean = {
@@ -517,6 +523,12 @@ export type ClapInputField<T = Record<string, any>> = {
   category: ClapInputCategory
 
   /**
+   * Whether the field is optional or not
+   */
+  // note from Julian: do we need this now, or can we wait?
+  // isOptional: boolean
+
+  /**
    * If the input is composed by other inputs, useful
    * for grouping the inputs
    */
@@ -531,6 +543,7 @@ export type ClapInputField<T = Record<string, any>> = {
   | ClapInputFieldNumber
   | ClapInputFieldInteger
   | ClapInputFieldString
+  | ClapInputFieldStrings
   | ClapInputFieldBoolean
   | ClapInputFieldAny
 )
@@ -598,6 +611,7 @@ export enum ClapWorkflowProvider {
 export enum ClapWorkflowCategory {
   ASSISTANT = "ASSISTANT",
   IMAGE_GENERATION = "IMAGE_GENERATION",
+  IMAGE_FACESWAP = "iMAGE_FACESWAP",
   IMAGE_FILTERING = "IMAGE_FILTERING",
   IMAGE_UPSCALING = "IMAGE_UPSCALING",
   IMAGE_DEPTH_MAPPING = "IMAGE_DEPTH_MAPPING",
@@ -606,6 +620,7 @@ export enum ClapWorkflowCategory {
   SOUND_GENERATION = "SOUND_GENERATION",
   VOICE_GENERATION = "VOICE_GENERATION",
   VIDEO_GENERATION = "VIDEO_GENERATION",
+  VIDEO_FACESWAP = "VIDEO_FACESWAP",
   VIDEO_FILTERING = "VIDEO_FILTERING",
   VIDEO_UPSCALING = "VIDEO_UPSCALING",
   VIDEO_DEPTH_MAPPING = "VIDEO_DEPTH_MAPPING",

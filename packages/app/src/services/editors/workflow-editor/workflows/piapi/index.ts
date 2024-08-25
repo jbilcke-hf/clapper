@@ -9,7 +9,7 @@ import { genericImageUrl, genericPrompt } from '../common/defaultValues'
 export const piApiWorkflows: ClapWorkflow[] = [
   {
     id: 'piapi://mj/v2/imagine',
-    label: 'Midjourne Imagine',
+    label: 'Midjourney Imagine',
     description: '',
     tags: ['Midjourney'],
     author: '',

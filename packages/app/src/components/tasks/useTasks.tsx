@@ -178,18 +178,18 @@ export const useTasks = create<TasksStore>((set, get) => ({
           const status = t.task.status || 'deleted'
           const progress = t.task.progress || 0
 
-          console.log(
-            `useTasks[${id}]: checkStatus: checking task, current status is: "${status}"`
-          )
+          // console.log(
+          //   `useTasks[${id}]: checkStatus: checking task, current status is: "${status}"`
+          // )
           if (
             status === TaskStatus.ERROR ||
             status === TaskStatus.SUCCESS ||
             status === TaskStatus.DELETED ||
             status === TaskStatus.CANCELLED
           ) {
-            console.log(
-              `useTasks[${id}]: checkStatus: status is "${status}", interrupting task loop..`
-            )
+            // console.log(
+            //   `useTasks[${id}]: checkStatus: status is "${status}", interrupting task loop..`
+            // )
 
             // this call might be redundant
             if (status === TaskStatus.SUCCESS) {
@@ -197,17 +197,17 @@ export const useTasks = create<TasksStore>((set, get) => ({
             }
             resolve(status)
           } else if (progress >= 100) {
-            console.log(
-              `useTasks[${id}]: checkStatus: task is completed at 100%, interrupting task loop..`
-            )
+            // console.log(
+            //   `useTasks[${id}]: checkStatus: task is completed at 100%, interrupting task loop..`
+            // )
             // this call might be redundant
             get().setProgress(id, { isFinished: true })
             // get().setStatus(TaskStatus.SUCCESS, id)
             resolve(TaskStatus.SUCCESS)
           } else {
-            console.log(
-              `useTasks[${id}]: checkStatus: status is "${status}", continuing task loop..`
-            )
+            // console.log(
+            //   `useTasks[${id}]: checkStatus: status is "${status}", continuing task loop..`
+            // )
             setTimeout(checkStatus, 1000)
           }
         } catch (err) {
@@ -218,15 +218,17 @@ export const useTasks = create<TasksStore>((set, get) => ({
       checkStatus()
     })
 
-    toast.promise<TaskStatus>(task.promise, {
-      loading: <TaskStatusUpdate taskId={id} />,
-      success: (finalStatus) => {
-        return finalStatus === TaskStatus.SUCCESS
-          ? task.successMessage
-          : `Task ended`
-      },
-      error: 'Task aborted',
-    })
+    if (task.visibility === TaskVisibility.BACKGROUND) {
+      toast.promise<TaskStatus>(task.promise, {
+        loading: <TaskStatusUpdate taskId={id} />,
+        success: (finalStatus) => {
+          return finalStatus === TaskStatus.SUCCESS
+            ? task.successMessage
+            : `Task ended`
+        },
+        error: 'Task aborted',
+      })
+    }
 
     const { tasks } = get()
     set({
@@ -243,22 +245,22 @@ export const useTasks = create<TasksStore>((set, get) => ({
       }
       // oh, one last thing: let's launch-and-forget the actual task
 
-      console.log(
-        `useTasks[${id}]: launching the task runner in the background..`
-      )
+      // console.log(
+      //   `useTasks[${id}]: launching the task runner in the background..`
+      // )
 
       // we provide to the task runner a wait to get the current status
       // that wait long-running jobs will know when they have been cancelled and no longer needed
       const result = await task.run(() => {
         const remoteControl = get().get(id)!
         const status = remoteControl?.task?.status
-        console.log(
-          `useTasks[${id}]: task runner asked for current status (which is: "${status || 'deleted'}")`
-        )
+        // console.log(
+        //   `useTasks[${id}]: task runner asked for current status (which is: "${status || 'deleted'}")`
+        // )
         return status || 'deleted'
       })
 
-      console.log(`useTasks[${id}]: task runner ended with status: "${result}"`)
+      // console.log(`useTasks[${id}]: task runner ended with status: "${result}"`)
       get().setProgress(id, { isFinished: true })
       // get().setStatus(result, id)
     }, 100)
@@ -280,11 +282,11 @@ export const useTasks = create<TasksStore>((set, get) => ({
     const { tasks } = get()
     const task = get().get(taskId)?.task
 
-    console.log(`useTasks[${taskId}]:setStatus("${status}")`)
+    // console.log(`useTasks[${taskId}]:setStatus("${status}")`)
     if (task) {
-      console.log(
-        `useTasks[${taskId}]:setStatus("${status}") -> setting one task to ${status}`
-      )
+      // console.log(
+      //   `useTasks[${taskId}]:setStatus("${status}") -> setting one task to ${status}`
+      // )
       set({
         tasks: {
           ...tasks,
@@ -292,9 +294,9 @@ export const useTasks = create<TasksStore>((set, get) => ({
         },
       })
     } else {
-      console.log(
-        `useTasks[${taskId}]:setStatus("${status}") -> setting all tasks to ${status}`
-      )
+      // console.log(
+      //   `useTasks[${taskId}]:setStatus("${status}") -> setting all tasks to ${status}`
+      // )
       const newTasks = {} as Record<string, Task>
       for (const [id, t] of Object.entries(tasks)) {
         newTasks[id] = { ...t, status: statusTransition(t.status, status) }
@@ -379,12 +381,16 @@ export const useTasks = create<TasksStore>((set, get) => ({
     get().setStatus(TaskStatus.SUCCESS, taskId)
   },
   fail: (taskId: string, reason?: string) => {
+    const message = reason || 'unknown failure'
+
     get().setProgress(taskId, {
-      message: reason || 'unknown failure',
+      message,
       isFinished: true,
       hasFailed: true,
     })
     get().setStatus(TaskStatus.ERROR, taskId)
+
+    toast.error(message)
   },
   cancel: (taskId?: string) => {
     get().setStatus(TaskStatus.CANCELLED, taskId)

@@ -1,5 +1,6 @@
 import { useTimeline } from "@/hooks"
 import { TimelineSegment } from "@/types"
+import { ClapSegmentStatus } from "@aitube/clap"
 import { Circle, Text } from "@react-three/drei"
 import { invalidate } from "@react-three/fiber"
 import { useState, useTransition } from "react"
@@ -32,6 +33,11 @@ export function RedrawButton({
       setInProgress(true)
     })
     try {
+        // by default resolveSegment won't generate a segment twice,
+        // unless we force things like so:
+        if (segment.status !== ClapSegmentStatus.IN_PROGRESS) {
+          segment.status = ClapSegmentStatus.TO_GENERATE
+        }
         // console.log(`click on RedrawButton for segment ` + segment.id)
         const newSegment = await resolveSegment(segment)
         // if (ref.current) {

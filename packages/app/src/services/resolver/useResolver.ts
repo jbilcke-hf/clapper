@@ -8,6 +8,7 @@ import {
   ClapSegmentCategory,
   ClapSegmentFilteringMode,
   ClapSegmentStatus,
+  ClapWorkflowProvider,
   filterSegments,
   generateSeed,
   newSegment,
@@ -36,6 +37,8 @@ import {
   RenderingBufferSizes,
   RenderingStrategies,
   ResolverStore,
+  TaskCategory,
+  TaskVisibility,
 } from '@aitube/clapper-services'
 
 import { getDefaultResolverState } from './getDefaultResolverState'
@@ -46,6 +49,8 @@ import { useMonitor } from '../monitor/useMonitor'
 import { useRenderer } from '../renderer'
 import { getDefaultResolveRequestPrompts } from './getDefaultResolveRequestPrompts'
 import { resolve } from '../api/resolve'
+import { useTasks } from '@/components/tasks/useTasks'
+import { getSegmentWorkflowProviderAndEngine } from '../editors/workflow-editor/getSegmentWorkflowProviderAndEngine'
 
 export const useResolver = create<ResolverStore>((set, get) => ({
   ...getDefaultResolverState(),
@@ -484,7 +489,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
     field?: 'face' | 'voice'
   ): Promise<ClapEntity> => {
     // note: if the entity has an image id or an audio id, we proceed anyway.
-    
+
     // that way the parent function can decide to re-generate the entity at any time.
 
     if (!field || field === 'face') {
@@ -509,8 +514,14 @@ export const useResolver = create<ResolverStore>((set, get) => ({
       }
     }
 
+    /*
+    TODO @julian-hf finish character voice generation
+    This will have to be done using some specific providers which support
+    prompting a voice from settings like "old aged man" etc
+
     if (!field || field === 'voice') {
       try {
+        throw new Error(`character voice generation isn't supported yet`)
         // we generate a random, novel voice
         // TODO use the gender
         const characterVoicePrompt = `A ${entity.age} years old ${entity.gender} is talking`
@@ -541,6 +552,7 @@ wake of the euro-zone debt crisis.`
         )
       }
     }
+    */
 
     return entity
   },
@@ -562,35 +574,47 @@ wake of the euro-zone debt crisis.`
   resolveSegment: async (
     segment: TimelineSegment
   ): Promise<TimelineSegment> => {
+    // note:
+    if (segment.status !== ClapSegmentStatus.TO_GENERATE) {
+      return segment
+    }
+
+    const { resolveEntity } = get()
     const settings = useSettings.getState().getRequestSettings()
     const timeline: TimelineStore = useTimeline.getState()
 
-    // note: do NOT use the visibleSegments here
-    // that's because resolveSegment is 100% asynchronous,
-    // meaning it might be called on invisible segments too!
     const {
       entityIndex,
-      segments: allSegments,
+      segments: allSegments, // we read all segments, even the invisible ones
       trackSilentChangeInSegment,
     } = timeline
 
-    if (!allSegments.length) {
+    const { workflow, provider, engine } = getSegmentWorkflowProviderAndEngine({
+      segment,
+      settings,
+    })
+
+    let isUnprocessable =
+      !workflow ||
+      !provider ||
+      provider === ClapWorkflowProvider.NONE ||
+      !engine ||
+      !allSegments.length
+
+    if (isUnprocessable) {
+      Object.assign(segment, { status: ClapSegmentStatus.ERROR })
+      trackSilentChangeInSegment(segment.id)
       return segment
-      // throw new Error(`please call setSegmentRender(...) first`)
     }
+
+    Object.assign(segment, { status: ClapSegmentStatus.IN_PROGRESS })
+    trackSilentChangeInSegment(segment.id)
 
     const segments: TimelineSegment[] = filterSegments(
       ClapSegmentFilteringMode.ANY,
       segment,
       allSegments
     )
-
-    if (segment.status === ClapSegmentStatus.IN_PROGRESS) {
-      // console.log(`useResolver.resolveSegment(): warning: this segment is already being generated!`)
-      return segment
-    }
-
-    segment.status = ClapSegmentStatus.IN_PROGRESS
 
     const entities = entityIndex || {}
 
@@ -612,6 +636,37 @@ wake of the euro-zone debt crisis.`
     const mainCharacterEntity: ClapEntity | undefined = mainCharacterId
       ? entities[mainCharacterId] || undefined
       : undefined
+
+    if (mainCharacterEntity) {
+      if (
+        !mainCharacterEntity?.imageId
+        // || !mainCharacterEntity.audioId
+      ) {
+        // we create an invisible task, which means there won't be any visible toast
+        // however if there is a failure this will still show up as an error toast
+        const entityTask = useTasks.getState().add({
+          category: TaskCategory.GENERIC,
+          visibility: TaskVisibility.INVISIBLE,
+          value: 0,
+        })
+
+        try {
+          console.log('calling resolveEntity', mainCharacterEntity)
+          await resolveEntity(mainCharacterEntity, 'face')
+          entityTask.success()
+        } catch (err) {
+          console.log(`failed to resolve entity (${err})`, mainCharacterEntity)
+          entityTask.fail(`failed to resolve entity (${err})`)
+
+          // not the best way to handle this
+          // mainCharacterEntity.imageId = 'ERROR'
+        }
+      } else {
+        console.log('main character entity already has an imageId')
+      }
+    } else {
+      console.log('no main character entity')
+    }
 
     const storyboard = segments.find(
       (s) => s.category === ClapSegmentCategory.STORYBOARD
@@ -674,6 +729,14 @@ wake of the euro-zone debt crisis.`
         positive: positiveMusicPrompt,
         // negative: '',
       },
+    })
+
+    // we create an invisible task, which means there won't be any visible toast
+    // however if there is a failure this will still show up as an error toast
+    const resolutionTask = useTasks.getState().add({
+      category: TaskCategory.GENERIC,
+      visibility: TaskVisibility.INVISIBLE,
+      value: 0,
     })
 
     try {
@@ -765,15 +828,17 @@ wake of the euro-zone debt crisis.`
         await timeline.fitSegmentToAssetDuration(newSegment)
       }
 
-      newSegment.status = ClapSegmentStatus.COMPLETED
-
+      Object.assign(newSegment, { status: ClapSegmentStatus.COMPLETED })
+      resolutionTask.success()
       trackSilentChangeInSegment(newSegment.id)
+
       return newSegment
     } catch (err) {
-      console.error(`useResolver.resolveSegment(): error: ${err}`)
-      segment.status = ClapSegmentStatus.TO_GENERATE
-      // we could do that in a future version to improve error tracking
-      // segment.status = ClapSegmentStatus.ERROR
+      const message = `Failed to resolve a segment (${err})`
+      console.error(message)
+      Object.assign(segment, { status: ClapSegmentStatus.ERROR })
+      resolutionTask.fail(message)
+      trackSilentChangeInSegment(segment.id)
     }
     return segment
   },

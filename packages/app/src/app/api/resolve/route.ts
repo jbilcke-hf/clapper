@@ -9,6 +9,7 @@ import {
   ClapAssetSource,
   ClapWorkflowEngine,
 } from '@aitube/clap'
+import { TimelineSegment } from '@aitube/timeline'
 
 import {
   resolveSegmentUsingHuggingFace,
@@ -32,7 +33,7 @@ import { ResolveRequest } from '@aitube/clapper-services'
 import { decodeOutput } from '@/lib/utils/decodeOutput'
 import { getTypeAndExtension } from '@/lib/utils/getTypeAndExtension'
 import { getMediaInfo } from '@/lib/ffmpeg/getMediaInfo'
-import { TimelineSegment } from '@aitube/timeline'
+import { getSegmentWorkflowProviderAndEngine } from '@/services/editors/workflow-editor/getSegmentWorkflowProviderAndEngine'
 
 type ProviderFn = (request: ResolveRequest) => Promise<TimelineSegment>
 
@@ -44,34 +45,27 @@ export async function POST(req: NextRequest) {
   // await throwIfInvalidToken(req.headers.get("Authorization"))
   const request = (await req.json()) as ResolveRequest
 
-  const workflow: ClapWorkflow | undefined =
-    request.segment.category === ClapSegmentCategory.STORYBOARD
-      ? request.settings.imageGenerationWorkflow
-      : request.segment.category === ClapSegmentCategory.VIDEO
-        ? request.settings.videoGenerationWorkflow
-        : request.segment.category === ClapSegmentCategory.DIALOGUE
-          ? request.settings.voiceGenerationWorkflow
-          : request.segment.category === ClapSegmentCategory.SOUND
-            ? request.settings.soundGenerationWorkflow
-            : request.segment.category === ClapSegmentCategory.MUSIC
-              ? request.settings.musicGenerationWorkflow
-              : undefined
+  const { workflow, provider, engine } =
+    getSegmentWorkflowProviderAndEngine(request)
+
+    /*
+  console.log(`Resolving a ${request.segment.category} segment using:`, {
+    workflow,
+    provider,
+    engine,
+  })
+    */
 
   if (!workflow) {
-    throw new Error(`request to /api/resolve is missing the .workflow field`)
+    throw new Error(`cannot resolve a segment without a valid workflow`)
   }
 
-  const provider: ClapWorkflowProvider | undefined =
-    workflow.provider || undefined
-
-  if (!provider) {
-    throw new Error(`request to /api/resolve is missing the .provider field`)
+  if (!provider || provider === ClapWorkflowProvider.NONE) {
+    throw new Error(`cannot resolve a segment without a valid provider`)
   }
-
-  const engine: ClapWorkflowEngine | undefined = workflow.engine || undefined
 
   if (!engine) {
-    throw new Error(`request to /api/resolve is missing the .engine field`)
+    throw new Error(`cannot resolve a segment without a valid engine`)
   }
 
   const comfyProviders: Partial<Record<ClapWorkflowProvider, ProviderFn>> = {
@@ -102,6 +96,7 @@ export async function POST(req: NextRequest) {
       : providers[provider] || undefined
 
   if (!resolveSegment || typeof resolveSegment !== 'function') {
+    // console.log('invalid resolveSegment:', request)
     throw new Error(
       `Engine "${engine}" is not supported by "${provider}" yet. If you believe this is a mistake, please open a Pull Request (with working code) to fix it. Thank you!`
     )
@@ -110,6 +105,7 @@ export async function POST(req: NextRequest) {
   let segment = request.segment
 
   try {
+    // console.log('calling resolveSegment', request)
     segment = await resolveSegment(request)
 
     // we clean-up and parse the output from all the resolvers:
