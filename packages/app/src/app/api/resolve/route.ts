@@ -34,6 +34,7 @@ import { decodeOutput } from '@/lib/utils/decodeOutput'
 import { getTypeAndExtension } from '@/lib/utils/getTypeAndExtension'
 import { getMediaInfo } from '@/lib/ffmpeg/getMediaInfo'
 import { getSegmentWorkflowProviderAndEngine } from '@/services/editors/workflow-editor/getSegmentWorkflowProviderAndEngine'
+import { runFaceSwap as runFaceswapWithFalAi } from './providers/falai/runFaceSwap'
 
 type ProviderFn = (request: ResolveRequest) => Promise<TimelineSegment>
 
@@ -45,8 +46,14 @@ export async function POST(req: NextRequest) {
   // await throwIfInvalidToken(req.headers.get("Authorization"))
   const request = (await req.json()) as ResolveRequest
 
-  const { workflow, provider, engine } =
-    getSegmentWorkflowProviderAndEngine(request)
+  const {
+    generationWorkflow,
+    generationProvider,
+    generationEngine,
+    faceswapWorkflow,
+    faceswapProvider,
+    faceswapEngine,
+  } = getSegmentWorkflowProviderAndEngine(request)
 
   /*
   console.log(`Resolving a ${request.segment.category} segment using:`, {
@@ -56,15 +63,15 @@ export async function POST(req: NextRequest) {
   })
     */
 
-  if (!workflow) {
+  if (!generationWorkflow) {
     throw new Error(`cannot resolve a segment without a valid workflow`)
   }
 
-  if (!provider || provider === ClapWorkflowProvider.NONE) {
+  if (!generationProvider || generationProvider === ClapWorkflowProvider.NONE) {
     throw new Error(`cannot resolve a segment without a valid provider`)
   }
 
-  if (!engine) {
+  if (!generationEngine) {
     throw new Error(`cannot resolve a segment without a valid engine`)
   }
 
@@ -91,14 +98,14 @@ export async function POST(req: NextRequest) {
   }
 
   const resolveSegment: ProviderFn | undefined =
-    engine === ClapWorkflowEngine.COMFYUI_WORKFLOW
-      ? comfyProviders[provider] || undefined
-      : providers[provider] || undefined
+    generationEngine === ClapWorkflowEngine.COMFYUI_WORKFLOW
+      ? comfyProviders[generationProvider] || undefined
+      : providers[generationProvider] || undefined
 
   if (!resolveSegment || typeof resolveSegment !== 'function') {
     // console.log('invalid resolveSegment:', request)
     throw new Error(
-      `Engine "${engine}" is not supported by "${provider}" yet. If you believe this is a mistake, please open a Pull Request (with working code) to fix it. Thank you!`
+      `Engine "${generationEngine}" is not supported by "${generationProvider}" yet. If you believe this is a mistake, please open a Pull Request (with working code) to fix it. Thank you!`
     )
   }
 
@@ -151,6 +158,27 @@ export async function POST(req: NextRequest) {
     segment.assetDurationInMs = 0
     segment.outputGain = 0
     segment.status = ClapSegmentStatus.TO_GENERATE
+  }
+
+  // extra step: face swap
+  if (faceswapProvider &&
+    request.settings.imageFaceswapWorkflow.data &&
+    segment.assetUrl &&
+    request.prompts.image.identity
+  ) {
+
+    const faceswapProviders: Partial<Record<ClapWorkflowProvider, ProviderFn>> = {
+      [ClapWorkflowProvider.FALAI]: runFaceswapWithFalAi,
+    }
+    
+    const faceSwap: ProviderFn | undefined =
+      faceswapProviders[faceswapProvider] || undefined
+
+    try {
+      await faceSwap?.(request)
+    } catch (err) {
+      console.error(`failed to run the faceswap (${err})`)
+    }
   }
 
   return NextResponse.json(segment)
