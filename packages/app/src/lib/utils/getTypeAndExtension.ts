@@ -1,7 +1,7 @@
 import { ClapOutputType } from '@aitube/clap'
 
 /**
- * break a base64 string into sub-components
+ * break a base64 data uri string into sub-components
  */
 export function getTypeAndExtension(base64: string = ''): {
   // category eg. video, audio, text
@@ -15,17 +15,15 @@ export function getTypeAndExtension(base64: string = ''): {
 
   outputType: ClapOutputType
 } {
-  // Regular expression to extract the MIME type and the base64 data
-  const matches = base64.match(/^data:([A-Za-z-+0-9/]+);base64,(.+)$/)
-
-  if (!matches || matches.length !== 3) {
-    throw new Error('Invalid base64 string')
+  if (!base64.startsWith('data:') || !base64.includes('base64,')) {
+    throw new Error('Invalid base64 data uri provided.')
   }
 
-  const assetFileFormat = matches[1] || ''
+  const base64Index = base64.indexOf('base64,')
+  const mimeType = base64.slice(5, base64Index - 1)
 
   // this should be enough for most media formats (jpeg, png, webp, mp4)
-  const [category, extension] = assetFileFormat.split('/')
+  const [category, extension] = mimeType.split('/')
 
   let outputType = ClapOutputType.TEXT
 
@@ -39,7 +37,7 @@ export function getTypeAndExtension(base64: string = ''): {
 
   return {
     category,
-    assetFileFormat,
+    assetFileFormat: mimeType,
     extension,
     outputType,
   }

@@ -12,6 +12,7 @@ import {
   ComfyUIWorkflowApiGraph,
   createPromptBuilder,
 } from './utils'
+import { ClapInputValueObject } from '@aitube/clap/dist/types'
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -72,33 +73,27 @@ export async function resolveSegment(
       )
     })
 
-    // Set main inputs
-    comfyApiWorkflowPromptBuilder
-      .input(
-        (inputValues[ClapperComfyUiInputIds.PROMPT] as any).id,
-        request.prompts.image.positive
-      )
-      .input(
-        (inputValues[ClapperComfyUiInputIds.NEGATIVE_PROMPT] as any).id,
-        request.prompts.image.negative
-      )
-      .input(
-        (inputValues[ClapperComfyUiInputIds.WIDTH] as any).id,
-        request.meta.width
-      )
-      .input(
-        (inputValues[ClapperComfyUiInputIds.HEIGHT] as any).id,
-        request.meta.height
-      )
-      .input(
-        (inputValues[ClapperComfyUiInputIds.SEED] as any).id,
-        generateSeed()
-      )
+    const mainInputs = [
+      [ClapperComfyUiInputIds.PROMPT, request.prompts.image.positive],
+      [ClapperComfyUiInputIds.NEGATIVE_PROMPT, request.prompts.image.negative],
+      [ClapperComfyUiInputIds.WIDTH, request.meta.width],
+      [ClapperComfyUiInputIds.HEIGHT, request.meta.height],
+      [ClapperComfyUiInputIds.SEED, generateSeed()],
+    ]
+
+    mainInputs.forEach((mainInput) => {
+      const inputId = (inputValues[mainInput[0]] as ClapInputValueObject).id
+      const inputValue = mainInput[1]
+      if (inputId) {
+        comfyApiWorkflowPromptBuilder.input(inputId, inputValue)
+      }
+    })
 
     // Set output
     comfyApiWorkflowPromptBuilder.setOutputNode(
       ClapperComfyUiInputIds.OUTPUT,
-      (inputValues[ClapperComfyUiInputIds.OUTPUT] as any).id
+      (inputValues[ClapperComfyUiInputIds.OUTPUT] as ClapInputValueObject)
+        .id as string
     )
 
     const pipeline = new CallWrapper(api, comfyApiWorkflowPromptBuilder)
