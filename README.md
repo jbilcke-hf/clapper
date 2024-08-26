@@ -12,7 +12,11 @@ header: mini
 short_description: 🎬 Clapper
 ---
 
-![Clapper 20240617|600](documentation/screenshots/20240617.jpg)
+> Clapper is in a **_very_** early stage. There are no tutorials, some UI features and buttons won't work, some workflows are broken, and there are no tests.
+> Want this to change? Come join our open-source community to help build Clapper!
+
+
+![Demo|600](documentation/videos/20240826.mp4)
 
 # Introduction
 
