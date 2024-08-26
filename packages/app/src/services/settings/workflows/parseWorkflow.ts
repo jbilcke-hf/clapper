@@ -49,10 +49,18 @@ export function parseWorkflow(
       throw new Error(`the workflow data seems invalid`)
     }
     if (maybeWorkflow.engine == ClapWorkflowEngine.COMFYUI_WORKFLOW) {
-      const { inputFields, inputValues } =
-        convertComfyUiWorkflowApiToClapWorkflow(maybeWorkflow.data)
-      maybeWorkflow.inputFields = inputFields
-      maybeWorkflow.inputValues = inputValues
+      // The `data` comfyui workflow doesn't have info about custom
+      // inputFields/inputValues, it gets only the default ones based on the nodes
+      const {
+        inputFields: defaultInputFields,
+        inputValues: defaultInputValues,
+      } = convertComfyUiWorkflowApiToClapWorkflow(maybeWorkflow.data)
+      // Use the already existing inputFields/inputValues, otherwise use the default
+      // ones based on the raw comfyui workflow data
+      maybeWorkflow.inputFields =
+        maybeWorkflow.inputFields || defaultInputFields
+      maybeWorkflow.inputValues =
+        maybeWorkflow.inputValues || defaultInputValues
     }
     return maybeWorkflow
   } catch (err) {
