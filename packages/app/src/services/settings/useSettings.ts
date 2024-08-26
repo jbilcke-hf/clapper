@@ -644,28 +644,24 @@ export const useSettings = create<SettingsStore>()(
           ),
         })
       },
-      setComfyWorkflowForImage: (comfyWorkflowForImage?: string) => {
+      setComfyClapWorkflowForImage: (
+        comfyClapWorkflowForImage?: ClapWorkflow
+      ) => {
         try {
-          if (!comfyWorkflowForImage) throw new Error('Invalid workflow')
+          if (!comfyClapWorkflowForImage) throw new Error('Invalid workflow')
           const currentWorkflowString = get().imageGenerationWorkflow
           const currentWorkflow = parseWorkflow(
             currentWorkflowString,
             ClapWorkflowCategory.IMAGE_GENERATION
           )
-          const clapWorkflow = convertComfyUiWorkflowApiToClapWorkflow(
-            comfyWorkflowForImage
-          )
+          const newWorkflow = comfyClapWorkflowForImage
           set({
-            comfyWorkflowForImage: getValidComfyWorkflowTemplate(
-              clapWorkflow.data,
-              getDefaultSettingsState().comfyWorkflowForImage
-            ),
+            comfyClapWorkflowForImage: newWorkflow,
+            imageGenerationWorkflow:
+              currentWorkflow.engine === ClapWorkflowEngine.COMFYUI_WORKFLOW
+                ? JSON.stringify(newWorkflow)
+                : currentWorkflowString,
           })
-          if (currentWorkflow.engine === ClapWorkflowEngine.COMFYUI_WORKFLOW) {
-            set({
-              imageGenerationWorkflow: JSON.stringify(clapWorkflow),
-            })
-          }
         } catch (e) {
           console.error(e)
         }
@@ -1003,9 +999,9 @@ export const useSettings = create<SettingsStore>()(
           maxVideosToGenerateInParallel:
             state.maxVideosToGenerateInParallel ||
             defaultSettings.maxVideosToGenerateInParallel,
-          comfyWorkflowForImage:
-            state.comfyWorkflowForImage ||
-            defaultSettings.comfyWorkflowForImage,
+          comfyClapWorkflowForImage:
+            state.comfyClapWorkflowForImage ||
+            defaultSettings.comfyClapWorkflowForImage,
           comfyWorkflowForVideo:
             state.comfyWorkflowForVideo ||
             defaultSettings.comfyWorkflowForVideo,
