@@ -157,6 +157,26 @@ export const genericVideoUrl: ClapInputField = {
   defaultValue: '',
 }
 
+export const genericFaceImage: ClapInputField = {
+  id: 'face_image',
+  label: 'Face Image URL',
+  description: 'Face Image URL',
+  category: ClapInputCategory.IMAGE_URL,
+  type: 'string',
+  allowedValues: [],
+  defaultValue: '',
+}
+
+export const genericDrivingVideo: ClapInputField = {
+  id: 'driving_video',
+  label: 'Driving Video URL',
+  description: 'Driving Video URL',
+  category: ClapInputCategory.VIDEO_URL,
+  type: 'string',
+  allowedValues: [],
+  defaultValue: '',
+}
+
 export const genericVoice: ClapInputField = {
   id: 'voice',
   label: 'Voice',

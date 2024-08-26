@@ -10,7 +10,7 @@ import {
   FalAiVideoResponse,
 } from './types'
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
-import { sampleVoice } from '@/lib/core/constants'
+import { sampleDrivingVideo, sampleVoice } from '@/lib/core/constants'
 import { getWorkflowLora } from '@/services/editors/workflow-editor/workflows/common/loras/getWorkflowLora'
 
 export async function resolveSegment(
@@ -174,7 +174,38 @@ export async function resolveSegment(
     model = request.settings.videoGenerationWorkflow.data || ''
 
     // console.log(`request.settings.falAiModelForVideo = `, request.settings.falAiModelForVideo)
-    if (model !== 'fal-ai/stable-video') {
+    if (model === 'fal-ai/live-portrait') {
+      const result = (await fal.run(model, {
+        input: {
+          image_url: request.prompts.video.image,
+
+          // what we do here is that we generate an "idle" video
+          // now, the current driving video is just a dummy one I made for testing
+          // we can replace it by something better, that would reflect the current
+          // pacing of the scene (news anchor, peaceful dialogue, intense, aggressive etc)
+          video_url: sampleDrivingVideo,
+
+          sync_mode: true,
+          enable_safety_checker:
+            request.settings.censorNotForAllAudiencesContent,
+        },
+      })) as FalAiVideoResponse
+
+      if (request.settings.censorNotForAllAudiencesContent) {
+        if (
+          Array.isArray(result.has_nsfw_concepts) &&
+          result.has_nsfw_concepts.includes(true)
+        ) {
+          throw new Error(
+            `The generated content has been filtered according to your safety settings`
+          )
+        }
+      }
+
+      console.log('live portrait result:', result)
+
+      segment.assetUrl = result?.video?.url || ''
+    } else if (model !== 'fal-ai/stable-video') {
       throw new Error(
         `only "fal-ai/stable-video" is supported by Clapper for the moment`
       )

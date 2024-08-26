@@ -7,9 +7,12 @@ import {
 
 import {
   genericBaseImageUrl,
+  genericDrivingVideo,
+  genericFaceImage,
   genericHeight1024,
   genericHeight2048,
   genericImage,
+  genericImageUrl,
   genericLora,
   genericPrompt,
   genericSwapImage,
@@ -27,6 +30,29 @@ import {
 // -> we can create a ticket to fix this
 // ------------------------------------------------------------------------------
 export const defaultWorkflows: ClapWorkflow[] = [
+  {
+    id: 'replicate://fofr/live-portrait',
+    label: 'Live Portrait by @fofr',
+    description: '',
+    tags: ['live portrait'],
+    author: '@fofr',
+    thumbnailUrl: '',
+    nonCommercial: true,
+    engine: ClapWorkflowEngine.REST_API,
+    category: ClapWorkflowCategory.VIDEO_GENERATION,
+    provider: ClapWorkflowProvider.REPLICATE,
+    data: 'fofr/live-portrait:067dd98cc3e5cb396c4a9efb4bba3eec6c4a9d271211325c477518fc6485e146',
+    schema: '',
+    inputFields: [genericFaceImage, genericDrivingVideo],
+    inputValues: {
+      [genericFaceImage.id]: genericFaceImage.defaultValue,
+      [genericDrivingVideo.id]: genericDrivingVideo.defaultValue,
+
+      // there are a lot of other params, check them here:
+      // https://replicate.com/fofr/live-portrait
+
+    },
+  },
   {
     id: 'replicate://cdingram/face-swap',
     label: 'Face Swap by @cdingram',
