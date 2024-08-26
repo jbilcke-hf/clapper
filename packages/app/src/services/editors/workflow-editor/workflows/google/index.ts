@@ -15,6 +15,13 @@ import {
   genericWidth2048,
 } from '../common/defaultValues'
 
+// ------------------------------------------------------------------------------
+// if a user is already using one of those workflows and you change its settings,
+// they will have to reselect it in the UI for changes to be taken into account.
+//
+// -> we can create a ticket to fix this
+// ------------------------------------------------------------------------------
+
 // you can find the list here: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versioning
 // The auto-updated version of a Gemini model points to the most recent stable version
 // google supports claude so you can also see the ids specific to Vertex AI here:

@@ -10,7 +10,12 @@ import { text_to_image_demo_workflow } from '../common/comfyui/text_to_image_dem
 import { getComfyWorkflow } from './getComfyWorkflow'
 import { useSettings } from '@/services'
 
-// some predefined workflows (later we will add some option to customize this)
+// ------------------------------------------------------------------------------
+// if a user is already using one of those workflows and you change its settings,
+// they will have to reselect it in the UI for changes to be taken into account.
+//
+// -> we can create a ticket to fix this
+// ------------------------------------------------------------------------------
 export const comfyuiWorkflows: ClapWorkflow[] = [
   {
     id: 'comfyui://text_to_image_demo_workflow',

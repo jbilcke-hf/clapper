@@ -4,7 +4,6 @@ import { ClapMediaOrientation, ClapSegmentCategory } from '@aitube/clap'
 import { ResolveRequest } from '@aitube/clapper-services'
 import { TimelineSegment } from '@aitube/timeline'
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
-import { defaultLoraModels } from '@/services/editors/workflow-editor/workflows/common/loras'
 import { getWorkflowLora } from '@/services/editors/workflow-editor/workflows/common/loras/getWorkflowLora'
 
 export async function resolveSegment(
@@ -22,12 +21,6 @@ export async function resolveSegment(
       request.settings.imageGenerationWorkflow
     )
 
-    let params: object = {
-      prompt: request.prompts.image.positive,
-      width: request.meta.width,
-      height: request.meta.height,
-      disable_safety_checker: !request.settings.censorNotForAllAudiencesContent,
-    }
 
     const aspectRatio =
       request.meta.orientation === ClapMediaOrientation.SQUARE
@@ -35,6 +28,14 @@ export async function resolveSegment(
         : request.meta.orientation === ClapMediaOrientation.PORTRAIT
           ? '9:16'
           : '16:9'
+
+    let params: object = {
+      prompt: request.prompts.image.positive,
+      width: request.meta.width,
+      height: request.meta.height,
+      aspect_ratio: aspectRatio,
+      disable_safety_checker: !request.settings.censorNotForAllAudiencesContent,
+    }
 
     if (
       request.settings.imageGenerationWorkflow.data === 'fofr/pulid-lightning'
@@ -78,12 +79,6 @@ export async function resolveSegment(
       }
     }
 
-    /*
-    console.log("debug:", {
-      model: request.settings.imageGenerationWorkflow.data,
-      params,
-    })
-      */
     const response = (await replicate.run(
       request.settings.imageGenerationWorkflow.data as any,
       { input: params }

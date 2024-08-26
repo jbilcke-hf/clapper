@@ -21,6 +21,18 @@ export async function runFaceSwap(
     const imageFaceswapWorkflowModel =
       request.settings.imageFaceswapWorkflow.data || ''
 
+    if (!imageFaceswapWorkflowModel) {
+      throw new Error(
+        `cannot run the face swap without an imageFaceswapWorkflowModel`
+      )
+    }
+    if (!segment.assetUrl) {
+      throw new Error(`cannot run the face swap without an assetUrl`)
+    }
+    if (!request.prompts.image.identity) {
+      throw new Error(`cannot run the face swap without an identity image`)
+    }
+
     if (imageFaceswapWorkflowModel) {
       try {
         const faceSwapResult = (await fal.run(imageFaceswapWorkflowModel, {
@@ -35,11 +47,10 @@ export async function runFaceSwap(
           },
         })) as FalAiImageResponse
 
-        // note how it is
         const imageResult = faceSwapResult.image?.url || ''
 
         if (!imageResult) {
-          throw new Error(`the generate image is empty`)
+          throw new Error(`the generated image is empty`)
         }
 
         if (request.settings.censorNotForAllAudiencesContent) {
@@ -60,7 +71,7 @@ export async function runFaceSwap(
     }
   } else {
     throw new Error(
-      `Clapper doesn't support face swapping videos for the "${segment.category}" category using Fal.ai yet`
+      `Clapper doesn't support face swapping for the "${segment.category}" category using Fal.ai yet`
     )
   }
 

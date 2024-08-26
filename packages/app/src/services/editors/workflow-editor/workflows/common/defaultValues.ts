@@ -101,7 +101,7 @@ export const genericBaseImageUrl: ClapInputField = {
   id: 'base_image_url',
   label: 'Base Image URL',
   description: 'Base Image URL',
-  category: ClapInputCategory.IMAGE_URL,
+  category: ClapInputCategory.TARGET_IMAGE_URL,
   type: 'string',
   allowedValues: [],
   defaultValue: '',
@@ -111,7 +111,27 @@ export const genericSwapImageUrl: ClapInputField = {
   id: 'swap_image_url',
   label: 'Swap Image URL',
   description: 'Swap Image URL',
-  category: ClapInputCategory.IMAGE_URL,
+  category: ClapInputCategory.SWAP_IMAGE_URL,
+  type: 'string',
+  allowedValues: [],
+  defaultValue: '',
+}
+
+export const genericTargetImage: ClapInputField = {
+  id: 'target_image',
+  label: 'Target Image URL',
+  description: 'Target Image URL',
+  category: ClapInputCategory.TARGET_IMAGE_URL,
+  type: 'string',
+  allowedValues: [],
+  defaultValue: '',
+}
+
+export const genericSwapImage: ClapInputField = {
+  id: 'swap_image',
+  label: 'Swap Image URL',
+  description: 'Swap Image URL',
+  category: ClapInputCategory.SWAP_IMAGE_URL,
   type: 'string',
   allowedValues: [],
   defaultValue: '',

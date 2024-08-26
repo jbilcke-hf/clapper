@@ -652,21 +652,21 @@ wake of the euro-zone debt crisis.`
         })
 
         try {
-          console.log('calling resolveEntity', mainCharacterEntity)
+          // console.log('calling resolveEntity', mainCharacterEntity)
           await resolveEntity(mainCharacterEntity, 'face')
           entityTask.success()
         } catch (err) {
-          console.log(`failed to resolve entity (${err})`, mainCharacterEntity)
+          // console.log(`failed to resolve entity (${err})`, mainCharacterEntity)
           entityTask.fail(`failed to resolve entity (${err})`)
 
           // not the best way to handle this
           // mainCharacterEntity.imageId = 'ERROR'
         }
       } else {
-        console.log('main character entity already has an imageId')
+        // console.log('main character entity already has an imageId')
       }
     } else {
-      console.log('no main character entity')
+      // console.log('no main character entity')
     }
 
     const storyboard = segments.find(

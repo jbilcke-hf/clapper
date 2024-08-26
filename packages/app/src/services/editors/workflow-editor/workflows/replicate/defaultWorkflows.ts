@@ -6,17 +6,52 @@ import {
 } from '@aitube/clap'
 
 import {
+  genericBaseImageUrl,
   genericHeight1024,
   genericHeight2048,
   genericImage,
   genericLora,
   genericPrompt,
+  genericSwapImage,
+  genericSwapImageUrl,
+  genericTargetImage,
   genericVideo,
   genericWidth1024,
   genericWidth2048,
 } from '../common/defaultValues'
 
+// ------------------------------------------------------------------------------
+// if a user is already using one of those workflows and you change its settings,
+// they will have to reselect it in the UI for changes to be taken into account.
+//
+// -> we can create a ticket to fix this
+// ------------------------------------------------------------------------------
 export const defaultWorkflows: ClapWorkflow[] = [
+  {
+    id: 'replicate://cdingram/face-swap',
+    label: 'Face Swap by @cdingram',
+    description: '',
+    tags: ['face-swap'],
+    author: '@cdingram',
+    thumbnailUrl: '',
+    nonCommercial: true,
+    engine: ClapWorkflowEngine.REST_API,
+    category: ClapWorkflowCategory.IMAGE_FACESWAP,
+    provider: ClapWorkflowProvider.REPLICATE,
+    data: 'cdingram/face-swap:d1d6ea8c8be89d664a07a457526f7128109dee7030fdac424788d762c71ed111',
+    schema: '',
+    inputFields: [
+      {
+        ...genericTargetImage,
+        id: 'input_image',
+      },
+      genericSwapImage,
+    ],
+    inputValues: {
+      input_image: genericTargetImage.defaultValue,
+      [genericSwapImage.id]: genericSwapImage.defaultValue,
+    },
+  },
   {
     id: 'replicate://lucataco/flux-dev-lora',
     label: 'Flux-dev-lora',

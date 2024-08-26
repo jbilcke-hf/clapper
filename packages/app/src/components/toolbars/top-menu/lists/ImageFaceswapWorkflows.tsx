@@ -49,11 +49,11 @@ export function ImageFaceswapWorkflows() {
           face&nbsp;swap
         </Tag>
         <div className={cn(`flex flex-row items-center space-x-2`)}>
-          <ClapWorkflowProviderLogo
+          {workflow?.provider && <ClapWorkflowProviderLogo
             provider={workflow?.provider}
             height={18}
             className={cn(`rounded-full`)}
-          />
+          />}
           <div>{workflow?.label || 'None'}</div>
         </div>
       </MenubarSubTrigger>

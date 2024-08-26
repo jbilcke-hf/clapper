@@ -6,6 +6,12 @@ import {
 } from '@aitube/clap'
 import { genericImageUrl, genericPrompt } from '../common/defaultValues'
 
+// ------------------------------------------------------------------------------
+// if a user is already using one of those workflows and you change its settings,
+// they will have to reselect it in the UI for changes to be taken into account.
+//
+// -> we can create a ticket to fix this
+// ------------------------------------------------------------------------------
 export const piApiWorkflows: ClapWorkflow[] = [
   {
     id: 'piapi://mj/v2/imagine',
