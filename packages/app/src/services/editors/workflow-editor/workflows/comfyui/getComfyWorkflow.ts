@@ -10,7 +10,7 @@ export function getComfyWorkflow(category: ClapSegmentCategory) {
   let comfyWorkflow = '{}'
 
   if (category === ClapSegmentCategory.STORYBOARD) {
-    comfyWorkflow = settings.comfyWorkflowForImage
+    comfyWorkflow = settings.comfyClapWorkflowForImage?.data
   } else if (category === ClapSegmentCategory.VIDEO) {
     comfyWorkflow = settings.comfyWorkflowForVideo
   }

@@ -1,24 +1,13 @@
 import { FormInput, FormSection, FormSwitch } from '@/components/forms'
-import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/utils'
 import { getDefaultSettingsState, useSettings } from '@/services/settings'
-import { useMemo } from 'react'
 import { FormComfyUIWorkflowSettings } from '../forms/FormComfyUIWorkflowSettings'
 import { ClapWorkflow } from '@aitube/clap'
 
 export function SettingsSectionImage() {
   const defaultSettings = getDefaultSettingsState()
-  const comfyUiWorkflow = useSettings((s) => s.comfyWorkflowForImage)
-  const setComfyUiWorkflow = useSettings((s) => s.setComfyWorkflowForImage)
-  const comfyUiClapWorkflow = useMemo(
-    () => convertComfyUiWorkflowApiToClapWorkflow(comfyUiWorkflow),
-    [comfyUiWorkflow]
-  )
-  const defaultComfyUiClapWorkflow = useMemo(
-    () =>
-      convertComfyUiWorkflowApiToClapWorkflow(
-        defaultSettings.comfyWorkflowForImage
-      ),
-    [defaultSettings.comfyWorkflowForImage]
+  const comfyClapWorkflow = useSettings((s) => s.comfyClapWorkflowForImage)
+  const setComfyClapWorkflow = useSettings(
+    (s) => s.setComfyClapWorkflowForImage
   )
 
   const imagePromptPrefix = useSettings((s) => s.imagePromptPrefix)
@@ -44,7 +33,7 @@ export function SettingsSectionImage() {
     (s) => s.setCensorNotForAllAudiencesContent
   )
   const onChangeComfyUiWorkflow = (clapWorkflowUpdated: ClapWorkflow) => {
-    setComfyUiWorkflow(clapWorkflowUpdated.data)
+    setComfyClapWorkflow(clapWorkflowUpdated)
   }
 
   return (
@@ -90,8 +79,8 @@ export function SettingsSectionImage() {
 
         <FormComfyUIWorkflowSettings
           className="pt-4"
-          clapWorkflow={comfyUiClapWorkflow}
-          defaultClapWorkflow={defaultComfyUiClapWorkflow}
+          clapWorkflow={comfyClapWorkflow}
+          defaultClapWorkflow={defaultSettings.comfyClapWorkflowForImage}
           onChange={onChangeComfyUiWorkflow}
         />
       </FormSection>
