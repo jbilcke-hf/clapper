@@ -448,6 +448,11 @@ export enum ClapInputCategory {
   SOUND_URL = "SOUND_URL",
   VIDEO_URL = "VIDEO_URL",
   IMAGE_URLS = "IMAGE_URLS",
+
+  // used for face swap
+  TARGET_IMAGE_URL = "TARGET_IMAGE_URL",
+  SWAP_IMAGE_URL = "SWAP_IMAGE_URL",
+
   WIDTH = "WIDTH",
   HEIGHT = "HEIGHT",
   SEED = "SEED",

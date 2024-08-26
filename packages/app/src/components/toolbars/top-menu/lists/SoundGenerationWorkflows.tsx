@@ -49,11 +49,11 @@ export function SoundGenerationWorkflows() {
           generate&nbsp;sound
         </Tag>
         <div className={cn(`flex flex-row items-center space-x-2`)}>
-          <ClapWorkflowProviderLogo
+          {workflow?.provider && <ClapWorkflowProviderLogo
             provider={workflow?.provider}
             height={18}
             className={cn(`rounded-full`)}
-          />
+          />}
           <div>{workflow?.label || 'None'}</div>
         </div>
       </MenubarSubTrigger>

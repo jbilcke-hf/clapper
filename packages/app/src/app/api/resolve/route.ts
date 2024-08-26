@@ -35,6 +35,7 @@ import { getTypeAndExtension } from '@/lib/utils/getTypeAndExtension'
 import { getMediaInfo } from '@/lib/ffmpeg/getMediaInfo'
 import { getSegmentWorkflowProviderAndEngine } from '@/services/editors/workflow-editor/getSegmentWorkflowProviderAndEngine'
 import { runFaceSwap as runFaceswapWithFalAi } from './providers/falai/runFaceSwap'
+import { runFaceSwap as runFaceswapWithReplicate } from './providers/replicate/runFaceSwap'
 
 type ProviderFn = (request: ResolveRequest) => Promise<TimelineSegment>
 
@@ -161,24 +162,45 @@ export async function POST(req: NextRequest) {
   }
 
   // extra step: face swap
-  if (faceswapProvider &&
+  if (
+    faceswapProvider &&
     request.settings.imageFaceswapWorkflow.data &&
     segment.assetUrl &&
     request.prompts.image.identity
   ) {
+    const faceswapProviders: Partial<Record<ClapWorkflowProvider, ProviderFn>> =
+      {
+        [ClapWorkflowProvider.FALAI]: runFaceswapWithFalAi,
+        [ClapWorkflowProvider.REPLICATE]: runFaceswapWithReplicate,
+      }
 
-    const faceswapProviders: Partial<Record<ClapWorkflowProvider, ProviderFn>> = {
-      [ClapWorkflowProvider.FALAI]: runFaceswapWithFalAi,
-    }
-    
     const faceSwap: ProviderFn | undefined =
       faceswapProviders[faceswapProvider] || undefined
 
-    try {
-      await faceSwap?.(request)
-    } catch (err) {
-      console.error(`failed to run the faceswap (${err})`)
-    }
+      if (faceSwap) {
+        try {
+          await faceSwap(request)
+
+          // we clean-up and parse the output from all the resolvers:
+          // this will download files hosted on CDNs, convert WAV files to MP3 etc
+
+          segment.assetUrl = await decodeOutput(segment.assetUrl)
+
+          segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)
+
+          segment.status = ClapSegmentStatus.COMPLETED
+
+          const { assetFileFormat, outputType } = getTypeAndExtension(
+            segment.assetUrl
+          )
+
+          segment.assetFileFormat = assetFileFormat
+          segment.outputType = outputType
+
+        } catch (err) {
+          console.error(`failed to run the faceswap (${err})`)
+        }
+      }
   }
 
   return NextResponse.json(segment)
