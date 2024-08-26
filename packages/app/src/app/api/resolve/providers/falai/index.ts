@@ -12,7 +12,6 @@ import {
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
 import { sampleVoice } from '@/lib/core/constants'
 import { getWorkflowLora } from '@/services/editors/workflow-editor/workflows/common/loras/getWorkflowLora'
-import { runImageFaceSwap } from './runImageFaceSwap'
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -171,12 +170,6 @@ export async function resolveSegment(
     }
 
     segment.assetUrl = result.images[0]?.url || ''
-
-    // TODO move this to the router, so that we can use the Fal.ai
-    // face swap with other image providers
-    if (!isUsingIntegratedFaceId) {
-      await runImageFaceSwap(request)
-    }
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
     model = request.settings.videoGenerationWorkflow.data || ''
 

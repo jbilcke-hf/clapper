@@ -14,11 +14,14 @@ export function getSegmentWorkflowProviderAndEngine({
   segment: TimelineSegment
   settings: RequestSettings
 }): {
-  workflow?: ClapWorkflow
-  provider?: ClapWorkflowProvider
-  engine?: ClapWorkflowEngine
+  generationWorkflow?: ClapWorkflow
+  generationProvider?: ClapWorkflowProvider
+  generationEngine?: ClapWorkflowEngine
+  faceswapWorkflow?: ClapWorkflow
+  faceswapProvider?: ClapWorkflowProvider
+  faceswapEngine?: ClapWorkflowEngine
 } {
-  const workflow: ClapWorkflow | undefined =
+  const generationWorkflow: ClapWorkflow | undefined =
     segment.category === ClapSegmentCategory.STORYBOARD
       ? settings.imageGenerationWorkflow
       : segment.category === ClapSegmentCategory.VIDEO
@@ -31,10 +34,31 @@ export function getSegmentWorkflowProviderAndEngine({
               ? settings.musicGenerationWorkflow
               : undefined
 
-  const provider: ClapWorkflowProvider | undefined =
-    workflow?.provider || undefined
+  const generationProvider: ClapWorkflowProvider | undefined =
+    generationWorkflow?.provider || undefined
 
-  const engine: ClapWorkflowEngine | undefined = workflow?.engine || undefined
+  const generationEngine: ClapWorkflowEngine | undefined =
+    generationWorkflow?.engine || undefined
 
-  return { workflow, provider, engine }
+  const faceswapWorkflow: ClapWorkflow | undefined =
+    segment.category === ClapSegmentCategory.STORYBOARD
+      ? settings.imageFaceswapWorkflow
+      : segment.category === ClapSegmentCategory.VIDEO
+        ? settings.videoFaceswapWorkflow
+        : undefined
+
+  const faceswapProvider: ClapWorkflowProvider | undefined =
+    faceswapWorkflow?.provider || undefined
+
+  const faceswapEngine: ClapWorkflowEngine | undefined =
+    faceswapWorkflow?.engine || undefined
+
+  return {
+    generationWorkflow,
+    generationProvider,
+    generationEngine,
+    faceswapWorkflow,
+    faceswapProvider,
+    faceswapEngine,
+  }
 }

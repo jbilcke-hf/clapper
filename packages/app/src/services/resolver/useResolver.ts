@@ -589,16 +589,17 @@ wake of the euro-zone debt crisis.`
       trackSilentChangeInSegment,
     } = timeline
 
-    const { workflow, provider, engine } = getSegmentWorkflowProviderAndEngine({
-      segment,
-      settings,
-    })
+    const { generationWorkflow, generationProvider, generationEngine } =
+      getSegmentWorkflowProviderAndEngine({
+        segment,
+        settings,
+      })
 
     let isUnprocessable =
-      !workflow ||
-      !provider ||
-      provider === ClapWorkflowProvider.NONE ||
-      !engine ||
+      !generationWorkflow ||
+      !generationProvider ||
+      generationProvider === ClapWorkflowProvider.NONE ||
+      !generationEngine ||
       !allSegments.length
 
     if (isUnprocessable) {
