@@ -29,3 +29,29 @@ test('getTypeAndExtension', () => {
     outputType: ClapOutputType.VIDEO,
   })
 })
+
+/**
+ * Related to the `Maximum call stack size exceeded` issue
+ * when using RegExp, now with string/array manipulation is
+ * much faster and the `stack` error solved; I wasn't able to easily
+ * replicate the stack size error in vitest env, seems happening only
+ * in Next env; so only a "performance" test is done.
+ *
+ * Issue: https://github.com/jbilcke-hf/clapper/issues/72
+ */
+test('getTypeAndExtension should be fast for long uris', () => {
+  const startTime = Date.now()
+  const longBase64String = 'a'.repeat(500_000_000)
+  const dataUri = `data:image/png;base64,${longBase64String}`
+  const result = getTypeAndExtension(dataUri)
+  expect(result).toStrictEqual({
+    assetFileFormat: 'image/png',
+    category: 'image',
+    extension: 'png',
+    outputType: ClapOutputType.IMAGE,
+  })
+  const endTime = Date.now()
+  const duration = endTime - startTime
+  // Original regexp approach was running around ~350ms; new one is around ~70ms
+  expect(duration).toBeLessThan(200)
+})
