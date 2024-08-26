@@ -563,30 +563,42 @@ export function getInputsFromComfyUiWorkflow(workflowString: string): {
   const outputNode = workflowGraph.getOutputNode()
 
   const inputValues = {
-    [ClapperComfyUiInputIds.PROMPT]: {
-      id: promptNodeInputs?.[0].id,
-      label: `${promptNodeInputs?.[0].id} (from node ${promptNodeInputs?.[0].nodeId})`,
-    },
-    [ClapperComfyUiInputIds.NEGATIVE_PROMPT]: {
-      id: negativePromptNodeInputs?.[0].id,
-      label: `${negativePromptNodeInputs?.[0].id} (from node ${negativePromptNodeInputs?.[0].nodeId})`,
-    },
-    [ClapperComfyUiInputIds.WIDTH]: {
-      id: widthNodeInputs?.[0].id,
-      label: `${widthNodeInputs?.[0].id} (from node ${widthNodeInputs?.[0].nodeId})`,
-    },
-    [ClapperComfyUiInputIds.HEIGHT]: {
-      id: heightNodeInputs?.[0].id,
-      label: `${heightNodeInputs?.[0].id} (from node ${heightNodeInputs?.[0].nodeId})`,
-    },
-    [ClapperComfyUiInputIds.SEED]: {
-      id: seedNodeInputs?.[0].id,
-      label: `${seedNodeInputs?.[0].id} (from node ${seedNodeInputs?.[0].nodeId})`,
-    },
-    [ClapperComfyUiInputIds.OUTPUT]: {
-      id: outputNode?.id,
-      label: `${outputNode?._meta?.title} (id: ${outputNode?.id})`,
-    },
+    [ClapperComfyUiInputIds.PROMPT]: promptNodeInputs?.[0]
+      ? {
+          id: promptNodeInputs?.[0].id,
+          label: `${promptNodeInputs?.[0].id} (from node ${promptNodeInputs?.[0].nodeId})`,
+        }
+      : undefined,
+    [ClapperComfyUiInputIds.NEGATIVE_PROMPT]: negativePromptNodeInputs?.[0]
+      ? {
+          id: negativePromptNodeInputs?.[0].id,
+          label: `${negativePromptNodeInputs?.[0].id} (from node ${negativePromptNodeInputs?.[0].nodeId})`,
+        }
+      : undefined,
+    [ClapperComfyUiInputIds.WIDTH]: widthNodeInputs?.[0]
+      ? {
+          id: widthNodeInputs?.[0].id,
+          label: `${widthNodeInputs?.[0].id} (from node ${widthNodeInputs?.[0].nodeId})`,
+        }
+      : undefined,
+    [ClapperComfyUiInputIds.HEIGHT]: heightNodeInputs?.[0]
+      ? {
+          id: heightNodeInputs?.[0].id,
+          label: `${heightNodeInputs?.[0].id} (from node ${heightNodeInputs?.[0].nodeId})`,
+        }
+      : undefined,
+    [ClapperComfyUiInputIds.SEED]: seedNodeInputs?.[0]
+      ? {
+          id: seedNodeInputs?.[0].id,
+          label: `${seedNodeInputs?.[0].id} (from node ${seedNodeInputs?.[0].nodeId})`,
+        }
+      : undefined,
+    [ClapperComfyUiInputIds.OUTPUT]: outputNode
+      ? {
+          id: outputNode?.id,
+          label: `${outputNode?._meta?.title} (id: ${outputNode?.id})`,
+        }
+      : undefined,
   }
 
   const inputLabels = {
