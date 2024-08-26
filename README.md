@@ -15,7 +15,7 @@ short_description: 🎬 Clapper
 > Clapper is in a **_very_** early stage. There are no tutorials, some UI features and buttons won't work, some workflows are broken, and there are no tests.
 > Want this to change? Come join our open-source community to help build Clapper!
 
-<video src="https://github.com/jbilcke-hf/clapper/raw/main/documentation/videos/20240826.mp4"></video>
+![Demo|600](documentation/videos/20240826.gif)
 
 # Introduction
 
