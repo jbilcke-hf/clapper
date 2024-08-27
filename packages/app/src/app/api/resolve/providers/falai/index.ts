@@ -174,7 +174,7 @@ export async function resolveSegment(
     model = request.settings.videoGenerationWorkflow.data || ''
 
     // console.log(`request.settings.falAiModelForVideo = `, request.settings.falAiModelForVideo)
-    if (model === 'fal-ai/live-portrait') {
+    if (model === 'fal-ai/live-portrait' &&  request.prompts.video.image) {
       const result = (await fal.run(model, {
         input: {
           image_url: request.prompts.video.image,

@@ -39,6 +39,7 @@ export async function resolveSegment(
 
     if (
       request.settings.imageGenerationWorkflow.data === 'fofr/pulid-lightning'
+      && request.prompts.image.identity
     ) {
       params = {
         ...params,
@@ -71,7 +72,8 @@ export async function resolveSegment(
           !request.settings.censorNotForAllAudiencesContent,
       }
     } else if (
-      request.settings.imageGenerationWorkflow.data === 'zsxkib/pulid'
+      request.settings.imageGenerationWorkflow.data === 'zsxkib/pulid' 
+      && request.prompts.image.identity
     ) {
       params = {
         ...params,
@@ -86,6 +88,8 @@ export async function resolveSegment(
 
     segment.assetUrl = `${response[0] || ''}`
   } else if (request.segment.category === ClapSegmentCategory.DIALOGUE) {
+   
+   if (request.prompts.voice.positive && request.prompts.voice.identity) {
     const response = (await replicate.run(
       request.settings.voiceGenerationWorkflow.data as any,
       {
@@ -98,10 +102,13 @@ export async function resolveSegment(
       }
     )) as any
     segment.assetUrl = `${response[0] || ''}`
+  } else {
+    console.log(`cannot generate a dialogue without a voice identity`)
+  }
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
     const model = request.settings.videoGenerationWorkflow.data as any
 
-    if (model.startsWith('fofr/live-portrait')) {
+    if (model.startsWith('fofr/live-portrait') && request.prompts.video.image) {
       const response = (await replicate.run(
         request.settings.videoGenerationWorkflow.data as any,
         {
@@ -146,7 +153,7 @@ export async function resolveSegment(
         }
       )) as any
       segment.assetUrl = `${response[0] || ''}`
-    } else {
+    } else if (request.prompts.video.image) {
       const response = (await replicate.run(
         request.settings.videoGenerationWorkflow.data as any,
         {
