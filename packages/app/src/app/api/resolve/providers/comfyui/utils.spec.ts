@@ -239,36 +239,66 @@ test('should return the correct inputs by node id', () => {
       name: 'seed',
       value: 156680208700286,
       id: '3.inputs.seed',
-      nodeId: '3',
+      node: {
+        id: '3',
+        name: 'KSampler',
+        type: 'KSampler',
+      },
     },
     {
       type: 'number',
       name: 'steps',
       value: 20,
       id: '3.inputs.steps',
-      nodeId: '3',
+      node: {
+        id: '3',
+        name: 'KSampler',
+        type: 'KSampler',
+      },
     },
-    { type: 'number', name: 'cfg', value: 8, id: '3.inputs.cfg', nodeId: '3' },
+    {
+      type: 'number',
+      name: 'cfg',
+      value: 8,
+      id: '3.inputs.cfg',
+      node: {
+        id: '3',
+        name: 'KSampler',
+        type: 'KSampler',
+      },
+    },
     {
       type: 'string',
       name: 'sampler_name',
       value: 'euler',
       id: '3.inputs.sampler_name',
-      nodeId: '3',
+      node: {
+        id: '3',
+        name: 'KSampler',
+        type: 'KSampler',
+      },
     },
     {
       type: 'string',
       name: 'scheduler',
       value: 'normal',
       id: '3.inputs.scheduler',
-      nodeId: '3',
+      node: {
+        id: '3',
+        name: 'KSampler',
+        type: 'KSampler',
+      },
     },
     {
       type: 'number',
       name: 'denoise',
       value: 1,
       id: '3.inputs.denoise',
-      nodeId: '3',
+      node: {
+        id: '3',
+        name: 'KSampler',
+        type: 'KSampler',
+      },
     },
   ])
 
@@ -278,7 +308,11 @@ test('should return the correct inputs by node id', () => {
       name: 'ckpt_name',
       value: 'v1-5-pruned-emaonly.ckpt',
       id: '4.inputs.ckpt_name',
-      nodeId: '4',
+      node: {
+        id: '4',
+        name: 'Load Checkpoint',
+        type: 'CheckpointLoaderSimple',
+      },
     },
   ])
 
@@ -288,21 +322,33 @@ test('should return the correct inputs by node id', () => {
       name: 'width',
       value: 512,
       id: '5.inputs.width',
-      nodeId: '5',
+      node: {
+        id: '5',
+        name: 'Empty Latent Image',
+        type: 'EmptyLatentImage',
+      },
     },
     {
       type: 'number',
       name: 'height',
       value: 512,
       id: '5.inputs.height',
-      nodeId: '5',
+      node: {
+        id: '5',
+        name: 'Empty Latent Image',
+        type: 'EmptyLatentImage',
+      },
     },
     {
       type: 'number',
       name: 'batch_size',
       value: 1,
       id: '5.inputs.batch_size',
-      nodeId: '5',
+      node: {
+        id: '5',
+        name: 'Empty Latent Image',
+        type: 'EmptyLatentImage',
+      },
     },
   ])
 
@@ -313,7 +359,11 @@ test('should return the correct inputs by node id', () => {
       value:
         'beautiful scenery nature glass bottle landscape, , purple galaxy bottle,',
       id: '6.inputs.text',
-      nodeId: '6',
+      node: {
+        id: '6',
+        name: 'CLIP Text Encode (Prompt)',
+        type: 'CLIPTextEncode',
+      },
     },
   ])
 
@@ -329,7 +379,11 @@ test('should detect the correct positive and negative prompt inputs', () => {
   expect(positivePromptInput).toEqual([
     {
       id: '6.inputs.text',
-      nodeId: '6',
+      node: {
+        id: '6',
+        name: 'CLIP Text Encode (Prompt)',
+        type: 'CLIPTextEncode',
+      },
       name: 'text',
       type: 'string',
       value:
@@ -340,7 +394,11 @@ test('should detect the correct positive and negative prompt inputs', () => {
   expect(negativePromptInput).toEqual([
     {
       id: '7.inputs.text',
-      nodeId: '7',
+      node: {
+        id: '7',
+        name: 'CLIP Text Encode (Prompt)',
+        type: 'CLIPTextEncode',
+      },
       name: 'text',
       type: 'string',
       value: 'text, watermark',
@@ -364,7 +422,11 @@ test('should detect the correct positive and negative prompt inputs using clappe
   expect(positivePromptInput).toEqual([
     {
       id: '6.inputs.text',
-      nodeId: '6',
+      node: {
+        id: '6',
+        name: 'CLIP Text Encode (Prompt)',
+        type: 'CLIPTextEncode',
+      },
       type: 'string',
       name: 'text',
       value: '@clapper/prompt',
@@ -374,7 +436,11 @@ test('should detect the correct positive and negative prompt inputs using clappe
   expect(negativePromptInput).toEqual([
     {
       id: '7.inputs.text',
-      nodeId: '7',
+      node: {
+        id: '7',
+        name: 'CLIP Text Encode (Prompt)',
+        type: 'CLIPTextEncode',
+      },
       type: 'string',
       name: 'text',
       value: '@clapper/negative',
@@ -398,7 +464,11 @@ test('should correctly search workflow inputs', () => {
   ).toEqual([
     {
       id: '6.inputs.text',
-      nodeId: '6',
+      node: {
+        id: '6',
+        name: 'CLIP Text Encode (Prompt)',
+        type: 'CLIPTextEncode',
+      },
       name: 'text',
       type: 'string',
       value:
@@ -406,7 +476,11 @@ test('should correctly search workflow inputs', () => {
     },
     {
       id: '7.inputs.text',
-      nodeId: '7',
+      node: {
+        id: '7',
+        name: 'CLIP Text Encode (Prompt)',
+        type: 'CLIPTextEncode',
+      },
       name: 'text',
       type: 'string',
       value: 'text, watermark',
@@ -421,7 +495,11 @@ test('should correctly search workflow inputs', () => {
   ).toEqual([
     {
       id: '6.inputs.text',
-      nodeId: '6',
+      node: {
+        id: '6',
+        name: 'CLIP Text Encode (Prompt)',
+        type: 'CLIPTextEncode',
+      },
       name: 'text',
       type: 'string',
       value:
@@ -437,7 +515,11 @@ test('should correctly search workflow inputs', () => {
   ).toEqual([
     {
       id: '6.inputs.text',
-      nodeId: '6',
+      node: {
+        id: '6',
+        name: 'CLIP Text Encode (Prompt)',
+        type: 'CLIPTextEncode',
+      },
       name: 'text',
       type: 'string',
       value:
@@ -472,6 +554,7 @@ test('should create the PromptBuilder', () => {
       ClapperComfyUiInputIds.NEGATIVE_PROMPT,
     [ClapperComfyUiInputIds.WIDTH]: ClapperComfyUiInputIds.WIDTH,
     [ClapperComfyUiInputIds.HEIGHT]: ClapperComfyUiInputIds.HEIGHT,
+    [ClapperComfyUiInputIds.SEED]: ClapperComfyUiInputIds.SEED,
   })
   expect(promptBuilder.prompt).toEqual(workflowRaw)
 })

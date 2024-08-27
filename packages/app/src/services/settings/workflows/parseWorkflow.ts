@@ -54,7 +54,10 @@ export function parseWorkflow(
       const {
         inputFields: defaultInputFields,
         inputValues: defaultInputValues,
-      } = convertComfyUiWorkflowApiToClapWorkflow(maybeWorkflow.data)
+      } = convertComfyUiWorkflowApiToClapWorkflow(
+        maybeWorkflow.data,
+        maybeWorkflow.category
+      )
       // Use the already existing inputFields/inputValues, otherwise use the default
       // ones based on the raw comfyui workflow data
       maybeWorkflow.inputFields =

@@ -14,7 +14,9 @@ export function useDynamicWorkflows() {
   const comfyClapWorkflowForImage = useSettings(
     (s) => s.comfyClapWorkflowForImage
   )
-  const comfyWorkflowForVideo = useSettings((s) => s.comfyWorkflowForVideo)
+  const comfyClapWorkflowForVideo = useSettings(
+    (s) => s.comfyClapWorkflowForVideo
+  )
   const comfyWorkflowForMusic = useSettings((s) => s.comfyWorkflowForMusic)
   const comfyWorkflowForSound = useSettings((s) => s.comfyWorkflowForSound)
   const comfyWorkflowForVoice = useSettings((s) => s.comfyWorkflowForVoice)
@@ -27,7 +29,7 @@ export function useDynamicWorkflows() {
     updateAvailableWorkflows()
   }, [
     comfyClapWorkflowForImage,
-    comfyWorkflowForVideo,
+    comfyClapWorkflowForVideo,
     comfyWorkflowForMusic,
     comfyWorkflowForSound,
     comfyWorkflowForVoice,

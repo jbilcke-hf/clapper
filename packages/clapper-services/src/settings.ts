@@ -65,7 +65,7 @@ export type BaseSettings = {
 
   // ------------ COMFY UI CLAP WORKFLOWS -----------------
   comfyClapWorkflowForImage: ClapWorkflow
-  comfyWorkflowForVideo: string
+  comfyClapWorkflowForVideo: ClapWorkflow
   comfyWorkflowForVoice: string
   comfyWorkflowForSound: string
   comfyWorkflowForMusic: string
@@ -197,7 +197,7 @@ export type SettingsControls = {
   setMaxVideosToGenerateInParallel: (maxVideosToGenerateInParallel?: number) => void
 
   setComfyClapWorkflowForImage: (comfyClapWorkflowForImage?: ClapWorkflow) => void
-  setComfyWorkflowForVideo: (comfyWorkflowForVideo?: string) => void
+  setComfyClapWorkflowForVideo: (comfyClapWorkflowForVideo?: ClapWorkflow) => void
   setComfyWorkflowForVoice: (comfyWorkflowForVoice?: string) => void
   setComfyWorkflowForSound: (comfyWorkflowForSound?: string) => void
   setComfyWorkflowForMusic: (comfyWorkflowForMusic?: string) => void
