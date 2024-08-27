@@ -101,7 +101,7 @@ export async function resolveSegment(
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
     const model = request.settings.videoGenerationWorkflow.data as any
 
-    if (model.startsWith("fofr/live-portrait")) {
+    if (model.startsWith('fofr/live-portrait')) {
       const response = (await replicate.run(
         request.settings.videoGenerationWorkflow.data as any,
         {
@@ -129,7 +129,6 @@ export async function resolveSegment(
             // default: 2.3
             live_portrait_scale: 2.3,
 
-
             // Enable stitching
             // default: true
             live_portrait_stitching: true,
@@ -140,7 +139,6 @@ export async function resolveSegment(
 
             // there are a lot of other params, check them here:
             // https://replicate.com/fofr/live-portrait
-
 
             disable_safety_checker:
               !request.settings.censorNotForAllAudiencesContent,

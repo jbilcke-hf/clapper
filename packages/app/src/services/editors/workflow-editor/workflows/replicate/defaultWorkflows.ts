@@ -50,7 +50,6 @@ export const defaultWorkflows: ClapWorkflow[] = [
 
       // there are a lot of other params, check them here:
       // https://replicate.com/fofr/live-portrait
-
     },
   },
   {
