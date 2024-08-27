@@ -32,13 +32,32 @@ import {
 // ------------------------------------------------------------------------------
 export const defaultWorkflows: ClapWorkflow[] = [
   {
+    id: 'replicate://cuuupid/cogvideox-5b',
+    label: 'CogVideoX-5b by @cuuupid',
+    description: '',
+    tags: ['video generation'],
+    author: '@cuuupid',
+    thumbnailUrl: '',
+    nonCommercial: true,
+    engine: ClapWorkflowEngine.REST_API,
+    category: ClapWorkflowCategory.VIDEO_GENERATION,
+    provider: ClapWorkflowProvider.REPLICATE,
+    data: 'cuuupid/cogvideox-5b',
+    schema: '',
+    // for more info: https://replicate.com/cuuupid/cogvideox-5b
+    inputFields: [genericPrompt],
+    inputValues: {
+      [genericPrompt.id]: genericPrompt.defaultValue,
+    },
+  },
+  {
     id: 'replicate://chenxwh/video-retalking',
     label: 'Video Retalking by @chenxwh',
     description: '',
     tags: ['video retalking'],
     author: '@chenxwh',
     thumbnailUrl: '',
-    nonCommercial: true,
+    nonCommercial: false,
     engine: ClapWorkflowEngine.REST_API,
     category: ClapWorkflowCategory.VIDEO_LIPSYNC,
     provider: ClapWorkflowProvider.REPLICATE,

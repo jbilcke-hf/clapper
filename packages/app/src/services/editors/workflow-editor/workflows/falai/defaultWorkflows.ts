@@ -48,6 +48,25 @@ TODO: add those as well
 // ------------------------------------------------------------------------------
 export const defaultWorkflows: ClapWorkflow[] = [
   {
+    id: 'falai://fal-ai/cogvideox-5b',
+    label: 'CogVideoX-5b',
+    description: '',
+    tags: ['video generation'],
+    author: '',
+    thumbnailUrl: '',
+    nonCommercial: true,
+
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.FALAI,
+    category: ClapWorkflowCategory.VIDEO_GENERATION,
+    data: 'fal-ai/face-swap',
+    schema: '',
+    inputFields: [genericPrompt],
+    inputValues: {
+      [genericPrompt.id]: genericPrompt.defaultValue,
+    },
+  },
+  {
     id: 'falai://fal-ai/face-swap',
     label: 'Face Swap',
     description: '',

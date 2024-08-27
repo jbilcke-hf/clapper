@@ -29,9 +29,7 @@ export async function resolveSegment(
     */
 
     if (!request.prompts.video.image) {
-      throw new Error(
-        `cannot generate a video without a storyboard (the concept of Clapper is to use storyboards)`
-      )
+      throw new Error(`cannot generate a video without a storyboard`)
     }
 
     // https://bigmodel.cn/dev/api#cogvideox

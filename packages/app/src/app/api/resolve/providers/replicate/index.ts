@@ -38,8 +38,9 @@ export async function resolveSegment(
     }
 
     if (
-      request.settings.imageGenerationWorkflow.data === 'fofr/pulid-lightning'
-      && request.prompts.image.identity
+      request.settings.imageGenerationWorkflow.data ===
+        'fofr/pulid-lightning' &&
+      request.prompts.image.identity
     ) {
       params = {
         ...params,
@@ -72,8 +73,8 @@ export async function resolveSegment(
           !request.settings.censorNotForAllAudiencesContent,
       }
     } else if (
-      request.settings.imageGenerationWorkflow.data === 'zsxkib/pulid' 
-      && request.prompts.image.identity
+      request.settings.imageGenerationWorkflow.data === 'zsxkib/pulid' &&
+      request.prompts.image.identity
     ) {
       params = {
         ...params,
@@ -88,23 +89,22 @@ export async function resolveSegment(
 
     segment.assetUrl = `${response[0] || ''}`
   } else if (request.segment.category === ClapSegmentCategory.DIALOGUE) {
-   
-   if (request.prompts.voice.positive && request.prompts.voice.identity) {
-    const response = (await replicate.run(
-      request.settings.voiceGenerationWorkflow.data as any,
-      {
-        input: {
-          text: request.prompts.voice.positive,
-          audio: request.prompts.voice.identity,
-          disable_safety_checker:
-            !request.settings.censorNotForAllAudiencesContent,
-        },
-      }
-    )) as any
-    segment.assetUrl = `${response[0] || ''}`
-  } else {
-    console.log(`cannot generate a dialogue without a voice identity`)
-  }
+    if (request.prompts.voice.positive && request.prompts.voice.identity) {
+      const response = (await replicate.run(
+        request.settings.voiceGenerationWorkflow.data as any,
+        {
+          input: {
+            text: request.prompts.voice.positive,
+            audio: request.prompts.voice.identity,
+            disable_safety_checker:
+              !request.settings.censorNotForAllAudiencesContent,
+          },
+        }
+      )) as any
+      segment.assetUrl = `${response[0] || ''}`
+    } else {
+      console.log(`cannot generate a dialogue without a voice identity`)
+    }
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
     const model = request.settings.videoGenerationWorkflow.data as any
 
@@ -146,6 +146,26 @@ export async function resolveSegment(
 
             // there are a lot of other params, check them here:
             // https://replicate.com/fofr/live-portrait
+
+            disable_safety_checker:
+              !request.settings.censorNotForAllAudiencesContent,
+          },
+        }
+      )) as any
+      segment.assetUrl = `${response[0] || ''}`
+    } else if (
+      model.startsWith('cuuupid/cogvideox-5b') &&
+      request.prompts.image.positive
+    ) {
+      const response = (await replicate.run(
+        request.settings.videoGenerationWorkflow.data as any,
+        {
+          input: {
+            // TODO use the workflows fields to do this
+            prompt: request.prompts.image.positive,
+
+            // there are a lot of other params, check them here:
+            // https://replicate.com/cuuupid/cogvideox-5b
 
             disable_safety_checker:
               !request.settings.censorNotForAllAudiencesContent,
