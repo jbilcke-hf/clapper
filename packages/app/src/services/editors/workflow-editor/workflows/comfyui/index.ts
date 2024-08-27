@@ -60,10 +60,12 @@ export async function getDynamicComfyuiWorkflows(): Promise<ClapWorkflow[]> {
       engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
       provider: ClapWorkflowProvider.COMFYUI,
       category: ClapWorkflowCategory.IMAGE_GENERATION,
-      data: settings.comfyWorkflowForImage,
+      data: settings.comfyClapWorkflowForImage?.data,
       schema: '',
-      inputFields: [genericPrompt],
-      inputValues: {
+      inputFields: settings.comfyClapWorkflowForImage?.inputFields || [
+        genericPrompt,
+      ],
+      inputValues: settings.comfyClapWorkflowForImage?.inputValues || {
         [genericPrompt.id]: genericPrompt.defaultValue,
       },
     },

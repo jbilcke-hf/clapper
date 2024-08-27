@@ -79,7 +79,7 @@ export function getDefaultSettingsState(): SettingsState {
     maxImagesToGenerateInParallel: 1,
     maxVideosToGenerateInParallel: 1,
 
-    comfyWorkflowForImage: defaultWorkflowForImages,
+    comfyClapWorkflowForImage: defaultWorkflowForImages,
     comfyWorkflowForVideo: '{}',
     comfyWorkflowForVoice: '{}',
     comfyWorkflowForSound: '{}',
