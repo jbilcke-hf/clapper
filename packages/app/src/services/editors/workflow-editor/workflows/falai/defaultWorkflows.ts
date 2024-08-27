@@ -161,7 +161,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     data: 'fal-ai/flux-realism',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -190,7 +190,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     data: 'fal-ai/flux-pro',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -241,7 +241,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     data: 'fal-ai/flux/dev',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -272,7 +272,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     data: 'fal-ai/fast-sdxl',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -303,7 +303,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     data: 'fal-ai/stable-diffusion-v3-medium',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,

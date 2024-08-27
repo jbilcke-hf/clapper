@@ -34,7 +34,7 @@ export const stabilityaiWorkflows: ClapWorkflow[] = [
     data: 'image-to-video',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [genericImage],
     inputValues: {
@@ -55,7 +55,7 @@ export const stabilityaiWorkflows: ClapWorkflow[] = [
     data: 'stable-image/generate/ultra',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -86,7 +86,7 @@ export const stabilityaiWorkflows: ClapWorkflow[] = [
     data: 'stable-image/generate/core',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -117,7 +117,7 @@ export const stabilityaiWorkflows: ClapWorkflow[] = [
     data: 'stable-image/generate/sd3',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,

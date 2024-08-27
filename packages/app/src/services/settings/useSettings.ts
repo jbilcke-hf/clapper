@@ -416,6 +416,15 @@ export const useSettings = create<SettingsStore>()(
             : defaultVideoFaceswapWorkflow,
         })
       },
+      setVideoLipsyncWorkflow: (videoLipsyncWorkflow?: ClapWorkflow) => {
+        const { videoLipsyncWorkflow: defaultVideoLipsyncWorkflow } =
+          getDefaultSettingsState()
+        set({
+          videoLipsyncWorkflow: videoLipsyncWorkflow
+            ? JSON.stringify(videoLipsyncWorkflow)
+            : defaultVideoLipsyncWorkflow,
+        })
+      },
       setVideoUpscalingWorkflow: (videoUpscalingWorkflow?: ClapWorkflow) => {
         const { videoUpscalingWorkflow: defaultVideoUpscalingWorkflow } =
           getDefaultSettingsState()
@@ -835,6 +844,11 @@ export const useSettings = create<SettingsStore>()(
           ClapWorkflowCategory.VIDEO_FACESWAP
         )
 
+        const videoLipsyncWorkflow = parseWorkflow(
+          state.videoLipsyncWorkflow || defaultSettings.videoLipsyncWorkflow,
+          ClapWorkflowCategory.VIDEO_LIPSYNC
+        )
+
         const videoDepthWorkflow = parseWorkflow(
           state.videoDepthWorkflow || defaultSettings.videoDepthWorkflow,
           ClapWorkflowCategory.VIDEO_DEPTH_MAPPING
@@ -955,6 +969,7 @@ export const useSettings = create<SettingsStore>()(
           imageSegmentationWorkflow,
           videoGenerationWorkflow,
           videoFaceswapWorkflow,
+          videoLipsyncWorkflow,
           videoDepthWorkflow,
           videoSegmentationWorkflow,
           videoUpscalingWorkflow,

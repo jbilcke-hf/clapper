@@ -51,7 +51,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     data: 'black-forest-labs/FLUX.1-dev',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -103,7 +103,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     data: 'coqui/XTTS-v2',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [genericPrompt],
     inputValues: {
@@ -124,7 +124,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     data: 'myshell-ai/OpenVoiceV2',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [genericPrompt],
     inputValues: {
@@ -145,7 +145,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     data: 'myshell-ai/OpenVoice',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [genericPrompt],
     inputValues: {
@@ -166,7 +166,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     data: 'WhisperSpeech/WhisperSpeech',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [genericPrompt],
     inputValues: {
@@ -187,7 +187,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     data: 'metavoiceio/metavoice-1B-v0.1',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [genericPrompt],
     inputValues: {
@@ -208,7 +208,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     data: 'parler-tts/parler_tts_mini_v0.1',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [genericPrompt],
     inputValues: {
@@ -229,7 +229,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     data: 'parler-tts/parler-tts-mini-expresso',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [genericPrompt],
     inputValues: {
@@ -286,7 +286,7 @@ export const huggingfaceWorkflows: ClapWorkflow[] = [
     category: ClapWorkflowCategory.MUSIC_GENERATION,
     data: 'cvssp/audioldm2-music',
     schema: '',
-    // Inputs of the workflow (this is used to build an UI for the automatically)
+    // Inputs of the workflow (this is used to build an UI for the workflow automatically)
     inputFields: [
       genericPrompt,
     ],

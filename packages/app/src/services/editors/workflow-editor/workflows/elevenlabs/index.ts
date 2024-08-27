@@ -31,7 +31,7 @@ export const elevenlabsWorkflows: ClapWorkflow[] = [
     data: 'v1/text-to-speech',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [genericPrompt],
     inputValues: {
@@ -52,7 +52,7 @@ export const elevenlabsWorkflows: ClapWorkflow[] = [
     data: 'v1/sound-generation',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [genericPrompt],
     inputValues: {
