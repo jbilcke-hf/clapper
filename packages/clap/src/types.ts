@@ -626,6 +626,7 @@ export enum ClapWorkflowCategory {
   VOICE_GENERATION = "VOICE_GENERATION",
   VIDEO_GENERATION = "VIDEO_GENERATION",
   VIDEO_FACESWAP = "VIDEO_FACESWAP",
+  VIDEO_LIPSYNC = "VIDEO_LIPSYNC",
   VIDEO_FILTERING = "VIDEO_FILTERING",
   VIDEO_UPSCALING = "VIDEO_UPSCALING",
   VIDEO_DEPTH_MAPPING = "VIDEO_DEPTH_MAPPING",
@@ -724,7 +725,7 @@ export type ClapWorkflow = {
   schema: string
 
   /**
-   * Inputs of the workflow (this is used to build an UI for the automatically)
+   * Inputs of the workflow (this is used to build an UI for the workflow automatically)
    */
   inputFields: ClapInputFields 
 

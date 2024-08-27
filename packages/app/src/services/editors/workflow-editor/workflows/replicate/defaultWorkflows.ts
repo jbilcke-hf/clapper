@@ -6,6 +6,7 @@ import {
 } from '@aitube/clap'
 
 import {
+  genericAudio,
   genericBaseImageUrl,
   genericDrivingVideo,
   genericFaceImage,
@@ -30,6 +31,34 @@ import {
 // -> we can create a ticket to fix this
 // ------------------------------------------------------------------------------
 export const defaultWorkflows: ClapWorkflow[] = [
+  {
+    id: 'replicate://chenxwh/video-retalking',
+    label: 'Video Retalking by @chenxwh',
+    description: '',
+    tags: ['video retalking'],
+    author: '@chenxwh',
+    thumbnailUrl: '',
+    nonCommercial: true,
+    engine: ClapWorkflowEngine.REST_API,
+    category: ClapWorkflowCategory.VIDEO_LIPSYNC,
+    provider: ClapWorkflowProvider.REPLICATE,
+    data: 'chenxwh/video-retalking:db5a650c807b007dc5f9e5abe27c53e1b62880d1f94d218d27ce7fa802711d67',
+    schema: '',
+    inputFields: [
+      {
+        ...genericVideo,
+        id: 'face',
+      },
+      {
+        ...genericAudio,
+        id: 'input_audio',
+      },
+    ],
+    inputValues: {
+      face: genericVideo.defaultValue,
+      input_audio: genericAudio.defaultValue,
+    },
+  },
   {
     id: 'replicate://fofr/live-portrait',
     label: 'Live Portrait by @fofr',
@@ -92,7 +121,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     schema: '',
     // data: 'lucataco/flux-dev-lora:94a0c19e55e36f75d657ecf9eada9f16a233b5329fb9cdf8e2b9ecd093e5c97e',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -124,7 +153,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     data: 'black-forest-labs/flux-pro',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -155,7 +184,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     data: 'black-forest-labs/flux-schnell',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [genericPrompt, genericWidth2048, genericHeight2048],
     inputValues: {
@@ -178,7 +207,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     data: 'black-forest-labs/flux-dev',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -209,7 +238,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     data: 'stability-ai/fast-sdxl',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -240,7 +269,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     data: 'chenxwh/openvoice',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [genericPrompt],
     inputValues: {

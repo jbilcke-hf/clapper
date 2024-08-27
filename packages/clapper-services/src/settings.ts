@@ -98,6 +98,7 @@ export type SettingsState = BaseSettings & {
   imageSegmentationWorkflow: string
   videoGenerationWorkflow: string
   videoFaceswapWorkflow: string
+  videoLipsyncWorkflow: string
   videoUpscalingWorkflow: string
   videoDepthWorkflow: string
   videoSegmentationWorkflow: string
@@ -119,6 +120,7 @@ export type RequestSettings = BaseSettings & {
   imageSegmentationWorkflow: ClapWorkflow
   videoGenerationWorkflow: ClapWorkflow
   videoFaceswapWorkflow: ClapWorkflow
+  videoLipsyncWorkflow: ClapWorkflow
   videoUpscalingWorkflow: ClapWorkflow
   videoDepthWorkflow: ClapWorkflow
   videoSegmentationWorkflow: ClapWorkflow
@@ -173,6 +175,7 @@ export type SettingsControls = {
   setImageSegmentationWorkflow: (imageSegmentationWorkflow?: ClapWorkflow) => void
   setVideoGenerationWorkflow: (videoGenerationWorkflow?: ClapWorkflow) => void
   setVideoFaceswapWorkflow: (videoFaceswapWorkflow?: ClapWorkflow) => void
+  setVideoLipsyncWorkflow: (videoLipsyncWorkflow?: ClapWorkflow) => void
   setVideoDepthWorkflow: (videoDepthWorkflow?: ClapWorkflow) => void
   setVideoSegmentationWorkflow: (videoSegmentationWorkflow?: ClapWorkflow) => void
   setVideoUpscalingWorkflow: (videoUpscalingWorkflow?: ClapWorkflow) => void

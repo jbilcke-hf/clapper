@@ -31,7 +31,7 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
     data: 'stability/sd3',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -62,7 +62,7 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
     data: 'accounts/stability/models/sd3-turbo',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -93,7 +93,7 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
     data: 'fireworks/stable-diffusion-xl-1024-v1-0',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,
@@ -124,7 +124,7 @@ export const fireworksaiWorkflows: ClapWorkflow[] = [
     data: 'accounts/fireworks/models/playground-v2-5-1024px-aesthetic',
     schema: '',
     /**
-     * Inputs of the workflow (this is used to build an UI for the automatically)
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
      */
     inputFields: [
       genericPrompt,

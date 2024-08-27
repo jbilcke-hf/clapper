@@ -57,6 +57,7 @@ export function getDefaultSettingsState(): SettingsState {
     imageSegmentationWorkflow: '',
     videoGenerationWorkflow: '',
     videoFaceswapWorkflow: '',
+    videoLipsyncWorkflow: '',
     videoUpscalingWorkflow: '',
     videoDepthWorkflow: '',
     videoSegmentationWorkflow: '',
