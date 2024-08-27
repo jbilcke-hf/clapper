@@ -20,6 +20,9 @@ export function getSegmentWorkflowProviderAndEngine({
   faceswapWorkflow?: ClapWorkflow
   faceswapProvider?: ClapWorkflowProvider
   faceswapEngine?: ClapWorkflowEngine
+  lipsyncWorkflow?: ClapWorkflow
+  lipsyncProvider?: ClapWorkflowProvider
+  lipsyncEngine?: ClapWorkflowEngine
 } {
   const generationWorkflow: ClapWorkflow | undefined =
     segment.category === ClapSegmentCategory.STORYBOARD
@@ -53,6 +56,17 @@ export function getSegmentWorkflowProviderAndEngine({
   const faceswapEngine: ClapWorkflowEngine | undefined =
     faceswapWorkflow?.engine || undefined
 
+  const lipsyncWorkflow: ClapWorkflow | undefined =
+    segment.category === ClapSegmentCategory.VIDEO
+      ? settings.videoLipsyncWorkflow
+      : undefined
+
+  const lipsyncProvider: ClapWorkflowProvider | undefined =
+    lipsyncWorkflow?.provider || undefined
+
+  const lipsyncEngine: ClapWorkflowEngine | undefined =
+    lipsyncWorkflow?.engine || undefined
+
   return {
     generationWorkflow,
     generationProvider,
@@ -60,5 +74,8 @@ export function getSegmentWorkflowProviderAndEngine({
     faceswapWorkflow,
     faceswapProvider,
     faceswapEngine,
+    lipsyncWorkflow,
+    lipsyncProvider,
+    lipsyncEngine,
   }
 }
