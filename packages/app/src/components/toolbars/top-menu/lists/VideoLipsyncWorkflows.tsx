@@ -43,8 +43,8 @@ export function VideoLipsyncWorkflows() {
   return (
     <MenubarSub>
       <MenubarSubTrigger>
-        <Tag size="lg" color={TagColor.ZINC}>
-          lip&amp;sync
+        <Tag size="lg" color={TagColor.BLUE}>
+          video&nbsp;lipsync
         </Tag>
         <div className={cn(`flex flex-row items-center space-x-2`)}>
           {workflow?.provider && (

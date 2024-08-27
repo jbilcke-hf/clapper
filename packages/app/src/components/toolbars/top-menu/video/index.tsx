@@ -22,6 +22,7 @@ import { useResolver } from '@/services/resolver/useResolver'
 import { IsBusy } from '../IsBusy'
 import { VideoDepthWorkflows } from '../lists/VideoDepthWorkflows'
 import { VideoSegmentationWorkflows } from '../lists/VideoSegmentationWorkflows'
+import { VideoLipsyncWorkflows } from '../lists/VideoLipsyncWorkflows'
 
 export function TopMenuVideo() {
   const nbPendingRequestsForVideo = useResolver(
@@ -51,6 +52,7 @@ export function TopMenuVideo() {
           </MenubarItem>
           <MenubarSeparator />
           <VideoGenerationWorkflows />
+          <VideoLipsyncWorkflows />
           <VideoUpscalingWorkflows />
           <VideoDepthWorkflows />
           <VideoSegmentationWorkflows />
