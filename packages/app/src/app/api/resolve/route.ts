@@ -36,6 +36,7 @@ import { getMediaInfo } from '@/lib/ffmpeg/getMediaInfo'
 import { getSegmentWorkflowProviderAndEngine } from '@/services/editors/workflow-editor/getSegmentWorkflowProviderAndEngine'
 import { runFaceSwap as runFaceswapWithFalAi } from './providers/falai/runFaceSwap'
 import { runFaceSwap as runFaceswapWithReplicate } from './providers/replicate/runFaceSwap'
+import { runLipSync as runLipSyncWithReplicate } from './providers/replicate/runLipSync'
 
 type ProviderFn = (request: ResolveRequest) => Promise<TimelineSegment>
 
@@ -54,6 +55,9 @@ export async function POST(req: NextRequest) {
     faceswapWorkflow,
     faceswapProvider,
     faceswapEngine,
+    lipsyncWorkflow,
+    lipsyncProvider,
+    lipsyncEngine,
   } = getSegmentWorkflowProviderAndEngine(request)
 
   /*
@@ -198,6 +202,58 @@ export async function POST(req: NextRequest) {
         segment.outputType = outputType
       } catch (err) {
         console.error(`failed to run the faceswap (${err})`)
+      }
+    }
+  }
+
+  // extra step: lip sync
+  // for this we need to have a valid video
+  // (or we could use a simple image + audio model)
+
+  const hasValidVideo =
+    segment.category === ClapSegmentCategory.VIDEO && segment.assetUrl
+
+  const firstDialogue = request.segments.find(
+    (s) => s.category === ClapSegmentCategory.DIALOGUE
+  )
+  const hasValidAudio = firstDialogue?.assetUrl
+
+  if (
+    lipsyncProvider &&
+    request.settings.videoLipsyncWorkflow.data &&
+    hasValidVideo &&
+    hasValidAudio
+  ) {
+    const lipsyncProviders: Partial<Record<ClapWorkflowProvider, ProviderFn>> =
+      {
+        // TODO use Fal.ai? I think they only have SadTalker?
+        [ClapWorkflowProvider.REPLICATE]: runLipSyncWithReplicate,
+      }
+
+    const lipsync: ProviderFn | undefined =
+      lipsyncProviders[lipsyncProvider] || undefined
+
+    if (lipsync) {
+      try {
+        await lipsync(request)
+
+        // we clean-up and parse the output from all the resolvers:
+        // this will download files hosted on CDNs, convert WAV files to MP3 etc
+
+        segment.assetUrl = await decodeOutput(segment.assetUrl)
+
+        segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)
+
+        segment.status = ClapSegmentStatus.COMPLETED
+
+        const { assetFileFormat, outputType } = getTypeAndExtension(
+          segment.assetUrl
+        )
+
+        segment.assetFileFormat = assetFileFormat
+        segment.outputType = outputType
+      } catch (err) {
+        console.error(`failed to run the lipsync (${err})`)
       }
     }
   }
