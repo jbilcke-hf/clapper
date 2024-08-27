@@ -611,41 +611,6 @@ export const useIO = create<IOStore>((set, get) => ({
 
     const videoBlob = new Blob([fullVideo], { type: 'video/mp4' })
 
-    const videoDataUrl = await blobToBase64DataUri(videoBlob)
-
-    const alreadyAnEmbeddedFinalVideo = timelineSegments
-      .filter(
-        (s) =>
-          s.category === ClapSegmentCategory.VIDEO &&
-          s.status === ClapSegmentStatus.COMPLETED &&
-          s.startTimeInMs === 0 &&
-          s.endTimeInMs === meta.durationInMs &&
-          s.assetUrl
-      )
-      .at(0)
-
-    // inject the final mp4 video file into the .clap
-    if (alreadyAnEmbeddedFinalVideo) {
-      console.log(`editing the clap to update the final video`)
-      alreadyAnEmbeddedFinalVideo.assetUrl = videoDataUrl
-    } else {
-      console.log(`editing the clap to add a new final video`)
-      timelineSegments.push(
-        await clapSegmentToTimelineSegment(
-          newSegment({
-            category: ClapSegmentCategory.VIDEO,
-            status: ClapSegmentStatus.COMPLETED,
-            startTimeInMs: 0,
-            endTimeInMs: meta.durationInMs,
-            assetUrl: videoDataUrl,
-            assetDurationInMs: meta.durationInMs,
-            assetSourceType: getClapAssetSourceType(videoDataUrl),
-            outputGain: 1.0,
-          })
-        )
-      )
-    }
-
     task.success()
 
     saveAnyFile(videoBlob, 'my_project.mp4')
