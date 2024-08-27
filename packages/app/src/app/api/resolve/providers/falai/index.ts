@@ -174,7 +174,7 @@ export async function resolveSegment(
     model = request.settings.videoGenerationWorkflow.data || ''
 
     // console.log(`request.settings.falAiModelForVideo = `, request.settings.falAiModelForVideo)
-    if (model === 'fal-ai/live-portrait' &&  request.prompts.video.image) {
+    if (model === 'fal-ai/live-portrait' && request.prompts.video.image) {
       const result = (await fal.run(model, {
         input: {
           image_url: request.prompts.video.image,
@@ -205,41 +205,87 @@ export async function resolveSegment(
       console.log('live portrait result:', result)
 
       segment.assetUrl = result?.video?.url || ''
-    } else if (model !== 'fal-ai/stable-video') {
-      throw new Error(
-        `only "fal-ai/stable-video" is supported by Clapper for the moment`
-      )
-    }
-
-    if (!request.prompts.video.image) {
-      throw new Error(
-        `cannot generate a video without a storyboard (the concept of Clapper is to use storyboards)`
-      )
-    }
-
-    const result = (await fal.run(model, {
-      input: {
-        ...getWorkflowInputValues(request.settings.videoGenerationWorkflow),
-
-        image_url: request.prompts.video.image,
-
-        sync_mode: true,
-        enable_safety_checker: request.settings.censorNotForAllAudiencesContent,
-      },
-    })) as FalAiVideoResponse
-
-    if (request.settings.censorNotForAllAudiencesContent) {
-      if (
-        Array.isArray(result.has_nsfw_concepts) &&
-        result.has_nsfw_concepts.includes(true)
-      ) {
+    } else if (model === 'fal-ai/cogvideox-5b') {
+      if (!request.prompts.image.positive) {
         throw new Error(
-          `The generated content has been filtered according to your safety settings`
+          `cannot generate a video with CogXVideo-5b without a text prompt`
         )
       }
-    }
 
-    segment.assetUrl = result?.video?.url || ''
+      const { workflowDefaultValues, workflowValues } = getWorkflowInputValues(
+        request.settings.videoGenerationWorkflow
+      )
+
+      const videoSize = {
+        width:
+          request.meta.width ||
+          workflowValues.width ||
+          workflowDefaultValues.width,
+        height:
+          request.meta.height ||
+          workflowValues.height ||
+          workflowDefaultValues.height,
+      }
+
+      const result = (await fal.run(model, {
+        input: {
+          prompt: request.prompts.image.positive,
+          negative_prompt: request.prompts.image.negative,
+
+          video_size: videoSize,
+
+          sync_mode: true,
+          enable_safety_checker:
+            request.settings.censorNotForAllAudiencesContent,
+        },
+      })) as FalAiVideoResponse
+
+      if (request.settings.censorNotForAllAudiencesContent) {
+        if (
+          Array.isArray(result.has_nsfw_concepts) &&
+          result.has_nsfw_concepts.includes(true)
+        ) {
+          throw new Error(
+            `The generated content has been filtered according to your safety settings`
+          )
+        }
+      }
+
+      segment.assetUrl = result?.video?.url || ''
+    } else if (model === 'fal-ai/stable-video') {
+      if (!request.prompts.video.image) {
+        throw new Error(`cannot generate a video without a storyboard`)
+      }
+
+      const result = (await fal.run(model, {
+        input: {
+          ...getWorkflowInputValues(request.settings.videoGenerationWorkflow),
+
+          image_url: request.prompts.video.image,
+
+          sync_mode: true,
+          enable_safety_checker:
+            request.settings.censorNotForAllAudiencesContent,
+        },
+      })) as FalAiVideoResponse
+
+      if (request.settings.censorNotForAllAudiencesContent) {
+        if (
+          Array.isArray(result.has_nsfw_concepts) &&
+          result.has_nsfw_concepts.includes(true)
+        ) {
+          throw new Error(
+            `The generated content has been filtered according to your safety settings`
+          )
+        }
+      }
+
+      segment.assetUrl = result?.video?.url || ''
+    } else {
+      throw new Error(
+        `model "${model}" with Fal.ai is supported by Clapper for the moment`
+      )
+    }
   } else if (request.segment.category === ClapSegmentCategory.SOUND) {
     model = request.settings.musicGenerationWorkflow.data
 
