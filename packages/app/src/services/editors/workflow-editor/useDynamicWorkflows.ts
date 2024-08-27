@@ -11,7 +11,9 @@ import { useWorkflowEditor } from './useWorkflowEditor'
  * ideally at the root
  */
 export function useDynamicWorkflows() {
-  const comfyWorkflowForImage = useSettings((s) => s.comfyWorkflowForImage)
+  const comfyClapWorkflowForImage = useSettings(
+    (s) => s.comfyClapWorkflowForImage
+  )
   const comfyWorkflowForVideo = useSettings((s) => s.comfyWorkflowForVideo)
   const comfyWorkflowForMusic = useSettings((s) => s.comfyWorkflowForMusic)
   const comfyWorkflowForSound = useSettings((s) => s.comfyWorkflowForSound)
@@ -24,7 +26,7 @@ export function useDynamicWorkflows() {
   useEffect(() => {
     updateAvailableWorkflows()
   }, [
-    comfyWorkflowForImage,
+    comfyClapWorkflowForImage,
     comfyWorkflowForVideo,
     comfyWorkflowForMusic,
     comfyWorkflowForSound,

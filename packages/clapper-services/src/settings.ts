@@ -63,8 +63,8 @@ export type BaseSettings = {
   maxImagesToGenerateInParallel: number
   maxVideosToGenerateInParallel: number
 
-  // ------------ COMFY UI WORKFLOWS -----------------
-  comfyWorkflowForImage: string
+  // ------------ COMFY UI CLAP WORKFLOWS -----------------
+  comfyClapWorkflowForImage: ClapWorkflow
   comfyWorkflowForVideo: string
   comfyWorkflowForVoice: string
   comfyWorkflowForSound: string
@@ -199,7 +199,7 @@ export type SettingsControls = {
   setMaxImagesToGenerateInParallel: (maxImagesToGenerateInParallel?: number) => void
   setMaxVideosToGenerateInParallel: (maxVideosToGenerateInParallel?: number) => void
 
-  setComfyWorkflowForImage: (comfyWorkflowForImage?: string) => void
+  setComfyClapWorkflowForImage: (comfyClapWorkflowForImage?: ClapWorkflow) => void
   setComfyWorkflowForVideo: (comfyWorkflowForVideo?: string) => void
   setComfyWorkflowForVoice: (comfyWorkflowForVoice?: string) => void
   setComfyWorkflowForSound: (comfyWorkflowForSound?: string) => void
