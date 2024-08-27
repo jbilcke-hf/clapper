@@ -666,13 +666,27 @@ export const useSettings = create<SettingsStore>()(
           console.error(e)
         }
       },
-      setComfyWorkflowForVideo: (comfyWorkflowForVideo?: string) => {
-        set({
-          comfyWorkflowForVideo: getValidComfyWorkflowTemplate(
-            comfyWorkflowForVideo,
-            getDefaultSettingsState().comfyWorkflowForVideo
-          ),
-        })
+      setComfyClapWorkflowForVideo: (
+        comfyClapWorkflowForVideo?: ClapWorkflow
+      ) => {
+        try {
+          if (!comfyClapWorkflowForVideo) throw new Error('Invalid workflow')
+          const currentWorkflowString = get().videoGenerationWorkflow
+          const currentWorkflow = parseWorkflow(
+            currentWorkflowString,
+            ClapWorkflowCategory.VIDEO_GENERATION
+          )
+          const newWorkflow = comfyClapWorkflowForVideo
+          set({
+            comfyClapWorkflowForVideo: newWorkflow,
+            videoGenerationWorkflow:
+              currentWorkflow.engine === ClapWorkflowEngine.COMFYUI_WORKFLOW
+                ? JSON.stringify(newWorkflow)
+                : currentWorkflowString,
+          })
+        } catch (e) {
+          console.error(e)
+        }
       },
       setComfyWorkflowForVoice: (comfyWorkflowForVoice?: string) => {
         set({
@@ -1002,9 +1016,9 @@ export const useSettings = create<SettingsStore>()(
           comfyClapWorkflowForImage:
             state.comfyClapWorkflowForImage ||
             defaultSettings.comfyClapWorkflowForImage,
-          comfyWorkflowForVideo:
-            state.comfyWorkflowForVideo ||
-            defaultSettings.comfyWorkflowForVideo,
+          comfyClapWorkflowForVideo:
+            state.comfyClapWorkflowForVideo ||
+            defaultSettings.comfyClapWorkflowForVideo,
           comfyWorkflowForVoice:
             state.comfyWorkflowForVoice ||
             defaultSettings.comfyWorkflowForVoice,

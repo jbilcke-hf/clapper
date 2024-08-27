@@ -7,7 +7,6 @@ import {
 
 import { genericImage, genericPrompt } from '../common/defaultValues'
 import { text_to_image_demo_workflow } from '../common/comfyui/text_to_image_demo_workflow'
-import { getComfyWorkflow } from './getComfyWorkflow'
 import { useSettings } from '@/services'
 
 // ------------------------------------------------------------------------------
@@ -80,10 +79,12 @@ export async function getDynamicComfyuiWorkflows(): Promise<ClapWorkflow[]> {
       engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
       provider: ClapWorkflowProvider.COMFYUI,
       category: ClapWorkflowCategory.VIDEO_GENERATION,
-      data: settings.comfyWorkflowForVideo,
+      data: settings.comfyClapWorkflowForVideo.data,
       schema: '',
-      inputFields: [genericImage],
-      inputValues: {
+      inputFields: settings.comfyClapWorkflowForVideo.inputFields || [
+        genericImage,
+      ],
+      inputValues: settings.comfyClapWorkflowForVideo.inputValues || {
         [genericImage.id]: genericImage.defaultValue,
       },
     },

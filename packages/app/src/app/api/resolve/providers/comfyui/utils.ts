@@ -17,7 +17,9 @@ export enum ClapperComfyUiInputIds {
   WIDTH = '@clapper/width',
   HEIGHT = '@clapper/height',
   SEED = '@clapper/seed',
+  IMAGE = '@clapper/image',
   OUTPUT = '@clapper/output',
+  NULL = '@clapper/null',
 }
 
 type NodeRawData = {
@@ -38,11 +40,15 @@ type INPUT_TYPES = 'string' | 'number'
 
 export type ComfyUiWorkflowApiNodeInput = {
   id: string
-  nodeId: string
   // Infered primitive type of the input based on its value
   type: INPUT_TYPES
   name: string
   value: any
+  node: {
+    id: string
+    name?: string
+    type?: string
+  }
 }
 
 export class ComfyUIWorkflowApiGraphEdge {
@@ -270,7 +276,8 @@ export class ComfyUIWorkflowApiGraph {
     for (const node of nodesWithInputs) {
       const inputSchemas = this.getInputsByNodeId(node.id)
       inputSchemas?.forEach((inputSchema) => {
-        inputs[`${inputSchema.nodeId}.inputs.${inputSchema.name}`] = inputSchema
+        inputs[`${inputSchema.node.id}.inputs.${inputSchema.name}`] =
+          inputSchema
       })
     }
 
@@ -341,7 +348,11 @@ export class ComfyUIWorkflowApiGraph {
         name: name,
         value: value,
         id: `${nodeId}.inputs.${name}`,
-        nodeId,
+        node: {
+          id: nodeId,
+          type: nodeData.class_type,
+          name: nodeData?._meta?.title,
+        },
       })
     }
 
@@ -357,6 +368,9 @@ export class ComfyUIWorkflowApiGraph {
     type?: string | RegExp
     // By name of node input
     name?: string | RegExp
+    // Based on the node
+    nodeType?: string | RegExp
+    nodeName?: string | RegExp
     // If any output of the node containing the input
     // is targeting another node's input with the given
     // name
@@ -368,14 +382,14 @@ export class ComfyUIWorkflowApiGraph {
 
     // Helper function to match string or RegExp
     const matches = (
-      value: string,
+      value: string | undefined,
       query: string | RegExp | undefined
     ): boolean => {
       if (!query) return true
       if (typeof query === 'string') {
         return value === query
       } else if (query instanceof RegExp) {
-        return query.test(value)
+        return query.test(value || '')
       }
       return false
     }
@@ -384,8 +398,10 @@ export class ComfyUIWorkflowApiGraph {
       (input) =>
         (matches(input.type, query.type) &&
           matches(input.name, query.name) &&
+          matches(input.node.name, query.nodeName) &&
+          matches(input.node.type, query.nodeType) &&
           (!query.nodeOutputToNodeInput ||
-            this.nodes[input.nodeId].outboundEdges.some((edge) =>
+            this.nodes[input.node.id].outboundEdges.some((edge) =>
               matches(edge.relationship, query.nodeOutputToNodeInput)
             )) &&
           !query.value) ||
@@ -406,8 +422,8 @@ export class ComfyUIWorkflowApiGraph {
     }
     const input = inputs[inputKey]
     if (!input) return
-    if (!this.nodes[input.nodeId].inputs) this.nodes[input.nodeId].inputs = {}
-    this.nodes[input.nodeId].inputs![input.name] = value
+    if (!this.nodes[input.node.id].inputs) this.nodes[input.node.id].inputs = {}
+    this.nodes[input.node.id].inputs![input.name] = value
   }
 
   toJson(): Record<string, any> {
@@ -467,7 +483,7 @@ export function findPromptInputsFromWorkflow(
 
 export function findNegativePromptInputsFromWorkflow(
   workflow: ComfyUIWorkflowApiGraph
-) {
+): ComfyUiWorkflowApiNodeInput[] {
   return unionBy(
     workflow.findInput({
       name: /.*(text|prompt|negative).*/i,
@@ -481,7 +497,9 @@ export function findNegativePromptInputsFromWorkflow(
   )
 }
 
-export function findWidthInputsFromWorkflow(workflow: ComfyUIWorkflowApiGraph) {
+export function findWidthInputsFromWorkflow(
+  workflow: ComfyUIWorkflowApiGraph
+): ComfyUiWorkflowApiNodeInput[] {
   return unionBy(
     workflow.findInput({
       name: /.*(width).*/i,
@@ -500,7 +518,7 @@ export function findWidthInputsFromWorkflow(workflow: ComfyUIWorkflowApiGraph) {
 
 export function findHeightInputsFromWorkflow(
   workflow: ComfyUIWorkflowApiGraph
-) {
+): ComfyUiWorkflowApiNodeInput[] {
   return unionBy(
     workflow.findInput({
       name: /.*(height).*/i,
@@ -517,7 +535,9 @@ export function findHeightInputsFromWorkflow(
   )
 }
 
-export function findSeedInputsFromWorkflow(workflow: ComfyUIWorkflowApiGraph) {
+export function findSeedInputsFromWorkflow(
+  workflow: ComfyUIWorkflowApiGraph
+): ComfyUiWorkflowApiNodeInput[] {
   return unionBy(
     workflow.findInput({
       name: /.*(seed).*/i,
@@ -534,17 +554,62 @@ export function findSeedInputsFromWorkflow(workflow: ComfyUIWorkflowApiGraph) {
   )
 }
 
-/**
- * Returns input fields / input values required by ComfyUi
- * @param workflow
- */
+export function findImageInputsFromWorkflow(
+  workflow: ComfyUIWorkflowApiGraph
+): ComfyUiWorkflowApiNodeInput[] {
+  return unionBy(
+    workflow.findInput({
+      value: (value) => /.*\@clapper\/image.*/i.test(value),
+    }),
+    'id'
+  )
+}
 
-export function getInputsFromComfyUiWorkflow(workflowString: string): {
+export const getMainInputIdsByClapWorkflowCategory = (
+  category: ClapWorkflowCategory
+) => {
+  switch (category) {
+    case ClapWorkflowCategory.VIDEO_GENERATION: {
+      return [
+        ClapperComfyUiInputIds.IMAGE,
+        ClapperComfyUiInputIds.WIDTH,
+        ClapperComfyUiInputIds.HEIGHT,
+        ClapperComfyUiInputIds.SEED,
+        ClapperComfyUiInputIds.OUTPUT,
+      ]
+    }
+    default: {
+      return [
+        ClapperComfyUiInputIds.PROMPT,
+        ClapperComfyUiInputIds.NEGATIVE_PROMPT,
+        ClapperComfyUiInputIds.WIDTH,
+        ClapperComfyUiInputIds.HEIGHT,
+        ClapperComfyUiInputIds.SEED,
+        ClapperComfyUiInputIds.OUTPUT,
+      ]
+    }
+  }
+}
+
+export const MainClapWorkflowInputsLabels = {
+  [ClapperComfyUiInputIds.PROMPT]: 'Prompt node input',
+  [ClapperComfyUiInputIds.NEGATIVE_PROMPT]: 'Negative prompt node input',
+  [ClapperComfyUiInputIds.WIDTH]: 'Width node input',
+  [ClapperComfyUiInputIds.HEIGHT]: 'Height node input',
+  [ClapperComfyUiInputIds.SEED]: 'Seed node input',
+  [ClapperComfyUiInputIds.IMAGE]: 'Image node input',
+  [ClapperComfyUiInputIds.OUTPUT]: 'Output node',
+}
+
+export function getMainInputsFromComfyUiWorkflow(
+  workflowString: string,
+  category: ClapWorkflowCategory
+): {
   inputFields: ClapInputFields
   inputValues: ClapInputValues
 } {
   const workflowGraph = ComfyUIWorkflowApiGraph.fromString(workflowString)
-
+  const mainInputsIds = getMainInputIdsByClapWorkflowCategory(category)
   const nodes = workflowGraph.getNodes()
   const textInputs = workflowGraph.findInput({
     type: 'string',
@@ -560,37 +625,44 @@ export function getInputsFromComfyUiWorkflow(workflowString: string): {
   const widthNodeInputs = findWidthInputsFromWorkflow(workflowGraph)
   const heightNodeInputs = findHeightInputsFromWorkflow(workflowGraph)
   const seedNodeInputs = findSeedInputsFromWorkflow(workflowGraph)
+  const imageNodeInputs = findImageInputsFromWorkflow(workflowGraph)
   const outputNode = workflowGraph.getOutputNode()
 
   const inputValues = {
     [ClapperComfyUiInputIds.PROMPT]: promptNodeInputs?.[0]
       ? {
           id: promptNodeInputs?.[0].id,
-          label: `${promptNodeInputs?.[0].id} (from node ${promptNodeInputs?.[0].nodeId})`,
+          label: `${promptNodeInputs?.[0].id} (from node ${promptNodeInputs?.[0].node.id})`,
         }
       : undefined,
     [ClapperComfyUiInputIds.NEGATIVE_PROMPT]: negativePromptNodeInputs?.[0]
       ? {
           id: negativePromptNodeInputs?.[0].id,
-          label: `${negativePromptNodeInputs?.[0].id} (from node ${negativePromptNodeInputs?.[0].nodeId})`,
+          label: `${negativePromptNodeInputs?.[0].id} (from node ${negativePromptNodeInputs?.[0].node.id})`,
         }
       : undefined,
     [ClapperComfyUiInputIds.WIDTH]: widthNodeInputs?.[0]
       ? {
           id: widthNodeInputs?.[0].id,
-          label: `${widthNodeInputs?.[0].id} (from node ${widthNodeInputs?.[0].nodeId})`,
+          label: `${widthNodeInputs?.[0].id} (from node ${widthNodeInputs?.[0].node.id})`,
         }
       : undefined,
     [ClapperComfyUiInputIds.HEIGHT]: heightNodeInputs?.[0]
       ? {
           id: heightNodeInputs?.[0].id,
-          label: `${heightNodeInputs?.[0].id} (from node ${heightNodeInputs?.[0].nodeId})`,
+          label: `${heightNodeInputs?.[0].id} (from node ${heightNodeInputs?.[0].node.id})`,
         }
       : undefined,
     [ClapperComfyUiInputIds.SEED]: seedNodeInputs?.[0]
       ? {
           id: seedNodeInputs?.[0].id,
-          label: `${seedNodeInputs?.[0].id} (from node ${seedNodeInputs?.[0].nodeId})`,
+          label: `${seedNodeInputs?.[0].id} (from node ${seedNodeInputs?.[0].node.id})`,
+        }
+      : undefined,
+    [ClapperComfyUiInputIds.IMAGE]: imageNodeInputs?.[0]
+      ? {
+          id: imageNodeInputs?.[0].id,
+          label: `${imageNodeInputs?.[0].id} (from node ${imageNodeInputs?.[0].node.id})`,
         }
       : undefined,
     [ClapperComfyUiInputIds.OUTPUT]: outputNode
@@ -601,14 +673,191 @@ export function getInputsFromComfyUiWorkflow(workflowString: string): {
       : undefined,
   }
 
-  const inputLabels = {
-    [ClapperComfyUiInputIds.PROMPT]: 'Prompt node input',
-    [ClapperComfyUiInputIds.NEGATIVE_PROMPT]: 'Negative prompt node input',
-    [ClapperComfyUiInputIds.WIDTH]: 'Width node input',
-    [ClapperComfyUiInputIds.HEIGHT]: 'Height node input',
-    [ClapperComfyUiInputIds.SEED]: 'Seed node input',
-    [ClapperComfyUiInputIds.OUTPUT]: 'Output node',
+  const getOptionsItems = (inputs: ComfyUiWorkflowApiNodeInput[]) => {
+    return [
+      ...inputs,
+      {
+        id: ClapperComfyUiInputIds.NULL,
+        name: 'Unset',
+        node: {
+          id: null,
+        },
+      },
+    ].map((p) => {
+      const item = {
+        id: p.id,
+        label:
+          p.id === ClapperComfyUiInputIds.NULL
+            ? `Unset`
+            : `${p.name} (from node ${p.node.id})`,
+      }
+      return {
+        ...item,
+        value: item,
+      }
+    })
   }
+
+  const inputFields: any = []
+  mainInputsIds.forEach((mainInput) => {
+    switch (mainInput) {
+      case ClapperComfyUiInputIds.PROMPT: {
+        inputFields.push({
+          id: ClapperComfyUiInputIds.PROMPT,
+          label: MainClapWorkflowInputsLabels[ClapperComfyUiInputIds.PROMPT],
+          type: 'nodeInput' as any,
+          category: ClapInputCategory.PROMPT,
+          description: 'The input where Clapper will put the segment prompt',
+          defaultValue: '',
+          metadata: {
+            options: getOptionsItems(
+              unionBy(promptNodeInputs, textInputs, 'id')
+            ),
+          },
+        })
+        return
+      }
+      case ClapperComfyUiInputIds.NEGATIVE_PROMPT: {
+        inputFields.push({
+          id: ClapperComfyUiInputIds.NEGATIVE_PROMPT,
+          label:
+            MainClapWorkflowInputsLabels[
+              ClapperComfyUiInputIds.NEGATIVE_PROMPT
+            ],
+          type: 'nodeInput' as any,
+          category: ClapInputCategory.PROMPT,
+          description:
+            'The node input where Clapper will put the segment negative prompt',
+          defaultValue: '',
+          metadata: {
+            options: getOptionsItems(
+              unionBy(negativePromptNodeInputs, textInputs, 'id')
+            ),
+          },
+        })
+        return
+      }
+      case ClapperComfyUiInputIds.WIDTH: {
+        inputFields.push({
+          id: ClapperComfyUiInputIds.WIDTH,
+          label: MainClapWorkflowInputsLabels[ClapperComfyUiInputIds.WIDTH],
+          type: 'nodeInput' as any,
+          category: ClapInputCategory.WIDTH,
+          description:
+            'The node input where Clapper will put the required image width',
+          defaultValue: '',
+          metadata: {
+            options: getOptionsItems(
+              unionBy(widthNodeInputs, dimensionInputs, 'id')
+            ),
+          },
+        })
+        return
+      }
+      case ClapperComfyUiInputIds.HEIGHT: {
+        inputFields.push({
+          id: ClapperComfyUiInputIds.HEIGHT,
+          label: MainClapWorkflowInputsLabels[ClapperComfyUiInputIds.HEIGHT],
+          type: 'nodeInput' as any,
+          description:
+            'The node input where Clapper will put the required image height',
+          category: ClapInputCategory.HEIGHT,
+          defaultValue: 1000,
+          metadata: {
+            options: getOptionsItems(
+              unionBy(heightNodeInputs, dimensionInputs, 'id')
+            ),
+          },
+        })
+        return
+      }
+      case ClapperComfyUiInputIds.SEED: {
+        inputFields.push({
+          id: ClapperComfyUiInputIds.SEED,
+          label: MainClapWorkflowInputsLabels[ClapperComfyUiInputIds.SEED],
+          type: 'nodeInput' as any,
+          category: ClapInputCategory.UNKNOWN,
+          description: 'The node input where Clapper will set a seed',
+          defaultValue: '',
+          metadata: {
+            options: getOptionsItems(seedNodeInputs),
+          },
+        })
+        return
+      }
+      case ClapperComfyUiInputIds.IMAGE: {
+        inputFields.push({
+          id: ClapperComfyUiInputIds.IMAGE,
+          label: MainClapWorkflowInputsLabels[ClapperComfyUiInputIds.IMAGE],
+          type: 'nodeInput' as any,
+          category: ClapInputCategory.UNKNOWN,
+          description: 'The node input where Clapper will set an image',
+          defaultValue: '',
+          metadata: {
+            options: getOptionsItems(imageNodeInputs),
+            tooltip: {
+              message: `
+                Clapper doesn't support file/upload node inputs;
+                use a string input from where Clapper can load a base64
+                data URI string (e.g. the "Load Image From Base64" node's
+                "data" input in the default video workflow).
+              `,
+              type: 'info',
+            },
+          },
+        })
+        return
+      }
+      case ClapperComfyUiInputIds.OUTPUT: {
+        inputFields.push({
+          id: ClapperComfyUiInputIds.OUTPUT,
+          label: MainClapWorkflowInputsLabels[ClapperComfyUiInputIds.OUTPUT],
+          type: 'node' as any,
+          category: ClapInputCategory.UNKNOWN,
+          description: 'The node from which Clapper will get the output image',
+          defaultValue: '',
+          metadata: {
+            options: nodes.map((p) => {
+              const item = {
+                id: p.id,
+                label: `${p._meta?.title || 'Untitled node'} (id: ${p.id})`,
+              }
+              return {
+                ...item,
+                value: item,
+              }
+            }),
+          },
+        })
+        return
+      }
+    }
+  })
+
+  return {
+    inputFields,
+    inputValues,
+  }
+}
+
+/**
+ * Returns input fields / input values required by ComfyUi
+ * @param workflow
+ */
+export function getInputsFromComfyUiWorkflow(
+  workflowString: string,
+  category: ClapWorkflowCategory
+): {
+  inputFields: ClapInputFields
+  inputValues: ClapInputValues
+} {
+  const workflowGraph = ComfyUIWorkflowApiGraph.fromString(workflowString)
+  const { inputFields: mainInputFields, inputValues: mainInputValues } =
+    getMainInputsFromComfyUiWorkflow(workflowString, category)
+
+  const inputValues = {
+    ...mainInputValues,
+  } as any
 
   const inputFields: ClapInputField<{
     options?: {
@@ -616,7 +865,10 @@ export function getInputsFromComfyUiWorkflow(workflowString: string): {
       label: string
       value: any
     }[]
-    mainInput?: any
+    tooltip?: {
+      type: string
+      message: string
+    }
   }>[] = [
     // Required fields that should be available in the workflow, otherwise
     // Clapper doesn't know how to input its settings (prompts, dimensions, etc)
@@ -627,107 +879,7 @@ export function getInputsFromComfyUiWorkflow(workflowString: string): {
       category: ClapInputCategory.UNKNOWN,
       description: 'Main inputs',
       defaultValue: '',
-      inputFields: [
-        {
-          id: ClapperComfyUiInputIds.PROMPT,
-          label: inputLabels[ClapperComfyUiInputIds.PROMPT],
-          type: 'nodeInput' as any,
-          category: ClapInputCategory.PROMPT,
-          description: 'The input where Clapper will put the segment prompt',
-          defaultValue: '',
-          metadata: {
-            options: unionBy(promptNodeInputs, textInputs, 'id').map((p) => ({
-              id: p.id,
-              label: `${p.name} (from node ${p.nodeId})`,
-              value: p.id,
-            })),
-          },
-        },
-        {
-          id: ClapperComfyUiInputIds.NEGATIVE_PROMPT,
-          label: inputLabels[ClapperComfyUiInputIds.NEGATIVE_PROMPT],
-          type: 'nodeInput' as any,
-          category: ClapInputCategory.PROMPT,
-          description:
-            'The node input where Clapper will put the segment negative prompt',
-          defaultValue: '',
-          metadata: {
-            options: unionBy(negativePromptNodeInputs, textInputs, 'id').map(
-              (p) => ({
-                id: p.id,
-                label: `${p.name} (from node ${p.nodeId})`,
-                value: p.id,
-              })
-            ),
-          },
-        },
-        {
-          id: ClapperComfyUiInputIds.WIDTH,
-          label: inputLabels[ClapperComfyUiInputIds.WIDTH],
-          type: 'nodeInput' as any,
-          category: ClapInputCategory.WIDTH,
-          description:
-            'The node input where Clapper will put the required image width',
-          defaultValue: '',
-          metadata: {
-            options: unionBy(widthNodeInputs, dimensionInputs, 'id').map(
-              (p) => ({
-                id: p.id,
-                label: `${p.name} (from node ${p.nodeId})`,
-                value: p.id,
-              })
-            ),
-          },
-        },
-        {
-          id: ClapperComfyUiInputIds.HEIGHT,
-          label: inputLabels[ClapperComfyUiInputIds.HEIGHT],
-          type: 'nodeInput' as any,
-          description:
-            'The node input where Clapper will put the required image height',
-          category: ClapInputCategory.HEIGHT,
-          defaultValue: 1000,
-          metadata: {
-            options: unionBy(heightNodeInputs, dimensionInputs, 'id').map(
-              (p) => ({
-                id: p.id,
-                label: `${p.name} (from node ${p.nodeId})`,
-                value: p.id,
-              })
-            ),
-          },
-        },
-        {
-          id: ClapperComfyUiInputIds.SEED,
-          label: inputLabels[ClapperComfyUiInputIds.SEED],
-          type: 'nodeInput' as any,
-          category: ClapInputCategory.UNKNOWN,
-          description: 'The node input where Clapper will set a seed',
-          defaultValue: '',
-          metadata: {
-            options: seedNodeInputs.map((p) => ({
-              id: p.id,
-              label: `${p.name} (from node ${p.nodeId})`,
-              value: p.id,
-            })),
-          },
-        },
-        {
-          id: ClapperComfyUiInputIds.OUTPUT,
-          label: inputLabels[ClapperComfyUiInputIds.OUTPUT],
-          type: 'node' as any,
-          category: ClapInputCategory.UNKNOWN,
-          description: 'The node from which Clapper will get the output image',
-          defaultValue: '',
-          metadata: {
-            options: nodes.map((p) => ({
-              id: p.id,
-              label: `${p._meta?.title || 'Untitled node'} (id: ${p.id})`,
-              value: p.id,
-            })),
-          },
-        },
-      ],
+      inputFields: mainInputFields,
     },
     // Other input fields based on the workflow nodes
     {
@@ -762,7 +914,13 @@ export function getInputsFromComfyUiWorkflow(workflowString: string): {
                 description: '',
                 defaultValue: input.value,
                 metadata: {
-                  mainInput: inputLabels[mainInputKey as string],
+                  tooltip: MainClapWorkflowInputsLabels[mainInputKey as string]
+                    ? {
+                        type: 'warning',
+                        message: `This value will be overwritten by Clapper because it is
+                      used as "${MainClapWorkflowInputsLabels[mainInputKey as string]}".`,
+                      }
+                    : undefined,
                 },
               }
             }),
@@ -816,26 +974,51 @@ export function createPromptBuilder(
 }
 
 export function convertComfyUiWorkflowApiToClapWorkflow(
-  workflowString: string
+  workflowString: string,
+  category: ClapWorkflowCategory = ClapWorkflowCategory.IMAGE_GENERATION
 ): ClapWorkflow {
   try {
-    const { inputFields, inputValues } =
-      getInputsFromComfyUiWorkflow(workflowString)
-    return {
-      id: 'comfyui://settings.comfyWorkflowForImage',
-      label: 'Custom Image Workflow',
-      description: 'Custom ComfyUI workflow to generate images',
-      tags: ['custom', 'image generation'],
-      author: 'You',
-      thumbnailUrl: '',
-      nonCommercial: false,
-      engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
-      provider: ClapWorkflowProvider.COMFYUI,
-      category: ClapWorkflowCategory.IMAGE_GENERATION,
-      data: workflowString,
-      schema: '',
-      inputFields,
-      inputValues,
+    const { inputFields, inputValues } = getInputsFromComfyUiWorkflow(
+      workflowString,
+      category
+    )
+    switch (category) {
+      case ClapWorkflowCategory.VIDEO_GENERATION: {
+        return {
+          id: 'comfyui://settings.comfyWorkflowForVideo',
+          label: 'Custom Video Workflow',
+          description: 'Custom ComfyUI workflow to generate videos',
+          tags: ['custom', 'video generation'],
+          author: 'You',
+          thumbnailUrl: '',
+          nonCommercial: false,
+          engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
+          provider: ClapWorkflowProvider.COMFYUI,
+          category,
+          data: workflowString,
+          schema: '',
+          inputFields,
+          inputValues,
+        }
+      }
+      default: {
+        return {
+          id: 'comfyui://settings.comfyWorkflowForImage',
+          label: 'Custom Image Workflow',
+          description: 'Custom ComfyUI workflow to generate images',
+          tags: ['custom', 'image generation'],
+          author: 'You',
+          thumbnailUrl: '',
+          nonCommercial: false,
+          engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
+          provider: ClapWorkflowProvider.COMFYUI,
+          category,
+          data: workflowString,
+          schema: '',
+          inputFields,
+          inputValues,
+        }
+      }
     }
   } catch (e) {
     throw e

@@ -549,8 +549,6 @@ export const useIO = create<IOStore>((set, get) => ({
           isExportableToFile && id !== ignoreThisVideoSegmentId
       )
 
-    console.log('segments:', segments)
-
     const videos: FFMPegVideoInput[] = []
     const audios: FFMPegAudioInput[] = []
 
@@ -569,7 +567,6 @@ export const useIO = create<IOStore>((set, get) => ({
           assetSourceType = ClapAssetSource.PATH
 
           if (filePath.startsWith('video/')) {
-            console.log('adding video')
             videos.push({
               data: base64DataUriToUint8Array(segment.assetUrl),
               startTimeInMs: segment.startTimeInMs,
@@ -610,10 +607,8 @@ export const useIO = create<IOStore>((set, get) => ({
     )
 
     const videoBlob = new Blob([fullVideo], { type: 'video/mp4' })
-
-    task.success()
-
     saveAnyFile(videoBlob, 'my_project.mp4')
+    task.success()
   },
 
   saveZipFile: async () => {
