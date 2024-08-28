@@ -4,7 +4,7 @@ import { GrDocumentConfig } from 'react-icons/gr'
 import debounce from 'lodash/debounce'
 import { FormSelect } from './FormSelect'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
-import { MdWarning } from 'react-icons/md'
+import { MdInfo, MdWarning } from 'react-icons/md'
 import { ClapInputField, ClapWorkflow } from '@aitube/clap'
 import { FormArea } from './FormArea'
 import { useCallback, useState } from 'react'
@@ -12,13 +12,16 @@ import {
   ComfyUIWorkflowApiGraph,
   convertComfyUiWorkflowApiToClapWorkflow,
 } from '@/app/api/resolve/providers/comfyui/utils'
+import clsx from 'clsx'
 
 export function FormComfyUIWorkflowSettings({
+  label,
   clapWorkflow,
   defaultClapWorkflow,
   onChange,
   className,
 }: {
+  label: string
   clapWorkflow: ClapWorkflow
   defaultClapWorkflow: ClapWorkflow
   onChange: (clapWorkflow: ClapWorkflow) => void
@@ -44,7 +47,9 @@ export function FormComfyUIWorkflowSettings({
     if (ComfyUIWorkflowApiGraph.isValidWorkflow(json)) {
       setErrors({ ...errors, workflow: null })
       debouncedOnChangeClapWorkflow(
-        structuredClone(convertComfyUiWorkflowApiToClapWorkflow(json))
+        structuredClone(
+          convertComfyUiWorkflowApiToClapWorkflow(json, clapWorkflow.category)
+        )
       )
     } else {
       setErrors({ ...errors, workflow: 'Please, provide a valid workflow.' })
@@ -67,6 +72,34 @@ export function FormComfyUIWorkflowSettings({
     } else {
       setErrors({ ...errors, workflow: 'Please, provide a valid workflow.' })
     }
+  }
+
+  const renderInputTooltip = (tooltip) => {
+    return (
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <div className="absolute right-0 top-0 flex h-full w-auto items-center justify-center px-2">
+            <div className="h-4 w-4">
+              {tooltip.type == 'info' ? (
+                <MdInfo color="white" className="h-full w-full" />
+              ) : (
+                <MdWarning color="yellow" className="h-full w-full" />
+              )}
+            </div>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="left">
+          <p
+            className={clsx('max-w-96 text-xs font-bold leading-4', {
+              'text-yellow-500': tooltip.type === 'warning',
+              'text-slate-100': tooltip.type === 'info',
+            })}
+          >
+            {tooltip.message}
+          </p>
+        </TooltipContent>
+      </Tooltip>
+    )
   }
 
   const renderInputFields = (
@@ -94,20 +127,30 @@ export function FormComfyUIWorkflowSettings({
         case 'nodeInput':
         case 'node': {
           return (
-            <FormSelect
+            <div
+              className="relative flex items-center justify-center"
               key={inputField.id}
-              label={inputField.label}
-              items={inputField.metadata?.options}
-              selectedItemId={inputValues[inputField.id].id}
-              selectedItemLabel={
-                !inputValues[inputField.id]
-                  ? 'Not found'
-                  : inputValues[inputField.id].label
-              }
-              onSelect={(value) =>
-                handleOnChangeInputValue(inputField.id, value)
-              }
-            />
+            >
+              <FormSelect
+                className={clsx({
+                  'pr-10': inputField.metadata?.tooltip,
+                })}
+                key={inputField.id}
+                label={inputField.label}
+                items={inputField.metadata?.options}
+                selectedItemId={inputValues[inputField.id]?.id}
+                selectedItemLabel={
+                  !inputValues[inputField.id]
+                    ? 'Not found'
+                    : inputValues[inputField.id].label
+                }
+                onSelect={(value) =>
+                  handleOnChangeInputValue(inputField.id, value)
+                }
+              />
+              {inputField.metadata?.tooltip &&
+                renderInputTooltip(inputField.metadata.tooltip)}
+            </div>
           )
         }
         default: {
@@ -126,21 +169,8 @@ export function FormComfyUIWorkflowSettings({
                 }
                 className="pr-8"
               />
-              {inputField.metadata?.mainInput && (
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <div className="absolute right-0 top-0 m-2 h-4 w-4">
-                      <MdWarning color="yellow" className="h-full w-full" />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent side="left">
-                    <p className="text-xs font-bold text-yellow-500">
-                      This value will be overwritten by Clapper because it is
-                      used as &quot;{inputField.metadata?.mainInput} &quot;.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
+              {inputField.metadata?.tooltip &&
+                renderInputTooltip(inputField.metadata.tooltip)}
             </div>
           )
         }
@@ -151,7 +181,7 @@ export function FormComfyUIWorkflowSettings({
   return (
     <>
       <FormArea
-        label="Custom ComfyUI workflow for images"
+        label={label}
         value={clapWorkflowDataDraft}
         defaultValue={''}
         onChange={handleOnChangeJson}
