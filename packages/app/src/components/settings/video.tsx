@@ -1,12 +1,13 @@
-import { FormArea, FormInput, FormSection } from '@/components/forms'
+import { FormInput, FormSection } from '@/components/forms'
 import { getDefaultSettingsState, useSettings } from '@/services/settings'
+import { FormComfyUIWorkflowSettings } from '../forms/FormComfyUIWorkflowSettings'
+import { ClapWorkflow, ClapWorkflowCategory } from '@aitube/clap'
 
 export function SettingsSectionVideo() {
   const defaultSettings = getDefaultSettingsState()
-
-  const comfyWorkflowForVideo = useSettings((s) => s.comfyWorkflowForVideo)
+  const comfyClapWorkflow = useSettings((s) => s.comfyClapWorkflowForVideo)
   const setComfyWorkflowForVideo = useSettings(
-    (s) => s.setComfyWorkflowForVideo
+    (s) => s.setComfyClapWorkflowForVideo
   )
 
   const videoPromptPrefix = useSettings((s) => s.videoPromptPrefix)
@@ -24,6 +25,10 @@ export function SettingsSectionVideo() {
   const setMaxVideosToGenerateInParallel = useSettings(
     (s) => s.setMaxVideosToGenerateInParallel
   )
+
+  const onChangeClapWorkflow = (clapWorkflowUpdated: ClapWorkflow) => {
+    setComfyWorkflowForVideo(clapWorkflowUpdated)
+  }
 
   return (
     <div className="flex flex-col justify-between space-y-6">
@@ -56,12 +61,12 @@ export function SettingsSectionVideo() {
           onChange={setVideoNegativePrompt}
         />
 
-        <FormArea
+        <FormComfyUIWorkflowSettings
           label="Custom ComfyUI workflow for video"
-          value={comfyWorkflowForVideo}
-          defaultValue={defaultSettings.comfyWorkflowForVideo}
-          onChange={setComfyWorkflowForVideo}
-          rows={8}
+          className="pt-4"
+          clapWorkflow={comfyClapWorkflow}
+          defaultClapWorkflow={defaultSettings.comfyClapWorkflowForVideo}
+          onChange={onChangeClapWorkflow}
         />
       </FormSection>
     </div>
