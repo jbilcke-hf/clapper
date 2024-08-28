@@ -6,7 +6,7 @@ import { useQueryStringParams } from '@/lib/hooks'
 import { useAssistant, useIO } from '@/services'
 
 export function useQueryStringLoader() {
-  const { clapUrl, startAt, interactive, prompt, imageStrategy } =
+  const { fileUrl, startAt, interactive, prompt, imageStrategy } =
     useQueryStringParams({
       // clapUrl: `/samples/test.clap`,
       // clapUrl: `/samples/Afterglow%20v10%20X%20Rewrite%20Bryan%20E.%20Harris%202023.clap`,
@@ -14,7 +14,7 @@ export function useQueryStringLoader() {
 
   const processUserMessage = useAssistant((s) => s.processUserMessage)
   const openClapUrl = useIO((s) => s.openClapUrl)
-
+  const openScreenplayUrl = useIO((s) => s.openScreenplayUrl)
   useEffect(() => {
     ;(async () => {
       if (prompt.length > 2) {
@@ -22,13 +22,17 @@ export function useQueryStringLoader() {
 
         console.log('initializing using message', prompt)
         processUserMessage(message)
-      } else if (clapUrl) {
-        console.log(`loading ${clapUrl}`)
-        await openClapUrl(clapUrl)
+      } else if (fileUrl) {
+        console.log(`loading ${fileUrl}`)
+        if (fileUrl.toLocaleLowerCase().endsWith(".clap")) {
+          await openClapUrl(fileUrl)
+        } else {
+          openScreenplayUrl(fileUrl)
+        }
       } else {
         console.log('No clap URL provided')
         return
       }
     })()
-  }, [prompt, openClapUrl, clapUrl, interactive, imageStrategy])
+  }, [prompt, openClapUrl, openScreenplayUrl, fileUrl, interactive, imageStrategy])
 }

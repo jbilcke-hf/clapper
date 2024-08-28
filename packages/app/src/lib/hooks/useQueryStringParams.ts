@@ -7,19 +7,19 @@ export function useQueryStringParams(
     interactive: defaultInteractive = false,
     startAt: defaultStartAt = 0,
     prompt: defaultPrompt = '',
-    clapUrl: defaultClapUrl = '',
+    fileUrl: defaultFileUrl = '',
     imageStrategy: defaultImageStrategy = RenderingStrategy.ON_DEMAND,
   }: {
     interactive?: boolean
     startAt?: number
     prompt?: string
-    clapUrl?: string
+    fileUrl?: string
     imageStrategy?: RenderingStrategy
   } = {
     interactive: false,
     startAt: 0,
     prompt: '',
-    clapUrl: '',
+    fileUrl: '',
     imageStrategy: RenderingStrategy.ON_DEMAND,
   }
 ) {
@@ -43,7 +43,7 @@ export function useQueryStringParams(
       .trim()
       .toLowerCase() === 'true'
 
-  const clapUrl = (searchParams?.get('clap') as string) || defaultClapUrl
+  const fileUrl = (searchParams?.get('open') as string) || defaultFileUrl
 
-  return { prompt, interactive, startAt, clapUrl, imageStrategy }
+  return { prompt, interactive, startAt, fileUrl, imageStrategy }
 }
