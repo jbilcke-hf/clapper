@@ -2,6 +2,7 @@ import { ResolveRequest } from '@aitube/clapper-services'
 import {
   ClapAssetSource,
   ClapSegmentCategory,
+  ClapWorkflowCategory,
   generateSeed,
 } from '@aitube/clap'
 import { TimelineSegment } from '@aitube/timeline'
@@ -44,27 +45,37 @@ export async function resolveSegment(
       : undefined
   ).init()
 
-  if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
-    const imageGenerationWorkflow = request.settings.imageGenerationWorkflow
+  if (
+    [ClapSegmentCategory.STORYBOARD, ClapSegmentCategory.VIDEO].includes(
+      request.segment.category
+    )
+  ) {
+    const clapWorkflow = {
+      [ClapSegmentCategory.STORYBOARD]:
+        request.settings.imageGenerationWorkflow,
+      [ClapSegmentCategory.VIDEO]: request.settings.videoGenerationWorkflow,
+    }[request.segment.category]
 
-    if (!imageGenerationWorkflow.inputValues[ClapperComfyUiInputIds.PROMPT]) {
+    if (
+      clapWorkflow.category === ClapWorkflowCategory.IMAGE_GENERATION &&
+      !clapWorkflow.inputValues[ClapperComfyUiInputIds.PROMPT]
+    ) {
       throw new Error(
         `This workflow doesn't seem to have an input required by Clapper (e.g. a node with an input called "prompt")`
       )
     }
 
-    if (!imageGenerationWorkflow.inputValues[ClapperComfyUiInputIds.OUTPUT]) {
+    if (!clapWorkflow.inputValues[ClapperComfyUiInputIds.OUTPUT]) {
       throw new Error(
         `This workflow doesn't seem to have a node output required by Clapper (e.g. a 'Save Image' node)`
       )
     }
 
     const comfyApiWorkflowPromptBuilder = createPromptBuilder(
-      ComfyUIWorkflowApiGraph.fromString(imageGenerationWorkflow.data)
+      ComfyUIWorkflowApiGraph.fromString(clapWorkflow.data)
     )
 
-    const { inputFields, inputValues } =
-      request.settings.imageGenerationWorkflow
+    const { inputFields, inputValues } = clapWorkflow
 
     inputFields.forEach((inputField) => {
       comfyApiWorkflowPromptBuilder.input(
@@ -79,13 +90,21 @@ export async function resolveSegment(
       [ClapperComfyUiInputIds.WIDTH, request.meta.width],
       [ClapperComfyUiInputIds.HEIGHT, request.meta.height],
       [ClapperComfyUiInputIds.SEED, generateSeed()],
+      [
+        ClapperComfyUiInputIds.IMAGE,
+        request.prompts.video.image.split(';base64,')?.[1],
+      ],
     ]
 
     mainInputs.forEach((mainInput) => {
-      const inputId = (inputValues[mainInput[0]] as ClapInputValueObject).id
-      const inputValue = mainInput[1]
-      if (inputId) {
-        comfyApiWorkflowPromptBuilder.input(inputId, inputValue)
+      if (
+        inputValues[mainInput[0]]?.id &&
+        inputValues[mainInput[0]]?.id != ClapperComfyUiInputIds.NULL
+      ) {
+        comfyApiWorkflowPromptBuilder.input(
+          inputValues[mainInput[0]]?.id,
+          mainInput[1]
+        )
       }
     })
 
@@ -114,21 +133,32 @@ export async function resolveSegment(
       throw new Error(`failed to run the pipeline (no output)`)
     }
 
-    const imagePaths = rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images.map(
-      (img: any) => api.getPathImage(img)
-    )
+    const getAssetPaths = (rawOutput) => {
+      if (clapWorkflow.category == ClapWorkflowCategory.VIDEO_GENERATION) {
+        return (
+          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.videos ||
+          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.gifs ||
+          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images
+        ).map((asset: any) => api.getPathImage(asset))
+      } else {
+        return rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images.map(
+          (img: any) => api.getPathImage(img)
+        )
+      }
+    }
+    const assetPaths = getAssetPaths(rawOutput)
 
-    console.log(`imagePaths:`, imagePaths)
+    console.log(`assetPaths:`, assetPaths)
 
-    const imagePath = imagePaths.at(0)
-    if (!imagePath) {
+    const assetPath = assetPaths.at(0)
+    if (!assetPath) {
       throw new Error(`failed to run the pipeline (no image)`)
     }
 
     // TODO: check what the imagePath looks like exactly
-    const assetUrl = await decodeOutput(imagePath)
+    const assetUrl = await decodeOutput(assetPath)
 
-    console.log(`assetUrl:`, imagePaths)
+    console.log(`assetUrl:`, assetPath)
     segment.assetUrl = assetUrl
     segment.assetSourceType = ClapAssetSource.DATA
 

@@ -1,19 +1,16 @@
 import { ClapSegmentCategory } from '@aitube/clap'
-import { getVideoPrompt } from '@aitube/engine'
-
-import { ComfyNode, ResolveRequest } from '@aitube/clapper-services'
 import { useSettings } from '@/services'
 
 export function getComfyWorkflow(category: ClapSegmentCategory) {
   const settings = useSettings.getState()
 
-  let comfyWorkflow = '{}'
+  let comfyWorkflow
 
   if (category === ClapSegmentCategory.STORYBOARD) {
-    comfyWorkflow = settings.comfyClapWorkflowForImage?.data
+    comfyWorkflow = settings.comfyClapWorkflowForImage
   } else if (category === ClapSegmentCategory.VIDEO) {
-    comfyWorkflow = settings.comfyWorkflowForVideo
+    comfyWorkflow = settings.comfyClapWorkflowForVideo
   }
 
-  return JSON.stringify(comfyWorkflow)
+  return JSON.stringify(comfyWorkflow || {})
 }

@@ -78,6 +78,7 @@ export function SettingsSectionImage() {
         />
 
         <FormComfyUIWorkflowSettings
+          label="Custom ComfyUI workflow for images"
           className="pt-4"
           clapWorkflow={comfyClapWorkflow}
           defaultClapWorkflow={defaultSettings.comfyClapWorkflowForImage}

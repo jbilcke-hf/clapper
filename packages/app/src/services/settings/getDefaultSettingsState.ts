@@ -2,6 +2,7 @@ import { RenderingStrategy } from '@aitube/timeline'
 import { ComfyIcuAccelerator, SettingsState } from '@aitube/clapper-services'
 
 import { defaultWorkflowForImages } from './workflows/image'
+import { defaultWorkflowForVideos } from './workflows/video'
 
 export function getDefaultSettingsState(): SettingsState {
   const state: SettingsState = {
@@ -81,7 +82,7 @@ export function getDefaultSettingsState(): SettingsState {
     maxVideosToGenerateInParallel: 1,
 
     comfyClapWorkflowForImage: defaultWorkflowForImages,
-    comfyWorkflowForVideo: '{}',
+    comfyClapWorkflowForVideo: defaultWorkflowForVideos,
     comfyWorkflowForVoice: '{}',
     comfyWorkflowForSound: '{}',
     comfyWorkflowForMusic: '{}',
