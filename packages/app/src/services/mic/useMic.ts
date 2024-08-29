@@ -13,21 +13,29 @@ export const useMic = create<MicStore>((set, get) => ({
   init: () => {
     const { interimResults, lang, continuous, grammar, grammarWeight } = get()
 
-    // Initialize webkitSpeechRecognition
-    const recognition: SpeechRecognition = new (window.SpeechRecognition ||
-      window.webkitSpeechRecognition)()
+    try {
+      // Initialize webkitSpeechRecognition
+      const recognition: SpeechRecognition = new (window.SpeechRecognition ||
+        window.webkitSpeechRecognition)()
 
-    if (!recognition) {
+      if (!recognition) {
+        set({
+          isSupported: false,
+          error: "this browser doesn't support speech recognition",
+        })
+        return
+      } else {
+        set({
+          isSupported: true,
+          error: '',
+        })
+      }
+    } catch (err) {
       set({
         isSupported: false,
         error: "this browser doesn't support speech recognition",
       })
       return
-    } else {
-      set({
-        isSupported: true,
-        error: '',
-      })
     }
 
     recognition.interimResults = true
