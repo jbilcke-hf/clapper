@@ -24,10 +24,12 @@ export function useQueryStringLoader() {
         processUserMessage(message)
       } else if (fileUrl) {
         console.log(`loading ${fileUrl}`)
-        if (fileUrl.toLocaleLowerCase().endsWith(".clap")) {
+        if (fileUrl.toLocaleLowerCase().includes(".clap")) {
+          console.log(`loading clap file`)
           await openClapUrl(fileUrl)
         } else {
-          openScreenplayUrl(fileUrl)
+          console.log(`loading screenplay file`)
+          await openScreenplayUrl(fileUrl)
         }
       } else {
         console.log('No clap URL provided')
