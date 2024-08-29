@@ -24,7 +24,7 @@ export function useQueryStringLoader() {
         processUserMessage(message)
       } else if (fileUrl) {
         console.log(`loading ${fileUrl}`)
-        if (fileUrl.toLocaleLowerCase().includes(".clap")) {
+        if (fileUrl.toLocaleLowerCase().includes('.clap')) {
           console.log(`loading clap file`)
           await openClapUrl(fileUrl)
         } else {
@@ -36,5 +36,12 @@ export function useQueryStringLoader() {
         return
       }
     })()
-  }, [prompt, openClapUrl, openScreenplayUrl, fileUrl, interactive, imageStrategy])
+  }, [
+    prompt,
+    openClapUrl,
+    openScreenplayUrl,
+    fileUrl,
+    interactive,
+    imageStrategy,
+  ])
 }
