@@ -26,7 +26,6 @@ export function Timeline(
   const setJumpAt = useTimeline((s) => s.setJumpAt)
   const setIsPlaying = useTimeline((s) => s.setIsPlaying)
   const setTogglePlayback = useTimeline((s) => s.setTogglePlayback)
-  const isEmpty = useTimeline((s) => s.isEmpty)
 
   const startLoop = useResolver((s) => s.startLoop)
 
