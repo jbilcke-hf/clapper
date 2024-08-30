@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { UUID } from '@aitube/clap'
+import { ClapSegmentCategory, UUID } from '@aitube/clap'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { toBlobURL } from '@ffmpeg/util'
 
@@ -10,6 +9,7 @@ export type FFMPegVideoInput = {
   startTimeInMs: number
   endTimeInMs: number
   durationInSecs: number
+  category: ClapSegmentCategory
 }
 
 export type FFMPegAudioInput = FFMPegVideoInput
@@ -240,7 +240,7 @@ export async function createFullAudio(
   console.log(TAG, 'Creating full audio', filename)
 
   const ffmpeg = await loadFFmpegSt()
-  const filterComplexParts = []
+  const filterComplexParts: string[] = []
   const baseFilename = `base_${filename}`
   let currentProgress = 0
   let targetProgress = 25
@@ -341,8 +341,9 @@ export async function createFullAudio(
  * @param onProgress callback to capture the progress of this method
  * @throws Error if ffmpeg returns exit code 1
  */
+
 export async function createFullSilentVideo(
-  videos: FFMPegVideoInput[],
+  videoInputs: FFMPegVideoInput[],
   filename: string,
   totalVideoDurationInMs: number,
   width: number,
@@ -352,128 +353,148 @@ export async function createFullSilentVideo(
 ) {
   const ffmpeg = await loadFFmpegMt()
   const fileList = 'fileList.txt'
-  const fileListContentArray = []
+  const fileListContentArray: string[] = []
 
-  // Complete array of videos including concatenated empty segments
-  // This is helpful for cleaner progress log
-  let lastStartTimeVideoInMs = 0
-  let videosWithGaps: FFMPegVideoInput[]
+  console.log(
+    `${TAG}: Starting createFullSilentVideo with ${videoInputs.length} inputs`
+  )
+  console.log(`${TAG}: Total duration: ${totalVideoDurationInMs}ms`)
 
-  if (!videos.length) {
-    videosWithGaps = [
-      {
-        startTimeInMs: 0,
-        endTimeInMs: totalVideoDurationInMs,
-        data: null,
-        durationInSecs: totalVideoDurationInMs / 1000,
-      },
-    ]
-  } else {
-    videosWithGaps = videos.reduce((arr: FFMPegVideoInput[], video, index) => {
-      const emptyVideoDurationInMs =
-        video.startTimeInMs - lastStartTimeVideoInMs
-      if (emptyVideoDurationInMs) {
-        arr.push({
-          startTimeInMs: lastStartTimeVideoInMs,
-          endTimeInMs: lastStartTimeVideoInMs + emptyVideoDurationInMs,
-          data: null,
-          durationInSecs: emptyVideoDurationInMs / 1000,
-        })
-      }
-      arr.push(video)
-      lastStartTimeVideoInMs = video.endTimeInMs
-      if (
-        index == videos.length - 1 &&
-        lastStartTimeVideoInMs < totalVideoDurationInMs
-      ) {
-        arr.push({
-          startTimeInMs: lastStartTimeVideoInMs,
-          endTimeInMs: totalVideoDurationInMs,
-          data: null,
-          durationInSecs:
-            (totalVideoDurationInMs - lastStartTimeVideoInMs) / 1000,
-        })
-      }
-      return arr
-    }, [])
-  }
+  onProgress?.(0, 'Preparing videos and images...')
 
-  onProgress?.(0, 'Preparing videos...')
-
-  // Arbitrary percentage, as `concat` is fast,
-  // then estimate the generation of gap videos
-  // as the 70% of the work
   let currentProgress = 0
-  let targetProgress = 70
+  const targetProgress = 100
+  const progressStep = targetProgress / videoInputs.length
 
-  for (const video of videosWithGaps) {
-    const expectedProgressForItem =
-      (((video.durationInSecs * 1000) / totalVideoDurationInMs) *
-        targetProgress) /
-      100
-    if (!video.data) {
-      if (excludeEmptyContent) continue
-      let collectedProgress = 0
-      await addEmptyVideo(
-        video.durationInSecs,
-        width,
-        height,
-        `empty_video_${UUID()}.mp4`,
-        fileListContentArray,
-        (progress) => {
-          const subProgress = progress / 100
-          currentProgress +=
-            (expectedProgressForItem * subProgress - collectedProgress) * 100
-          console.log(TAG, 'Current progress', currentProgress)
-          onProgress?.(currentProgress, 'Preparing videos...')
-          collectedProgress = expectedProgressForItem * subProgress
-        }
-      )
-    } else {
-      const videoFilename = `video_${UUID()}.mp4`
-      await ffmpeg.writeFile(videoFilename, video.data)
-      fileListContentArray.push(`file ${videoFilename}`)
-      currentProgress += expectedProgressForItem * 100
-      console.log(TAG, 'Current progress', currentProgress)
-      onProgress?.(currentProgress, 'Preparing videos...')
+  for (let index = 0; index < videoInputs.length; index++) {
+    const input = videoInputs[index]
+
+    console.log(`${TAG}: Processing input ${index + 1}/${videoInputs.length}`)
+    console.log(
+      `${TAG}: Input start time: ${input.startTimeInMs}ms, end time: ${input.endTimeInMs}ms`
+    )
+    console.log(`${TAG}: Input category: ${input.category}`)
+
+    if (input.data === null) {
+      console.warn(`${TAG}: Skipping input at index ${index} due to null data`)
+      continue
     }
+
+    const inputFilename = `input_${index}_${UUID()}.${input.category === ClapSegmentCategory.STORYBOARD ? 'png' : 'mp4'}`
+    await ffmpeg.writeFile(inputFilename, input.data)
+
+    const segmentDuration = (input.endTimeInMs - input.startTimeInMs) / 1000
+    console.log(`${TAG}: Segment duration: ${segmentDuration}s`)
+
+    let outputFilename = `output_${index}_${UUID()}.mp4`
+
+    if (input.category === ClapSegmentCategory.STORYBOARD) {
+      // Handle image input
+      console.log(`${TAG}: Processing image input`)
+      const ffmpegCommand = [
+        '-loop',
+        '1',
+        '-i',
+        inputFilename,
+        '-t',
+        segmentDuration.toString(),
+        '-vf',
+        `scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2`,
+        '-c:v',
+        'libx264',
+        '-tune',
+        'stillimage',
+        '-pix_fmt',
+        'yuv420p',
+        '-shortest',
+        outputFilename,
+      ]
+      console.log(
+        `${TAG}: FFmpeg command for image: ${ffmpegCommand.join(' ')}`
+      )
+      await ffmpeg.exec(ffmpegCommand)
+    } else {
+      // Handle video input
+      console.log(`${TAG}: Processing video input`)
+      const ffmpegCommand = [
+        '-i',
+        inputFilename,
+        '-t',
+        segmentDuration.toString(),
+        '-vf',
+        `scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2`,
+        '-c:v',
+        'libx264',
+        '-pix_fmt',
+        'yuv420p',
+        '-shortest',
+        outputFilename,
+      ]
+      console.log(
+        `${TAG}: FFmpeg command for video: ${ffmpegCommand.join(' ')}`
+      )
+      await ffmpeg.exec(ffmpegCommand)
+    }
+
+    fileListContentArray.push(`file '${outputFilename}'`)
+    console.log(`${TAG}: Added to file list: file '${outputFilename}'`)
+
+    currentProgress += progressStep
+    onProgress?.(
+      currentProgress,
+      `Processed input ${index + 1} of ${videoInputs.length}`
+    )
   }
 
-  onProgress?.(targetProgress, 'Concatenating videos...')
-  currentProgress = 70
-  targetProgress = 100
+  if (fileListContentArray.length === 0) {
+    throw new Error(`${TAG}: No valid inputs to process`)
+  }
+
+  console.log(`${TAG}: File list content:`)
+  console.log(fileListContentArray.join('\n'))
 
   const fileListContent = fileListContentArray.join('\n')
   await ffmpeg.writeFile(fileList, fileListContent)
 
-  const creatBaseFullVideoExitCode = await captureFFmpegProgress(
-    ffmpeg,
-    totalVideoDurationInMs,
-    async () => {
-      await ffmpeg.exec([
-        '-f',
-        'concat',
-        '-safe',
-        '0',
-        '-i',
-        fileList,
-        '-loglevel',
-        'verbose',
-        '-c',
-        'copy',
-        filename,
-      ])
-    },
-    (progress: number) => {
-      onProgress?.(
-        calculateProgress(currentProgress, progress, targetProgress),
-        'Merging audio and video...'
-      )
-    }
-  )
+  onProgress?.(targetProgress, 'Concatenating videos and images...')
 
-  if (creatBaseFullVideoExitCode) {
-    throw new Error(`${TAG}: Error while creating base full video!`)
+  const concatenateCommand = [
+    '-f',
+    'concat',
+    '-safe',
+    '0',
+    '-i',
+    fileList,
+    '-c',
+    'copy',
+    '-fflags',
+    '+genpts',
+    filename,
+  ]
+  console.log(`${TAG}: Concatenate command: ${concatenateCommand.join(' ')}`)
+
+  const concatenateExitCode = await ffmpeg.exec(concatenateCommand)
+
+  if (concatenateExitCode !== 0) {
+    throw new Error(`${TAG}: Error while concatenating videos and images!`)
   }
-  onProgress?.(targetProgress, 'Concatenating videos...')
+
+  console.log(`${TAG}: Silent video created successfully`)
+  onProgress?.(100, 'Silent video created successfully')
+
+  // Verify the output video duration
+  const probeCommand = [
+    '-i',
+    filename,
+    '-show_entries',
+    'format=duration',
+    '-v',
+    'quiet',
+    '-of',
+    'csv=p=0',
+  ]
+  const probeDuration = await ffmpeg.exec(probeCommand)
+  console.log(
+    `${TAG}: Final video duration: ${probeDuration}s (expected: ${totalVideoDurationInMs / 1000}s)`
+  )
 }

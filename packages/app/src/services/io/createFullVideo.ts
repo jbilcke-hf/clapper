@@ -17,7 +17,7 @@ import {
  *
  */
 export async function createFullVideo(
-  videos: FFMPegVideoInput[],
+  videoInputs: FFMPegVideoInput[],
   audios: FFMPegAudioInput[],
   width: number,
   height: number,
@@ -38,7 +38,7 @@ export async function createFullVideo(
   let targetProgress = 33.3
 
   await createFullSilentVideo(
-    videos,
+    videoInputs,
     fullSilentVideoFilename,
     totalVideoDurationInMs,
     width,

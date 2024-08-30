@@ -523,7 +523,7 @@ export const useIO = create<IOStore>((set, get) => ({
 
   saveVideoFile: async () => {
     const { saveAnyFile } = get()
-    console.log(`rendering project using the free community server..`)
+    console.log(`rendering project using the embedded FFmpeg..`)
 
     const timeline: TimelineStore = useTimeline.getState()
 
@@ -558,6 +558,7 @@ export const useIO = create<IOStore>((set, get) => ({
       )
 
     const videos: FFMPegVideoInput[] = []
+    const images: FFMPegVideoInput[] = []
     const audios: FFMPegAudioInput[] = []
 
     segments.forEach(
@@ -569,7 +570,6 @@ export const useIO = create<IOStore>((set, get) => ({
         assetSourceType,
         isExportableToFile,
       }) => {
-        // we extract the base64 files
         if (isExportableToFile) {
           assetUrl = filePath
           assetSourceType = ClapAssetSource.PATH
@@ -580,31 +580,47 @@ export const useIO = create<IOStore>((set, get) => ({
               startTimeInMs: segment.startTimeInMs,
               endTimeInMs: segment.endTimeInMs,
               durationInSecs: segment.assetDurationInMs / 1000,
+              category: segment.category,
             })
-          }
-
-          if (
+          } else if (
+            filePath.startsWith('image/') ||
+            segment.category === ClapSegmentCategory.STORYBOARD
+          ) {
+            images.push({
+              data: base64DataUriToUint8Array(segment.assetUrl),
+              startTimeInMs: segment.startTimeInMs,
+              endTimeInMs: segment.endTimeInMs,
+              durationInSecs:
+                (segment.endTimeInMs - segment.startTimeInMs) / 1000,
+              category: segment.category,
+            })
+          } else if (
             filePath.startsWith('music/') ||
             filePath.startsWith('sound/') ||
             filePath.startsWith('dialogue/')
           ) {
-            console.log('adding audio')
             audios.push({
               data: base64DataUriToUint8Array(segment.assetUrl),
               startTimeInMs: segment.startTimeInMs,
               endTimeInMs: segment.endTimeInMs,
               durationInSecs: segment.assetDurationInMs / 1000,
+              category: segment.category,
             })
           }
         }
       }
     )
 
+    // Combine videos and images
+    const videoInputs = [...videos, ...images].sort(
+      (a, b) => a.startTimeInMs - b.startTimeInMs
+    )
+
     const fullVideo = await createFullVideo(
-      videos,
+      videoInputs,
       audios,
-      1024,
-      576,
+      meta.width,
+      meta.height,
       totalDurationInMs,
       (progress, message) => {
         task.setProgress({
@@ -706,6 +722,7 @@ export const useIO = create<IOStore>((set, get) => ({
                   startTimeInMs: segment.startTimeInMs,
                   endTimeInMs: segment.endTimeInMs,
                   durationInSecs: segment.assetDurationInMs / 1000,
+                  category: segment.category,
                 })
               }
 
@@ -718,6 +735,7 @@ export const useIO = create<IOStore>((set, get) => ({
                   startTimeInMs: segment.startTimeInMs,
                   endTimeInMs: segment.endTimeInMs,
                   durationInSecs: segment.assetDurationInMs / 1000,
+                  category: segment.category,
                 })
               }
             }
