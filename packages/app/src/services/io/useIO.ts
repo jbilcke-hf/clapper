@@ -925,7 +925,7 @@ export const useIO = create<IOStore>((set, get) => ({
   )}
   <playlist id="playlist2">
     <property name="shotcut:audio">1</property>
-    <property name="shotcut:name">Dialogues & speech</property>
+    <property name="shotcut:name">Dialogues &amp; speech</property>
     ${dialogues.map(
       ({ segment, shortId }) => /* HTML*/ `
     <entry
