@@ -1,10 +1,8 @@
 import { useTimeline } from "@/hooks"
 import { MapControls } from "@react-three/drei"
-import { TimelineControlsImpl } from "./types"
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
 import { clamp } from "@/utils/clamp"
 import { useFrame, useThree } from "@react-three/fiber"
-import { DEFAULT_DURATION_IN_MS_PER_STEP, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 
 // for doc see:
 // https://threejs.org/docs/index.html?q=controls#examples/en/controls/MapControls
@@ -114,7 +112,7 @@ export function TimelineControls({
     if (timelineCursor) {
    
       timelineCursor.position.x = (
-        (cursorTimestampAtInMs) / DEFAULT_DURATION_IN_MS_PER_STEP
+        (cursorTimestampAtInMs) / useTimeline.getState().durationInMsPerStep
       ) * cellWidth
     }
 

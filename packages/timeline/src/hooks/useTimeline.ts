@@ -4,7 +4,7 @@ import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, 
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
-import { DEFAULT_DURATION_IN_MS_PER_STEP, DEFAULT_NB_TRACKS } from "@/constants"
+import { DEFAULT_NB_TRACKS } from "@/constants"
 import { hslToHex, findFreeTrack, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment, timelineSegmentToClapSegment } from "@/utils"
 import { ClapSegmentCategoryColors, ClapSegmentColorScheme, ClapTimelineTheme, SegmentResolver } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -48,6 +48,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     const {
       defaultCellHeight,
+      durationInMsPerStep,
       cellWidth,
     } = get()
 
@@ -67,7 +68,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     for (const s of segments) {
       if (s.category === ClapSegmentCategory.CAMERA) {
         const durationInSteps = (
-          (s.endTimeInMs - s.startTimeInMs) / DEFAULT_DURATION_IN_MS_PER_STEP
+          (s.endTimeInMs - s.startTimeInMs) / durationInMsPerStep
         )
         // TODO: we should do this row by row
         // and look at the most recurring duration,
@@ -209,6 +210,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
+        durationInMsPerStep,
         totalDurationInMs,
       })
     })
@@ -236,6 +238,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       meta,
       tracks,
       defaultSegmentDurationInSteps,
+      durationInMsPerStep,
       cellWidth: previousCellWidth,
       totalDurationInMs,
     } = get()
@@ -255,6 +258,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
+        durationInMsPerStep,
         totalDurationInMs,
       })
     })
@@ -568,6 +572,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       tracks,
       cellWidth,
       defaultSegmentDurationInSteps,
+      durationInMsPerStep,
       totalDurationInMs,
     } = get()
 
@@ -581,6 +586,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         )),
         cellWidth,
         defaultSegmentDurationInSteps,
+        durationInMsPerStep,
         totalDurationInMs,
       })
     })
@@ -740,6 +746,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       meta,
       cellWidth,
       defaultSegmentDurationInSteps,
+      durationInMsPerStep,
       totalDurationInMs,
       tracks,
       defaultPreviewHeight,
@@ -782,6 +789,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           tracks,
           cellWidth,
           defaultSegmentDurationInSteps,
+          durationInMsPerStep,
           totalDurationInMs,
         }),
       })
@@ -807,6 +815,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
       totalDurationInMs: previousTotalDurationInMs,
       defaultSegmentDurationInSteps,
+      durationInMsPerStep,
       defaultPreviewHeight,
       defaultCellHeight,
       assignTrack,
@@ -885,6 +894,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
+        durationInMsPerStep,
         totalDurationInMs,
       })
     })
@@ -909,6 +919,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       cellWidth,
       defaultSegmentDurationInSteps,
       segments,
+      durationInMsPerStep,
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
       allSegmentsChanged: previousAllSegmentsChanged,
       totalDurationInMs: previousTotalDurationInMs,
@@ -934,7 +945,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     // let's set some limits eg. at least 1 sec, I think this is reasonable
     const minimumLengthInSteps = 2
-    const minimumLengthInMs = minimumLengthInSteps * DEFAULT_DURATION_IN_MS_PER_STEP
+    const minimumLengthInMs = minimumLengthInSteps * durationInMsPerStep
 
     // positive if new duration is longer,
     // negative if shorter
@@ -1048,6 +1059,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
+        durationInMsPerStep,
         totalDurationInMs,
       })
     })

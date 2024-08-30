@@ -3,19 +3,21 @@ import { ClapMeta, ClapTracks } from "@aitube/clap"
 import { ContentSizeMetrics } from "@/types/timeline"
 
 import { computeCellHeight } from "./computeCellHeight"
-import { DEFAULT_COLUMNS_PER_SLICE, DEFAULT_DURATION_IN_MS_PER_STEP, DEFAULT_NB_TRACKS, NB_MAX_SHOTS, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants/grid"
+import { DEFAULT_NB_TRACKS, NB_MAX_SHOTS, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants/grid"
 
 export function computeContentSizeMetrics({
   meta,
   tracks,
   cellWidth,
   defaultSegmentDurationInSteps,
+  durationInMsPerStep,
   totalDurationInMs,
 }: {
   meta: ClapMeta
   tracks: ClapTracks
   cellWidth: number
   defaultSegmentDurationInSteps: number
+  durationInMsPerStep: number
   totalDurationInMs: number
 }): ContentSizeMetrics {
 
@@ -55,7 +57,7 @@ export function computeContentSizeMetrics({
     nbIdentifiedTracks: newTracks.length,
 
     // node: content width and height are in pixels
-    contentWidth: (totalDurationInMs / DEFAULT_DURATION_IN_MS_PER_STEP) * cellWidth,
+    contentWidth: (totalDurationInMs / durationInMsPerStep) * cellWidth,
     contentHeight,
 
     tracks: newTracks,

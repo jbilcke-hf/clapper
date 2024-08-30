@@ -224,6 +224,8 @@ export type TimelineStorePreferencesState = {
   height: number
   
   theme: ClapTimelineTheme
+
+  durationInMsPerStep: number
   
   /**
    * The timeline camera

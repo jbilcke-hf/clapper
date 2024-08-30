@@ -2,7 +2,6 @@ import { Suspense } from "react"
 import { a } from "@react-spring/three"
 import { ClapSegmentCategory } from "@aitube/clap"
 
-import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { useTimeline } from "@/hooks"
 import { useHoveredSegment } from "@/hooks/useHoveredSegment"
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
@@ -42,15 +41,17 @@ export function Cell({
   const cellHeight = getCellHeight(s.track)
   const verticalCellPosition = getVerticalCellPosition(0, s.track)
 
+  const durationInMsPerStep = useTimeline(s => s.durationInMsPerStep)
+
   // used to react to changes impacting tracks
   const tracks = useTimeline(s => s.tracks)
 
   const durationInSteps = (
-    (s.endTimeInMs - s.startTimeInMs) / DEFAULT_DURATION_IN_MS_PER_STEP
+    (s.endTimeInMs - s.startTimeInMs) / durationInMsPerStep
   )
 
   const startTimeInSteps = (
-    s.startTimeInMs / DEFAULT_DURATION_IN_MS_PER_STEP
+    s.startTimeInMs / durationInMsPerStep
   )
 
   const widthInPx = durationInSteps * cellWidth
@@ -111,7 +112,7 @@ export function Cell({
     const isOutOfRange = offsetX < leftBarTrackScaleWidth ||offsetY < topBarTimeScaleHeight
 
     const cursorX = pointX + (size.width / 2)
-    const cursorTimestampAtInMs = (cursorX / cellWidth) * DEFAULT_DURATION_IN_MS_PER_STEP
+    const cursorTimestampAtInMs = (cursorX / cellWidth) * useTimeline.getState().durationInMsPerStep
     
     //console.log("cells.Cell:onClick() e:", e)
 
