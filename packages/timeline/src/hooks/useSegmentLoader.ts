@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react"
 import * as THREE from "three"
 import { useThree } from "@react-three/fiber"
 
-import { DEFAULT_DURATION_IN_MS_PER_STEP } from "@/constants"
 import { similar, sliceSegments } from "@/utils"
 
 import { useTimeline } from "./useTimeline"
@@ -72,7 +71,7 @@ export const useSegmentLoader = ({
     const state = stateRef.current
 
     const timeline: TimelineStore = useTimeline.getState() 
-    const { cellWidth, width, height } = timeline
+    const { cellWidth, width, height, durationInMsPerStep } = timeline
 
     if (!state || !camera) { return }
 
@@ -139,8 +138,8 @@ export const useSegmentLoader = ({
     const afterStepsWithBuffer = Math.max(0, cellIndex - securityMarginInCellStepCount)
     const beforeStepsWithBuffer = Math.max(afterStepsWithBuffer, cellIndex + maxPossibleNumberOfVisibleHorizontalCells + securityMarginInCellStepCount)
 
-    const afterTimeWithBufferInMs = afterStepsWithBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
-    const beforeTimeWithBufferInMs = beforeStepsWithBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
+    const afterTimeWithBufferInMs = afterStepsWithBuffer * durationInMsPerStep
+    const beforeTimeWithBufferInMs = beforeStepsWithBuffer * durationInMsPerStep
 
     if (
       state.afterTimeWithBufferInMs !== afterTimeWithBufferInMs
@@ -161,8 +160,8 @@ export const useSegmentLoader = ({
     const afterStepsWithoutBuffer = Math.max(0, cellIndex)
     const beforeStepsWithoutBuffer = Math.max(afterStepsWithoutBuffer, cellIndex + maxPossibleNumberOfVisibleHorizontalCells)
 
-    const afterTimeWithoutBufferInMs = afterStepsWithoutBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
-    const beforeTimeWithoutBufferInMs = beforeStepsWithoutBuffer * DEFAULT_DURATION_IN_MS_PER_STEP
+    const afterTimeWithoutBufferInMs = afterStepsWithoutBuffer * durationInMsPerStep
+    const beforeTimeWithoutBufferInMs = beforeStepsWithoutBuffer * durationInMsPerStep
   
     if (
       state.afterTimeWithoutBufferInMs !== afterTimeWithoutBufferInMs

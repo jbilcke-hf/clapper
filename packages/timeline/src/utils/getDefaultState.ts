@@ -2,7 +2,7 @@ import { newClap } from "@aitube/clap"
 
 import { DEFAULT_NB_TRACKS, pastel, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 import { TimelineStorePreferencesState, TimelineStoreProjectState, TimelineStoreState } from "@/types/timeline"
-import { NB_MAX_SHOTS } from "@/constants/grid"
+import { DEFAULT_DURATION_IN_MS_PER_STEP, NB_MAX_SHOTS } from "@/constants/grid"
 
 
 // those settings will change between .clap project reloads
@@ -79,6 +79,9 @@ export function getDefaultPreferencesState(): TimelineStorePreferencesState {
     width: 1800,
     height: 800,
     theme: pastel,
+
+    durationInMsPerStep: DEFAULT_DURATION_IN_MS_PER_STEP,
+  
     timelineControls: undefined,
     topBarTimeScale: undefined,
     leftBarTrackScale: undefined,

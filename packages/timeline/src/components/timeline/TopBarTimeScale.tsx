@@ -7,7 +7,6 @@ useTimeline
 } from "@/hooks"
 
 import { useTimeScaleGraduations } from "@/hooks/useTimeScaleGraduations"
-import { DEFAULT_DURATION_IN_MS_PER_STEP, NB_MAX_SHOTS } from "@/constants/grid"
 import { formatTimestamp } from "@/utils/formatTimestamp"
 
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
@@ -35,6 +34,8 @@ export function TopBarTimeScale() {
 
   const isResizing = useTimeline(s => s.isResizing)
 
+  const durationInMsPerStep = useTimeline(s => s.durationInMsPerStep)
+
   const unit = 10
 
   // note: recomputing this is expensive and creates a visual delay
@@ -42,7 +43,7 @@ export function TopBarTimeScale() {
     unit
   });
 
-  let timestampInMs = -DEFAULT_DURATION_IN_MS_PER_STEP
+  let timestampInMs = -durationInMsPerStep
 
   const setHorizontalZoomLevel = useTimeline((s) => s.setHorizontalZoomLevel)
 
@@ -62,6 +63,7 @@ export function TopBarTimeScale() {
         isDraggingCursor,
         timelineCursor,
         topBarTimeScale,
+        durationInMsPerStep,
         timelineCamera,
         canvas
       } = useTimeline.getState()
@@ -77,7 +79,7 @@ export function TopBarTimeScale() {
 
         const positionInsideTheTimelineX = newPositionOfTheCursorX + timelineCamera.position.x
 
-        const newCursorTimestampAtInMs = (positionInsideTheTimelineX / cellWidth) * DEFAULT_DURATION_IN_MS_PER_STEP
+        const newCursorTimestampAtInMs = (positionInsideTheTimelineX / cellWidth) * durationInMsPerStep
         
         setCursorTimestampAtInMs(newCursorTimestampAtInMs)
         jumpAt(newCursorTimestampAtInMs)
@@ -195,7 +197,7 @@ export function TopBarTimeScale() {
           >
             {
             formatTimestamp(
-              timestampInMs += DEFAULT_DURATION_IN_MS_PER_STEP, {
+              timestampInMs += durationInMsPerStep, {
                 hours: false, // idx % unit === 0,
                 minutes: idx % unit === 0,
                 seconds: true,
@@ -252,7 +254,8 @@ export function TopBarTimeScale() {
       onPointerDown={(e) => {
         if (isDisabled) { return }
         const cursorX = e.point.x + (size.width / 2)
-        const cursorTimestampAtInMs = (cursorX / cellWidth) * DEFAULT_DURATION_IN_MS_PER_STEP
+        const durationInMsPerStep = useTimeline.getState().durationInMsPerStep
+        const cursorTimestampAtInMs = (cursorX / cellWidth) * durationInMsPerStep
         const { wasPlaying } = togglePlayback(false)
         wasPlayingRef.current = wasPlaying
         setCursorTimestampAtInMs(cursorTimestampAtInMs)
@@ -280,8 +283,9 @@ export function TopBarTimeScale() {
         // console.log(e)
         // handle the "timeline cursor drag"
         if (e.pressure > 0) {
+          const durationInMsPerStep = useTimeline.getState().durationInMsPerStep
           const cursorX = e.point.x + (size.width / 2)
-          const cursorTimestampAtInMs = (cursorX / cellWidth) * DEFAULT_DURATION_IN_MS_PER_STEP
+          const cursorTimestampAtInMs = (cursorX / cellWidth) * durationInMsPerStep
           setCursorTimestampAtInMs(cursorTimestampAtInMs)
           jumpAt(cursorTimestampAtInMs)
         }
