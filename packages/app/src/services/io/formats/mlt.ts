@@ -3,19 +3,8 @@ import {
   formatDuration,
   formatSegmentForExport,
 } from '@/lib/utils'
-import {
-  ClapAssetSource,
-  ClapProject,
-  ClapSegment,
-  ClapSegmentCategory,
-  UUID,
-} from '@aitube/clap'
-import {
-  TimelineSegment,
-  timelineSegmentToClapSegment,
-  TimelineStore,
-  useTimeline,
-} from '@aitube/timeline'
+import { ClapSegmentCategory } from '@aitube/clap'
+import { TimelineStore, useTimeline } from '@aitube/timeline'
 
 export async function generateMLT(): Promise<string> {
   const timeline: TimelineStore = useTimeline.getState()
@@ -46,7 +35,7 @@ export async function generateMLT(): Promise<string> {
   )
 
   // want to see some colors? install es6-string-html in your VSCode
-  return /* HTML*/ `<?xml version="1.0" standalone="no"?>
+  return /* XML */ `<?xml version="1.0" standalone="no"?>
 <mlt LC_NUMERIC="C" version="7.24.0" title="${meta.title}" producer="main_bin">
 <profile
 description="${meta.width}:${meta.height}"
@@ -83,7 +72,7 @@ colorspace="709"
 </playlist>
 ${segments
   .map(
-    ({ segment, shortId, fileName, filePath, index }) => /* HTML*/ `
+    ({ segment, shortId, fileName, filePath, index }) => /* XML */ `
 <producer
 id="${shortId}"
 in="${formatDuration(0)}"
@@ -124,7 +113,7 @@ ${
 <property name="shotcut:name">Video clips</property>
 ${videos
   .map(
-    ({ segment, shortId }) => /* HTML*/ `
+    ({ segment, shortId }) => /* XML */ `
 <entry
   producer="${shortId}"
   in="${formatDuration(0)}"
@@ -139,7 +128,7 @@ ${videos
 <property name="shotcut:name">Storyboards</property>
 ${storyboards
   .map(
-    ({ segment, shortId }) => /* HTML*/ `
+    ({ segment, shortId }) => /* XML */ `
 <entry
   producer="${shortId}"
   in="${formatDuration(0)}"
@@ -150,7 +139,7 @@ ${storyboards
   .join('')}
 </playlist>
 ${[...dialogues, ...sounds, ...music].map(
-  ({ segment, filePath, fileName, shortId }) => /* HTML*/ `
+  ({ segment, filePath, fileName, shortId }) => /* XML */ `
 <chain id="${shortId}" out="${formatDuration(meta.durationInMs)}">
 <property name="length">${formatDuration(meta.durationInMs)}</property>
 <property name="eof">pause</property>
@@ -192,7 +181,7 @@ ${
 <property name="shotcut:audio">1</property>
 <property name="shotcut:name">Dialogues &amp; speech</property>
 ${dialogues.map(
-  ({ segment, shortId }) => /* HTML*/ `
+  ({ segment, shortId }) => /* XML */ `
 <entry
   producer="${shortId}"
   in="${segment.startTimeInMs}"
@@ -205,7 +194,7 @@ ${dialogues.map(
 <property name="shotcut:audio">1</property>
 <property name="shotcut:name">Sound effects</property>
 ${sounds.map(
-  ({ segment, shortId }) => /* HTML*/ `
+  ({ segment, shortId }) => /* XML */ `
 <entry
   producer="${shortId}"
   in="${segment.startTimeInMs}"
@@ -218,7 +207,7 @@ ${sounds.map(
 <property name="shotcut:audio">1</property>
 <property name="shotcut:name">Music</property>
 ${music.map(
-  ({ segment, shortId }) => /* HTML*/ `
+  ({ segment, shortId }) => /* XML */ `
 <entry
   producer="${shortId}"
   in="${segment.startTimeInMs}"

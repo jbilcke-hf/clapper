@@ -45,6 +45,7 @@ export type IOControls = {
   saveClap: () => Promise<void>
   saveVideoFile: () => Promise<void>
   saveZipFile: () => Promise<void>
+  saveOTIOZFile: () => Promise<void>
 
   openMLT: (file: File) => Promise<void>
   saveMLT: () => Promise<void>
