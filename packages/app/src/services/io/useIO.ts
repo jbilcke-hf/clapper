@@ -59,7 +59,13 @@ import { useUI } from '../ui'
 import { getTypeAndExtension } from '@/lib/utils/getTypeAndExtension'
 
 import { useScriptEditor } from '../editors'
-import { generateFCP, generateMLT } from './formats'
+import {
+  generateEDL,
+  generateFCP,
+  generateMLT,
+  generateOTIO,
+  generateOTIOZ,
+} from './formats'
 
 export const useIO = create<IOStore>((set, get) => ({
   ...getDefaultIOState(),
@@ -641,6 +647,13 @@ export const useIO = create<IOStore>((set, get) => ({
       files['meta.json'] = fflate.strToU8(JSON.stringify(meta, null, 2))
 
       try {
+        const edlXml = await generateEDL()
+        files['edl_project.edl'] = fflate.strToU8(edlXml)
+      } catch (err) {
+        console.error(`failed to generate the EDL file`)
+      }
+
+      try {
         const shotcutMltXml = await generateMLT()
         files['shotcut_project.mlt'] = fflate.strToU8(shotcutMltXml)
       } catch (err) {
@@ -650,9 +663,15 @@ export const useIO = create<IOStore>((set, get) => ({
       try {
         const fcpXml = await generateFCP()
         files['finalcut_project.fcpxml'] = fflate.strToU8(fcpXml)
-  
       } catch (err) {
         console.error(`failed to generate the FCPXML file`)
+      }
+
+      try {
+        const otio = await generateOTIO()
+        files['opentimeline_project.otio'] = fflate.strToU8(otio)
+      } catch (err) {
+        console.error(`failed to generate the OpenTimelineIO file`)
       }
 
       const videos: FFMPegVideoInput[] = []
@@ -762,6 +781,40 @@ export const useIO = create<IOStore>((set, get) => ({
     }
   },
 
+  saveOTIOZFile: async () => {
+    const { saveAnyFile } = get()
+    console.log(`Exporting project to OTIOZ...`)
+
+    const task = useTasks.getState().add({
+      category: TaskCategory.EXPORT,
+      visibility: TaskVisibility.BLOCKER,
+      initialMessage: `Exporting project to OTIOZ...`,
+      successMessage: `Successfully exported the project to OTIOZ!`,
+      value: 0,
+    })
+
+    try {
+      task.setProgress({
+        message: 'Generating OTIOZ content...',
+        value: 10,
+      })
+
+      const otiozData = await generateOTIOZ()
+
+      task.setProgress({
+        message: 'Preparing file for download...',
+        value: 90,
+      })
+
+      const blob = new Blob([otiozData], { type: 'application/octet-stream' })
+      saveAnyFile(blob, 'my_project.otioz')
+
+      task.success()
+    } catch (err) {
+      console.error('Failed to generate OTIOZ:', err)
+      task.fail(`${err || 'Unknown error occurred while generating OTIOZ'}`)
+    }
+  },
   openMLT: async (file: File) => {
     useUI.getState().setShowWelcomeScreen(false)
   },
