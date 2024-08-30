@@ -48,7 +48,6 @@ export type IOControls = {
 
   openMLT: (file: File) => Promise<void>
   saveMLT: () => Promise<void>
-  generateMLT: () => Promise<string>
 
   openKdenline: (file: File) => Promise<void>
   saveKdenline: () => Promise<void>
