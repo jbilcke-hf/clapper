@@ -149,7 +149,6 @@ export type TimelineStoreProjectState = {
   entityIndex: Record<string, ClapEntity>
   entitiesChanged: number
 
-  isEmpty: boolean
   isLoading: boolean
 
   // -- metrics computed by computeContentSizeMetrics --

@@ -156,10 +156,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     }
 
-    // note that we measure the empty ness here, but right after
-    // we run some code to fill-in the missing tracks
-    const isEmpty = tracks.length === 0
-
    // ---------- FILL-IN THE TRACKS ---------------
     for (let id = 0; id < DEFAULT_NB_TRACKS; id++) {
       if (!tracks[id]) {
@@ -205,8 +201,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       totalDurationInMs,
       lineNumberToMentionedSegments,
 
-
-      isEmpty,
       isLoading: false,
       finalVideo,
 
@@ -756,6 +750,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     segment.track = track
    
+    let nbTracks = tracks.length
+
     // add the track if it is missing
     if (!tracks[segment.track]) {
       const isPreview =
@@ -1159,3 +1155,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   }
 }
 ))
+
+if (typeof window !== 'undefined') {
+  (window as any).useTimeline = useTimeline
+}

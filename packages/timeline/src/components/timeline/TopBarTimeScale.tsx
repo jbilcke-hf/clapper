@@ -21,10 +21,10 @@ export function TopBarTimeScale() {
   const jumpAt = useTimeline(s => s.jumpAt)
   const togglePlayback = useTimeline(s => s.togglePlayback)
   const theme = useTimeline(s => s.theme)
-  const isEmpty = useTimeline(s => s.isEmpty)
+  const tracks = useTimeline(s => s.tracks)
 
   // right now empty means disabled, but in the future we might use other things
-  const isDisabled = isEmpty;
+  const isDisabled = tracks.length === 0;
 
   const wasPlayingRef = useRef<boolean | undefined>(undefined)
 

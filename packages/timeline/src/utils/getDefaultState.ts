@@ -20,7 +20,6 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     entityIndex: {},
     entitiesChanged: 0,
 
-    isEmpty: true,
     isLoading: false,
 
     initialized: false,
