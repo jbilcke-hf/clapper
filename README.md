@@ -80,7 +80,7 @@ git lfs install
 
 You will also need to install [Bun](https://bun.sh/docs/installation)
 
-Clapper has been tested with Node `20.15.1`.
+Clapper has been tested with Node `20.17.0`.
 
 To make sure you use this version, you can use [NVM](https://github.com/nvm-sh/nvm) to activate it:
 

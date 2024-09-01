@@ -12,7 +12,7 @@
     "build:dev": "bun build ./src/index.tsx --outfile=dist/index.js --external @radix-ui/react-slider --external @react-spring/three --external @react-spring/types --external @react-three/drei --external @react-three/fiber --external @types/react --external @types/react-dom --external react --external react-dom --external tailwindcss --external three --external typescript --external zustand && bun run build:declaration",
     "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
     "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
-    "publish": "bun run build && npm publish --access public",
+    "publish": "npm publish --access public",
     "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build",
     "dev": "vite",
     "serve": "vite preview"

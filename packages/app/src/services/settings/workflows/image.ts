@@ -1,5 +1,6 @@
-import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/utils'
 import { ClapWorkflowCategory } from '@aitube/clap'
+
+import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/convertComfyUiWorkflowApiToClapWorkflow'
 
 // https://replicate.com/fofr/any-comfyui-workflow/examples#ps4f5zcthdrgm0cfqh586zed7r
 export const defaultWorkflowForImages = convertComfyUiWorkflowApiToClapWorkflow(

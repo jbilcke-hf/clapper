@@ -5,15 +5,16 @@ import {
   ClapWorkflowCategory,
   generateSeed,
 } from '@aitube/clap'
-import { TimelineSegment } from '@aitube/timeline'
-import { BasicCredentials, CallWrapper, ComfyApi } from '@saintno/comfyui-sdk'
-import { decodeOutput } from '@/lib/utils/decodeOutput'
-import {
-  ClapperComfyUiInputIds,
-  ComfyUIWorkflowApiGraph,
-  createPromptBuilder,
-} from './utils'
 import { ClapInputValueObject } from '@aitube/clap/dist/types'
+
+import { TimelineSegment } from '@aitube/timeline'
+
+import { BasicCredentials, CallWrapper, ComfyApi } from '@saintno/comfyui-sdk'
+
+import { decodeOutput } from '@/lib/utils/decodeOutput'
+import { ClapperComfyUiInputIds } from './types'
+import { createPromptBuilder } from './createPromptBuilder'
+import { ComfyUIWorkflowApiGraph } from './graph'
 
 export async function resolveSegment(
   request: ResolveRequest

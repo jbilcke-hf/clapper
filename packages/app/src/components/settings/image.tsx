@@ -45,7 +45,8 @@ export function SettingsSectionImage() {
           onCheckedChange={setCensorNotForAllAudiencesContent}
         />
         <p className="text-xs italic text-white/50">
-          Note: API providers each have their own policies regarding NFAA. Don't use Clapper for illegal purposes.
+          Note: API providers each have their own policies regarding NFAA.
+          Don&apos;t use Clapper for illegal purposes.
         </p>
 
         <FormInput

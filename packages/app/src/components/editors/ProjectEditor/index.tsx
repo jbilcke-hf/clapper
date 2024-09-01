@@ -1,11 +1,9 @@
-
 import { FormInput } from '@/components/forms/FormInput'
 import { FormSection } from '@/components/forms/FormSection'
 import { FormSwitch } from '@/components/forms/FormSwitch'
 
 import { ClapProject } from '@aitube/clap'
 import { useTimeline } from '@aitube/timeline'
-
 
 export function ProjectEditor() {
   const clap: ClapProject | undefined = useTimeline((s) => s.clap)
@@ -24,18 +22,18 @@ export function ProjectEditor() {
   }, [clap?.meta, setCurrent])
   */
 
-  const title = useTimeline(s => s.title)
-  const description = useTimeline(s => s.description)
-  const synopsis = useTimeline(s => s.synopsis)
-  const width = useTimeline(s => s.width)
-  const height = useTimeline(s => s.height)
-  const bpm = useTimeline(s => s.bpm)
-  const frameRate = useTimeline(s => s.frameRate)
-  const imagePrompt = useTimeline(s => s.imagePrompt)
-  const systemPrompt = useTimeline(s => s.systemPrompt)
-  const licence = useTimeline(s => s.licence)
-  const isInteractive = useTimeline(s => s.isInteractive)
-  const isLoop = useTimeline(s => s.isLoop)
+  const title = useTimeline((s) => s.title)
+  const description = useTimeline((s) => s.description)
+  const synopsis = useTimeline((s) => s.synopsis)
+  const width = useTimeline((s) => s.width)
+  const height = useTimeline((s) => s.height)
+  const bpm = useTimeline((s) => s.bpm)
+  const frameRate = useTimeline((s) => s.frameRate)
+  const imagePrompt = useTimeline((s) => s.imagePrompt)
+  const systemPrompt = useTimeline((s) => s.systemPrompt)
+  const licence = useTimeline((s) => s.licence)
+  const isInteractive = useTimeline((s) => s.isInteractive)
+  const isLoop = useTimeline((s) => s.isLoop)
 
   /*
   if (!current) {
@@ -93,12 +91,10 @@ export function ProjectEditor() {
       <FormInput<number>
         label={'Content width (⚠️ careful!)'}
         defaultValue={1024}
-         
         // 4k is 3840×2160
         // but we can't do that yet obviously
         minValue={256}
         maxValue={1024}
-
         value={width || 1024}
         onChange={(width) => {
           useTimeline.setState({ width })
@@ -106,13 +102,11 @@ export function ProjectEditor() {
       />
       <FormInput<number>
         label={'Content height (⚠️ careful!)'}
-
         defaultValue={576}
         // 4k is 3840×2160
         // but we can't do that yet obviously
         minValue={256}
         maxValue={1024}
-
         value={height || 576}
         onChange={(height) => {
           useTimeline.setState({ height })
@@ -182,11 +176,7 @@ export function ProjectEditor() {
         // onCheckedChange={(isInteractive) => {
         //   setCurrent({ ...current, isInteractive: !isInteractive })
         // }}
-        checked={
-          typeof isInteractive === 'boolean'
-            ? isInteractive
-            : false
-        }
+        checked={typeof isInteractive === 'boolean' ? isInteractive : false}
         onCheckedChange={(isInteractive) => {
           useTimeline.setState({ isInteractive: !isInteractive })
         }}
@@ -197,16 +187,11 @@ export function ProjectEditor() {
         // onCheckedChange={(isLoop) => {
         //   setCurrent({ ...current, isLoop: !isLoop })
         // }}
-        
-        checked={
-          typeof isLoop === 'boolean'
-            ? isLoop
-            : false
-        }
+
+        checked={typeof isLoop === 'boolean' ? isLoop : false}
         onCheckedChange={(isLoop) => {
           useTimeline.setState({ isLoop: !isLoop })
         }}
-
       />
     </FormSection>
   )

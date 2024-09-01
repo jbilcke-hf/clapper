@@ -12,7 +12,7 @@ import {
   editClapSounds,
   editClapStoryboards,
   editClapVideos,
-} from '@aitube/api-client'
+} from '@aitube/client'
 
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
 

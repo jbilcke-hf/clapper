@@ -54,7 +54,7 @@ export function ProjectCreationWizard() {
         className={cn(
           `select-none`,
           // DialogContent comes with some hardcoded values so we need to override them
-          `h-[70%] w-[95w] max-w-8xl md:w-[70vw]`,
+          `max-w-8xl h-[70%] w-[95w] md:w-[70vw]`,
           `flex flex-row`
         )}
       >

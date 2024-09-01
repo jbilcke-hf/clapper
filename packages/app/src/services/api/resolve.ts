@@ -1,6 +1,13 @@
 'use client'
 
 import {
+  ClapMeta,
+  ClapSegmentCategory,
+  ClapWorkflowEngine,
+  ClapWorkflowProvider,
+  newSegment,
+} from '@aitube/clap'
+import {
   clapSegmentToTimelineSegment,
   TimelineSegment,
   TimelineStore,
@@ -11,14 +18,8 @@ import {
   ResolveRequestPrompts,
   SettingsStore,
 } from '@aitube/clapper-services'
+
 import { useSettings } from '../settings'
-import {
-  ClapMeta,
-  ClapSegmentCategory,
-  ClapWorkflowEngine,
-  ClapWorkflowProvider,
-  newSegment,
-} from '@aitube/clap'
 import { getDefaultResolveRequestPrompts } from '../resolver/getDefaultResolveRequestPrompts'
 
 export async function resolve(

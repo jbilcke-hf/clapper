@@ -12,10 +12,10 @@
     "start": "bun run --cwd packages/app start",
     "start:prod": "bun run --cwd packages/app start:prod",
     "build": "bun run build:all",
-    "build:all": "bun run build:clap && bun run build:timeline && bun run build:api-client && bun run build:io && bun run build:colors && bun run build:engine && bun run build:broadway && bun run build:clapper-services && bun run build:app",
+    "build:all": "bun run build:clap && bun run build:timeline && bun run build:client && bun run build:io && bun run build:colors && bun run build:engine && bun run build:broadway && bun run build:clapper-services && bun run build:app",
     "build:clap": "bun run --cwd packages/clap build",
     "build:timeline": "bun run --cwd packages/timeline build",
-    "build:api-client": "bun run --cwd packages/api-client build",
+    "build:client": "bun run --cwd packages/client build",
     "build:io": "bun run --cwd packages/io build",
     "build:colors": "bun run --cwd packages/colors build",
     "build:engine": "bun run --cwd packages/engine build",
@@ -23,7 +23,7 @@
     "build:clapper-services": "bun run --cwd packages/clapper-services build",
     "build:app": "bun run --cwd packages/app build",
     "test": "bun run test:all",
-    "test:all": "bun run --cwd packages/clap test && bun run --cwd packages/timeline test && bun run --cwd packages/api-client test && bun run --cwd packages/io test && bun run --cwd packages/colors test && bun run --cwd packages/engine test && bun run --cwd packages/broadway test && bun run --cwd packages/clapper-services test && bun run --cwd packages/app test",
+    "test:all": "bun run --cwd packages/clap test && bun run --cwd packages/timeline test && bun run --cwd packages/client test && bun run --cwd packages/io test && bun run --cwd packages/colors test && bun run --cwd packages/engine test && bun run --cwd packages/broadway test && bun run --cwd packages/clapper-services test && bun run --cwd packages/app test",
     "format": "bun run --cwd packages/app format"
   },
   "trustedDependencies": [
@@ -34,7 +34,7 @@
   "workspaces": [
     "packages/clap",
     "packages/timeline",
-    "packages/api-client",
+    "packages/client",
     "packages/io",
     "packages/colors",
     "packages/engine",

@@ -8,9 +8,9 @@ import { useTimeline } from '@aitube/timeline'
 
 export function BottomToolbar() {
   const theme = useTheme()
-  const bpm = useTimeline(s => s.bpm)
-  const frameRate = useTimeline(s => s.frameRate)
-  
+  const bpm = useTimeline((s) => s.bpm)
+  const frameRate = useTimeline((s) => s.frameRate)
+
   return (
     <div
       className={cn(
@@ -34,7 +34,6 @@ export function BottomToolbar() {
           <span className="text-white/55">{APP_REVISION}</span>
         </div>
 
-
         {/*
         Note sure that's really useful since there is a garbage collector,
         I got a situation where I had 1.2 Gb when loaded empty,
@@ -52,7 +51,9 @@ export function BottomToolbar() {
 
         <div className="flex flex-row space-x-1">
           <span className="text-white/40">FPS:</span>
-          <span className="text-white/55">{Math.round(frameRate * 1000) / 1000}</span>
+          <span className="text-white/55">
+            {Math.round(frameRate * 1000) / 1000}
+          </span>
         </div>
       </div>
       <div className="flex flex-row space-x-6">
