@@ -525,6 +525,15 @@ export const useIO = create<IOStore>((set, get) => ({
     const { saveAnyFile } = get()
     console.log(`rendering project using the embedded FFmpeg..`)
 
+    const task = useTasks.getState().add({
+      category: TaskCategory.EXPORT,
+      visibility: TaskVisibility.BLOCKER,
+      initialMessage: `Rendering the project to MP4..`,
+      successMessage: `Successfully exported the MP4 video!`,
+      value: 0,
+    })
+
+    try {
     const timeline: TimelineStore = useTimeline.getState()
 
     const {
@@ -539,14 +548,6 @@ export const useIO = create<IOStore>((set, get) => ({
     if (!clap) {
       throw new Error(`cannot save a clap.. if there is no clap`)
     }
-
-    const task = useTasks.getState().add({
-      category: TaskCategory.EXPORT,
-      visibility: TaskVisibility.BLOCKER,
-      initialMessage: `Rendering the project to MP4..`,
-      successMessage: `Successfully exported the MP4 video!`,
-      value: 0,
-    })
 
     const ignoreThisVideoSegmentId = (await getFinalVideo(clap))?.id || ''
 
@@ -633,6 +634,10 @@ export const useIO = create<IOStore>((set, get) => ({
     const videoBlob = new Blob([fullVideo], { type: 'video/mp4' })
     saveAnyFile(videoBlob, 'my_project.mp4')
     task.success()
+    } catch (err) {
+      console.error(err)
+      task.fail(`${err || 'unknown error'}`)
+    }
   },
 
   saveZipFile: async () => {
