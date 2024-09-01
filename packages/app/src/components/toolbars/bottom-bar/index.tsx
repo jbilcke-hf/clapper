@@ -4,10 +4,13 @@ import { useTheme } from '@/services/ui/useTheme'
 import { Metrics } from './metrics'
 import { APP_REVISION } from '@/lib/core/constants'
 import { Tasks } from './tasks'
+import { useTimeline } from '@aitube/timeline'
 
 export function BottomToolbar() {
   const theme = useTheme()
-
+  const bpm = useTimeline(s => s.bpm)
+  const frameRate = useTimeline(s => s.frameRate)
+  
   return (
     <div
       className={cn(
@@ -31,6 +34,7 @@ export function BottomToolbar() {
           <span className="text-white/55">{APP_REVISION}</span>
         </div>
 
+
         {/*
         Note sure that's really useful since there is a garbage collector,
         I got a situation where I had 1.2 Gb when loaded empty,
@@ -40,6 +44,16 @@ export function BottomToolbar() {
         what would be more useful is to collect system metrics in the Desktop version.
         <Metrics />
         */}
+
+        <div className="flex flex-row space-x-1">
+          <span className="text-white/40">BPM:</span>
+          <span className="text-white/55">{Math.round(bpm * 1000) / 1000}</span>
+        </div>
+
+        <div className="flex flex-row space-x-1">
+          <span className="text-white/40">FPS:</span>
+          <span className="text-white/55">{Math.round(frameRate * 1000) / 1000}</span>
+        </div>
       </div>
       <div className="flex flex-row space-x-6">
         <Tasks />

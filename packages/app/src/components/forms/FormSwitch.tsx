@@ -17,7 +17,7 @@ export function FormSwitch({
   onCheckedChange: (checked: boolean) => void
 }) {
   return (
-    <FormField label={label} className={cn(``, className)}>
+    <FormField label={label} className={cn(`justify-start`, className)}>
       <Switch
         checked={checked}
         onCheckedChange={(checked) => {
