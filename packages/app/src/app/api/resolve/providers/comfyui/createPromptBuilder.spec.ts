@@ -1,11 +1,5 @@
 import { expect, test } from 'vitest'
-import {
-  ClapperComfyUiInputIds,
-  ComfyUIWorkflowApiGraph,
-  createPromptBuilder,
-  findNegativePromptInputsFromWorkflow,
-  findPromptInputsFromWorkflow,
-} from './utils'
+import { createPromptBuilder } from './createPromptBuilder'
 
 // Default workflow used by ComfyUI, downloaded for API
 const workflowRaw = {

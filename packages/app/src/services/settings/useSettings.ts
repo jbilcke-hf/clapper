@@ -23,7 +23,6 @@ import { getValidComfyWorkflowTemplate } from '@/lib/utils/getValidComfyWorkflow
 import { parseComfyIcuAccelerator } from '@/lib/utils/parseComfyIcuAccelerator'
 
 import { parseWorkflow } from './workflows/parseWorkflow'
-import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/utils'
 
 export const useSettings = create<SettingsStore>()(
   persist(

@@ -8,11 +8,9 @@ import { MdInfo, MdWarning } from 'react-icons/md'
 import { ClapInputField, ClapWorkflow } from '@aitube/clap'
 import { FormArea } from './FormArea'
 import { useCallback, useState } from 'react'
-import {
-  ComfyUIWorkflowApiGraph,
-  convertComfyUiWorkflowApiToClapWorkflow,
-} from '@/app/api/resolve/providers/comfyui/utils'
 import clsx from 'clsx'
+import { ComfyUIWorkflowApiGraph } from '@/app/api/resolve/providers/comfyui/graph'
+import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/convertComfyUiWorkflowApiToClapWorkflow'
 
 export function FormComfyUIWorkflowSettings({
   label,

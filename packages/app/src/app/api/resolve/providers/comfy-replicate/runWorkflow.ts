@@ -1,4 +1,8 @@
-import Replicate from 'replicate'
+// import Replicate from 'replicate'
+// fix for the error:
+// ../../node_modules/replicate/lib/util.js
+// Critical dependency: require function is used in a way in which dependencies cannot be statically extracted
+const Replicate = require('replicate')
 
 export async function runWorkflow({
   apiKey,

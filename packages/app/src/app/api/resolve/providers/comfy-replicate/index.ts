@@ -5,7 +5,7 @@ import {
 } from '@aitube/clap'
 
 import { ResolveRequest } from '@aitube/clapper-services'
-import { getComfyWorkflow } from '../../../../../services/editors/workflow-editor/workflows/comfyui/getComfyWorkflow'
+
 import { runWorkflow } from './runWorkflow'
 import { TimelineSegment } from '@aitube/timeline'
 

@@ -5,8 +5,9 @@
  * - Replaced 'Load Image' node by 'Load Image From Base64'
  */
 
-import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/utils'
 import { ClapWorkflowCategory } from '@aitube/clap'
+
+import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/convertComfyUiWorkflowApiToClapWorkflow'
 
 export const defaultWorkflowForVideos = convertComfyUiWorkflowApiToClapWorkflow(
   JSON.stringify({

@@ -55,22 +55,24 @@ export function SettingsDialog() {
         className={cn(
           `select-none`,
           // DialogContent comes with some hardcoded values so we need to override them
-          `h-[70%] w-[95w] max-w-8xl md:w-[70vw]`,
+          `max-w-8xl h-[70%] w-[95w] md:w-[70vw]`,
           `flex flex-row`
         )}
       >
-        <ScrollArea className="flex h-full w-30 flex-col">
+        <ScrollArea className="w-30 flex h-full flex-col">
           <div className="flex flex-col items-end">
-            {Object.keys(panels).filter(key => key !== 'NONE').map((key) => (
-              <Button
-                key={key}
-                variant="ghost"
-                className="flex w-full flex-col items-end text-right text-lg font-thin capitalize text-neutral-300"
-                onClick={() => setShowSettings(key as SettingsCategory)}
-              >
-                {panelLabels[key]}
-              </Button>
-            ))}
+            {Object.keys(panels)
+              .filter((key) => key !== 'NONE')
+              .map((key) => (
+                <Button
+                  key={key}
+                  variant="ghost"
+                  className="flex w-full flex-col items-end text-right text-lg font-thin capitalize text-neutral-300"
+                  onClick={() => setShowSettings(key as SettingsCategory)}
+                >
+                  {panelLabels[key]}
+                </Button>
+              ))}
           </div>
         </ScrollArea>
 
