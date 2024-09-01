@@ -1,0 +1,46 @@
+{
+  "name": "@aitube/client",
+  "module": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "version": "0.2.4-3",
+  "description": "Official API client for AiTube.at",
+  "scripts": {
+    "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap && bun run build:declaration",
+    "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
+    "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
+    "publish": "npm publish --access public",
+    "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jbilcke-hf/aitube-client.git"
+  },
+  "keywords": [
+    "Clapper.app",
+    "AiTube.at",
+    "OpenClap",
+    "AI cinema",
+    "file format",
+    "specification"
+  ],
+  "author": "Julian Bilcke",
+  "license": "MIT",
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/**/*.d.ts"
+  ],
+  "dependencies": {
+    "@aitube/clap": "workspace:*",
+    "@types/bun": "latest",
+    "query-string": "^9.0.0"
+  }
+}
