@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import * as THREE from "three"
-import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity } from "@aitube/clap"
+import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
@@ -82,13 +82,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     // TODO: compute the exact image ratio instead of using the media orientation,
     // since it might not match the actual assets
-    const defaultMediaRatio = clap ? (
+    const defaultImageRatio = clap ? (
       (clap.meta.width || 896) / (clap.meta.height || 512)
     ) : (896 / 512)
     
-    // also storyboards and videos might have different sizes / ratios
+    // also storyboard images and videos might have different sizes / ratios
     const defaultPreviewHeight = Math.round(
-      defaultSegmentLengthInPixels / defaultMediaRatio
+      defaultSegmentLengthInPixels / defaultImageRatio
     )
 
     const lineNumberToMentionedSegments: Record<number, TimelineSegment[]> = {}
@@ -120,7 +120,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
       if (!tracks[segment.track]) {
         const isPreview =
-        segment.category === ClapSegmentCategory.STORYBOARD ||
+        segment.category === ClapSegmentCategory.IMAGE ||
           segment.category === ClapSegmentCategory.VIDEO
 
         tracks[segment.track] = {
@@ -172,8 +172,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       }
     }
 
-    let totalDurationInMs = clap.meta.durationInMs
-    let totalNumberOfLines = clap.meta.screenplay.split('\n').length
+    let durationInMs = clap.meta.durationInMs
+    let totalNumberOfLines = clap.meta.storyPrompt.split('\n').length
 
     // console.log("totalNumberOfLines = " + totalNumberOfLines)
 
@@ -189,7 +189,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     }
 
     set({
-      meta,
+      ...meta,
       scenes: clap.scenes,
       segments,
       entities: clap.entities,
@@ -199,19 +199,20 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       visibleSegments: [],
       atLeastOneSegmentChanged: 1,
       allSegmentsChanged: 1,
-      totalDurationInMs,
+      durationInMs,
       lineNumberToMentionedSegments,
 
       isLoading: false,
       finalVideo,
 
       ...computeContentSizeMetrics({
-        meta,
+        width: meta.width,
+        height: meta.height,
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
         durationInMsPerStep,
-        totalDurationInMs,
+        durationInMs,
       })
     })
 
@@ -220,10 +221,15 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     get().jumpAt(0)
   },
   getClap: async (): Promise<ClapProject> => {
-    const { meta, entities, scenes, segments } = get()
+    const { 
+      getClapMeta,
+      entities,
+      scenes,
+      segments
+    } = get()
 
     const clap = newClap({
-      meta: { ...meta },
+      meta: getClapMeta(),
       entities: [...entities],
       scenes: [...scenes],
       segments: segments.map(ts => timelineSegmentToClapSegment(ts))
@@ -231,16 +237,60 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     return clap
   },
+  getClapMeta: (): ClapMeta => {
+    const { 
+      id,
+      title,
+      description,
+      synopsis,
+      licence,
+      bpm,
+      frameRate,
+      tags,
+      thumbnailUrl,
+      imageRatio,
+      durationInMs,
+      width,
+      height,
+      imagePrompt,
+      systemPrompt,
+      storyPrompt,
+      isLoop,
+      isInteractive,
+    } = get()
+
+    return {
+      id,
+      title,
+      description,
+      synopsis,
+      licence,
+      bpm,
+      frameRate,
+      tags,
+      thumbnailUrl,
+      imageRatio,
+      durationInMs,
+      width,
+      height,
+      imagePrompt,
+      systemPrompt,
+      storyPrompt,
+      isLoop,
+      isInteractive,
+    }
+  },
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => {
     const {
       minHorizontalZoomLevel,
       maxHorizontalZoomLevel,
-      meta,
+      width,
+      height,
       tracks,
       defaultSegmentDurationInSteps,
       durationInMsPerStep,
       cellWidth: previousCellWidth,
-      totalDurationInMs,
+      durationInMs,
     } = get()
     const cellWidth = Math.min(maxHorizontalZoomLevel, Math.max(minHorizontalZoomLevel, newHorizontalZoomLevel))
     
@@ -254,12 +304,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       resizeStartedAt,
       isResizing,
       ...computeContentSizeMetrics({
-        meta,
+        width,
+        height,
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
         durationInMsPerStep,
-        totalDurationInMs,
+        durationInMs,
       })
     })
   },
@@ -568,17 +619,19 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   },
   toggleTrackVisibility: (trackId: number) => {
     const {
-      meta,
+      width,
+      height,
       tracks,
       cellWidth,
       defaultSegmentDurationInSteps,
       durationInMsPerStep,
-      totalDurationInMs,
+      durationInMs,
     } = get()
 
     set({
       ...computeContentSizeMetrics({
-        meta,
+        width,
+        height,
         tracks: tracks.map((t: any) => (
           t.id === trackId
           ? { ...t, visible: !t.visible }
@@ -587,20 +640,20 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         cellWidth,
         defaultSegmentDurationInSteps,
         durationInMsPerStep,
-        totalDurationInMs,
+        durationInMs,
       })
     })
   },
   setContainerSize: ({ width, height }: { width: number; height: number }) => {
-    const { width: previousWidth, height: previousHeight } = get()
+    const { containerWidth: previousWidth, containerHeight: previousHeight } = get()
     const changed = 
       (Math.round(previousWidth) !== Math.round(height))
       || (Math.round(previousHeight) !== Math.round(height))
     if (!changed) { return }
 
     set({
-      width,
-      height,
+      containerWidth: width,
+      containerHeight: height,
       resizeStartedAt: performance.now(),
       isResizing: true,
       /*
@@ -743,11 +796,12 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     triggerChange?: boolean
   }): Promise<void> => {
     const {
-      meta,
+      width,
+      height,
       cellWidth,
       defaultSegmentDurationInSteps,
       durationInMsPerStep,
-      totalDurationInMs,
+      durationInMs,
       tracks,
       defaultPreviewHeight,
       defaultCellHeight,
@@ -762,7 +816,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // add the track if it is missing
     if (!tracks[segment.track]) {
       const isPreview =
-        segment.category === ClapSegmentCategory.STORYBOARD ||
+        segment.category === ClapSegmentCategory.IMAGE ||
         segment.category === ClapSegmentCategory.VIDEO
    
       tracks[segment.track] = {
@@ -785,12 +839,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         allSegmentsChanged: previousAllSegmentsChanged + 1,
         atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
         ...computeContentSizeMetrics({
-          meta,
+          width,
+          height,
           tracks,
           cellWidth,
           defaultSegmentDurationInSteps,
           durationInMsPerStep,
-          totalDurationInMs,
+          durationInMs,
         }),
       })
     }
@@ -806,14 +861,15 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   }): Promise<void> => {
     // adding a segment is a bit complicated, lot of stuff might have to be updated
     const {
-      meta,
+      width,
+      height,
       findFreeTrack,
       cellWidth,
       tracks,
       segments: previousSegments,
       allSegmentsChanged: previousAllSegmentsChanged,
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
-      totalDurationInMs: previousTotalDurationInMs,
+      durationInMs: previousDurationInMs,
       defaultSegmentDurationInSteps,
       durationInMsPerStep,
       defaultPreviewHeight,
@@ -873,29 +929,24 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // on a temporally sorted tree
     const segments = previousSegments.concat(segment)
 
-    const totalDurationInMs =
-      segment.endTimeInMs > previousTotalDurationInMs
+    const durationInMs =
+      segment.endTimeInMs > previousDurationInMs
       ? segment.endTimeInMs
-      : previousTotalDurationInMs
-
-    const newMeta = {
-      ...meta,
-      durationInMs: totalDurationInMs
-    }
+      : previousDurationInMs
 
     set({
-      meta: newMeta,
       segments,
       allSegmentsChanged: previousAllSegmentsChanged + 1,
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
-      totalDurationInMs,
+      durationInMs,
       ...computeContentSizeMetrics({
-        meta: newMeta,
+        width,
+        height,
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
         durationInMsPerStep,
-        totalDurationInMs,
+        durationInMs,
       })
     })
   },
@@ -914,7 +965,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   fitSegmentToAssetDuration: async (segment: TimelineSegment, requestedDurationInMs?: number): Promise<void> => {
     
     const {
-      meta,
+      width,
+      height,
       tracks,
       cellWidth,
       defaultSegmentDurationInSteps,
@@ -922,12 +974,12 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       durationInMsPerStep,
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
       allSegmentsChanged: previousAllSegmentsChanged,
-      totalDurationInMs: previousTotalDurationInMs,
+      durationInMs: previousDurationInMs,
       findFreeTrack,
       assignTrack
     } = get()
 
-    const durationInMs: number =
+    let requestedDuration: number =
       typeof requestedDurationInMs === "number" && isFinite(requestedDurationInMs) && !isNaN(requestedDurationInMs)
       ? requestedDurationInMs
       : segment.assetDurationInMs
@@ -936,9 +988,9 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // trivial case: nothing to do!
     const segmentDurationInMs = segment.endTimeInMs - segment.startTimeInMs
     if (
-      durationInMs === 0
+      requestedDuration === 0
       ||
-      segmentDurationInMs === durationInMs
+      segmentDurationInMs === requestedDuration
     ) {
       return
     }
@@ -949,7 +1001,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     // positive if new duration is longer,
     // negative if shorter
-    const timeDifferenceInMs = durationInMs - segmentDurationInMs
+    const timeDifferenceInMs = requestedDuration - segmentDurationInMs
 
     // setup some limits
     const newSegmentDurationInMs = Math.max(
@@ -969,7 +1021,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     const endTimeInMs = segment.endTimeInMs
     // const newEndTimeInMs = endTimeInMs + newTimeDifferenceInMs
 
-    let totalDurationInMs = previousTotalDurationInMs
+    let durationInMs = previousDurationInMs
 
     const referenceSegmentIsMusicOrSound =
       segment.category === ClapSegmentCategory.MUSIC
@@ -1043,8 +1095,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         }
 
         // also need to update the total duration
-        if (s.endTimeInMs > totalDurationInMs) {
-          totalDurationInMs = s.endTimeInMs
+        if (s.endTimeInMs > durationInMs) {
+          durationInMs = s.endTimeInMs
         }
       }
     }
@@ -1054,13 +1106,15 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       segments,
       allSegmentsChanged: previousAllSegmentsChanged + 1,
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
+      durationInMs,
       ...computeContentSizeMetrics({
-        meta,
+        width,
+        height,
         tracks,
         cellWidth,
         defaultSegmentDurationInSteps,
         durationInMsPerStep,
-        totalDurationInMs,
+        durationInMs,
       })
     })
   },

@@ -223,7 +223,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
           )
           segmentsToRender.push(s)
         }
-      } else if (s.category === ClapSegmentCategory.STORYBOARD) {
+      } else if (s.category === ClapSegmentCategory.IMAGE) {
         // console.log(`useResolver.runLoop(): found a storyboard segment`)
 
         if (s.status !== ClapSegmentStatus.TO_GENERATE) {
@@ -498,7 +498,7 @@ export const useResolver = create<ResolverStore>((set, get) => ({
         const newSegmentData = await resolve({
           segment: await clapSegmentToTimelineSegment(
             newSegment({
-              category: ClapSegmentCategory.STORYBOARD,
+              category: ClapSegmentCategory.IMAGE,
               prompt,
             })
           ),
@@ -669,8 +669,8 @@ wake of the euro-zone debt crisis.`
       // console.log('no main character entity')
     }
 
-    const storyboard = segments.find(
-      (s) => s.category === ClapSegmentCategory.STORYBOARD
+    const storyboardImage = segments.find(
+      (s) => s.category === ClapSegmentCategory.IMAGE
     )
 
     const dialogue = segments.find(
@@ -712,7 +712,7 @@ wake of the euro-zone debt crisis.`
       },
       video: {
         // image to animate
-        image: storyboard?.assetUrl,
+        image: storyboardImage?.assetUrl,
 
         // dialogue line to lip-sync
         voice: dialogue?.assetUrl,

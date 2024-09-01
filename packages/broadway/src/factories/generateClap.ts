@@ -1,6 +1,6 @@
 import YAML from "yaml"
 
-import { ClapFormat, ClapHeader, ClapMeta, ClapEntity, ClapScene, ClapSegment, ClapMediaOrientation, getValidNumber, UUID, ClapWorkflow, sanitizeEntities, sanitizeSegment, sanitizeWorkflows } from "@aitube/clap"
+import { ClapFormat, ClapHeader, ClapMeta, ClapEntity, ClapScene, ClapSegment, ClapImageRatio, getValidNumber, UUID, ClapWorkflow, sanitizeEntities, sanitizeSegment, sanitizeWorkflows } from "@aitube/clap"
 import { MovieScript, Screenplay } from "@/types"
 
 /**
@@ -69,16 +69,18 @@ export async function generateClap({
     licence: "",
     tags: [],
     thumbnailUrl: "",
-    orientation: ClapMediaOrientation.LANDSCAPE,
+    imageRatio: ClapImageRatio.LANDSCAPE,
     durationInMs: highestEndTimeInMs,
     isLoop: false,
     isInteractive: false,
     // TODO read this from the project config
     width: getValidNumber(1024, 256, 8192, 1024),
     height: getValidNumber(576, 256, 8192, 576),
-    defaultVideoModel: "SVD",
-    extraPositivePrompt: [],
-    screenplay: screenplay.fullText,
+    imagePrompt: '',
+    storyPrompt: screenplay.fullText,
+    systemPrompt: '',
+    bpm: 120,
+    frameRate: 24,
   }
 
   const entries = [

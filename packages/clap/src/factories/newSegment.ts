@@ -24,6 +24,8 @@ export function newSegment(maybeSegment?: Partial<ClapSegment>) {
 
   const segment: ClapSegment = {
     id: typeof maybeSegment?.id === "string" ? maybeSegment.id : UUID(),
+    parentId: typeof maybeSegment?.parentId === "string" ? maybeSegment.parentId : "",
+    childrenIds: Array.isArray(maybeSegment?.childrenIds) ? maybeSegment.childrenIds : [],
     track: isValidNumber(maybeSegment?.track) ? (maybeSegment?.track || 0) : 0,
     startTimeInMs,
     endTimeInMs,

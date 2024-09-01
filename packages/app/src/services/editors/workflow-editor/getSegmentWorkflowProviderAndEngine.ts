@@ -25,7 +25,7 @@ export function getSegmentWorkflowProviderAndEngine({
   lipsyncEngine?: ClapWorkflowEngine
 } {
   const generationWorkflow: ClapWorkflow | undefined =
-    segment.category === ClapSegmentCategory.STORYBOARD
+    segment.category === ClapSegmentCategory.IMAGE
       ? settings.imageGenerationWorkflow
       : segment.category === ClapSegmentCategory.VIDEO
         ? settings.videoGenerationWorkflow
@@ -44,7 +44,7 @@ export function getSegmentWorkflowProviderAndEngine({
     generationWorkflow?.engine || undefined
 
   const faceswapWorkflow: ClapWorkflow | undefined =
-    segment.category === ClapSegmentCategory.STORYBOARD
+    segment.category === ClapSegmentCategory.IMAGE
       ? settings.imageFaceswapWorkflow
       : segment.category === ClapSegmentCategory.VIDEO
         ? settings.videoFaceswapWorkflow

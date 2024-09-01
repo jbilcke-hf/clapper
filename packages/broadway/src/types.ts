@@ -8,7 +8,7 @@ export type NamedEntity = {
   }
   prompts: Omit<
     Record<any, string[]>,
-    "SPLAT" | "INTERFACE" | "EVENT" | "EFFECT" | "PHENOMENON" | "MESH" | "DEPTH" | "VIDEO" | "STORYBOARD" | "GENERIC"
+    "SPLAT" | "INTERFACE" | "EVENT" | "EFFECT" | "PHENOMENON" | "MESH" | "DEPTH" | "VIDEO" | "IMAGE" | "GENERIC"
   >
 }
 

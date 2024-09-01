@@ -11,7 +11,7 @@ import {
   ClapOutputType,
   ClapSegmentCategory,
   ClapSegmentStatus,
-  parseMediaOrientation,
+  parseImageRatio,
   ClapCompletionMode
 } from "@aitube/clap"
 
@@ -47,7 +47,7 @@ export async function renderShotToVideo({
   let shotVideoSegment: ClapSegment | undefined = shotVideoSegments.at(0)
   
   const shotStoryboardSegments: ClapSegment[] = shotSegments.filter(s =>
-    s.category === ClapSegmentCategory.STORYBOARD
+    s.category === ClapSegmentCategory.IMAGE
   )
 
   let shotStoryboardSegment: ClapSegment | undefined = shotStoryboardSegments.at(0)
@@ -176,7 +176,7 @@ export async function renderShotToVideo({
       startTimeInMs: shotSegment.startTimeInMs,
       endTimeInMs: shotSegment.endTimeInMs,
       assetDurationInMs: shotSegment.assetDurationInMs,
-      category: ClapSegmentCategory.STORYBOARD,
+      category: ClapSegmentCategory.IMAGE,
       prompt: shotVideoSegment.prompt,
       outputType: ClapOutputType.IMAGE,
       status: ClapSegmentStatus.TO_GENERATE,

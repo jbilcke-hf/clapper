@@ -17,7 +17,7 @@ export async function runFaceSwap(
 
   const segment: TimelineSegment = request.segment
 
-  if (segment.category === ClapSegmentCategory.STORYBOARD) {
+  if (segment.category === ClapSegmentCategory.IMAGE) {
     const imageFaceswapWorkflowModel =
       request.settings.imageFaceswapWorkflow.data || ''
 

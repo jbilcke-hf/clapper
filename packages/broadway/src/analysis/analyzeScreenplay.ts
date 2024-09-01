@@ -323,7 +323,7 @@ export async function analyzeScreenplay(
               // "photo"
               "movie still", // so it isn't empty
             ],
-            categoryName: ClapSegmentCategory.STORYBOARD,
+            categoryName: ClapSegmentCategory.IMAGE,
             outputType: ClapOutputType.IMAGE,
           }))
 

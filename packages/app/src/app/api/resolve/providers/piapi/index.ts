@@ -1,6 +1,6 @@
 import { TimelineSegment } from '@aitube/timeline'
 import { ResolveRequest } from '@aitube/clapper-services'
-import { ClapMediaOrientation, ClapSegmentCategory } from '@aitube/clap'
+import { ClapImageRatio, ClapSegmentCategory } from '@aitube/clap'
 
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
 import { createImage } from './midjourney/createImage'
@@ -18,7 +18,7 @@ export async function resolveSegment(
 
   let model = request.settings.imageGenerationWorkflow.data || ''
 
-  if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category === ClapSegmentCategory.IMAGE) {
     model = request.settings.imageGenerationWorkflow.data || ''
 
     if (!request.prompts.image.positive) {
@@ -65,7 +65,7 @@ export async function resolveSegment(
 
     if (!request.prompts.video.image) {
       console.error(
-        `resolveSegment: cannot generate video without a storyboard`
+        `resolveSegment: cannot generate video without a storyboard image`
       )
       return segment
     }
@@ -77,9 +77,9 @@ export async function resolveSegment(
     if (workflow.id === 'piapi://kling/v1/video') {
       // can only be 16:9,9:16,1:1
       const aspectRatio =
-        request.meta.orientation === ClapMediaOrientation.SQUARE
+        request.meta.orientation === ClapImageRatio.SQUARE
           ? '1:1'
-          : request.meta.orientation === ClapMediaOrientation.PORTRAIT
+          : request.meta.orientation === ClapImageRatio.PORTRAIT
             ? '9:16'
             : '16:9'
 

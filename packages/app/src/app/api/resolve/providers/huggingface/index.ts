@@ -21,7 +21,7 @@ export async function resolveSegment(
     request.settings.huggingFaceApiKey
   )
 
-  if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category === ClapSegmentCategory.IMAGE) {
     segment.assetUrl = await generateImage(request)
   } else if (request.segment.category === ClapSegmentCategory.DIALOGUE) {
     segment.assetUrl = await generateVoice(request)

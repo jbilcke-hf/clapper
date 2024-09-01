@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { ClapEntity, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -127,19 +127,15 @@ export type ContentSizeMetrics = {
   defaultCellHeight: number
   defaultSegmentDurationInSteps: number
   defaultSegmentLengthInPixels: number
-  defaultMediaRatio: number
+  defaultImageRatio: number
   defaultPreviewHeight: number
 }
 
-
-
-export type TimelineStoreProjectState = {
-  meta: ClapMeta
+export type TimelineStoreProjectState = ClapMeta & {
   scenes: ClapScene[]
 
   segments: TimelineSegment[]
 
-  totalDurationInMs: number
   loadedSegments: TimelineSegment[]
   visibleSegments: TimelineSegment[]
   nbIdentifiedTracks: number
@@ -161,7 +157,7 @@ export type TimelineStoreProjectState = {
   defaultCellHeight: number
   defaultSegmentDurationInSteps: number
   defaultSegmentLengthInPixels: number
-  defaultMediaRatio: number
+  defaultImageRatio: number
   defaultPreviewHeight: number
   // -------------------------------------------------
 
@@ -210,7 +206,6 @@ export type TimelineStoreProjectState = {
   cursorTimestampAtInMs: number
 }
 
-
 export type TimelineStorePreferencesState = {
   canvas?: HTMLCanvasElement
   
@@ -220,8 +215,8 @@ export type TimelineStorePreferencesState = {
   isReady: boolean
 
   // container width and height
-  width: number
-  height: number
+  containerWidth: number
+  containerHeight: number
   
   theme: ClapTimelineTheme
 
@@ -262,6 +257,7 @@ export type TimelineStoreModifiers = {
   clear: () => void
   setClap: (clap?: ClapProject) => Promise<void>
   getClap: () => Promise<ClapProject>
+  getClapMeta: () => ClapMeta
   setHorizontalZoomLevel: (newHorizontalZoomLevel: number) => void
   setSegments: (segments?: TimelineSegment[]) => void
   setLoadedSegments: (loadedSegments?: TimelineSegment[]) => void

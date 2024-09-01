@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react'
 // TODO: move this to the renderer service
 // also since filters use WebGPU, I think one day we can run them in real-time
 // over the video as well (or maybe using WebGL)
-function useCurrentlyVisibleStoryboard(): string | undefined {
+function useVisibleStoryboardImages(): string | undefined {
   const { activeStoryboardSegment } = useRenderer((s) => s.bufferedSegments)
 
   // can't return something if there is nothing
@@ -25,7 +25,7 @@ function useCurrentlyVisibleStoryboard(): string | undefined {
   return activeStoryboardSegment.assetUrl
 }
 
-function useFilteredStoryboard(input?: string): string | undefined {
+function useFilteredStoryboardImages(input?: string): string | undefined {
   const current = useFilterEditor((s) => s.current)
   const runFilterPipeline = useFilterEditor((s) => s.runFilterPipeline)
   const [result, setResult] = useState('')
@@ -65,8 +65,8 @@ export function FilterViewer() {
   const undo = useFilterEditor((s) => s.undo)
   const redo = useFilterEditor((s) => s.redo)
 
-  const input = useCurrentlyVisibleStoryboard()
-  const output = useFilteredStoryboard(input)
+  const input = useVisibleStoryboardImages()
+  const output = useFilteredStoryboardImages(input)
 
   const hasBetaAccess = useUI((s) => s.hasBetaAccess)
 

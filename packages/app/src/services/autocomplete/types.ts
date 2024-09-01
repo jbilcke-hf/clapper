@@ -12,7 +12,7 @@ export type AutocompleteControls = {
    * @param params
    * @returns
    */
-  storyboardsToStory: (params?: {
+  convertImagesToStory: (params?: {
     startTimeInMs?: number
     endTimeInMs?: number
   }) => Promise<void>

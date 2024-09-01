@@ -3,6 +3,8 @@ import { generateSeed, isValidNumber, parseOutputType, parseSegmentCategory, UUI
 
 export function sanitizeSegment({
     id,
+    parentId,
+    childrenIds,
     track,
     startTimeInMs,
     endTimeInMs,
@@ -30,6 +32,8 @@ export function sanitizeSegment({
   }: Partial<ClapSegment> = {}): ClapSegment {
   return {
     id: typeof id === "string" ? id : UUID(),
+    parentId: typeof parentId === "string" ? parentId : "",
+    childrenIds: Array.isArray(childrenIds) ? childrenIds : [],
     track: isValidNumber(track) ? (track || 0) : 0,
     startTimeInMs: isValidNumber(startTimeInMs) ? (startTimeInMs || 0) : 0,
     endTimeInMs: isValidNumber(assetDurationInMs) ? (endTimeInMs || 0) : 0,

@@ -33,11 +33,11 @@ const video: ClapSegmentCategorySettings = {
   color: "indigo",
 }
 
-// this is a special segment type used to render preview thumbnails
-const storyboard: ClapSegmentCategorySettings = {
-  id: ClapSegmentCategory.STORYBOARD,
-  title: "storyboard",
-  description: "Storyboard preview (image or video)",
+// this is a special segment type used to render images
+const image: ClapSegmentCategorySettings = {
+  id: ClapSegmentCategory.IMAGE,
+  title: "image",
+  description: "Image (for storyboarding or controlnet)",
   color: "indigo",
 }
 
@@ -142,6 +142,13 @@ const colors: ClapSegmentCategorySettings = {
 }
 */
 
+const group: ClapSegmentCategorySettings = {
+  id: ClapSegmentCategory.GROUP,
+  title: "Group",
+  description: "Group",
+  color: "neutral",
+}
+
 const generic: ClapSegmentCategorySettings = {
   id: ClapSegmentCategory.GENERIC,
   title: "Generic",
@@ -189,7 +196,7 @@ export const segmentCategories: Record<ClapSegmentCategory, ClapSegmentCategoryS
   INTERFACE: interface_, // (visible)
   PHENOMENON: phenomenon, // (invisible) a prompt which defines new event(s) to fire based on event(s)
   VIDEO: video,
-  STORYBOARD: storyboard,
+  IMAGE: image,
   CHARACTER: character,
   LOCATION: location,
   TIME: time,
@@ -203,6 +210,7 @@ export const segmentCategories: Record<ClapSegmentCategory, ClapSegmentCategoryS
   STYLE: style,
   CAMERA: camera,
   TRANSITION: transition,
+  GROUP: group,
   GENERIC: generic,
 }
 

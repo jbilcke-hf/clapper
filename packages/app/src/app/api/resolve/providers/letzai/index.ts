@@ -16,7 +16,7 @@ export async function resolveSegment(
 
   let model = request.settings.imageGenerationWorkflow.data || ''
 
-  if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category === ClapSegmentCategory.IMAGE) {
     model = request.settings.imageGenerationWorkflow.data || ''
 
     if (!request.prompts.image.positive) {

@@ -32,7 +32,7 @@ export async function resolveSegment(
     segments: request.segments,
   })
 
-  if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category === ClapSegmentCategory.IMAGE) {
     const resolvedClap = await editClapStoryboards({
       clap,
       completionMode: ClapCompletionMode.PARTIAL,
@@ -40,19 +40,19 @@ export async function resolveSegment(
       token: '<TODO>',
     })
 
-    const storyboards = resolvedClap.segments.filter(
-      (s) => s.category === ClapSegmentCategory.STORYBOARD
+    const storyboardImages = resolvedClap.segments.filter(
+      (s) => s.category === ClapSegmentCategory.IMAGE
     )
 
-    const storyboard = storyboards.at(0)
+    const storyboardImage = storyboardImages.at(0)
 
-    if (!storyboard) {
-      throw new Error(`failed to generate a storyboard`)
+    if (!storyboardImage) {
+      throw new Error(`failed to generate a storyboard image`)
     }
 
     return {
       ...request.segment,
-      ...(storyboard as TimelineSegment),
+      ...(storyboardImage as TimelineSegment),
     }
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
     const resolvedClap = await editClapVideos({

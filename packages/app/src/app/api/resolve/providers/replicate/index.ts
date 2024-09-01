@@ -1,6 +1,6 @@
 import Replicate from 'replicate'
 
-import { ClapMediaOrientation, ClapSegmentCategory } from '@aitube/clap'
+import { ClapImageRatio, ClapSegmentCategory } from '@aitube/clap'
 import { ResolveRequest } from '@aitube/clapper-services'
 import { TimelineSegment } from '@aitube/timeline'
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
@@ -17,15 +17,15 @@ export async function resolveSegment(
 
   const segment = request.segment
 
-  if (request.segment.category == ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category == ClapSegmentCategory.IMAGE) {
     const { workflowValues } = getWorkflowInputValues(
       request.settings.imageGenerationWorkflow
     )
 
     const aspectRatio =
-      request.meta.orientation === ClapMediaOrientation.SQUARE
+      request.meta.orientation === ClapImageRatio.SQUARE
         ? '1:1'
-        : request.meta.orientation === ClapMediaOrientation.PORTRAIT
+        : request.meta.orientation === ClapImageRatio.PORTRAIT
           ? '9:16'
           : '16:9'
 

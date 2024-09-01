@@ -150,7 +150,7 @@ export async function updateStoryAndScene({
       }
     } else {
       // if the LLM tries to add a new camera, we must
-      // also create corresponding video and storyboards segments as well
+      // also create corresponding video and storyboard image segments as well
       if (segment.category === ClapSegmentCategory.CAMERA) {
         segmentsToAdd.push(
           await clapSegmentToTimelineSegment(
@@ -167,7 +167,7 @@ export async function updateStoryAndScene({
             newSegment({
               ...segmentProperties,
               prompt: 'movie still',
-              category: ClapSegmentCategory.STORYBOARD,
+              category: ClapSegmentCategory.IMAGE,
               outputType: ClapOutputType.IMAGE,
             })
           )

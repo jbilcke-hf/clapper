@@ -16,7 +16,7 @@ export enum RenderingStrategy {
 
   // render assets visible on screen in priority,
   // then pre-render *ALL* the remaining project's assets
-  // so yeah if you have 3000 storyboards, it will render that many ($$$)
+  // so yeah if you have 3000 storyboard images, it will render that many ($$$)
   // (note: there is a setting to cap the number of parallel renderings)
   //
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -42,7 +42,7 @@ export type SegmentResolver = (segment: TimelineSegment) => Promise<TimelineSegm
 
 export type RenderableSegmentCategory =
   | ClapSegmentCategory.VIDEO
-  | ClapSegmentCategory.STORYBOARD
+  | ClapSegmentCategory.IMAGE
   | ClapSegmentCategory.DIALOGUE
   | ClapSegmentCategory.SOUND
   | ClapSegmentCategory.MUSIC

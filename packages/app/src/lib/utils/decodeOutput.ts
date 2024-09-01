@@ -25,7 +25,7 @@ export async function decodeOutput(input: any): Promise<string> {
     // which is a unreasonable since a few frames quickly add up to 10 Mb,
     // we can't afford to have a 20 Gb .clap file
     //
-    // if you really want to have a pro, Hollywood-grade storyboard storage,
+    // if you really want to have a pro, Hollywood-grade storyboard image storage,
     // this isn't impossible but then you need to use either file paths or remote URL paths
     // and if you want some lossless like this, we should add a parameter to support that
     const jpegImageAsBase64 = await convertToJpeg(base64Url)

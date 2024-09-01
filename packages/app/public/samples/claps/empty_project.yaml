@@ -7,15 +7,18 @@
   description: An exciting new project
   synopsis: ""
   licence: ""
-  orientation: landscape
+  imageRatio: landscape
   durationInMs: 18000
   width: 1024
   height: 575
   defaultVideoModel: AnimateDiff-Lightning
-  extraPositivePrompt: []
-  screenplay: ""
+  imagePrompt: ""
+  storyPrompt: ""
+  systemPrompt: ""
   isLoop: false
   isInteractive: false
+  bpm: 120
+  frameRate: 24
 - id: e16478cf-3535-48e9-98e8-f702ec9ca348
   track: 0
   startTimeInMs: 0

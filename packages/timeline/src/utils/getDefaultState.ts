@@ -1,17 +1,15 @@
-import { newClap } from "@aitube/clap"
+import { ClapMeta, newClap } from "@aitube/clap"
 
 import { DEFAULT_NB_TRACKS, pastel, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 import { TimelineStorePreferencesState, TimelineStoreProjectState, TimelineStoreState } from "@/types/timeline"
 import { DEFAULT_DURATION_IN_MS_PER_STEP, NB_MAX_SHOTS } from "@/constants/grid"
 
-
-// those settings will change between .clap project reloads
+// those settings WILL change between .clap project reloads
 export function getDefaultProjectState(): TimelineStoreProjectState {
   return {
-    meta: newClap().meta,
+    ...newClap().meta,
     scenes: [],
     segments: [],
-    totalDurationInMs: 0,
     loadedSegments: [],
     visibleSegments: [],
     lineNumberToMentionedSegments: {},
@@ -39,7 +37,7 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     defaultCellHeight: PROMPT_STEP_HEIGHT_IN_PX,
     defaultSegmentDurationInSteps: 4,
     defaultSegmentLengthInPixels: 4 * PROMPT_STEP_HEIGHT_IN_PX,
-    defaultMediaRatio: 896 / 512,
+    defaultImageRatio: 896 / 512,
     defaultPreviewHeight: PROMPT_STEP_HEIGHT_IN_PX,
     typicalSegmentDurationInSteps: 4,
 
@@ -76,8 +74,8 @@ export function getDefaultPreferencesState(): TimelineStorePreferencesState {
   return {
     canvas: undefined,
     isReady: false,
-    width: 1800,
-    height: 800,
+    containerWidth: 1800,
+    containerHeight: 800,
     theme: pastel,
 
     durationInMsPerStep: DEFAULT_DURATION_IN_MS_PER_STEP,

@@ -61,7 +61,7 @@ export function createSegment({
         ClapSegmentCategory.MESH,
         ClapSegmentCategory.DEPTH,
         ClapSegmentCategory.VIDEO,
-        ClapSegmentCategory.STORYBOARD
+        ClapSegmentCategory.IMAGE
       ].includes(item.id)
   ) as ClapSegmentCategorySettings[]
 
@@ -76,6 +76,9 @@ export function createSegment({
   const randomSegment: ClapSegment = newSegment({
     id: UUID(),
 
+    parentId: '',
+    childrenIds: [],
+    
     startTimeInMs,
     endTimeInMs,
     startTimeInLines,

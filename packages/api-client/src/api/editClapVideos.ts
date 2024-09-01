@@ -42,7 +42,7 @@ export async function editClapVideos({
     params.t = "true"
   }
   // special trick to not touch the generated
-  // storyboards that are used by pending videos
+  // storyboard images that are used by pending videos
   const idsOfStoryboardsToKeep = clap.segments.map((segment: ClapSegment) => {
     
     const isPendingVideo = (
@@ -53,14 +53,14 @@ export async function editClapVideos({
 
     if (!isPendingVideo) { return undefined }
 
-    const storyboard: ClapSegment | undefined = filterSegments(
+    const storyboardImage: ClapSegment | undefined = filterSegments(
       ClapSegmentFilteringMode.BOTH,
       segment,
       clap.segments,
-      ClapSegmentCategory.STORYBOARD
+      ClapSegmentCategory.IMAGE
     ).at(0)
 
-    return storyboard?.id
+    return storyboardImage?.id
   }).filter((x: any) => x) as string[]
 
   const newClap = await fetchClap(`${aitubeApiUrl}edit/videos?${queryString.stringify(params)}`, {

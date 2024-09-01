@@ -9,7 +9,7 @@ export async function resolveSegment(
 ): Promise<TimelineSegment> {
   const segment = request.segment
 
-  if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category === ClapSegmentCategory.IMAGE) {
     segment.assetUrl = await callGradioApi({
       url: request.settings.gradioApiUrlForImage,
       inputs: request.prompts.image,

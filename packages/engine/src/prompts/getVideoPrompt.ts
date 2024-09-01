@@ -30,7 +30,7 @@ export function getVideoPrompt(
       }
 
       if (
-        category === ClapSegmentCategory.STORYBOARD ||
+        category === ClapSegmentCategory.IMAGE ||
         category === ClapSegmentCategory.CHARACTER ||
         category === ClapSegmentCategory.LOCATION ||
         category === ClapSegmentCategory.TIME ||

@@ -66,7 +66,7 @@ export function formatSegmentForExport(
 
   const isExportableToFile =
     (segment.category === ClapSegmentCategory.VIDEO ||
-      segment.category === ClapSegmentCategory.STORYBOARD ||
+      segment.category === ClapSegmentCategory.IMAGE ||
       segment.category === ClapSegmentCategory.DIALOGUE ||
       segment.category === ClapSegmentCategory.SOUND ||
       segment.category === ClapSegmentCategory.MUSIC) &&

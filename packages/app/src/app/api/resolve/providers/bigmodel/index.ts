@@ -22,14 +22,14 @@ export async function resolveSegment(
     note 
     if (!request.prompts.image.positive) {
       console.error(
-        `resolveSegment: cannot resolve a storyboard with an empty prompt`
+        `resolveSegment: cannot resolve a storyboard image with an empty prompt`
       )
       return segment
     }
     */
 
     if (!request.prompts.video.image) {
-      throw new Error(`cannot generate a video without a storyboard`)
+      throw new Error(`cannot generate a video without a storyboard image`)
     }
 
     // https://bigmodel.cn/dev/api#cogvideox

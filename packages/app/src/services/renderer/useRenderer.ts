@@ -213,8 +213,7 @@ export const useRenderer = create<RendererStore>((set, get) => ({
         }
 
         const isActiveStoryboard =
-          segment.category === ClapSegmentCategory.STORYBOARD &&
-          segment.assetUrl
+          segment.category === ClapSegmentCategory.IMAGE && segment.assetUrl
         if (isActiveStoryboard) {
           results.activeSegments.push(segment)
           results.activeStoryboardSegment = segment
@@ -245,7 +244,7 @@ export const useRenderer = create<RendererStore>((set, get) => ({
         // if we find the closests candidates
         const isVideo =
           segment.category === ClapSegmentCategory.VIDEO && segment.assetUrl
-        // const isUpcomingStoryboard = segment.category === ClapSegmentCategory.STORYBOARD && segment.assetUrl
+        // const isUpcomingStoryboardImage = segment.category === ClapSegmentCategory.IMAGE && segment.assetUrl
         if (isVideo) {
           // if the candidate isn't "more upcoming" than the current result,
           // then we continue
@@ -259,10 +258,9 @@ export const useRenderer = create<RendererStore>((set, get) => ({
           continue
         }
 
-        const isStoryboard =
-          segment.category === ClapSegmentCategory.STORYBOARD &&
-          segment.assetUrl
-        if (isStoryboard && !results.upcomingStoryboardSegment) {
+        const isStoryboardImage =
+          segment.category === ClapSegmentCategory.IMAGE && segment.assetUrl
+        if (isStoryboardImage && !results.upcomingStoryboardSegment) {
           results.upcomingStoryboardSegment = segment
           continue
         }

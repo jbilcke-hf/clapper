@@ -10,6 +10,8 @@ const root = createRoot(container!)
 
 const segment: TimelineSegment = {
   id: '105246fd-7be3-4dfa-9596-01068ad858e9',
+  parentId: '',
+  childrenIds: [],
   track: 1,
   startTimeInMs: 0,
   endTimeInMs: 500 * 4,
@@ -50,7 +52,7 @@ const segment: TimelineSegment = {
 }
 
 useTimeline.setState({
-  totalDurationInMs: 2000,
+  durationInMs: 2000,
   theme: {
     topBarTimeScale: {
       backgroundColor: '#7d7c78',
@@ -107,7 +109,7 @@ useTimeline.setState({
           saturation: 30,
           lightness: 78.6,
         },
-        STORYBOARD: {
+        IMAGE: {
           hue: 70,
           saturation: 30,
           lightness: 78.6,
@@ -174,6 +176,11 @@ useTimeline.setState({
         },
         CAMERA: {
           hue: 10,
+          saturation: 30,
+          lightness: 78.6,
+        },
+        GROUP: {
+          hue: 200,
           saturation: 30,
           lightness: 78.6,
         },

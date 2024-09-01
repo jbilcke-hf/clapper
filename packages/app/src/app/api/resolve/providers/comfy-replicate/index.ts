@@ -18,7 +18,7 @@ export async function resolveSegment(
 
   const segment: TimelineSegment = request.segment
 
-  if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category === ClapSegmentCategory.IMAGE) {
     const inputFields =
       request.settings.imageGenerationWorkflow.inputFields || []
 

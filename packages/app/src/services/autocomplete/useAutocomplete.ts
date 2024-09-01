@@ -26,7 +26,7 @@ import { AutocompleteStore } from './types'
 export const useAutocomplete = create<AutocompleteStore>((set, get) => ({
   ...getDefaultAutocompleteState(),
 
-  storyboardsToStory: async (
+  convertImagesToStory: async (
     params: {
       startTimeInMs?: number
       endTimeInMs?: number
@@ -46,7 +46,7 @@ export const useAutocomplete = create<AutocompleteStore>((set, get) => ({
       : 0
     const endTimeInMs = isValidNumber(params?.endTimeInMs)
       ? params?.endTimeInMs!
-      : timeline.totalDurationInMs
+      : timeline.durationInMs
 
     const range = { startTimeInMs, endTimeInMs }
 
@@ -56,33 +56,35 @@ export const useAutocomplete = create<AutocompleteStore>((set, get) => ({
 
       // since this is very long task, we can run it in the background
       visibility: TaskVisibility.BACKGROUND,
-      initialMessage: `Analyzing storyboards..`,
-      successMessage: `Analyzing storyboards.. 100% done`,
+      initialMessage: `Analyzing images..`,
+      successMessage: `Analyzing images.. 100% done`,
       value: 0,
     })
 
     set({ isRunning: true })
 
     try {
-      const storyboards = filterSegments<TimelineSegment>(
+      const storyboardImages = filterSegments<TimelineSegment>(
         ClapSegmentFilteringMode.ANY,
         range,
         timeline.segments,
-        ClapSegmentCategory.STORYBOARD
-      ).filter((storyboard) => storyboard.assetUrl.startsWith('data:'))
+        ClapSegmentCategory.IMAGE
+      ).filter((storyboardImage) =>
+        storyboardImage.assetUrl.startsWith('data:')
+      )
 
       let i = 0
       let progress = 0
       // to keep things light and in the background, we use an async for loop
-      for (const storyboard of storyboards) {
+      for (const storyboardImage of storyboardImages) {
         const isStillRunning = get().isRunning
         if (!isStillRunning) {
           break
         }
 
         try {
-          console.log(`analyzing storyboard:`, storyboard)
-          const frames = [storyboard.assetUrl]
+          console.log(`analyzing storyboard image:`, storyboardImage)
+          const frames = [storyboardImage.assetUrl]
           const captions = await extractCaptionsFromFrames(
             frames,
             (
@@ -93,7 +95,7 @@ export const useAutocomplete = create<AutocompleteStore>((set, get) => ({
               // this will be counting from to 100%, for each call to extractCaptionsFromFrames()
               // so TODO @Julian: adjust this for the right calculation
               // task.setProgress({
-              //   message: `Analyzing storyboards (${progress}%)`,
+              //   message: `Analyzing storyboard images (${progress}%)`,
               //   value: progress,
               // })
             }
@@ -101,12 +103,12 @@ export const useAutocomplete = create<AutocompleteStore>((set, get) => ({
 
           i++
 
-          const relativeProgress = i / storyboards.length
+          const relativeProgress = i / storyboardImages.length
 
           progress += relativeProgress * 100
 
           task.setProgress({
-            message: `Analyzing storyboards (${Math.round(progress)}%)`,
+            message: `Analyzing images (${Math.round(progress)}%)`,
             value: progress,
           })
 
@@ -168,8 +170,8 @@ export const useAutocomplete = create<AutocompleteStore>((set, get) => ({
                 category: ClapSegmentCategory.CAMERA,
                 prompt: 'medium-shot',
                 label: 'medium-shot',
-                startTimeInMs: storyboard.startTimeInMs,
-                endTimeInMs: storyboard.endTimeInMs,
+                startTimeInMs: storyboardImage.startTimeInMs,
+                endTimeInMs: storyboardImage.endTimeInMs,
                 status: ClapSegmentStatus.COMPLETED,
                 track: timeline.findFreeTrack({ startTimeInMs, endTimeInMs }), // track row index
               })
@@ -187,8 +189,8 @@ export const useAutocomplete = create<AutocompleteStore>((set, get) => ({
                   category,
                   prompt,
                   label: prompt,
-                  startTimeInMs: storyboard.startTimeInMs,
-                  endTimeInMs: storyboard.endTimeInMs,
+                  startTimeInMs: storyboardImage.startTimeInMs,
+                  endTimeInMs: storyboardImage.endTimeInMs,
                   status: ClapSegmentStatus.COMPLETED,
                   track: timeline.findFreeTrack({ startTimeInMs, endTimeInMs }), // track row index
                 })
@@ -199,13 +201,16 @@ export const useAutocomplete = create<AutocompleteStore>((set, get) => ({
 
           await timeline.addSegments({ segments })
         } catch (err) {
-          console.error(`failed to analyze a storyboard:`, err)
+          console.error(`failed to analyze a storyboard image:`, err)
         }
 
         // TODO: use a special prompt to get categorized captions
       }
     } catch (err) {
-      console.error(`storyboardsToStory(): failed to analyze storyboards:`, err)
+      console.error(
+        `convertImagesToStory(): failed to analyze storyboard images:`,
+        err
+      )
     } finally {
       task.success()
       set({ isRunning: false })
