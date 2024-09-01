@@ -28,7 +28,12 @@ export function EditorsSideMenu() {
   const theme = useTheme()
   return (
     <div
-      className="flex h-full w-[3.25rem] flex-col items-center justify-between border-r"
+      className="
+      w-10 md:w-11 lg:w-12 xl:w-13 flex
+      h-full
+      flex-col items-center justify-between
+      border-r
+      transition-all duration-200 ease-in-out"
       style={{
         backgroundColor:
           theme.editorMenuBgColor || theme.defaultBgColor || '#eeeeee',
@@ -36,7 +41,10 @@ export function EditorsSideMenu() {
           theme.editorBorderColor || theme.defaultBorderColor || '#eeeeee',
       }}
     >
-      <div className="flex h-full w-full flex-col items-center">
+      <div className="
+      flex h-full w-full flex-col items-center
+      transition-all duration-200 ease-in-out
+      ">
         <EditorsSideMenuItem view={EditorView.PROJECT} label="Project settings">
           <MdMovieEdit />
         </EditorsSideMenuItem>

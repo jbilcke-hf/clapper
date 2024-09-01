@@ -26,7 +26,7 @@ module.exports = {
         "4xs": "8rem",
         "3xs": "12rem",
         "2xs": "16rem",
-      },
+      }
     },
   },
   plugins: []
