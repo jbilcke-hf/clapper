@@ -71,7 +71,7 @@ export async function analyzeScreenplay(
   let movieGenres = await getMostProbableGenres(screenplay.fullText, 20)
   let movieGenreLabel = Object.keys(movieGenres)[0] || ""
   let movieGenre = getGenre(movieGenreLabel)
-  await onProgress?.(progress += 10, "Analyzing each scenes..")
+  await onProgress?.(progress += 10, "Parsing scenes..")
 
   const extraPositivePrompt = movieGenreLabel ? [movieGenreLabel]: []
 

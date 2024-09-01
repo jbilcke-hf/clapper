@@ -11,7 +11,7 @@ export function FormLabel({
 }) {
   return (
     <label
-      className={cn(`font-mono text-xs text-white/80`, className)}
+      className={cn(`font-mono text-xs text-white/85`, className)}
       style={{
         textShadow: '#000000 0px 0 1px',
       }}
