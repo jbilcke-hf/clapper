@@ -1,16 +1,5 @@
-import {
-  ClapAssetSource,
-  ClapProject,
-  ClapSegment,
-  ClapSegmentCategory,
-  UUID,
-} from '@aitube/clap'
-import {
-  TimelineSegment,
-  timelineSegmentToClapSegment,
-  TimelineStore,
-  useTimeline,
-} from '@aitube/timeline'
+import { ClapAssetSource, ClapProject } from '@aitube/clap'
+import { TimelineStore, useTimeline } from '@aitube/timeline'
 import {
   ExportableSegment,
   formatSegmentForExport,
@@ -28,12 +17,7 @@ const secondsToTimecode = (seconds: number, fps: number): string => {
 
 export async function generateEDL(): Promise<string> {
   const timeline: TimelineStore = useTimeline.getState()
-  const {
-    meta,
-    getClap,
-    totalDurationInMs,
-    segments: timelineSegments,
-  } = timeline
+  const { title, getClap, segments: timelineSegments } = timeline
 
   const clap: ClapProject | null = await getClap()
   if (!clap) {
@@ -51,7 +35,7 @@ export async function generateEDL(): Promise<string> {
     return folderName.slice(0, 7) // Limit to 7 characters for EDL compatibility
   }
 
-  let edlContent = `TITLE: ${meta.title}\nFCM: NON-DROP FRAME\n\n`
+  let edlContent = `TITLE: ${title}\nFCM: NON-DROP FRAME\n\n`
   let timelineInPoint = 0
 
   const exportableSegments: ExportableSegment[] = timelineSegments

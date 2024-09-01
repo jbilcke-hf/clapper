@@ -12,7 +12,7 @@ export async function resolveSegment(
   if (!request.settings.huggingFaceApiKey) {
     throw new Error(`Missing API key for "Hugging Face"`)
   }
-  if (request.segment.category !== ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category !== ClapSegmentCategory.IMAGE) {
     throw new Error(
       `Clapper doesn't support ${request.segment.category} generation for provider "Comfy Hugging Face". Please open a pull request with (working code) to solve this!`
     )

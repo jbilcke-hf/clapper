@@ -4,7 +4,7 @@ import { getValidNumber } from "@/utils/getValidNumber"
 
 import { ClapHeader, ClapMeta, ClapEntity, ClapProject, ClapScene, ClapSegment, ClapFormat, ClapWorkflow, ClapWorkflowEngine } from "@/types"
 import { UUID } from "@/utils/uuid"
-import { parseMediaOrientation } from "@/utils/parseMediaOrientation"
+import { parseImageRatio } from "@/utils/parseImageRatio"
 import { isValidNumber, parseWorkflowEngine } from "@/utils"
 import { sanitizeWorkflows } from "@/sanitizers/sanitizeWorkflows"
 import { sanitizeEntities } from "@/sanitizers/sanitizeEntities"

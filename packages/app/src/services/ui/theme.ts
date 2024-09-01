@@ -38,7 +38,7 @@ export const baseClapSegmentCategoryColors: ClapSegmentCategoryColors = {
     lightness: 78.6,
   },
   [ClapSegmentCategory.VIDEO]: { hue: 70, saturation: 30, lightness: 78.6 },
-  [ClapSegmentCategory.STORYBOARD]: {
+  [ClapSegmentCategory.IMAGE]: {
     hue: 70,
     saturation: 30,
     lightness: 78.6,
@@ -72,6 +72,7 @@ export const baseClapSegmentCategoryColors: ClapSegmentCategoryColors = {
   [ClapSegmentCategory.DIALOGUE]: { hue: 23, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.STYLE]: { hue: 285, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.CAMERA]: { hue: 10, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.GROUP]: { hue: 200, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.GENERIC]: { hue: 200, saturation: 30, lightness: 78.6 },
 }
 
@@ -684,7 +685,7 @@ export const silent: UITheme = {
           lightness: 85,
         },
         [ClapSegmentCategory.VIDEO]: { hue: 70, saturation: 0, lightness: 85 },
-        [ClapSegmentCategory.STORYBOARD]: {
+        [ClapSegmentCategory.IMAGE]: {
           hue: 70,
           saturation: 0,
           lightness: 85,
@@ -726,6 +727,11 @@ export const silent: UITheme = {
         },
         [ClapSegmentCategory.STYLE]: { hue: 285, saturation: 0, lightness: 85 },
         [ClapSegmentCategory.CAMERA]: { hue: 10, saturation: 0, lightness: 85 },
+        [ClapSegmentCategory.GROUP]: {
+          hue: 200,
+          saturation: 0,
+          lightness: 85,
+        },
         [ClapSegmentCategory.GENERIC]: {
           hue: 200,
           saturation: 0,

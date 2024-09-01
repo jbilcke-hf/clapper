@@ -40,7 +40,7 @@ import {
   ClapSegment,
   ClapEntity,
   ClapProject, 
-  ClapMediaOrientation,
+  ClapImageRatio,
 
   ClapInputFieldNumber,
   ClapInputFieldString,
@@ -55,7 +55,7 @@ import {
   ClapWorkflow,
 
 // defaults
-  defaultMediaOrientation,
+  defaultImageRatio,
 
   // factories
   newClap,
@@ -76,7 +76,7 @@ import {
   getClapAssetSourceType,
   getValidNumber,
   isValidNumber,
-  parseMediaOrientation,
+  parseImageRatio,
   parseOutputType,
   parseWorkflowEngine,
   parseSegmentCategory,
@@ -121,7 +121,7 @@ clap.segments.at(64).assetUrl = await generateVideoWithAI(....)
 const segment: ClapSegment = clap.segments.at(42)
 segment.prompt = "a camel in the desert, medium-shot, award-winning, 4k, Canon EOS"
 
-const storyboards = clap.segment.filter(s => s.category === ClapSegmentCategory.STORYBOARD)
+const storyboards = clap.segment.filter(s => s.category === ClapSegmentCategory.IMAGE)
 
 // save the Clap file
 const newFile: ClapProject = await serializeClap(clap)

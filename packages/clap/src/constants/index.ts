@@ -1,1 +1,1 @@
-export { defaultMediaOrientation } from "@/constants/defaultValues"
+export { defaultImageRatio } from "@/constants/defaultValues"

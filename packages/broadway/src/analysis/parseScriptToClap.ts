@@ -1,4 +1,4 @@
-import { ClapMediaOrientation, ClapProject, newClap, UUID } from "@aitube/clap"
+import { ClapImageRatio, ClapProject, newClap, UUID } from "@aitube/clap"
 
 import { cleanUTF8Characters } from "@/utils"
 import { analyzeScreenplay } from "@/analysis/analyzeScreenplay"
@@ -60,20 +60,22 @@ export async function parseScriptToClap(
     meta: {
       id: UUID(),
       title: "Untitled",
-      description: `${movieGenreLabel}`,
+      description: `${movieGenreLabel || ''}`,
       synopsis: "",
-      licence: "This OpenClap file is just a conversion from the original screenplay and doesn't claim any copyright or intellectual property. All rights reserved to the original intellectual property and copyright holders. Using OpenClap isn't piracy.",
+      licence: "",
     
-      orientation: ClapMediaOrientation.LANDSCAPE,
+      imageRatio: ClapImageRatio.LANDSCAPE,
       durationInMs: totalDurationInMs,
     
       width: 1024,
       height: 576,
-      defaultVideoModel: "", // <-- we should deprecate this no?
-      extraPositivePrompt: extraPositivePrompt,
-      screenplay: finalPlainText,
+      imagePrompt: extraPositivePrompt.join(', '),
+      storyPrompt: finalPlainText,
+      systemPrompt: '',
       isLoop: false,
       isInteractive: false,
+      bpm: 120,
+      frameRate: 24,
     },
     scenes: scenes.map((scene, i) => ({
       ...scene,

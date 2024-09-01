@@ -42,8 +42,16 @@ export function parseSegmentCategory(input: any, defaultCategory?: ClapSegmentCa
   else if (unknownString === "video" || unknownString === "videos") {
     category = ClapSegmentCategory.VIDEO
   }
-  else if (unknownString === "storyboard" || unknownString === "storyboards") {
-    category = ClapSegmentCategory.STORYBOARD
+  else if (
+    unknownString === "image" ||
+    unknownString === "images" ||
+    
+    // those were the previous names,
+    // but we are going to deprecate this soon
+    unknownString === "storyboard" ||
+    unknownString === "storyboards"
+  ) {
+    category = ClapSegmentCategory.IMAGE
   }
   else if (unknownString === "transition" || unknownString === "transitions" || unknownString === "cut" || unknownString === "cuts") {
     category = ClapSegmentCategory.TRANSITION

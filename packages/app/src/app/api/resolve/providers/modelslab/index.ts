@@ -12,7 +12,7 @@ export async function resolveSegment(
   if (!request.settings.modelsLabApiKey) {
     throw new Error(`Missing API key for "ModelsLab.com"`)
   }
-  if (request.segment.category !== ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category !== ClapSegmentCategory.IMAGE) {
     throw new Error(
       `Clapper doesn't support ${request.segment.category} generation for provider "ModelsLab". Please open a pull request with (working code) to solve this!`
     )

@@ -1,16 +1,5 @@
-import {
-  ClapAssetSource,
-  ClapProject,
-  ClapSegment,
-  ClapSegmentCategory,
-  UUID,
-} from '@aitube/clap'
-import {
-  TimelineSegment,
-  timelineSegmentToClapSegment,
-  TimelineStore,
-  useTimeline,
-} from '@aitube/timeline'
+import { ClapProject, UUID } from '@aitube/clap'
+import { TimelineStore, useTimeline } from '@aitube/timeline'
 import {
   ExportableSegment,
   formatSegmentForExport,
@@ -18,14 +7,9 @@ import {
 
 export async function generateFCP(): Promise<string> {
   const timeline: TimelineStore = useTimeline.getState()
-  const {
-    meta,
-    getClap,
-    totalDurationInMs,
-    segments: timelineSegments,
-  } = timeline
+  const { title, width, height, getClap, segments: timelineSegments } = timeline
 
-  const DEFAULT_FRAME_RATE = 30
+  const DEFAULT_FRAME_RATE = 24
 
   const formatFCPTime = (
     timeInMs: number,
@@ -41,12 +25,12 @@ export async function generateFCP(): Promise<string> {
   }
 
   const createAssetFormat = (id: string): string => {
-    return /* XML */ `<format id="${id}" name="FFVideoFormat${meta.height}p${DEFAULT_FRAME_RATE}" frameDuration="${formatFCPTime(1000 / DEFAULT_FRAME_RATE)}" width="${meta.width}" height="${meta.height}"/>`
+    return /* XML */ `<format id="${id}" name="FFVideoFormat${height}p${DEFAULT_FRAME_RATE}" frameDuration="${formatFCPTime(1000 / DEFAULT_FRAME_RATE)}" width="${width}" height="${height}"/>`
   }
 
   const resources: string[] = []
   const assetClips: string[] = []
-  const formatId = `r${meta.width}x${meta.height}`
+  const formatId = `r${width}x${height}`
 
   resources.push(createAssetFormat(formatId))
 
@@ -89,8 +73,8 @@ export async function generateFCP(): Promise<string> {
     ${resources.join('\n')}
   </resources>
   <library>
-    <event name="${meta.title}">
-      <project name="${meta.title}">
+    <event name="${title}">
+      <project name="${title}">
         <sequence format="${formatId}" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
           <spine>
             ${assetClips.join('\n')}
@@ -104,14 +88,20 @@ export async function generateFCP(): Promise<string> {
 
 export async function generateFCP7XML(): Promise<string> {
   const timeline: TimelineStore = useTimeline.getState()
-  const { meta, segments: timelineSegments } = timeline
+  const {
+    title,
+    durationInMs,
+    width,
+    height,
+    segments: timelineSegments,
+  } = timeline
 
   let xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xmeml>
 <xmeml version="5">
   <sequence>
-    <name>${meta.title}</name>
-    <duration>${meta.durationInMs / 1000}</duration>
+    <name>${title}</name>
+    <duration>${durationInMs / 1000}</duration>
     <rate>
       <timebase>30</timebase>
       <ntsc>FALSE</ntsc>
@@ -120,8 +110,8 @@ export async function generateFCP7XML(): Promise<string> {
       <video>
         <format>
           <samplecharacteristics>
-            <width>${meta.width}</width>
-            <height>${meta.height}</height>
+            <width>${width}</width>
+            <height>${height}</height>
           </samplecharacteristics>
         </format>
         <track>

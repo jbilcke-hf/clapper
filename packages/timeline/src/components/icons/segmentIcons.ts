@@ -17,7 +17,7 @@ export const segmentCategoryToIconPath: Record<ClapSegmentCategory, string> = {
   [ClapSegmentCategory.INTERFACE]: `${path}interface.svg`,
   [ClapSegmentCategory.PHENOMENON]: `${path}phenomenon.svg`,
   [ClapSegmentCategory.VIDEO]: `${path}video.svg`,
-  [ClapSegmentCategory.STORYBOARD]: `${path}storyboard.svg`,
+  [ClapSegmentCategory.IMAGE]: `${path}storyboard.svg`,
   [ClapSegmentCategory.TRANSITION]: `${path}transition.svg`,
   [ClapSegmentCategory.CHARACTER]: `${path}character.svg`,
   [ClapSegmentCategory.LOCATION]: `${path}location.svg`,
@@ -31,5 +31,6 @@ export const segmentCategoryToIconPath: Record<ClapSegmentCategory, string> = {
   [ClapSegmentCategory.DIALOGUE]: `${path}dialogue.svg`,
   [ClapSegmentCategory.STYLE]: `${path}style.svg`,
   [ClapSegmentCategory.CAMERA]: `${path}camera.svg`,
+  [ClapSegmentCategory.GROUP]: `${path}generic.svg`,
   [ClapSegmentCategory.GENERIC]: `${path}generic.svg`,
 }

@@ -127,8 +127,8 @@ export const mockCategoryPrompts_misc: Record<ClapSegmentCategory, string[]> = {
   INTERFACE: [],
   PHENOMENON: [],
   VIDEO: [],
-  STORYBOARD: [],
-
+  IMAGE: [],
+  GROUP: [],
   GENERIC: [
     "Custom"
   ]
@@ -250,8 +250,8 @@ export const mockCategoryPrompts: Record<ClapSegmentCategory, string[]> = {
   INTERFACE: [],
   PHENOMENON: [],
   VIDEO: [],
-  STORYBOARD: [],
-
+  IMAGE: [],
+  GROUP: [],
   GENERIC: [
     "Lorem ipsum"
   ]

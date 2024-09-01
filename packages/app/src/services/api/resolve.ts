@@ -13,6 +13,7 @@ import {
 } from '@aitube/clapper-services'
 import { useSettings } from '../settings'
 import {
+  ClapMeta,
   ClapSegmentCategory,
   ClapWorkflowEngine,
   ClapWorkflowProvider,
@@ -24,12 +25,14 @@ export async function resolve(
   req: Partial<ResolveRequest>
 ): Promise<TimelineSegment> {
   const { getRequestSettings }: SettingsStore = useSettings.getState()
-  const { meta }: TimelineStore = useTimeline.getState()
+  const timeline: TimelineStore = useTimeline.getState()
+
+  const meta = timeline.getClapMeta()
 
   const defaultTimelineSegment: TimelineSegment =
     await clapSegmentToTimelineSegment(
       newSegment({
-        category: ClapSegmentCategory.STORYBOARD,
+        category: ClapSegmentCategory.IMAGE,
       })
     )
 
@@ -67,6 +70,10 @@ export async function resolve(
       : [],
     mainCharacterId: req.mainCharacterId || undefined,
     mainCharacterEntity: req.mainCharacterEntity || undefined,
+
+    // jbilcke-hf: I don't think we need all of those fields
+    // for our request, especially since some are a bit large
+    // and probably slow-down all our requests eg. the story prompt, thumbnail..
     meta,
     prompts: getDefaultResolveRequestPrompts(req.prompts),
   }

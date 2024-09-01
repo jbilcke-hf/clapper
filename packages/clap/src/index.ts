@@ -10,7 +10,7 @@ export {
   ClapEntityTimbre,
   ClapFormat,
   ClapHeader,
-  ClapMediaOrientation,
+  ClapImageRatio,
   ClapMeta,
   ClapOutputType,
   ClapProject,
@@ -40,7 +40,7 @@ export {
   ClapWorkflow
 } from '@/types'
 export {
-  defaultMediaOrientation
+  defaultImageRatio
 } from '@/constants'
 export {
   newClap,
@@ -61,7 +61,7 @@ export {
   getClapAssetSourceType,
   getValidNumber,
   isValidNumber,
-  parseMediaOrientation,
+  parseImageRatio,
   parseOutputType,
   parseWorkflowEngine,
   parseWorkflowCategory,

@@ -34,13 +34,12 @@ export enum ClapSegmentCategory {
   // otherwise some web browsers might not be able to display it
   VIDEO = "VIDEO",
 
-  // the name of this field is a bit confusing,
-  // we are going to rename it to IMAGE = "IMAGE"
-  // (because the storyboard is the board and timeline of drawing and picutes)
+  // an images, to be used for storyboarding, style reference,
+  // image transformation, controlnet etc
   //
   // format can currently be jpg, png, webp, heic
   // (note: most of the apps compatible with .clap prefer to work with jpg and png)
-  STORYBOARD = "STORYBOARD",
+  IMAGE = "IMAGE",
 
   // a transition between two shots (eg. a cross-fade)
   TRANSITION = "TRANSITION",
@@ -91,6 +90,11 @@ export enum ClapSegmentCategory {
   // type of shot eg "medium-shot", aperture, ISO..
   CAMERA = "CAMERA",
 
+  // the segment is a group
+  // this can be used to represent concepts such as Blocks, but not only.
+  // this can for instance used to represent groups of blocks, revisions, chapters etc
+  GROUP = "GROUP",
+
   // ..anything else, from prompt to arbitrary/custom/obscure file format
   // 
   // however if you have a special demand, something that could be popular and not too niche,
@@ -98,9 +102,17 @@ export enum ClapSegmentCategory {
   GENERIC = "GENERIC"
 }
 
-export enum ClapMediaOrientation {
+/**
+ * Image ratio (also valid for video)
+ */
+export enum ClapImageRatio {
+  // 16:9
   LANDSCAPE = "LANDSCAPE",
+
+  // 9:16
   PORTRAIT = "PORTRAIT",
+
+  // 1:1
   SQUARE = "SQUARE"
 }
 
@@ -262,6 +274,19 @@ export type ClapMeta = {
   licence: string
   
   /**
+   * Beats per minute
+   */
+  bpm: number
+
+  /**
+   * Number of frames per second
+   * 
+   * 24 FPS: standard for most movies and streaming video content
+   * 25 FPS (UK & Europe) and 30 FPS (the US & elsewhere): standard frame rate for TV video
+   */
+  frameRate: number
+
+  /**
    * List of keywords used to describe the project.
    * 
    * Examples: action, sci-fi, romance, advert, music video,
@@ -275,7 +300,14 @@ export type ClapMeta = {
    */
   thumbnailUrl: string
 
-  orientation: ClapMediaOrientation
+  /**
+   * Tells what kind of image ratio is used
+   * 
+   * LANDSCAPE (16:9)
+   * PORTRAIT (9:16)
+   * SQUARE (1:1)
+   */
+  imageRatio: ClapImageRatio
 
   // the default duration of the experience
   // the real one might last longer if made interactive
@@ -283,9 +315,22 @@ export type ClapMeta = {
 
   width: number
   height: number
-  defaultVideoModel: string
-  extraPositivePrompt: string[]
-  screenplay: string
+
+  /**
+   * Global prompt used for image and video generation
+   */
+  imagePrompt: string
+
+  /**
+   * Global instructions used for the assistant
+   */
+  systemPrompt: string
+
+  /**
+   * Story prompt (or "screenplay") of the project
+   */
+  storyPrompt: string
+
   isLoop: boolean
   isInteractive: boolean
 }
@@ -315,10 +360,29 @@ export type ClapScene = {
 
 export type ClapSegment = {
   id: string
-  track: number // usually track 0 is the video, track 1 is the storyboard, track 2 is the camera
+
+  /**
+   * ID of the parent segment id
+   */
+  parentId: string
+
+  /**
+   * IDs of children segments
+   */
+  childrenIds: string[]
+
+  // right now tracks are a mess, but we are going to clean this up and have a more organized structure
+  // usually track 0 is the video, track 1 is the storyboard, track 2 is the camera
+  // but we need a better system to make this definition and immutable
+  track: number
+
   startTimeInMs: number
   endTimeInMs: number
   category: ClapSegmentCategory
+
+  // TODO: add BPM as well
+  // the rationale behind that is that some segments will
+  // be to handle music, or act as group
 
   /**
    * ID of the entity attached to the segment

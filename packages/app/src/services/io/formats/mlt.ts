@@ -8,7 +8,13 @@ import { TimelineStore, useTimeline } from '@aitube/timeline'
 
 export async function generateMLT(): Promise<string> {
   const timeline: TimelineStore = useTimeline.getState()
-  const { meta, segments: timelineSegments } = timeline
+  const {
+    title,
+    width,
+    height,
+    durationInMs,
+    segments: timelineSegments,
+  } = timeline
 
   const segments: ExportableSegment[] = timelineSegments
     .map((segment, i) => formatSegmentForExport(segment, i))
@@ -19,7 +25,7 @@ export async function generateMLT(): Promise<string> {
   )
 
   const storyboards: ExportableSegment[] = segments.filter(
-    ({ segment }) => segment.category === ClapSegmentCategory.STORYBOARD
+    ({ segment }) => segment.category === ClapSegmentCategory.IMAGE
   )
 
   const dialogues: ExportableSegment[] = segments.filter(
@@ -36,11 +42,11 @@ export async function generateMLT(): Promise<string> {
 
   // want to see some colors? install es6-string-html in your VSCode
   return /* XML */ `<?xml version="1.0" standalone="no"?>
-<mlt LC_NUMERIC="C" version="7.24.0" title="${meta.title}" producer="main_bin">
+<mlt LC_NUMERIC="C" version="7.24.0" title="${title}" producer="main_bin">
 <profile
-description="${meta.width}:${meta.height}"
-width="${meta.width}"
-height="${meta.height}"
+description="${width}:${height}"
+width="${width}"
+height="${height}"
 progressive="0"
 sample_aspect_num="1"
 sample_aspect_den="1"
@@ -58,8 +64,8 @@ colorspace="709"
 <playlist id="main_bin">
 <property name="xml_retain">1</property>
 </playlist>
-<producer id="black" in="00:00:00.000" out="${formatDuration(meta.durationInMs)}">
-<property name="length">${formatDuration(meta.durationInMs)}</property>
+<producer id="black" in="00:00:00.000" out="${formatDuration(durationInMs)}">
+<property name="length">${formatDuration(durationInMs)}</property>
 <property name="eof">pause</property>
 <property name="resource">0</property>
 <property name="aspect_ratio">1</property>
@@ -68,7 +74,7 @@ colorspace="709"
 <property name="set.test_audio">0</property>
 </producer>
 <playlist id="background">
-<entry producer="black" in="00:00:00.000" out="${formatDuration(meta.durationInMs)}" />
+<entry producer="black" in="00:00:00.000" out="${formatDuration(durationInMs)}" />
 </playlist>
 ${segments
   .map(
@@ -76,8 +82,8 @@ ${segments
 <producer
 id="${shortId}"
 in="${formatDuration(0)}"
-out="${formatDuration(meta.durationInMs)}">
-<property name="length">${formatDuration(meta.durationInMs)}</property>
+out="${formatDuration(durationInMs)}">
+<property name="length">${formatDuration(durationInMs)}</property>
 <property name="eof">pause</property>
 <property name="resource">${filePath}</property>
 <property name="ttl">1</property>
@@ -85,8 +91,8 @@ out="${formatDuration(meta.durationInMs)}">
 <property name="meta.media.progressive">1</property>
 <property name="seekable">1</property>
 <property name="format">1</property>
-<property name="meta.media.width">${meta.width}</property>
-<property name="meta.media.height">${meta.height}</property>
+<property name="meta.media.width">${width}</property>
+<property name="meta.media.height">${height}</property>
 <property name="mlt_service">qimage</property>
 <property name="creation_time">${
       segment.createdAt || new Date().toISOString()
@@ -140,8 +146,8 @@ ${storyboards
 </playlist>
 ${[...dialogues, ...sounds, ...music].map(
   ({ segment, filePath, fileName, shortId }) => /* XML */ `
-<chain id="${shortId}" out="${formatDuration(meta.durationInMs)}">
-<property name="length">${formatDuration(meta.durationInMs)}</property>
+<chain id="${shortId}" out="${formatDuration(durationInMs)}">
+<property name="length">${formatDuration(durationInMs)}</property>
 <property name="eof">pause</property>
 <property name="resource">${filePath}</property>
 <property name="mlt_service">avformat-novalidate</property>
@@ -220,7 +226,7 @@ ${music.map(
 id="tractor0"
 title="Shotcut version 24.04.28"
 in="00:00:00.000"
-out="${formatDuration(meta.durationInMs)}">
+out="${formatDuration(durationInMs)}">
 <property name="shotcut">1</property>
 <property name="shotcut:projectAudioChannels">2</property>
 <property name="shotcut:projectFolder">1</property>

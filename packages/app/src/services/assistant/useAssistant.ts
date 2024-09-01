@@ -187,7 +187,7 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
       bufferedSegments: { activeSegments },
     } = useRenderer.getState()
     const timeline: TimelineStore = useTimeline.getState()
-    const { meta, scenes, addSegment, entityIndex } = timeline
+    const { description, scenes, entityIndex } = timeline
 
     // note: here `settings` is not the store's state itself (with methods etc)
     // but a snapshot of the serializable state values only
@@ -269,7 +269,7 @@ export const useAssistant = create<AssistantStore>((set, get) => ({
       fullScene: scene?.sequenceFullText || '',
       actionLine: scene?.line || '',
       entities: entityIndex,
-      projectInfo: meta.description,
+      projectInfo: description,
       history: get().history,
     }
 

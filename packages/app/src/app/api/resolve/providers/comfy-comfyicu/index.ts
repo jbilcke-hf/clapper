@@ -15,7 +15,7 @@ export async function resolveSegment(
     throw new Error(`Missing API key for "Comfy.icu"`)
   }
 
-  if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category === ClapSegmentCategory.IMAGE) {
     const workflowId =
       request.settings.imageGenerationWorkflow.id.split('://').pop() || ''
 

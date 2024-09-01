@@ -83,7 +83,7 @@ export function TopMenuLogo() {
             <BiSolidMoviePlay style={{ color }} />
           )}
           <span
-            className="hidden md:inline ld:text-md scale-[88%] pr-0.5 font-bold tracking-[-0.03em] md:pr-1 lg:pr-2"
+            className="ld:text-md hidden scale-[88%] pr-0.5 font-bold tracking-[-0.03em] md:inline md:pr-1 lg:pr-2"
             style={{ color }}
           >
             Clapper

@@ -49,11 +49,11 @@ interface OTIOTimeline {
 
 export async function generateOTIO(): Promise<string> {
   const timeline: TimelineStore = useTimeline.getState()
-  const { meta, segments: timelineSegments } = timeline
+  const { title, segments: timelineSegments } = timeline
 
   const otioData: OTIOTimeline = {
     OTIO_SCHEMA: 'Timeline.1',
-    name: meta.title,
+    name: title,
     global_start_time: null,
     tracks: {
       OTIO_SCHEMA: 'Stack.1',

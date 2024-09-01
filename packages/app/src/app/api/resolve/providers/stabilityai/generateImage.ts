@@ -1,4 +1,4 @@
-import { ClapMediaOrientation } from '@aitube/clap'
+import { ClapImageRatio } from '@aitube/clap'
 
 import { ResolveRequest, StabilityAiImageSize } from '@aitube/clapper-services'
 
@@ -22,9 +22,9 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
   }
 
   const aspectRatio =
-    request.meta.orientation === ClapMediaOrientation.SQUARE
+    request.meta.orientation === ClapImageRatio.SQUARE
       ? StabilityAiImageSize.SQUARE
-      : request.meta.orientation === ClapMediaOrientation.PORTRAIT
+      : request.meta.orientation === ClapImageRatio.PORTRAIT
         ? StabilityAiImageSize.PORTRAIT_9_16
         : StabilityAiImageSize.LANDSCAPE_16_9
 

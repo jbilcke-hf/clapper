@@ -1,7 +1,7 @@
 import * as fal from '@fal-ai/serverless-client'
 import { TimelineSegment } from '@aitube/timeline'
 import { FalAiImageSize, ResolveRequest } from '@aitube/clapper-services'
-import { ClapMediaOrientation, ClapSegmentCategory } from '@aitube/clap'
+import { ClapImageRatio, ClapSegmentCategory } from '@aitube/clap'
 import {
   FalAiAudioResponse,
   FalAiImageResponse,
@@ -31,7 +31,7 @@ export async function resolveSegment(
   // for doc see:
   // https://fal.ai/models/fal-ai/fast-sdxl/api
 
-  if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category === ClapSegmentCategory.IMAGE) {
     model = request.settings.imageGenerationWorkflow.data || ''
 
     if (!request.prompts.image.positive) {
@@ -78,9 +78,9 @@ export async function resolveSegment(
 
     // this was the previous system
     /*
-      request.meta.orientation === ClapMediaOrientation.SQUARE
+      request.meta.orientation === ClapImageRatio.SQUARE
         ? FalAiImageSize.SQUARE_HD
-        : request.meta.orientation === ClapMediaOrientation.PORTRAIT
+        : request.meta.orientation === ClapImageRatio.PORTRAIT
           ? FalAiImageSize.PORTRAIT_16_9
           : FalAiImageSize.LANDSCAPE_16_9
     */
@@ -254,7 +254,7 @@ export async function resolveSegment(
       segment.assetUrl = result?.video?.url || ''
     } else if (model === 'fal-ai/stable-video') {
       if (!request.prompts.video.image) {
-        throw new Error(`cannot generate a video without a storyboard`)
+        throw new Error(`cannot generate a video without a storyboard image`)
       }
 
       const result = (await fal.run(model, {

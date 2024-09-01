@@ -13,7 +13,7 @@ export async function resolveSegment(
 
   const segment = request.segment
 
-  if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category === ClapSegmentCategory.IMAGE) {
     segment.assetUrl = await generateImage(request)
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
     segment.assetUrl = await generateVideo(request)

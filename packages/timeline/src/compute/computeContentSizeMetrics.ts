@@ -6,19 +6,21 @@ import { computeCellHeight } from "./computeCellHeight"
 import { DEFAULT_NB_TRACKS, NB_MAX_SHOTS, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants/grid"
 
 export function computeContentSizeMetrics({
-  meta,
+  width,
+  height,
   tracks,
   cellWidth,
   defaultSegmentDurationInSteps,
   durationInMsPerStep,
-  totalDurationInMs,
+  durationInMs,
 }: {
-  meta: ClapMeta
+  width: number
+  height: number
   tracks: ClapTracks
   cellWidth: number
   defaultSegmentDurationInSteps: number
   durationInMsPerStep: number
-  totalDurationInMs: number
+  durationInMs: number
 }): ContentSizeMetrics {
 
   // in the future those might be dynamic / coming from settings
@@ -30,12 +32,12 @@ export function computeContentSizeMetrics({
 
   // TODO: compute the exact image ratio instead of using the media orientation,
   // since it might not match the actual assets
-  const defaultMediaRatio =
-    (meta.width || 896) / (meta.height || 512)
+  const defaultImageRatio =
+    (width || 896) / (height || 512)
   
-  // also storyboards and videos might have different sizes / ratios
+  // also storyboard images and videos might have different sizes / ratios
   const defaultPreviewHeight = Math.round(
-    defaultSegmentLengthInPixels / defaultMediaRatio
+    defaultSegmentLengthInPixels / defaultImageRatio
   )
   
   let contentHeight = 0
@@ -57,7 +59,7 @@ export function computeContentSizeMetrics({
     nbIdentifiedTracks: newTracks.length,
 
     // node: content width and height are in pixels
-    contentWidth: (totalDurationInMs / durationInMsPerStep) * cellWidth,
+    contentWidth: (durationInMs / durationInMsPerStep) * cellWidth,
     contentHeight,
 
     tracks: newTracks,
@@ -65,7 +67,7 @@ export function computeContentSizeMetrics({
     defaultCellHeight,
     defaultSegmentDurationInSteps,
     defaultSegmentLengthInPixels,
-    defaultMediaRatio,
+    defaultImageRatio,
     defaultPreviewHeight,
   }
 }

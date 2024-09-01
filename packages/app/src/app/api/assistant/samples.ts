@@ -11,7 +11,7 @@ import {
       "prompt": "",
       "startTimeInMs": 767000,
       "endTimeInMs": 769000,
-      "category": "STORYBOARD"
+      "category": "IMAGE"
     },
     {
       "segmentId": 2,
@@ -25,7 +25,7 @@ import {
       "prompt": "",
       "startTimeInMs": 769000,
       "endTimeInMs": 771000,
-      "category": "STORYBOARD"
+      "category": "IMAGE"
     },
     {
       "segmentId": 4,

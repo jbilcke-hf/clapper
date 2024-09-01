@@ -1,3 +1,3 @@
-import { ClapMediaOrientation } from "@/types"
+import { ClapImageRatio } from "@/types"
 
-export const defaultMediaOrientation = ClapMediaOrientation.LANDSCAPE
+export const defaultImageRatio = ClapImageRatio.LANDSCAPE

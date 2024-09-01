@@ -15,7 +15,7 @@ export const baseClapSegmentCategoryColors: ClapSegmentCategoryColors = {
   [ClapSegmentCategory.INTERFACE]: { hue: 216, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.PHENOMENON]: { hue: 270, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.VIDEO]: { hue: 70, saturation: 30, lightness: 78.6 },
-  [ClapSegmentCategory.STORYBOARD]: { hue: 70, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.IMAGE]: { hue: 70, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.TRANSITION]: { hue: 55, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.CHARACTER]: { hue: 285.8, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.LOCATION]: { hue: 80.9, saturation: 30, lightness: 78.6 },
@@ -29,6 +29,7 @@ export const baseClapSegmentCategoryColors: ClapSegmentCategoryColors = {
   [ClapSegmentCategory.DIALOGUE]: { hue: 23, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.STYLE]: { hue: 285, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.CAMERA]: { hue: 10, saturation: 30, lightness: 78.6 },
+  [ClapSegmentCategory.GROUP]: { hue: 200, saturation: 30, lightness: 78.6 },
   [ClapSegmentCategory.GENERIC]: { hue: 200, saturation: 30, lightness: 78.6 },
 }
 

@@ -11,7 +11,8 @@ export function EmbeddedPlayer() {
   const isPlaying = useMonitor((s) => s.isPlaying)
   const togglePlayback = useMonitor((s) => s.togglePlayback)
 
-  const meta = useTimeline((s) => s.meta)
+  const isInteractive = useTimeline((s) => s.isInteractive)
+  const isLive = useTimeline((s) => s.isLive)
 
   const [isOverlayVisible, setOverlayVisible] = useState(true)
 
@@ -64,8 +65,8 @@ export function EmbeddedPlayer() {
           >
             <div
               className={cn(`flex h-full flex-row items-center`, {
-                'bg-yellow-500/100': meta.isInteractive,
-                'bg-red-500/100': meta.isLive,
+                'bg-yellow-500/100': isInteractive,
+                'bg-red-500/100': isLive,
               })}
               style={{
                 width: '100%', // <-- TODO: compute the % of progression within the experience
@@ -90,7 +91,7 @@ export function EmbeddedPlayer() {
                 onClick={togglePlayback}
               />
               <StaticOrInteractiveTag
-                isInteractive={meta.isInteractive}
+                isInteractive={isInteractive}
                 size="md"
                 className=""
               />

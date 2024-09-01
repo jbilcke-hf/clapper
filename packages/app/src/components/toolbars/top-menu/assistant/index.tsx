@@ -18,7 +18,7 @@ import { useAutocomplete } from '@/services/autocomplete/useAutocomplete'
 
 export function TopMenuAssistant() {
   const setShowSettings = useUI((s) => s.setShowSettings)
-  const storyboardsToStory = useAutocomplete((s) => s.storyboardsToStory)
+  const convertImagesToStory = useAutocomplete((s) => s.convertImagesToStory)
 
   const hasBetaAccess = useUI((s) => s.hasBetaAccess)
 
@@ -41,7 +41,7 @@ export function TopMenuAssistant() {
               <MenubarSeparator />
               <MenubarItem
                 onClick={() => {
-                  storyboardsToStory()
+                  convertImagesToStory()
                 }}
               >
                 Storyboards-to-captions (beta, client-side AI)

@@ -46,13 +46,12 @@ export async function resolveSegment(
   ).init()
 
   if (
-    [ClapSegmentCategory.STORYBOARD, ClapSegmentCategory.VIDEO].includes(
+    [ClapSegmentCategory.IMAGE, ClapSegmentCategory.VIDEO].includes(
       request.segment.category
     )
   ) {
     const clapWorkflow = {
-      [ClapSegmentCategory.STORYBOARD]:
-        request.settings.imageGenerationWorkflow,
+      [ClapSegmentCategory.IMAGE]: request.settings.imageGenerationWorkflow,
       [ClapSegmentCategory.VIDEO]: request.settings.videoGenerationWorkflow,
     }[request.segment.category]
 

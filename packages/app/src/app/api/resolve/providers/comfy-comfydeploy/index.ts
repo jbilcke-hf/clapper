@@ -14,7 +14,7 @@ export async function resolveSegment(
     throw new Error(`Missing API key for "ComfyDeploy"`)
   }
 
-  if (request.segment.category === ClapSegmentCategory.STORYBOARD) {
+  if (request.segment.category === ClapSegmentCategory.IMAGE) {
     const inputFields =
       request.settings.imageGenerationWorkflow.inputFields || []
 

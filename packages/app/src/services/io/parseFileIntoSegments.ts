@@ -121,7 +121,7 @@ export async function parseFileIntoSegments({
         status: ClapSegmentStatus.COMPLETED,
         // track: findFreeTrack({ segments, startTimeInMs, endTimeInMs }), // track row index
         label: `${file.name}`, // a short label to name the segment (optional, can be human or LLM-defined)
-        category: ClapSegmentCategory.STORYBOARD,
+        category: ClapSegmentCategory.IMAGE,
 
         assetUrl,
         assetDurationInMs: durationInMs,
@@ -132,20 +132,20 @@ export async function parseFileIntoSegments({
         track: track ? track + 1 : undefined,
       }
 
-      const storyboard = await clapSegmentToTimelineSegment(
+      const storyboardImage = await clapSegmentToTimelineSegment(
         newSegment(partialStoryboard)
       )
 
       if (isValidNumber(track)) {
-        storyboard.track = track
+        storyboardImage.track = track
       }
 
-      storyboard.outputType = ClapOutputType.IMAGE
+      storyboardImage.outputType = ClapOutputType.IMAGE
 
       // we assume we want it to be immediately visible
-      storyboard.visibility = SegmentVisibility.VISIBLE
+      storyboardImage.visibility = SegmentVisibility.VISIBLE
 
-      newSegments.push(storyboard)
+      newSegments.push(storyboardImage)
 
       break
     }
@@ -170,6 +170,8 @@ export async function parseFileIntoSegments({
         durationInMs,
         durationInSteps,
       })
+
+      useTimeline.setState({ bpm })
 
       // TODO: use the correct drop time
       const startTimeInMs = isValidNumber(maybeStartTimeInMs)

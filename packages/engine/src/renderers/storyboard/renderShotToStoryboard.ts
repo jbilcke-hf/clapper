@@ -40,7 +40,7 @@ export async function renderShotToStoryboard({
   )
 
   const shotStoryboardSegments: ClapSegment[] = shotSegments.filter(s =>
-    s.category === ClapSegmentCategory.STORYBOARD
+    s.category === ClapSegmentCategory.IMAGE
   )
 
   let shotStoryboardSegment: ClapSegment | undefined = shotStoryboardSegments.at(0)
@@ -52,7 +52,7 @@ export async function renderShotToStoryboard({
       startTimeInMs: shotSegment.startTimeInMs,
       endTimeInMs: shotSegment.endTimeInMs,
       assetDurationInMs: shotSegment.assetDurationInMs,
-      category: ClapSegmentCategory.STORYBOARD,
+      category: ClapSegmentCategory.IMAGE,
       prompt: "",
       assetUrl: "",
       outputType: ClapOutputType.IMAGE,

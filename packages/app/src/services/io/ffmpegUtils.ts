@@ -380,7 +380,7 @@ export async function createFullSilentVideo(
       continue
     }
 
-    const inputFilename = `input_${index}_${UUID()}.${input.category === ClapSegmentCategory.STORYBOARD ? 'png' : 'mp4'}`
+    const inputFilename = `input_${index}_${UUID()}.${input.category === ClapSegmentCategory.IMAGE ? 'png' : 'mp4'}`
     await ffmpeg.writeFile(inputFilename, input.data)
 
     const segmentDuration = (input.endTimeInMs - input.startTimeInMs) / 1000
@@ -388,7 +388,7 @@ export async function createFullSilentVideo(
 
     let outputFilename = `output_${index}_${UUID()}.mp4`
 
-    if (input.category === ClapSegmentCategory.STORYBOARD) {
+    if (input.category === ClapSegmentCategory.IMAGE) {
       // Handle image input
       console.log(`${TAG}: Processing image input`)
       const ffmpegCommand = [

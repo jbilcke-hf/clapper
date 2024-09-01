@@ -3,7 +3,8 @@
 import {
   ClapAssetSource,
   ClapEntity,
-  ClapMediaOrientation,
+  ClapImageRatio,
+  ClapMeta,
   ClapOutputType,
   ClapProject,
   ClapSegment,
@@ -189,22 +190,23 @@ export const useIO = create<IOStore>((set, get) => ({
           title: projectName,
           description: `${projectName} (${fileName})`,
           synopsis: '',
-          licence:
-            "This OpenClap file is just a conversion from the original screenplay and doesn't claim any copyright or intellectual property. All rights reserved to the original intellectual property and copyright holders. Using OpenClap isn't piracy.",
+          licence: '',
 
-          orientation: ClapMediaOrientation.LANDSCAPE,
+          imageRatio: ClapImageRatio.LANDSCAPE,
           durationInMs: frames.length * durationInMs,
 
           // TODO: those should come from the Clapper user settings
 
           width: 1024,
           height: 576,
-
-          defaultVideoModel: '', // <-- we should deprecate this no?
-          extraPositivePrompt: [],
-          screenplay: '',
+          imagePrompt: '',
+          storyPrompt: '',
+          systemPrompt: '',
           isLoop: false,
           isInteractive: false,
+
+          bpm: 120,
+          frameRate: 24,
         },
       })
     )
@@ -528,10 +530,11 @@ export const useIO = create<IOStore>((set, get) => ({
     const timeline: TimelineStore = useTimeline.getState()
 
     const {
-      meta,
-      getClap,
-      totalDurationInMs,
+      width,
+      height,
+      durationInMs,
       segments: timelineSegments,
+      getClap,
     } = timeline
 
     const clap = await getClap()
@@ -584,7 +587,7 @@ export const useIO = create<IOStore>((set, get) => ({
             })
           } else if (
             filePath.startsWith('image/') ||
-            segment.category === ClapSegmentCategory.STORYBOARD
+            segment.category === ClapSegmentCategory.IMAGE
           ) {
             images.push({
               data: base64DataUriToUint8Array(segment.assetUrl),
@@ -619,9 +622,9 @@ export const useIO = create<IOStore>((set, get) => ({
     const fullVideo = await createFullVideo(
       videoInputs,
       audios,
-      meta.width,
-      meta.height,
-      totalDurationInMs,
+      width,
+      height,
+      durationInMs,
       (progress, message) => {
         task.setProgress({
           message: `Rendering video (${Math.round(progress)}%)`,
@@ -650,7 +653,7 @@ export const useIO = create<IOStore>((set, get) => ({
     try {
       const timeline: TimelineStore = useTimeline.getState()
 
-      const { meta, segments: timelineSegments } = timeline
+      const { segments: timelineSegments } = timeline
 
       const segments: ExportableSegment[] = timelineSegments
         .map((segment, i) => formatSegmentForExport(segment, i))
@@ -658,7 +661,9 @@ export const useIO = create<IOStore>((set, get) => ({
 
       let files: fflate.AsyncZippable = {}
 
-      files['screenplay.txt'] = fflate.strToU8(meta.screenplay)
+      const meta = timeline.getClapMeta()
+
+      files['story_prompt.txt'] = fflate.strToU8(meta.storyPrompt)
 
       files['meta.json'] = fflate.strToU8(JSON.stringify(meta, null, 2))
 
@@ -762,7 +767,7 @@ export const useIO = create<IOStore>((set, get) => ({
           audios,
           meta.width,
           meta.height,
-          timeline.totalDurationInMs,
+          timeline.durationInMs,
           (progress, message) => {
             task.setProgress({
               message,

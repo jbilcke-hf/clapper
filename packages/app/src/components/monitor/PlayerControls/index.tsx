@@ -26,7 +26,7 @@ export function PlayerControls({ className }: { className?: string }) {
   const jumpAt = useMonitor((s) => s.jumpAt)
 
   const cursorTimestampAtInMs = useTimeline((s) => s.cursorTimestampAtInMs)
-  const totalDurationInMs = useTimeline((s) => s.totalDurationInMs)
+  const durationInMs = useTimeline((s) => s.durationInMs)
 
   const handleAccelerate = () => {}
 
@@ -77,7 +77,7 @@ export function PlayerControls({ className }: { className?: string }) {
         />
       </div>
       <Counter
-        valueInMs={totalDurationInMs}
+        valueInMs={durationInMs}
         color={theme.monitorSecondaryTextColor || theme.defaultTextColor || ''}
       />
     </div>

@@ -40,13 +40,13 @@ export const useScriptEditor = create<ScriptEditorStore>((set, get) => ({
     const { highlightElements, textModel } = get()
 
     set({
-      current: clap.meta.screenplay,
-      lastPublished: clap.meta.screenplay,
+      current: clap.meta.storyPrompt,
+      lastPublished: clap.meta.storyPrompt,
     })
 
     try {
       // we need to update the model
-      textModel?.setValue(clap.meta.screenplay)
+      textModel?.setValue(clap.meta.storyPrompt)
     } catch (err) {
       // to catch the "Error: Model is disposed!"
       // this can happen if the timing isn't right,

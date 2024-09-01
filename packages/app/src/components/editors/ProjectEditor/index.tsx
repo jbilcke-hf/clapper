@@ -35,7 +35,7 @@ export function ProjectEditor() {
   return (
     <FormSection label={'Project Settings'} className="p-4">
       <FormInput<string>
-        label={'title'}
+        label={'Title'}
         value={current.title || ''}
         defaultValue=""
         onChange={(title) => {
@@ -76,18 +76,32 @@ export function ProjectEditor() {
         minValue={256}
         maxValue={1024}
       />
-      {/*
-      for this one we will need some kind of draft mode
-      */}
+      <FormInput<number>
+        label={'BPM (Beats Per Minute) (WIP)'}
+        value={current.bpm || 110}
+        defaultValue={110}
+        minValue={1}
+        maxValue={500}
+      />
+      <FormInput<number>
+        label={'Frame rate (WIP)'}
+        value={current.frameRate || 24}
+        defaultValue={24}
+        minValue={1}
+        maxValue={1000}
+      />
       <FormInput<string>
-        label={'Global prompt keywords ("3D render, comical"..)'}
-        value={
-          Array.isArray(current.extraPositivePrompt)
-            ? current.extraPositivePrompt.join(', ')
-            : ''
-        }
-        onChange={(newKeywords) => {
-          // const keywords = newKeywords.split(",").map(x => x.trim())
+        label={'Global image/video prompt ("3D render, 1970 style..")'}
+        value={current.imagePrompt || ''}
+        onChange={(imagePrompt) => {
+          setCurrent({ ...current, imagePrompt })
+        }}
+      />
+      <FormInput<string>
+        label={'Global assistant prompt ("don\'t use swear words..")'}
+        value={current.systemPrompt || ''}
+        onChange={(systemPrompt) => {
+          setCurrent({ ...current, systemPrompt })
         }}
       />
       <FormInput<string>

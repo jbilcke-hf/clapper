@@ -54,15 +54,14 @@ export function EditorsSideMenuItem({
 
   return (
     <Tooltip delayDuration={0}>
-      <TooltipTrigger asChild disabled={!tooltipLabel}
-      className="
-      h-8 md:h-9 xl:h-11
-      w-full
-      transition-all duration-200 ease-in-out
-      ">
+      <TooltipTrigger
+        asChild
+        disabled={!tooltipLabel}
+        className="h-8 w-full transition-all duration-200 ease-in-out md:h-9 xl:h-11"
+      >
         <div
           className={cn(
-            `flex h-8 md:h-9 xl:h-11 w-full flex-col`,
+            `flex h-8 w-full flex-col md:h-9 xl:h-11`,
             `transition-all duration-150 ease-out`,
             `items-center justify-center`,
             unmanaged || isActive ? '' : `cursor-pointer`,

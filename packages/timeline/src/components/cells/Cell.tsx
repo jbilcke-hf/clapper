@@ -248,7 +248,7 @@ export function Cell({
       if you manage to make this component work,
       let me know.. 
       
-      (s.category !== ClapSegmentCategory.STORYBOARD && 
+      (s.category !== ClapSegmentCategory.IMAGE && 
        s.category !== ClapSegmentCategory.VIDEO) 
       && <SegmentIcon category={s.category} />
       */}
@@ -256,7 +256,7 @@ export function Cell({
       {
         // TODO also add the buttons to Dialogue, Sound, Music etc..
         // also maybe fix the display, as when zoomed out it doesn't look good
-      (s.category === ClapSegmentCategory.STORYBOARD
+      (s.category === ClapSegmentCategory.IMAGE
       || s.category === ClapSegmentCategory.VIDEO
       || s.category === ClapSegmentCategory.DIALOGUE
       || s.category === ClapSegmentCategory.SOUND

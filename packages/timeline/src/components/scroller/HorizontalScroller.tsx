@@ -21,7 +21,7 @@ export function HorizontalScroller() {
   // we could display the cursor as an extra line, I guess
   // but the real range is the actual view window
   const cursorTimestampAtInMs = useTimeline(s => s.cursorTimestampAtInMs)
-  const totalDurationInMs = useTimeline(s => s.totalDurationInMs)
+  const durationInMs = useTimeline(s => s.durationInMs)
 
   const setScrollX = useTimeline(s => s.setScrollX)
   const contentWidth = useTimeline(s => s.contentWidth)
@@ -55,7 +55,7 @@ export function HorizontalScroller() {
 
       <TimelineSlider
         minTimeInMs={0}
-        maxTimeInMs={totalDurationInMs}
+        maxTimeInMs={durationInMs}
         currentPlaybackCursorPosition={cursorTimestampAtInMs}
         playbackCursorPositionColor={theme.playbackCursor.lineColor}
         playbackCursorPositionWidthInPx={2}
@@ -86,7 +86,7 @@ export function HorizontalScroller() {
           // is enough, however we could also use slidingWindowRangeThumbEndTimeInMs
           // to change the zoom factor in the timeline (@julian will implement this)
 
-          const scrollRatio = slidingWindowRangeThumbStartTimeInMs / totalDurationInMs
+          const scrollRatio = slidingWindowRangeThumbStartTimeInMs / durationInMs
           const newScrollX = scrollRatio * contentWidth
           setScrollX(newScrollX)
           timelineCamera.position.setX(newScrollX)
