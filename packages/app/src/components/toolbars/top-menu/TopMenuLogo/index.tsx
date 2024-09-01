@@ -47,7 +47,8 @@ export function TopMenuLogo() {
       <TooltipTrigger className="flex items-center justify-center">
         <div
           className={cn(
-            `group flex items-center justify-center`,
+            `group flex items-center justify-start`,
+            `scale-[85%] md:-mr-2 md:scale-90 lg:mr-0 lg:scale-100`,
             isDisabled ? '' : 'pointer-cursor'
           )}
           onClick={() => {
@@ -82,7 +83,7 @@ export function TopMenuLogo() {
             <BiSolidMoviePlay style={{ color }} />
           )}
           <span
-            className="scale-[88%] pr-2 text-lg font-bold tracking-[-0.03em]"
+            className="hidden md:inline ld:text-md scale-[88%] pr-0.5 font-bold tracking-[-0.03em] md:pr-1 lg:pr-2"
             style={{ color }}
           >
             Clapper

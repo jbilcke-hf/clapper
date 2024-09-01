@@ -54,14 +54,20 @@ export function EditorsSideMenuItem({
 
   return (
     <Tooltip delayDuration={0}>
-      <TooltipTrigger asChild disabled={!tooltipLabel} className="h-12 w-full">
+      <TooltipTrigger asChild disabled={!tooltipLabel}
+      className="
+      h-8 md:h-9 xl:h-11
+      w-full
+      transition-all duration-200 ease-in-out
+      ">
         <div
           className={cn(
-            `flex h-12 w-full flex-col`,
+            `flex h-8 md:h-9 xl:h-11 w-full flex-col`,
             `transition-all duration-150 ease-out`,
             `items-center justify-center`,
             unmanaged || isActive ? '' : `cursor-pointer`,
-            `border-l-[2px]`,
+            `border-l-[1px] md:border-l-[1.5px] lg:border-l-[2px]`,
+            `transition-all duration-200 ease-in-out`,
             isActive
               ? 'fill-neutral-50/80 text-neutral-50 opacity-100 hover:fill-neutral-50 hover:text-neutral-50'
               : 'fill-neutral-400/80 text-gray-400 opacity-80 hover:fill-neutral-200 hover:text-neutral-200 hover:opacity-100',
@@ -78,7 +84,8 @@ export function EditorsSideMenuItem({
           <div
             className={cn(
               `flex-col items-center justify-center`,
-              `text-center text-[28px]`,
+              `text-center`,
+              `text-[20px] md:text-[22px] lg:text-[24px] xl:text-[28px]`,
               `transition-all duration-200 ease-out`,
               `stroke-1`,
               isActive ? `scale-110` : `group-hover:scale-110`
