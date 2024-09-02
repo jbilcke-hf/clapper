@@ -536,107 +536,107 @@ export const useIO = create<IOStore>((set, get) => ({
     })
 
     try {
-    const timeline: TimelineStore = useTimeline.getState()
+      const timeline: TimelineStore = useTimeline.getState()
 
-    const {
-      width,
-      height,
-      durationInMs,
-      segments: timelineSegments,
-      getClap,
-    } = timeline
+      const {
+        width,
+        height,
+        durationInMs,
+        segments: timelineSegments,
+        getClap,
+      } = timeline
 
-    const clap = await getClap()
+      const clap = await getClap()
 
-    if (!clap) {
-      throw new Error(`cannot save a clap.. if there is no clap`)
-    }
+      if (!clap) {
+        throw new Error(`cannot save a clap.. if there is no clap`)
+      }
 
-    const ignoreThisVideoSegmentId = (await getFinalVideo(clap))?.id || ''
+      const ignoreThisVideoSegmentId = (await getFinalVideo(clap))?.id || ''
 
-    const segments: ExportableSegment[] = timelineSegments
-      .map((segment, i) => formatSegmentForExport(segment, i))
-      .filter(
-        ({ id, isExportableToFile }) =>
-          isExportableToFile && id !== ignoreThisVideoSegmentId
-      )
+      const segments: ExportableSegment[] = timelineSegments
+        .map((segment, i) => formatSegmentForExport(segment, i))
+        .filter(
+          ({ id, isExportableToFile }) =>
+            isExportableToFile && id !== ignoreThisVideoSegmentId
+        )
 
-    const videos: FFMPegVideoInput[] = []
-    const images: FFMPegVideoInput[] = []
-    const audios: FFMPegAudioInput[] = []
+      const videos: FFMPegVideoInput[] = []
+      const images: FFMPegVideoInput[] = []
+      const audios: FFMPegAudioInput[] = []
 
-    segments.forEach(
-      ({
-        segment,
-        prefix,
-        filePath,
-        assetUrl,
-        assetSourceType,
-        isExportableToFile,
-      }) => {
-        if (isExportableToFile) {
-          assetUrl = filePath
-          assetSourceType = ClapAssetSource.PATH
+      segments.forEach(
+        ({
+          segment,
+          prefix,
+          filePath,
+          assetUrl,
+          assetSourceType,
+          isExportableToFile,
+        }) => {
+          if (isExportableToFile) {
+            assetUrl = filePath
+            assetSourceType = ClapAssetSource.PATH
 
-          if (filePath.startsWith('video/')) {
-            videos.push({
-              data: base64DataUriToUint8Array(segment.assetUrl),
-              startTimeInMs: segment.startTimeInMs,
-              endTimeInMs: segment.endTimeInMs,
-              durationInSecs: segment.assetDurationInMs / 1000,
-              category: segment.category,
-            })
-          } else if (
-            filePath.startsWith('image/') ||
-            segment.category === ClapSegmentCategory.IMAGE
-          ) {
-            images.push({
-              data: base64DataUriToUint8Array(segment.assetUrl),
-              startTimeInMs: segment.startTimeInMs,
-              endTimeInMs: segment.endTimeInMs,
-              durationInSecs:
-                (segment.endTimeInMs - segment.startTimeInMs) / 1000,
-              category: segment.category,
-            })
-          } else if (
-            filePath.startsWith('music/') ||
-            filePath.startsWith('sound/') ||
-            filePath.startsWith('dialogue/')
-          ) {
-            audios.push({
-              data: base64DataUriToUint8Array(segment.assetUrl),
-              startTimeInMs: segment.startTimeInMs,
-              endTimeInMs: segment.endTimeInMs,
-              durationInSecs: segment.assetDurationInMs / 1000,
-              category: segment.category,
-            })
+            if (filePath.startsWith('video/')) {
+              videos.push({
+                data: base64DataUriToUint8Array(segment.assetUrl),
+                startTimeInMs: segment.startTimeInMs,
+                endTimeInMs: segment.endTimeInMs,
+                durationInSecs: segment.assetDurationInMs / 1000,
+                category: segment.category,
+              })
+            } else if (
+              filePath.startsWith('image/') ||
+              segment.category === ClapSegmentCategory.IMAGE
+            ) {
+              images.push({
+                data: base64DataUriToUint8Array(segment.assetUrl),
+                startTimeInMs: segment.startTimeInMs,
+                endTimeInMs: segment.endTimeInMs,
+                durationInSecs:
+                  (segment.endTimeInMs - segment.startTimeInMs) / 1000,
+                category: segment.category,
+              })
+            } else if (
+              filePath.startsWith('music/') ||
+              filePath.startsWith('sound/') ||
+              filePath.startsWith('dialogue/')
+            ) {
+              audios.push({
+                data: base64DataUriToUint8Array(segment.assetUrl),
+                startTimeInMs: segment.startTimeInMs,
+                endTimeInMs: segment.endTimeInMs,
+                durationInSecs: segment.assetDurationInMs / 1000,
+                category: segment.category,
+              })
+            }
           }
         }
-      }
-    )
+      )
 
-    // Combine videos and images
-    const videoInputs = [...videos, ...images].sort(
-      (a, b) => a.startTimeInMs - b.startTimeInMs
-    )
+      // Combine videos and images
+      const videoInputs = [...videos, ...images].sort(
+        (a, b) => a.startTimeInMs - b.startTimeInMs
+      )
 
-    const fullVideo = await createFullVideo(
-      videoInputs,
-      audios,
-      width,
-      height,
-      durationInMs,
-      (progress, message) => {
-        task.setProgress({
-          message: `Rendering video (${Math.round(progress)}%)`,
-          value: progress * 0.9,
-        })
-      }
-    )
+      const fullVideo = await createFullVideo(
+        videoInputs,
+        audios,
+        width,
+        height,
+        durationInMs,
+        (progress, message) => {
+          task.setProgress({
+            message: `Rendering video (${Math.round(progress)}%)`,
+            value: progress * 0.9,
+          })
+        }
+      )
 
-    const videoBlob = new Blob([fullVideo], { type: 'video/mp4' })
-    saveAnyFile(videoBlob, 'my_project.mp4')
-    task.success()
+      const videoBlob = new Blob([fullVideo], { type: 'video/mp4' })
+      saveAnyFile(videoBlob, 'my_project.mp4')
+      task.success()
     } catch (err) {
       console.error(err)
       task.fail(`${err || 'unknown error'}`)
