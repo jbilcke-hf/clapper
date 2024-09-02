@@ -47,13 +47,14 @@ export function AssistantWorkflows() {
           ai&nbsp;assistant
         </Tag>
         <div className={cn(`flex flex-row items-center space-x-2`)}>
-          {workflow?.provider && (
-            <ClapWorkflowProviderLogo
-              provider={workflow?.provider}
-              height={18}
-              className={cn(`rounded-full`)}
-            />
-          )}
+          {workflow?.provider &&
+            workflow?.provider !== ClapWorkflowProvider.NONE && (
+              <ClapWorkflowProviderLogo
+                provider={workflow?.provider}
+                height={18}
+                className={cn(`rounded-full`)}
+              />
+            )}
           <div>{workflow?.label || 'None'}</div>
         </div>
       </MenubarSubTrigger>

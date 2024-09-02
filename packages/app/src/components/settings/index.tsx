@@ -67,7 +67,7 @@ export function SettingsDialog() {
                 <Button
                   key={key}
                   variant="ghost"
-                  className="flex w-full flex-col items-end text-right text-base xl:text-lg font-thin capitalize text-neutral-300 border-0 bg-transparent"
+                  className="flex w-full flex-col items-end border-0 bg-transparent text-right text-base font-thin capitalize text-neutral-300 xl:text-lg"
                   onClick={() => setShowSettings(key as SettingsCategory)}
                 >
                   {panelLabels[key]}
