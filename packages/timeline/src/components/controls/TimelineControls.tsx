@@ -1,8 +1,12 @@
-import { useTimeline } from "@/hooks"
-import { MapControls } from "@react-three/drei"
-import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
-import { clamp } from "@/utils/clamp"
+import { useEffect, useRef } from "react"
+import * as THREE from "three"
 import { useFrame, useThree } from "@react-three/fiber"
+import { MapControls } from "@react-three/drei"
+
+import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
+import { useTimeline } from "@/hooks"
+import { clamp } from "@/utils/clamp"
+
 
 // for doc see:
 // https://threejs.org/docs/index.html?q=controls#examples/en/controls/MapControls
@@ -18,7 +22,66 @@ export function TimelineControls({
   zoomSpeed: number
   zoomDampingFactor: number
 }) {
-  const { size } = useThree()
+  const { size, camera } = useThree()
+  const timelineControls = useTimeline(s => s.timelineControls)
+  const setTimelineControls = useTimeline(s => s.setTimelineControls)
+  const initialPinchDistanceRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (!timelineControls || !camera) return
+
+    const handleTouchStart = (event: TouchEvent) => {
+      if (event.touches.length === 2) {
+        const touch1 = event.touches[0]
+        const touch2 = event.touches[1]
+        initialPinchDistanceRef.current = Math.hypot(
+          touch1.clientX - touch2.clientX,
+          touch1.clientY - touch2.clientY
+        )
+      }
+    }
+
+    const handleTouchMove = (event: TouchEvent) => {
+      if (event.touches.length === 2 && initialPinchDistanceRef.current !== null) {
+        const touch1 = event.touches[0]
+        const touch2 = event.touches[1]
+        const currentDistance = Math.hypot(
+          touch1.clientX - touch2.clientX,
+          touch1.clientY - touch2.clientY
+        )
+        const delta = (currentDistance - initialPinchDistanceRef.current) * 0.01
+
+        // Manually adjust the camera zoom
+        const newZoom = camera.zoom * (1 + delta * zoomSpeed)
+        camera.zoom = clamp(newZoom, minZoom, maxZoom)
+        camera.updateProjectionMatrix()
+
+        // Update the controls target and position
+        if (timelineControls.target && timelineControls.object) {
+          const zoomChange = camera.zoom / timelineControls.object.zoom
+          timelineControls.target.sub(timelineControls.object.position).multiplyScalar(1 - zoomChange).add(timelineControls.object.position)
+          timelineControls.object.zoom = camera.zoom
+          timelineControls.object.updateProjectionMatrix()
+          timelineControls.update()
+        }
+
+        initialPinchDistanceRef.current = currentDistance
+      }
+    }
+
+    const domElement = timelineControls.domElement
+
+    if (!domElement) { return }
+
+    domElement.addEventListener('touchstart', handleTouchStart, { passive: false })
+    domElement.addEventListener('touchmove', handleTouchMove, { passive: false })
+
+    return () => {
+      domElement.removeEventListener('touchstart', handleTouchStart)
+      domElement.removeEventListener('touchmove', handleTouchMove)
+    }
+  }, [timelineControls, camera, zoomSpeed, minZoom, maxZoom])
+
 
   // this controls the top grid ruler bar and makes it sticky
   // this works by controlling the render priority, and taking over whatever the Controls might have set
@@ -127,8 +190,7 @@ export function TimelineControls({
     gl.render(scene, camera)
   }, 1)
 
-  
-  const setTimelineControls = useTimeline(s => s.setTimelineControls)
+
   // TODO: we should create a new class extending from MapControls
   // and add some custom code to put limits, to avoid going out of bounds
   // I also don't like how scroll is working on macOS, because the mouse wheel
@@ -142,7 +204,10 @@ export function TimelineControls({
         }
       }}
       makeDefault
+
+      // I don't remember why we put enabled false here
       enabled={false}
+
       // minDistance={10}
       // maxDistance={10}
       minZoom={minZoom}
@@ -173,6 +238,11 @@ export function TimelineControls({
       // reverseOrbit: boolean;
       // reverseHorizontalOrbit: boolean;
       // reverseVerticalOrbit: boolean;
+
+      touches={{
+        ONE: THREE.TOUCH.PAN,
+        TWO: THREE.TOUCH.DOLLY_PAN
+      }}
     />
   );
 };
