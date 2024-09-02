@@ -2,8 +2,16 @@ import { ClapWorkflowProvider } from '@aitube/clap'
 
 import { ComfyIcuAccelerator } from '@aitube/clapper-services'
 
-export const ClapWorkflowProviderShortNames = {
+export const ClapWorkflowProviderShortNames: Record<
+  ClapWorkflowProvider,
+  string
+> = {
   [ClapWorkflowProvider.BUILTIN]: 'Clapper',
+  [ClapWorkflowProvider.CIVITAI]: 'Civitai',
+  [ClapWorkflowProvider.HOTSHOT]: 'Hotshot',
+  [ClapWorkflowProvider.LETZAI]: 'Letz.ai',
+  [ClapWorkflowProvider.PIAPI]: 'PiApi',
+  [ClapWorkflowProvider.BIGMODEL]: 'BigModel',
   [ClapWorkflowProvider.ANTHROPIC]: 'Anthropic',
   [ClapWorkflowProvider.COHERE]: 'Cohere',
   [ClapWorkflowProvider.COMFYUI]: 'ComfyUI',

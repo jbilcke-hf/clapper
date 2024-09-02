@@ -11,7 +11,7 @@ export function parseWorkflow(
   category: ClapWorkflowCategory
 ): ClapWorkflow {
   const noWorkflow: ClapWorkflow = {
-    id: `empty://${category}`,
+    id: `none://${category}`,
     label: 'No workflow',
     description: '',
     tags: [],
