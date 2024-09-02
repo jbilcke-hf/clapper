@@ -23,6 +23,17 @@ export function useQueryStringParams(
     imageStrategy: RenderingStrategy.ON_DEMAND,
   }
 ) {
+
+  /**
+   * 
+   * TODO:
+   * 
+   * Use nuqs maybe?
+   * 
+   * https://nuqs.47ng.com
+   * 
+   * 
+   */
   const searchParams = useSearchParams()
 
   const prompt = (searchParams?.get('prompt') as string) || defaultPrompt
