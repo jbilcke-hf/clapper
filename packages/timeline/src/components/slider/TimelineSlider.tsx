@@ -77,6 +77,8 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
   const [windowEnd, setWindowEnd] = useState(slidingWindowRangeThumbEndTimeInMs);
   const [playbackCursor, setPlaybackCursor] = useState(currentPlaybackCursorPosition);
   const [showOverlay, setShowOverlay] = useState(false);
+  const [lastTouchX, setLastTouchX] = useState(0);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   const drawEvents = useCallback(() => {
     const canvas = canvasRef.current;
@@ -108,42 +110,6 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
 
   const memoizedEvents = useMemo(() => events, [events]);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) { return; }
-  
-    if (useTimeline.getState().tracks.length) { return }
-
-    const x = e.clientX - rect.left;
-    const cursorX = ((playbackCursor - minTimeInMs) / (maxTimeInMs - minTimeInMs)) * rect.width;
-  
-    if (Math.abs(x - cursorX) <= playbackCursorPositionWidthInPx * 2 && allowPlaybackCursorToBeDragged) {
-      setIsDraggingCursor(true);
-    } else {
-      setIsDraggingWindow(true);
-      const clickedTime = minTimeInMs + (x / rect.width) * (maxTimeInMs - minTimeInMs);
-      const windowWidth = windowEnd - windowStart;
-      let newStart = clickedTime - windowWidth / 2;
-      let newEnd = clickedTime + windowWidth / 2;
-  
-      if (newStart < minTimeInMs) {
-        newStart = minTimeInMs;
-        newEnd = newStart + windowWidth;
-      } else if (newEnd > maxTimeInMs) {
-        newEnd = maxTimeInMs;
-        newStart = newEnd - windowWidth;
-      }
-  
-      setWindowStart(newStart);
-      setWindowEnd(newEnd);
-      onSlidingWindowRangeThumbUpdate({ slidingWindowRangeThumbStartTimeInMs: newStart, slidingWindowRangeThumbEndTimeInMs: newEnd });
-    }
-  
-    setDragStartX(e.clientX);
-    setShowOverlay(true);
-  };
-  
-
   const setCanvasSize = useCallback(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -163,18 +129,28 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
     }
   }, []);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDraggingWindow && !isDraggingCursor) return;
-    if (useTimeline.getState().tracks.length) { return }
+  useEffect(() => {
+    setCanvasSize();
+    drawEvents();
+  }, [setCanvasSize, drawEvents, memoizedEvents, windowStart, windowEnd, playbackCursor]);
 
-    const containerWidth = containerRef.current?.clientWidth || 1;
-    const deltaX = e.clientX - dragStartX;
-  
-    if (isDraggingWindow) {
+  const handleStart = useCallback((clientX: number) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    if (!useTimeline.getState().tracks.length) return;
+
+    const x = clientX - rect.left;
+    const cursorX = ((playbackCursor - minTimeInMs) / (maxTimeInMs - minTimeInMs)) * rect.width;
+
+    if (Math.abs(x - cursorX) <= playbackCursorPositionWidthInPx * 2 && allowPlaybackCursorToBeDragged) {
+      setIsDraggingCursor(true);
+    } else {
+      setIsDraggingWindow(true);
+      const clickedTime = minTimeInMs + (x / rect.width) * (maxTimeInMs - minTimeInMs);
       const windowWidth = windowEnd - windowStart;
-      let newStart = windowStart + (deltaX / containerWidth) * (maxTimeInMs - minTimeInMs);
-      let newEnd = newStart + windowWidth;
-  
+      let newStart = clickedTime - windowWidth / 2;
+      let newEnd = clickedTime + windowWidth / 2;
+
       if (newStart < minTimeInMs) {
         newStart = minTimeInMs;
         newEnd = newStart + windowWidth;
@@ -182,7 +158,36 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
         newEnd = maxTimeInMs;
         newStart = newEnd - windowWidth;
       }
-  
+
+      setWindowStart(newStart);
+      setWindowEnd(newEnd);
+      onSlidingWindowRangeThumbUpdate({ slidingWindowRangeThumbStartTimeInMs: newStart, slidingWindowRangeThumbEndTimeInMs: newEnd });
+    }
+
+    setDragStartX(clientX);
+    setLastTouchX(clientX);
+    setShowOverlay(true);
+  }, [allowPlaybackCursorToBeDragged, maxTimeInMs, minTimeInMs, onSlidingWindowRangeThumbUpdate, playbackCursor, playbackCursorPositionWidthInPx, windowEnd, windowStart]);
+  const handleMove = useCallback((clientX: number) => {
+    if (!isDraggingWindow && !isDraggingCursor) return;
+    if (!useTimeline.getState().tracks.length) return;
+
+    const containerWidth = containerRef.current?.clientWidth || 1;
+    const deltaX = clientX - (isTouchDevice ? lastTouchX : dragStartX);
+
+    if (isDraggingWindow) {
+      const windowWidth = windowEnd - windowStart;
+      let newStart = windowStart + (deltaX / containerWidth) * (maxTimeInMs - minTimeInMs);
+      let newEnd = newStart + windowWidth;
+
+      if (newStart < minTimeInMs) {
+        newStart = minTimeInMs;
+        newEnd = newStart + windowWidth;
+      } else if (newEnd > maxTimeInMs) {
+        newEnd = maxTimeInMs;
+        newStart = newEnd - windowWidth;
+      }
+
       setWindowStart(newStart);
       setWindowEnd(newEnd);
       onSlidingWindowRangeThumbUpdate({ slidingWindowRangeThumbStartTimeInMs: newStart, slidingWindowRangeThumbEndTimeInMs: newEnd });
@@ -192,37 +197,79 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
       setPlaybackCursor(newCursor);
       onPlaybackCursorUpdate({ playbackCursorPositionInMs: newCursor });
     }
-  
-    setDragStartX(e.clientX);
-  }, [isDraggingWindow, isDraggingCursor, dragStartX, windowStart, windowEnd, playbackCursor, minTimeInMs, maxTimeInMs, onSlidingWindowRangeThumbUpdate, onPlaybackCursorUpdate]);
-  
-    
-  useEffect(() => {
-    setCanvasSize();
-    drawEvents();
-  }, [setCanvasSize, drawEvents, memoizedEvents, windowStart, windowEnd, playbackCursor]);
 
-  const handleMouseUp = useCallback(() => {
+    if (isTouchDevice) {
+      setLastTouchX(clientX);
+    } else {
+      setDragStartX(clientX);
+    }
+  }, [dragStartX, isDraggingCursor, isDraggingWindow, isTouchDevice, lastTouchX, maxTimeInMs, minTimeInMs, onPlaybackCursorUpdate, onSlidingWindowRangeThumbUpdate, playbackCursor, windowEnd, windowStart]);
+
+  const handleEnd = useCallback(() => {
     setIsDraggingWindow(false);
     setIsDraggingCursor(false);
     setShowOverlay(false);
+    setLastTouchX(0);
   }, []);
 
-  useEffect(() => {
-    if (showOverlay) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+  // Mouse event handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsTouchDevice(false);
+    handleStart(e.clientX);
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isTouchDevice) {
+      handleMove(e.clientX);
     }
+  }, [handleMove, isTouchDevice]);
 
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [showOverlay, handleMouseMove, handleMouseUp]);
+  const handleMouseUp = useCallback(() => {
+    if (!isTouchDevice) {
+      handleEnd();
+    }
+  }, [handleEnd, isTouchDevice]);
 
+// Touch event handlers
+const handleTouchStart = (e: React.TouchEvent) => {
+  setIsTouchDevice(true);
+  handleStart(e.touches[0].clientX);
+};
+
+const handleTouchMove = useCallback((e: TouchEvent) => {
+  if (isTouchDevice) {
+    e.preventDefault(); // Prevent scrolling
+    handleMove(e.touches[0].clientX);
+  }
+}, [handleMove, isTouchDevice]);
+
+const handleTouchEnd = useCallback(() => {
+  if (isTouchDevice) {
+    handleEnd();
+  }
+}, [handleEnd, isTouchDevice]);
+
+
+useEffect(() => {
+  if (showOverlay) {
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd);
+  } else {
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+    document.removeEventListener('touchmove', handleTouchMove);
+    document.removeEventListener('touchend', handleTouchEnd);
+  }
+
+  return () => {
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+    document.removeEventListener('touchmove', handleTouchMove);
+    document.removeEventListener('touchend', handleTouchEnd);
+  };
+}, [showOverlay, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
   // Update state when props change
   useEffect(() => {
@@ -236,7 +283,7 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
 
   const handleWheel = (e: React.WheelEvent) => {
     if (!allowSlidingWindowRangeThumbResizeOnMouseWheel) return;
-    if (useTimeline.getState().tracks.length) { return }
+    if (!useTimeline.getState().tracks.length) { return }
 
     const delta = e.deltaY * mouseWheelSensibility;
     const windowWidth = windowEnd - windowStart;
@@ -261,7 +308,8 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
   const handleDoubleClick = (e: React.MouseEvent) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
-    if (useTimeline.getState().tracks.length) { return }
+
+    if (!useTimeline.getState().tracks.length) { return }
 
     const x = e.clientX - rect.left;
     const clickedTime = minTimeInMs + (x / rect.width) * (maxTimeInMs - minTimeInMs);
@@ -278,7 +326,7 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
       newEnd = maxTimeInMs;
       newStart = newEnd - windowWidth;
     }
-  
+
     setWindowStart(newStart);
     setWindowEnd(newEnd);
     onSlidingWindowRangeThumbUpdate({ slidingWindowRangeThumbStartTimeInMs: newStart, slidingWindowRangeThumbEndTimeInMs: newEnd });
@@ -291,12 +339,13 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
   
   return (
     <div
-      ref={containerRef}
-      className={`relative ${className}`}
-      onMouseDown={handleMouseDown}
-      onWheel={handleWheel}
-      onDoubleClick={handleDoubleClick}
-      style={{ cursor: 'default' }}
+    ref={containerRef}
+    className={`relative pointer-events-auto ${className}`}
+    onMouseDown={handleMouseDown}
+    onTouchStart={handleTouchStart}
+    onWheel={handleWheel}
+    onDoubleClick={handleDoubleClick}
+    style={{ cursor: 'default', touchAction: 'none' }}
     >
       <canvas
         ref={canvasRef}
