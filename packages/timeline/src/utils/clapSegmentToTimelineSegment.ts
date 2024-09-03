@@ -2,6 +2,7 @@ import { ClapOutputType, ClapSegment } from "@aitube/clap"
 
 import { SegmentEditionStatus, SegmentVisibility, TimelineSegment } from "@/types"
 import { getAudioBuffer } from "./getAudioBuffer"
+import { getSegmentColorScheme } from "./getSegmentColorScheme"
 
 export async function clapSegmentToTimelineSegment(clapSegment: ClapSegment): Promise<TimelineSegment> {
 
@@ -33,6 +34,7 @@ export async function clapSegmentToTimelineSegment(clapSegment: ClapSegment): Pr
 
   if (!segment.editionStatus) { segment.editionStatus = SegmentEditionStatus.EDITABLE }
 
+  segment.colors = getSegmentColorScheme(segment)
 
   if (!segment.audioBuffer) {
     if (segment.outputType === ClapOutputType.AUDIO) {

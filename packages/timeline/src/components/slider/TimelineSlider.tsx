@@ -1,13 +1,5 @@
-import { useTimeline } from '@/index';
+import { TimelineSegment, useTimeline } from '@/index';
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
-
-export interface TimelineSliderEvent {
-  id: string;
-  track: number;
-  startTimeInMs: number;
-  endTimeInMs: number;
-  color: string;
-}
 
 export interface TimelineSliderProps {
   minTimeInMs: number;
@@ -25,9 +17,9 @@ export interface TimelineSliderProps {
   slidingWindowRangeThumbBorderRadiusInPx: number;
   slidingWindowRangeThumbBackgroundColor: string;
   className: string;
-  events?: TimelineSliderEvent[];
-  eventOpacityWhenInsideSlidingWindowRangeThumb: number;
-  eventOpacityWhenOutsideSlidingWindowRangeThumb: number;
+  segments?: TimelineSegment[];
+  segmentOpacityWhenInsideSlidingWindowRangeThumb: number;
+  segmentOpacityWhenOutsideSlidingWindowRangeThumb: number;
   onSlidingWindowRangeThumbUpdate: (update: { 
     slidingWindowRangeThumbStartTimeInMs: number;
     slidingWindowRangeThumbEndTimeInMs: number;
@@ -62,9 +54,9 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
   slidingWindowRangeThumbBorderRadiusInPx,
   slidingWindowRangeThumbBackgroundColor,
   className,
-  events = [],
-  eventOpacityWhenInsideSlidingWindowRangeThumb,
-  eventOpacityWhenOutsideSlidingWindowRangeThumb,
+  segments = [],
+  segmentOpacityWhenInsideSlidingWindowRangeThumb,
+  segmentOpacityWhenOutsideSlidingWindowRangeThumb,
   onSlidingWindowRangeThumbUpdate,
   onPlaybackCursorUpdate,
 }) => {
@@ -90,25 +82,25 @@ const TimelineSlider: React.FC<TimelineSliderProps> = ({
 
     ctx.clearRect(0, 0, width * dpr, height * dpr);
 
-    const totalTracks = Math.max(...events.map(e => e.track), 0) + 1;
+    const totalTracks = Math.max(...segments.map(e => e.track), 0) + 1;
     const trackHeight = height / totalTracks;
 
-    events.forEach(event => {
-      const startX = ((event.startTimeInMs - minTimeInMs) / (maxTimeInMs - minTimeInMs)) * width;
-      const endX = ((event.endTimeInMs - minTimeInMs) / (maxTimeInMs - minTimeInMs)) * width;
-      const y = event.track * trackHeight;
+    segments.forEach(segment => {
+      const startX = ((segment.startTimeInMs - minTimeInMs) / (maxTimeInMs - minTimeInMs)) * width;
+      const endX = ((segment.endTimeInMs - minTimeInMs) / (maxTimeInMs - minTimeInMs)) * width;
+      const y = segment.track * trackHeight;
 
-      ctx.fillStyle = event.color;
+      ctx.fillStyle = segment.colors.backgroundColor;
       ctx.globalAlpha = 
-        (event.startTimeInMs >= windowStart && event.endTimeInMs <= windowEnd)
-          ? eventOpacityWhenInsideSlidingWindowRangeThumb
-          : eventOpacityWhenOutsideSlidingWindowRangeThumb;
+        (segment.startTimeInMs >= windowStart && segment.endTimeInMs <= windowEnd)
+          ? segmentOpacityWhenInsideSlidingWindowRangeThumb
+          : segmentOpacityWhenOutsideSlidingWindowRangeThumb;
       
       ctx.fillRect(startX, y, endX - startX, trackHeight);
     });
-  }, [events, minTimeInMs, maxTimeInMs, windowStart, windowEnd, eventOpacityWhenInsideSlidingWindowRangeThumb, eventOpacityWhenOutsideSlidingWindowRangeThumb]);
+  }, [segments, minTimeInMs, maxTimeInMs, windowStart, windowEnd, segmentOpacityWhenInsideSlidingWindowRangeThumb, segmentOpacityWhenOutsideSlidingWindowRangeThumb]);
 
-  const memoizedEvents = useMemo(() => events, [events]);
+  const memoizedEvents = useMemo(() => segments, [segments]);
 
   const setCanvasSize = useCallback(() => {
     const canvas = canvasRef.current;

@@ -49,6 +49,21 @@ const segment: TimelineSegment = {
   isGrabbedOnLeftHandle: false,
   isGrabbedOnRightHandle: false,
   editionStatus: SegmentEditionStatus.EDITABLE,
+  colors: {
+    baseHue: 0,
+    baseSaturation: 0,
+    baseLightness: 0,
+    backgroundColor: '',
+    backgroundColorHover: '',
+    backgroundColorDisabled: '',
+    foregroundColor: '',
+    borderColor: '',
+    textColor: '',
+    textColorHover: '',
+    waveformLineSpacing: 0,
+    waveformGradientStart: 0,
+    waveformGradientEnd: 0
+  },
 }
 
 useTimeline.setState({

@@ -69,6 +69,10 @@ export type BrowserOnlySegmentData = {
   // Cache for textures
   textures: Record<string, THREE.Texture>
 
+  // pre-computed color scheme
+  // (I've added this cache after doing perf analysis)
+  colors: ClapSegmentColorScheme
+
   /**
    * the following fields have been added to this type only very recently
    * and their implementation is not finished,
@@ -264,7 +268,6 @@ export type TimelineStoreModifiers = {
   setVisibleSegments: (visibleSegments?: TimelineSegment[]) => void
   getCellHeight: (trackNumber?: number) => number
   getVerticalCellPosition: (start: number, end: number) => number
-  getSegmentColorScheme: (segment: TimelineSegment) => ClapSegmentColorScheme
   setHoveredSegment: (params?: {
     hoveredSegment?: TimelineSegment
     area?: SegmentArea 

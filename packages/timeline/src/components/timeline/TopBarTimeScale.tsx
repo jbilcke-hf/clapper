@@ -1,21 +1,19 @@
 import React, { useEffect, useMemo, useRef } from "react"
-
+import { useThree } from "@react-three/fiber"
 import { Plane, Text } from "@react-three/drei"
 
-import {
-useTimeline
-} from "@/hooks"
-
+import { useTimeline } from "@/hooks"
 import { useTimeScaleGraduations } from "@/hooks/useTimeScaleGraduations"
 import { formatTimestamp } from "@/utils/formatTimestamp"
 
 import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
-import { useThree } from "@react-three/fiber"
 
 export function TopBarTimeScale() {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { size } = useThree()
+  const containerWidth = useTimeline(s => s.containerWidth)
+
+  const { size, camera } = useThree()
 
   const jumpAt = useTimeline(s => s.jumpAt)
   const togglePlayback = useTimeline(s => s.togglePlayback)
@@ -153,7 +151,26 @@ export function TopBarTimeScale() {
         ))}
       </group>
       <group position={[0, 0, 0]} visible={!isResizing}>
-        {timeScaleGraduations.filter((_, idx) => (idx * cellWidth) < maxWidth).map((lineGeometry, idx) => (
+        {timeScaleGraduations
+          .filter((_, idx) => (idx * cellWidth) < maxWidth)
+          .map((lineGeometry, idx) => {
+            
+            if (
+              // Hide text if it's too close to others or out of view
+              (cellWidth <= 4 && idx % 10 !== 0) || 
+              (cellWidth <= 40 && idx % unit !== 0) ||
+              idx === 0 // Always hide the 0
+
+              // TODO: those need more work
+              // ||
+              // (idx * cellWidth) < camera.position.x - size.width / 2 - cellWidth || // Out of view on the left
+              // (idx * cellWidth) > camera.position.x + size.width / 2 + cellWidth // Out of view on the right
+            ) {
+              return null
+            }
+            
+
+            return (
           <Text
             key={idx}
             position={[
@@ -179,6 +196,7 @@ export function TopBarTimeScale() {
             // so you will have to change the "Arial" or "bold Arial"
             // in the function which computes a character's width
             fontWeight={200}
+            /*
             visible={
               // always hide the 0
               idx === 0
@@ -194,6 +212,7 @@ export function TopBarTimeScale() {
 
               : false
             }
+              */
           >
             {
             formatTimestamp(
@@ -204,7 +223,8 @@ export function TopBarTimeScale() {
                 milliseconds: cellWidth > 20,
             })}
           </Text>
-        ))}
+            )
+          }).filter(x => x)}
       </group>
     </>
   ), [
@@ -215,6 +235,7 @@ export function TopBarTimeScale() {
     contentWidth,
     cellWidth,
     unit,
+    containerWidth,
     formatTimestamp,
     theme.topBarTimeScale.backgroundColor,
     theme.topBarTimeScale.lineColor,
@@ -236,9 +257,10 @@ export function TopBarTimeScale() {
 
         const disableWheel = true
         if (disableWheel) {
-        console.log(`user tried to change the horizontal scale, but it is disabled due to rescaling bugs (@Julian fix this!)`)
-        e.stopPropagation()
-        return false
+          console.log(
+            `zoom in/out is currently disabled, we need to update the min and max values and check other redrawing routines (see https://github.com/jbilcke-hf/clapper/issues/47)`)
+          e.stopPropagation()
+          return false
         }
 
         const wheelFactor = 0.3
