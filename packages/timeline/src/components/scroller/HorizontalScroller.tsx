@@ -1,11 +1,19 @@
+import { useMemo } from "react"
+
 import { useTimeline } from "@/hooks/useTimeline"
+import { getSegmentColorScheme } from "@/utils/getSegmentColorScheme"
+
 
 import TimelineSlider from "../slider/TimelineSlider"
 
 export function HorizontalScroller() {
   const theme = useTimeline(s => s.theme)
 
+  const containerWidth = useTimeline(s => s.containerWidth)
+
   const segments = useTimeline(s => s.segments)
+
+  const atLeastOneSegmentChanged = useTimeline(s => s.atLeastOneSegmentChanged)
 
   const timelineCamera = useTimeline(s => s.timelineCamera)
   const timelineControls = useTimeline(s => s.timelineControls)
@@ -26,33 +34,17 @@ export function HorizontalScroller() {
   const setScrollX = useTimeline(s => s.setScrollX)
   const contentWidth = useTimeline(s => s.contentWidth)
 
-  const getSegmentColorScheme = useTimeline(s => s.getSegmentColorScheme)
-
+  const cachedSegments = useMemo(() => segments, [atLeastOneSegmentChanged, containerWidth, contentWidth])
+  
   if (!timelineCamera || !timelineControls) { return null }
 
+  // TODO: we need to be able to change the zoom level from the horizontal scroller
   const handleZoomChange = (newZoom: number) => {
     setHorizontalZoomLevel(newZoom)
   }
 
   return (
     <div className="flex flex-row items-center w-full">
-      {/*
-      PREVIOUS COMPONENT, NOW OBSOLETE:
-      <HorizontalSlider
-        defaultValue={[rangeStart, rangeEnd]} 
-        min={0}
-        max={width}
-        step={1}
-        value={[rangeStart, rangeEnd]}
-        onValueChange={(newRange: number[]) => {
-          handleTimelinePositionChange(newRange[0])
-        }}
-        onWheel={(e) => {
-          // handleZoomChange(cellWidth + e.deltaY)
-        }}
-      />
-      */}
-
       <TimelineSlider
         minTimeInMs={0}
         maxTimeInMs={durationInMs}
@@ -69,15 +61,9 @@ export function HorizontalScroller() {
         slidingWindowRangeThumbBorderRadiusInPx={2}
         slidingWindowRangeThumbBackgroundColor="rgba(0,123,123,0.2)"
         className="w-full h-14"
-        events={segments.map(s => ({
-          id: s.id,
-          track: s.track,
-          startTimeInMs: s.startTimeInMs,
-          endTimeInMs: s.endTimeInMs,
-          color: getSegmentColorScheme(s).backgroundColor,
-        }))}
-        eventOpacityWhenInsideSlidingWindowRangeThumb={1.0}
-        eventOpacityWhenOutsideSlidingWindowRangeThumb={0.7}
+        segments={cachedSegments}
+        segmentOpacityWhenInsideSlidingWindowRangeThumb={1.0}
+        segmentOpacityWhenOutsideSlidingWindowRangeThumb={0.7}
         onSlidingWindowRangeThumbUpdate={({
           slidingWindowRangeThumbStartTimeInMs,
           slidingWindowRangeThumbEndTimeInMs

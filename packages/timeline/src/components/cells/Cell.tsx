@@ -1,4 +1,4 @@
-import { Suspense } from "react"
+import { Suspense, useMemo } from "react"
 import { a } from "@react-spring/three"
 import { ClapSegmentCategory } from "@aitube/clap"
 
@@ -17,6 +17,8 @@ import { useThree } from "@react-three/fiber"
 import { SegmentArea } from "@/types/timeline"
 import { SegmentIcon } from "../icons/SegmentIcon"
 
+import { getSegmentColorScheme } from "@/utils/getSegmentColorScheme"
+
 export function Cell({
   segment: s
 }: {
@@ -31,8 +33,7 @@ export function Cell({
   // this is only used to react to changes in the segment
   const segmentChanged = useSegmentChanges(s)
   
-  const getSegmentColorScheme = useTimeline(s => s.getSegmentColorScheme)
-  const colorScheme = getSegmentColorScheme(s)
+  const colorScheme = useMemo(() => getSegmentColorScheme(s), [segmentChanged])
 
   const cellWidth = useTimeline((s) => s.cellWidth)
   const getCellHeight = useTimeline((s) => s.getCellHeight)

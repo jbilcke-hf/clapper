@@ -26,5 +26,7 @@ export function timelineSegmentToClapSegment(timelineSegment: TimelineSegment): 
   delete segment.isPlaying
   delete segment.editionStatus
 
+  delete segment.colors
+
   return segment as ClapSegment
 }

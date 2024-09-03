@@ -15,6 +15,7 @@ export const useTimeScaleGraduations = ({
 }: {
   unit: number
 }) => {
+  const containerWidth = useTimeline(s => s.containerWidth)
   const cellWidth = useTimeline(s => s.cellWidth)
   const nbMaxShots = useTimeline(s => s.nbMaxShots)
   const contentWidth = useTimeline((s) => s.contentWidth)
