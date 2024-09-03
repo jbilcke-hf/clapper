@@ -20,7 +20,13 @@ export const useAudio = create<AudioStore>((set, get) => ({
     if (isPlaying) {
       return
     }
-    currentlyPlaying.forEach((p) => p.sourceNode.start())
+    currentlyPlaying.forEach((p) => {
+      try {
+        p.sourceNode.start()
+        } catch (err) {
+          // that will throw for the "cannot start more than once" thing
+        }
+      })
   },
   stop: () => {
     // console.log("useAudio: stop()")
@@ -29,7 +35,11 @@ export const useAudio = create<AudioStore>((set, get) => ({
       return
     }
     currentlyPlaying.forEach((p) => {
-      p.sourceNode.stop()
+      try {
+        p.sourceNode.stop()
+      } catch (err) {
+        // yeah
+      }
     })
     // no need to update currentlyPlaying, it will be automatic
     // see function playAudioSegment(), below the "source.sourceNode.onended = () => {"
