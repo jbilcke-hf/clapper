@@ -19,7 +19,10 @@ export function Monitor() {
     <div
       ref={ref as any}
       className={cn(
-        `flex h-full w-full flex-row items-center justify-between overflow-hidden px-2 transition-colors`
+        `flex h-full w-full`,
+        `flex-row items-center justify-between`,
+        `overflow-hidden px-2 pb-0.5`,
+        `transition-colors`
       )}
       style={{
         background: theme?.monitorBgColor || theme?.defaultBgColor || '',
@@ -49,7 +52,13 @@ export function Monitor() {
           </div>
         )}
       </div>
-      <VUMeter className={cn(`ml-1 h-[70%] w-8`)} />
+      <div
+        className={cn(
+          `flex h-full flex-col items-center justify-between overflow-hidden`
+        )}
+      >
+        <VUMeter className={cn(`mt-12 ml-1 mr-2 h-[80%] w-8`)} />
+      </div>
     </div>
   )
 }

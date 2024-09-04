@@ -35,7 +35,7 @@ export function PlayerControls({ className }: { className?: string }) {
       className={cn(
         `flex flex-row items-center justify-between @container`,
         `transition-all duration-200 ease-out`,
-        `w-full max-w-[800px] space-x-2 py-2 @md:w-[50%]`,
+        `w-full max-w-[500px] @md:w-[50%]`,
         className
       )}
     >
@@ -46,8 +46,8 @@ export function PlayerControls({ className }: { className?: string }) {
       <div
         className={cn(
           `flex flex-row items-center justify-between`,
-          `transition-all duration-200 ease-out`,
-          `h-18 w-32 space-x-2 @lg:w-36 @2xl:w-40`
+          `transition-all duration-100 ease-out`,
+          `h-18`
         )}
       >
         <IconSwitch
