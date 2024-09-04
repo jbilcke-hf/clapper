@@ -23,10 +23,10 @@ export const useAudio = create<AudioStore>((set, get) => ({
     currentlyPlaying.forEach((p) => {
       try {
         p.sourceNode.start()
-        } catch (err) {
-          // that will throw for the "cannot start more than once" thing
-        }
-      })
+      } catch (err) {
+        // that will throw for the "cannot start more than once" thing
+      }
+    })
   },
   stop: () => {
     // console.log("useAudio: stop()")

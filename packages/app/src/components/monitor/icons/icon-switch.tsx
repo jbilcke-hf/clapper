@@ -75,7 +75,7 @@ export function IconSwitch({
           'scale-100',
           `transition-all duration-100 ease-in-out`,
           'group-hover:scale-110',
-          `h-12 w-12`,
+          `h-10 w-10`,
           {
             'h-9 w-9': size === 'sm',
           }

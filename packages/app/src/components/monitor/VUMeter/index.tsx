@@ -1,31 +1,47 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { useAudio } from '@/services'
+import { cn } from '@/lib/utils/cn'
 
-export function VUMeter({ className = 'w-10 h-full' }: { className?: string }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+const BOX_COUNT = 80
+const BOX_COUNT_RED = 3
+const BOX_COUNT_YELLOW = 8
+const GRADUATIONS = [0, -5, -10, -15, -20, -30, -40, -50]
+
+const graduations = (
+  <div className="flex h-full flex-col justify-between text-right text-3xs text-white/25">
+    {GRADUATIONS.map((db) => (
+      <div key={db}>{db}</div>
+    ))}
+  </div>
+)
+
+const Meter = React.forwardRef<HTMLDivElement>(({}, ref) => (
+  <div ref={ref} className="flex h-full w-full flex-grow flex-col gap-[1px]">
+    {[...Array(BOX_COUNT)].map((_, index) => (
+      <div
+        key={index}
+        className={cn(
+          `w-full flex-grow duration-75`,
+          index < BOX_COUNT_RED
+            ? 'bg-red-700/100'
+            : index < BOX_COUNT_RED + BOX_COUNT_YELLOW
+              ? 'bg-yellow-700/100'
+              : 'bg-lime-700/100'
+        )}
+      />
+    ))}
+  </div>
+))
+
+Meter.displayName = 'Meter'
+
+export function VUMeter({ className = 'w-24 h-full' }) {
   const audioContext = useAudio((s) => s.audioContext)
   const currentlyPlaying = useAudio((s) => s.currentlyPlaying)
-  const [meterValues, setMeterValues] = useState({ left: 0, right: 0 })
-
-  const boxCount = 40
-  const boxCountRed = 3
-  const boxCountYellow = 8
-  const boxGapFraction = 0.15
-  const columnGap = 20
-  const leftMargin = 18
-  const leftTextMargin = 18
-
-  const redOn = 'rgba(255,47,30,0.3)'
-  const redOff = 'rgba(64,12,8,0.4)'
-  const yellowOn = 'rgba(255,215,5,0.3)'
-  const yellowOff = 'rgba(64,53,0,0.4)'
-  const greenOn = 'rgba(53,255,30,0.3)'
-  const greenOff = 'rgba(13,64,8,0.4)'
-
-  const graduations = [0, -5, -10, -15, -20, -30, -40, -50]
-
-  // vu-meter sensitivity
-  const sensitivity = 2.2
+  const leftMeterRef = useRef<HTMLDivElement>(null)
+  const rightMeterRef = useRef<HTMLDivElement>(null)
+  const prevActiveBoxesRef = useRef({ left: 0, right: 0 })
+  const animationFrameRef = useRef<number>()
 
   useEffect(() => {
     if (!audioContext) return
@@ -45,31 +61,44 @@ export function VUMeter({ className = 'w-10 h-full' }: { className?: string }) {
     splitter.connect(analyserLeft, 0)
     splitter.connect(analyserRight, 1)
 
-    let animationFrameId: number
+    const sensitivity = 2.2
 
     const updateMeter = () => {
+      if (!leftMeterRef.current || !rightMeterRef.current) return
+
       analyserLeft.getByteFrequencyData(dataArrayLeft)
       analyserRight.getByteFrequencyData(dataArrayRight)
-      
-      const averageLeft = dataArrayLeft.reduce((acc, val) => acc + val, 0) / bufferLength
-      const averageRight = dataArrayRight.reduce((acc, val) => acc + val, 0) / bufferLength
-      
-      // Apply sensitivity to the normalized values
+
+      const averageLeft =
+        dataArrayLeft.reduce((acc, val) => acc + val, 0) / bufferLength
+      const averageRight =
+        dataArrayRight.reduce((acc, val) => acc + val, 0) / bufferLength
+
       const normalizedLeft = Math.min(1, (averageLeft / 255) * sensitivity)
       const normalizedRight = Math.min(1, (averageRight / 255) * sensitivity)
-      
-      setMeterValues({
-        left: normalizedLeft,
-        right: normalizedRight
-      })
 
-      animationFrameId = requestAnimationFrame(updateMeter)
+      const activeBoxesLeft = Math.floor(normalizedLeft * BOX_COUNT)
+      const activeBoxesRight = Math.floor(normalizedRight * BOX_COUNT)
+
+      if (activeBoxesLeft !== prevActiveBoxesRef.current.left) {
+        updateMeterDisplay(leftMeterRef.current, activeBoxesLeft)
+        prevActiveBoxesRef.current.left = activeBoxesLeft
+      }
+
+      if (activeBoxesRight !== prevActiveBoxesRef.current.right) {
+        updateMeterDisplay(rightMeterRef.current, activeBoxesRight)
+        prevActiveBoxesRef.current.right = activeBoxesRight
+      }
+
+      animationFrameRef.current = requestAnimationFrame(updateMeter)
     }
 
     updateMeter()
 
     return () => {
-      cancelAnimationFrame(animationFrameId)
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
       analyserLeft.disconnect()
       analyserRight.disconnect()
       splitter.disconnect()
@@ -77,119 +106,28 @@ export function VUMeter({ className = 'w-10 h-full' }: { className?: string }) {
         source.gainNode.disconnect(splitter)
       })
     }
-  }, [audioContext, currentlyPlaying, sensitivity])
+  }, [audioContext, currentlyPlaying])
 
-  // Drawing effect
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
+  const updateMeterDisplay = (element: HTMLDivElement, activeBoxes: number) => {
+    const boxes = element.children
 
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    let width: number,
-      height: number,
-      meterWidth: number,
-      boxHeight: number,
-      boxGapY: number,
-      boxWidth: number,
-      boxGapX: number
-
-    const calculateDimensions = () => {
-      const rect = canvas.getBoundingClientRect()
-      const dpr = window.devicePixelRatio || 1
-      width = rect.width * dpr
-      height = rect.height * dpr
-      canvas.width = width
-      canvas.height = height
-      ctx.scale(dpr, dpr)
-
-      meterWidth = (rect.width - columnGap) / 2
-      boxHeight = rect.height / (boxCount + (boxCount + 1) * boxGapFraction)
-      boxGapY = boxHeight * boxGapFraction
-      boxWidth = meterWidth - boxGapY * 2
-      boxGapX = (meterWidth - boxWidth) / 2
-    }
-
-    const draw = () => {
-      calculateDimensions()
-
-      // Clear the canvas
-      ctx.clearRect(0, 0, width, height)
-
-      // Draw meters
-      drawMeter(ctx, leftMargin, meterValues.left)
-      drawMeter(ctx, meterWidth + columnGap, meterValues.right)
-
-      // Draw graduations
-      drawGraduations(ctx)
-
-      requestAnimationFrame(draw)
-    }
-
-    const drawMeter = (
-      ctx: CanvasRenderingContext2D,
-      xOffset: number,
-      value: number
-    ) => {
-      const activeBoxes = Math.floor(value * boxCount)
-
-      for (let i = 0; i < boxCount; i++) {
-        const id = i + 1 // Box ID from bottom to top
-        const x = xOffset + boxGapX
-        const y = height / window.devicePixelRatio - (i + 1) * (boxHeight + boxGapY) + boxGapY // Y-coordinate from bottom to top
-
-        ctx.beginPath()
-        ctx.rect(x, y, boxWidth, boxHeight)
-
-        if (id <= activeBoxes) {
-          ctx.fillStyle = getBoxColor(boxCount - i, true) // Reverse color mapping
-        } else {
-          ctx.fillStyle = getBoxColor(boxCount - i, false) // Reverse color mapping
-        }
-
-        ctx.fill()
-      }
-    }
-
-    const drawGraduations = (ctx: CanvasRenderingContext2D) => {
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.35)'
-      ctx.font = '9px sans-serif'
-      ctx.textAlign = 'right'
-
-      graduations.forEach((db, index) => {
-        const y = (height / window.devicePixelRatio) * (index / (graduations.length - 1))
-        ctx.fillText(`${db}`, width / window.devicePixelRatio - leftTextMargin, y)
-      })
-    }
-
-    const getBoxColor = (id: number, isActive: boolean) => {
-      if (id <= boxCountRed) {
-        return isActive ? redOn : redOff
-      } else if (id <= boxCountRed + boxCountYellow) {
-        return isActive ? yellowOn : yellowOff
+    for (let i = 0; i < BOX_COUNT; i++) {
+      const box = boxes[BOX_COUNT - 1 - i] as HTMLDivElement
+      if (i < activeBoxes) {
+        box.style.opacity = '1'
       } else {
-        return isActive ? greenOn : greenOff
+        box.style.opacity = '0.6'
       }
     }
-
-    // Initial draw and window resize handler
-    const handleResize = () => {
-      calculateDimensions()
-      draw()
-    }
-
-    handleResize()
-    window.addEventListener('resize', handleResize)
-
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [meterValues])
+  }
 
   return (
-    <div className={`flex items-center justify-center ${className}`}>
-      <canvas ref={canvasRef} className="h-full w-full" />
+    <div className={`flex justify-between ${className}`}>
+      {graduations}
+      <div className="ml-1.5 flex h-full w-full justify-between space-x-1">
+        <Meter ref={leftMeterRef} />
+        <Meter ref={rightMeterRef} />
+      </div>
     </div>
   )
 }
