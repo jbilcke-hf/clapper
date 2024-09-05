@@ -1,4 +1,5 @@
 export { useDebounce } from './useDebounce'
+export { useDebounceFn } from './useDebounceFn'
 export { useOpenFilePicker } from './useOpenFilePicker'
 export { useFullscreenStatus } from './useFullscreenStatus'
 export { useQueryStringParams } from './useQueryStringParams'

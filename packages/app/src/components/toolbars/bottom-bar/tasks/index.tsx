@@ -36,12 +36,13 @@ export function Tasks() {
         <PopoverTrigger
           className={cn(
             `group transition-all duration-100 ease-out`,
+            `flex flex-row items-center justify-center pt-[1px]`,
             nbRunningBackgroundTasks
               ? 'opacity-80 hover:opacity-100'
               : 'opacity-70 hover:opacity-90'
           )}
         >
-          <span className="mr-0.5 text-white/55">
+          <span className="pr-0.5 text-white/55">
             {nbRunningBackgroundTasks || 'no'}
           </span>
           <span className="text-white/40">pending tasks</span>

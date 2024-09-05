@@ -5,8 +5,10 @@ import { useAnimationFrame, useTimeline } from "@/hooks"
 import { useCursorGeometry } from "@/hooks/useCursorGeometry"
 import { leftBarTrackScaleWidth } from "@/constants/themes"
 
+const CURSOR_WIDTH_IN_PX = 2
 
 const SPEED_RESOLUTION = 50 // px/sec
+const MAX_SPEED = 200
 const GRADIENT_EXPONENT = 3
 
 export function Cursor() {
@@ -36,20 +38,22 @@ export function Cursor() {
       const granularSpeed = Math.floor(speed / SPEED_RESOLUTION) * SPEED_RESOLUTION
 
       if (granularSpeed !== lastSpeedRef.current) {
-        const maxSpeed = 200
-        const visibility = Math.min(granularSpeed / maxSpeed, 1)
+        const visibility = Math.min(granularSpeed / MAX_SPEED, 1)
 
         lineMatRefs.current.forEach((mat, idx) => {
           const t = idx / (lineMatRefs.current.length - 1)
           const opacity = visibility * Math.pow(t, GRADIENT_EXPONENT)
-          const isLast = idx >= (lineMatRefs.current.length - 2)
-          mat.opacity = isLast ? 1.0 : opacity
+          const isAlwaysVisible = idx >= (lineMatRefs.current.length - CURSOR_WIDTH_IN_PX)
+          mat.opacity = isAlwaysVisible ? 1.0 : opacity
         })
 
         lastSpeedRef.current = granularSpeed
       }
 
-      timelineCursor.scale.x = direction
+              // note: we need to avoid having a scale of 0
+      if (direction !== 0) {
+        timelineCursor.scale.x = direction
+      }
     }
 
     lastPositionRef.current = currentPosition
@@ -64,7 +68,7 @@ export function Cursor() {
       {cursorGeometries.map((lineGeometry, idx) => {
         const t = idx / (cursorGeometries.length - 1)
         const opacity = Math.pow(t, GRADIENT_EXPONENT)
-        const isLast = idx >= (cursorGeometries.length - 2)
+        const isAlwaysVisible = idx >= (cursorGeometries.length - CURSOR_WIDTH_IN_PX)
         return (
           <line
           // @ts-ignore-line
@@ -74,8 +78,12 @@ export function Cursor() {
               ref={(ref) => { if (ref) lineMatRefs.current[idx] = ref }}
               attach="material"
               color={theme.playbackCursor.lineColor}
+
+              // note: in WebGL lines larger than 1 are not guaranteed to be
+              // supported by the browser, so let's assume it is always 1px
               linewidth={1}
-              opacity={isLast ? 1.0 : opacity}
+
+              opacity={isAlwaysVisible ? 1.0 : opacity}
               transparent
             />
           </line>

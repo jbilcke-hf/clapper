@@ -5,6 +5,7 @@ import { Metrics } from './metrics'
 import { APP_REVISION } from '@/lib/core/constants'
 import { Tasks } from './tasks'
 import { useTimeline } from '@aitube/timeline'
+import { TimelineZoom } from '@/components/core/timeline/TimelineZoom'
 
 export function BottomToolbar() {
   const theme = useTheme()
@@ -57,6 +58,7 @@ export function BottomToolbar() {
         </div>
       </div>
       <div className="flex flex-row space-x-6">
+        <TimelineZoom />
         <Tasks />
       </div>
     </div>

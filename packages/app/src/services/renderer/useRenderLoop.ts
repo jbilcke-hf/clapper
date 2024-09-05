@@ -11,7 +11,6 @@ import { useAudio } from '@/services/audio/useAudio'
 import { useMonitor } from '../monitor/useMonitor'
 import { useEffect, useRef } from 'react'
 import { useSettings } from '../settings'
-import { set } from 'date-fns'
 
 /**
  * Runs a rendering loop

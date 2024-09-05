@@ -1,4 +1,4 @@
-export { Cursor } from "./CursorWeird"
+export { Cursor } from "./Cursor"
 export { Timeline } from "./Timeline"
 export { TopBarTimeScale } from "./TopBarTimeScale"
 export { LeftBarTrackScale } from "./LeftBarTrackScale"

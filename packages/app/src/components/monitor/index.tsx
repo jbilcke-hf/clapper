@@ -57,7 +57,7 @@ export function Monitor() {
           `flex h-full flex-col items-center justify-between overflow-hidden`
         )}
       >
-        <VUMeter className={cn(`mt-12 ml-1 mr-2 h-[80%] w-8`)} />
+        <VUMeter className={cn(`ml-1 mr-2 mt-12 h-[80%] w-8`)} />
       </div>
     </div>
   )
