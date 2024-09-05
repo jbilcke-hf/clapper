@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 
 import { useMic } from '../mic/useMic'
 import { useAssistant } from './useAssistant'
-import { useDebounce } from '@/lib/hooks'
 
 export function useVoiceAssistant() {
   const processUserMessage = useAssistant((s) => s.processUserMessage)

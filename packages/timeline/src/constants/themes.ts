@@ -4,7 +4,7 @@ import { ClapTimelineTheme } from "@/types"
 import { ClapSegmentCategoryColors } from "@/types/theme"
 
 export const leftBarTrackScaleWidth = 120
-export const topBarTimeScaleHeight = 40
+export const topBarTimeScaleHeight = 34
 
 export const baseClapSegmentCategoryColors: ClapSegmentCategoryColors = {
   [ClapSegmentCategory.SPLAT]: { hue: 347, saturation: 30, lightness: 78.6 },

@@ -73,14 +73,14 @@ export function useWaveform({
 
     const cachedImage = cache[cacheKey]
 
-    console.log(`redraw() for cache key "${cacheKey}"`)
+    // console.log(`redraw() for cache key "${cacheKey}"`)
     if (canvasRenderingContext) {
       if (cachedImage) {
-        console.log('redraw() we have a cached image:', cachedImage)
+        // console.log('redraw() we have a cached image:', cachedImage)
         // If we have cached data
         canvasRenderingContext.putImageData(cachedImage, 0, 0)
       } else {
-        console.log('redraw() no cached image')
+        // console.log('redraw() no cached image')
         const middle = mode === WaveformRenderingMode.MONO ? height : height / 2
         const channelData = audioBuffer.getChannelData(0)
         const step = Math.ceil(channelData.length / (width * zoom))
