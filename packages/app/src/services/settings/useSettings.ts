@@ -793,6 +793,14 @@ export const useSettings = create<SettingsStore>()(
           ),
         })
       },
+      setInterfaceSnapWindowsToGrid: (interfaceSnapWindowsToGrid: boolean) => {
+        set({
+          interfaceSnapWindowsToGrid: getValidBoolean(
+            interfaceSnapWindowsToGrid,
+            getDefaultSettingsState().interfaceSnapWindowsToGrid
+          ),
+        })
+      },
       getRequestSettings: (): RequestSettings => {
         const state = get()
         const defaultSettings = getDefaultSettingsState()
@@ -1064,6 +1072,9 @@ export const useSettings = create<SettingsStore>()(
           scriptEditorShowMinimap:
             state.scriptEditorShowMinimap ||
             defaultSettings.scriptEditorShowMinimap,
+          interfaceSnapWindowsToGrid:
+            state.interfaceSnapWindowsToGrid ||
+            defaultSettings.interfaceSnapWindowsToGrid,
         }
       },
     }),
