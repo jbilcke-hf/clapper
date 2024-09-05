@@ -34,6 +34,7 @@ import { useDynamicWorkflows } from '@/services/editors/workflow-editor/useDynam
 
 import { useQueryStringLoader } from '@/components/toolbars/top-menu/file/useQueryStringLoader'
 import { useSetupIframeOnce } from './embed/useSetupIframeOnce'
+import { TimelineZoom } from '@/components/core/timeline/TimelineZoom'
 
 export enum ClapperIntegrationMode {
   APP = 'APP',
@@ -244,6 +245,11 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
         defaultX={375}
         defaultY={527}
         canBeClosed={false}
+        toolbar={({ isFocused }) => (
+          <>
+            <TimelineZoom />
+          </>
+        )}
       >
         <Timeline />
       </FruityWindow>

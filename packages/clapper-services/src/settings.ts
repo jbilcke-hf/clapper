@@ -83,6 +83,8 @@ export type BaseSettings = {
 
   scriptEditorShowLineNumbers: boolean
   scriptEditorShowMinimap: boolean
+
+  interfaceSnapWindowsToGrid: boolean
 }
 
 // Settings are serialized to the local storage,
@@ -216,6 +218,8 @@ export type SettingsControls = {
 
   setScriptEditorShowLineNumbers: (scriptEditorShowLineNumbers: boolean) => void
   setScriptEditorShowMinimap: (scriptEditorShowMinimap: boolean) => void
+
+  setInterfaceSnapWindowsToGrid: (interfaceSnapWindowsToGrid: boolean) => void
 
   /**
    * Return settings that can be used for a request
