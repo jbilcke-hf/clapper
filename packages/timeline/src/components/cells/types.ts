@@ -9,7 +9,7 @@ export type SpecializedCellProps = {
   cellHeight: number
   isHovered: boolean
   setHoveredSegment: (params?: {
-    hoveredSegment?: TimelineSegment
+    segment?: TimelineSegment
     area?: SegmentArea 
   }) => void
   durationInSteps: number

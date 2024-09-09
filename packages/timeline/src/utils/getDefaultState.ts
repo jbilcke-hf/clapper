@@ -19,6 +19,7 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     entitiesChanged: 0,
 
     isLoading: false,
+    showBetaFeatures: true,
 
     initialized: false,
     timeout: 0 as unknown as NodeJS.Timeout,

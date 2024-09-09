@@ -20,6 +20,7 @@ import { cn } from "./utils"
 import { TimelineCamera } from "./components/camera"
 import { useTimeline } from "./hooks"
 import { topBarTimeScaleHeight } from "./constants/themes"
+import { TimelineStore } from "./types"
 
 export function ClapTimeline({
   clap,
@@ -62,6 +63,19 @@ export function ClapTimeline({
 
   const handleIsCreated = () => {
     useTimeline.setState({ isReady: true })
+  }
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) => {
+    const timeline: TimelineStore = useTimeline.getState()
+    const { editedSegment } = timeline
+
+    // do something based on the current status of the edited segment
+    // for instance if the edited segment is being grabbed,
+    // we are going to want to display the segments that are around it
+    // console.log(`TODO @julian: implement edit here`)
+
+    event.stopPropagation()
+    return false
   }
 
   return (
@@ -123,6 +137,9 @@ export function ClapTimeline({
                 deltaY: wheelEvent.deltaY
               })
             }}
+
+            onMouseMove={handleMouseMove}
+            onTouchMove={handleMouseMove}
             >
               <TimelineCamera />
               <TimelineControls
