@@ -62,7 +62,7 @@ export function Cursor() {
 
   const memoizedGroup = useMemo(() => (
     <group
-      position={[leftBarTrackScaleWidth, (contentHeight / 2), -4]}
+      position={[leftBarTrackScaleWidth, (contentHeight / 2), -3]}
       ref={r => { if (r) setTimelineCursor(r) }}
     >
       {cursorGeometries.map((lineGeometry, idx) => {

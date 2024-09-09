@@ -1,16 +1,19 @@
 import { create } from "zustand"
 import * as THREE from "three"
+import type { ThreeEvent } from "@react-three/fiber"
 import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
 
-import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea } from "@/types/timeline"
+import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
-import { DEFAULT_NB_TRACKS } from "@/constants"
+import { DEFAULT_NB_TRACKS, leftBarTrackScaleWidth } from "@/constants"
 import { hslToHex, findFreeTrack, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment, timelineSegmentToClapSegment } from "@/utils"
 import { ClapSegmentCategoryColors, ClapSegmentColorScheme, ClapTimelineTheme, SegmentResolver } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
+import { useThree } from "@react-three/fiber"
+import { topBarTimeScaleHeight } from "@/constants/themes"
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -337,10 +340,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     return height
   },
   setHoveredSegment: ({
-    hoveredSegment,
+    segment,
     area,
   }: {
-    hoveredSegment?: TimelineSegment
+    segment?: TimelineSegment
     area?: SegmentArea 
   } = {}) => {
     const {
@@ -350,24 +353,24 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     } = get()
 
     // note: we do all of this in order to avoid useless state updates
-    if (hoveredSegment) {
+    if (segment && area) {
       if (previousHoveredSegment) {
-        if (previousHoveredSegment.id === hoveredSegment.id) {
+        if (previousHoveredSegment.id === segment.id) {
           // nothing to do
           return
         } else {
           previousHoveredSegment.isHovered = false
-          hoveredSegment.isHoveredOnLeftHandle = false
-          hoveredSegment.isHoveredOnRightHandle = false
-          hoveredSegment.isHoveredOnBody = false
+          segment.isHoveredOnLeftHandle = false
+          segment.isHoveredOnRightHandle = false
+          segment.isHoveredOnBody = false
         }
       } else {
-        hoveredSegment.isHovered = true
-        hoveredSegment.isHoveredOnLeftHandle = area === SegmentArea.LEFT
-        hoveredSegment.isHoveredOnRightHandle = area === SegmentArea.RIGHT
-        hoveredSegment.isHoveredOnBody = area === SegmentArea.MIDDLE
+        segment.isHovered = true
+        segment.isHoveredOnLeftHandle = area === SegmentArea.LEFT
+        segment.isHoveredOnRightHandle = area === SegmentArea.RIGHT
+        segment.isHoveredOnBody = area === SegmentArea.MIDDLE
         set({
-          hoveredSegment,
+          hoveredSegment: segment,
           allSegmentsChanged: 1 + previousAllSegmentsChanged,
           atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged
         })
@@ -388,7 +391,15 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       }
     }
   },
-  setEditedSegment: (editedSegment?: TimelineSegment) => {
+  setEditedSegment: ({
+    segment,
+    status = SegmentEditionStatus.EDITING
+  }: {
+    segment?: TimelineSegment
+    status?: SegmentEditionStatus
+  } = {
+    status: SegmentEditionStatus.EDITING
+  }) => {
     const {
       editedSegment: previousEditedSegment,
       allSegmentsChanged: previousAllSegmentsChanged,
@@ -396,18 +407,18 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     } = get()
 
     // note: we do all of this in order to avoid useless state updates
-    if (editedSegment) {
+    if (segment) {
       if (previousEditedSegment) {
-        if (previousEditedSegment.id === editedSegment.id) {
+        if (previousEditedSegment.id === segment.id) {
           // nothing to do
           return
         } else {
           previousEditedSegment.editionStatus = SegmentEditionStatus.EDITABLE
         }
       } else {
-        editedSegment.editionStatus = SegmentEditionStatus.EDITING
+        segment.editionStatus = status || SegmentEditionStatus.EDITING
         set({
-          editedSegment,
+          editedSegment: segment,
           atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
           allSegmentsChanged: 1 + previousAllSegmentsChanged
         })
@@ -507,6 +518,132 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         allSegmentsChanged: 1 + previousAllSegmentsChanged,
       })
     }
+  },
+  handleSegmentEvent: ({
+    eventType,
+    segment,
+  }: {
+    eventType: SegmentPointerEvent
+    segment: TimelineSegment
+  }): SegmentEventCallbackHandler => {
+    function segmentEventCallbackHandler(event: ThreeEvent<PointerEvent> | ThreeEvent<MouseEvent>) {
+      const pointX = event.point.x
+      const offsetX = event.offsetX
+      const offsetY = event.offsetY
+
+      /*
+        console.log("segmentEventCallbackHandler:" + JSON.stringify({
+          pointX: Math.round(e.point.x),
+          offsetX: Math.round(e.offsetX),
+          offsetY: Math.round(e.offsetY),
+          isOutOfRange,
+          cursorLeftPosInPx: Math.round(cursorLeftPosInPx),
+          cursorRightPosInPx: Math.round(cursorRightPosInPx),
+          area
+        }, null, 2))
+      */
+
+      const { cellWidth, containerWidth, durationInMsPerStep, setSelectedSegment, setHoveredSegment, setEditedSegment } = get()
+
+      const durationInSteps = (
+        (segment.endTimeInMs - segment.startTimeInMs) / durationInMsPerStep
+      )
+
+      /*
+      const startTimeInSteps = (
+        segment.startTimeInMs / durationInMsPerStep
+      )
+      */
+
+      const widthInPx = durationInSteps * cellWidth
+
+      const segmentWidth = widthInPx
+
+      const isOutOfRange = offsetX < leftBarTrackScaleWidth || offsetY < topBarTimeScaleHeight
+    
+      const cursorX = pointX + (containerWidth / 2)
+      const cursorTimestampAtInMs = (cursorX / cellWidth) * useTimeline.getState().durationInMsPerStep
+      
+      //console.log("cells.Cell:onClick() e:", e)
+    
+      const wMin = cursorTimestampAtInMs - segment.startTimeInMs
+      const wMax = segment.endTimeInMs - segment.startTimeInMs
+      const cursorLeftPosInRatio = wMin / wMax
+    
+      const cursorLeftPosInPx = cursorLeftPosInRatio * segmentWidth
+      const cursorRightPosInPx = segmentWidth - cursorLeftPosInPx 
+    
+      // note: this should be "responsive", with a max width
+      const sideGrabHandleWidth = 9
+      // let isInLeftArea = cursorLeftPosInRatio < 0.5
+      // let isInRightArea = cursorLeftPosInRatio > 0.5
+    
+      const area =
+        (cursorLeftPosInPx < sideGrabHandleWidth) ? SegmentArea.LEFT
+      : (cursorRightPosInPx < sideGrabHandleWidth) ? SegmentArea.RIGHT
+      : SegmentArea.MIDDLE
+
+      if (isOutOfRange) {
+        event.stopPropagation()
+        return false
+      }
+
+      if (eventType === SegmentPointerEvent.DOUBLE_CLICK) {
+        setHoveredSegment({
+          segment,
+          area
+        })
+        setSelectedSegment({
+          segment,
+    
+          // we leave it unspecified to create an automated toggle
+          // isSelected: true,
+    
+          onlyOneSelectedAtOnce: true,
+        })
+        setEditedSegment({
+          segment,
+          status: SegmentEditionStatus.EDITING
+        })
+      } else if (
+        eventType === SegmentPointerEvent.CLICK ||
+        eventType === SegmentPointerEvent.DOWN ||
+        eventType === SegmentPointerEvent.MOVE
+      ) {
+        setHoveredSegment({
+          segment,
+          area
+        })
+        if (area === SegmentArea.LEFT) {
+          setEditedSegment({
+            segment,
+            status: SegmentEditionStatus.RESIZE_START
+          })
+        } else if (area === SegmentArea.RIGHT) {
+          setEditedSegment({
+            segment,
+            status: SegmentEditionStatus.RESIZE_END
+          })
+        } else if (area === SegmentArea.MIDDLE) {
+          setEditedSegment({
+          segment,
+            status: SegmentEditionStatus.DRAGGING
+          })
+        }
+      } else if (eventType === SegmentPointerEvent.UP) {
+        setHoveredSegment({
+          segment: undefined,
+          area
+        })
+        setEditedSegment({
+          segment: undefined,
+        })
+      }
+
+      event.stopPropagation()
+      return false
+    }
+    return segmentEventCallbackHandler
   },
   trackSilentChangeInSegment: (segmentId: string) => {
     const { silentChangesInSegment, atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged } = get()

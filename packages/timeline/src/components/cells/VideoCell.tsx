@@ -67,19 +67,23 @@ export function VideoCell({
     });
   }, [isHovered, videos, numPreviews]);
 
+  /*
   const handleHover = (isHovering: boolean) => {
     setHoveredSegment(isHovering ? {
       hoveredSegment: segment,
       area: SegmentArea.MIDDLE
     } : undefined);
   };
+  */
 
   return (
     <a.group
     key={segment.id}
     position={[0, 0, 0]}
-    onPointerEnter={() => handleHover(true)}
-    onPointerLeave={() => handleHover(false)}
+
+    // autoplay has been disabled
+    //onPointerEnter={() => handleHover(true)}
+    //onPointerLeave={() => handleHover(false)}
   >
     <group position={[-widthInPxAfterZoom / 2, -cellHeight, 0]}>
       {videos.map((video, index) => {

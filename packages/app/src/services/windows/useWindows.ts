@@ -61,10 +61,7 @@ export const useWindows = create<WindowsStore>((set, get) => ({
         0,
         ...Object.values(state.windows).map((w) => w.zIndex)
       )
-      const { x: newX, y: newY } = state.getNextPosition(
-        win.width,
-        win.height
-      )
+      const { x: newX, y: newY } = state.getNextPosition(win.width, win.height)
       return {
         windows: {
           ...state.windows,
@@ -81,124 +78,157 @@ export const useWindows = create<WindowsStore>((set, get) => ({
         },
       }
     }),
-    
-    snapToGridValue: (value: number, cellSize: number, attractionArea: number): number => {
-      const closestGridLine = Math.round(value / cellSize) * cellSize
-      if (Math.abs(value - closestGridLine) <= attractionArea) {
-        return closestGridLine
-      }
-      return value
-    },
-  
-    updateWindowPosition: (id: string, x: number, y: number) => {
-      const state = get()
-      const { snapToGrid, gridWidthInPercent, gridHeightInPercent, gridAttractionAreaInPixels } = state
-      const win = state.windows[id]
-      
-      if (snapToGrid) {
-        const viewportWidth = window.innerWidth
-        const viewportHeight = window.innerHeight
-        const gridCellWidth = (viewportWidth * gridWidthInPercent) / 100
-        const gridCellHeight = (viewportHeight * gridHeightInPercent) / 100
-    
-        // Snap to left or right edge
-        if (x <= gridAttractionAreaInPixels) {
-          x = 0
-        } else if (viewportWidth - (x + win.width) <= gridAttractionAreaInPixels) {
-          x = viewportWidth - win.width
-        } else {
-          x = state.snapToGridValue(x, gridCellWidth, gridAttractionAreaInPixels)
-        }
-    
-        // Snap to top or bottom edge
-        if (y <= gridAttractionAreaInPixels) {
-          y = 0
-        } else if (viewportHeight - (y + win.height) <= gridAttractionAreaInPixels) {
-          y = viewportHeight - win.height
-        } else {
-          y = state.snapToGridValue(y, gridCellHeight, gridAttractionAreaInPixels)
-        }
-    
-        // Adjust width and height to snap to opposite edges if close
-        let newWidth = win.width
-        let newHeight = win.height
-    
-        if (viewportWidth - (x + win.width) <= gridAttractionAreaInPixels) {
-          newWidth = viewportWidth - x
-        }
-        if (viewportHeight - (y + win.height) <= gridAttractionAreaInPixels) {
-          newHeight = viewportHeight - y
-        }
-    
-        set((state) => ({
-          windows: {
-            ...state.windows,
-            [id]: { ...state.windows[id], x, y, width: newWidth, height: newHeight },
-          },
-        }))
+
+  snapToGridValue: (
+    value: number,
+    cellSize: number,
+    attractionArea: number
+  ): number => {
+    const closestGridLine = Math.round(value / cellSize) * cellSize
+    if (Math.abs(value - closestGridLine) <= attractionArea) {
+      return closestGridLine
+    }
+    return value
+  },
+
+  updateWindowPosition: (id: string, x: number, y: number) => {
+    const state = get()
+    const {
+      snapToGrid,
+      gridWidthInPercent,
+      gridHeightInPercent,
+      gridAttractionAreaInPixels,
+    } = state
+    const win = state.windows[id]
+
+    if (snapToGrid) {
+      const viewportWidth = window.innerWidth
+      const viewportHeight = window.innerHeight
+      const gridCellWidth = (viewportWidth * gridWidthInPercent) / 100
+      const gridCellHeight = (viewportHeight * gridHeightInPercent) / 100
+
+      // Snap to left or right edge
+      if (x <= gridAttractionAreaInPixels) {
+        x = 0
+      } else if (
+        viewportWidth - (x + win.width) <=
+        gridAttractionAreaInPixels
+      ) {
+        x = viewportWidth - win.width
       } else {
-        set((state) => ({
-          windows: {
-            ...state.windows,
-            [id]: { ...state.windows[id], x, y },
-          },
-        }))
+        x = state.snapToGridValue(x, gridCellWidth, gridAttractionAreaInPixels)
       }
-    },
-    
-    updateWindowSize: (id: string, width: number, height: number) => {
-      const state = get()
-      const { snapToGrid, gridWidthInPercent, gridHeightInPercent, gridAttractionAreaInPixels } = state
-      const win = state.windows[id]
-      
-      if (snapToGrid) {
-        const viewportWidth = window.innerWidth
-        const viewportHeight = window.innerHeight
-        const gridCellWidth = (viewportWidth * gridWidthInPercent) / 100
-        const gridCellHeight = (viewportHeight * gridHeightInPercent) / 100
-    
-        width = state.snapToGridValue(width, gridCellWidth, gridAttractionAreaInPixels)
-        height = state.snapToGridValue(height, gridCellHeight, gridAttractionAreaInPixels)
-    
-        // Adjust position if snapping to right or bottom edge
-        let newX = win.x
-        let newY = win.y
-    
-        if (viewportWidth - (win.x + width) <= gridAttractionAreaInPixels) {
-          newX = viewportWidth - width
-        }
-        if (viewportHeight - (win.y + height) <= gridAttractionAreaInPixels) {
-          newY = viewportHeight - height
-        }
-    
-        set((state) => ({
-          windows: {
-            ...state.windows,
-            [id]: { ...state.windows[id], width, height, x: newX, y: newY },
-          },
-        }))
+
+      // Snap to top or bottom edge
+      if (y <= gridAttractionAreaInPixels) {
+        y = 0
+      } else if (
+        viewportHeight - (y + win.height) <=
+        gridAttractionAreaInPixels
+      ) {
+        y = viewportHeight - win.height
       } else {
-        set((state) => ({
-          windows: {
-            ...state.windows,
-            [id]: { ...state.windows[id], width, height },
-          },
-        }))
+        y = state.snapToGridValue(y, gridCellHeight, gridAttractionAreaInPixels)
       }
-    },
-  
-    updateWindow: (id, updates) => {
+
+      // Adjust width and height to snap to opposite edges if close
+      let newWidth = win.width
+      let newHeight = win.height
+
+      if (viewportWidth - (x + win.width) <= gridAttractionAreaInPixels) {
+        newWidth = viewportWidth - x
+      }
+      if (viewportHeight - (y + win.height) <= gridAttractionAreaInPixels) {
+        newHeight = viewportHeight - y
+      }
+
       set((state) => ({
         windows: {
           ...state.windows,
-          [id]: state.windows[id]
-            ? { ...state.windows[id], ...updates }
-            : state.windows[id],
+          [id]: {
+            ...state.windows[id],
+            x,
+            y,
+            width: newWidth,
+            height: newHeight,
+          },
         },
       }))
-    },
+    } else {
+      set((state) => ({
+        windows: {
+          ...state.windows,
+          [id]: { ...state.windows[id], x, y },
+        },
+      }))
+    }
+  },
 
-    
+  updateWindowSize: (id: string, width: number, height: number) => {
+    const state = get()
+    const {
+      snapToGrid,
+      gridWidthInPercent,
+      gridHeightInPercent,
+      gridAttractionAreaInPixels,
+    } = state
+    const win = state.windows[id]
+
+    if (snapToGrid) {
+      const viewportWidth = window.innerWidth
+      const viewportHeight = window.innerHeight
+      const gridCellWidth = (viewportWidth * gridWidthInPercent) / 100
+      const gridCellHeight = (viewportHeight * gridHeightInPercent) / 100
+
+      width = state.snapToGridValue(
+        width,
+        gridCellWidth,
+        gridAttractionAreaInPixels
+      )
+      height = state.snapToGridValue(
+        height,
+        gridCellHeight,
+        gridAttractionAreaInPixels
+      )
+
+      // Adjust position if snapping to right or bottom edge
+      let newX = win.x
+      let newY = win.y
+
+      if (viewportWidth - (win.x + width) <= gridAttractionAreaInPixels) {
+        newX = viewportWidth - width
+      }
+      if (viewportHeight - (win.y + height) <= gridAttractionAreaInPixels) {
+        newY = viewportHeight - height
+      }
+
+      set((state) => ({
+        windows: {
+          ...state.windows,
+          [id]: { ...state.windows[id], width, height, x: newX, y: newY },
+        },
+      }))
+    } else {
+      set((state) => ({
+        windows: {
+          ...state.windows,
+          [id]: { ...state.windows[id], width, height },
+        },
+      }))
+    }
+  },
+
+  updateWindow: (id, updates) => {
+    set((state) => ({
+      windows: {
+        ...state.windows,
+        [id]: state.windows[id]
+          ? { ...state.windows[id], ...updates }
+          : state.windows[id],
+      },
+    }))
+  },
+
   removeWindow: (id) =>
     set((state) => {
       const { [id]: _, ...rest } = state.windows

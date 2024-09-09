@@ -1,4 +1,5 @@
 import * as THREE from "three"
+import type { ThreeEvent } from "@react-three/fiber"
 import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
@@ -6,6 +7,8 @@ import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { SegmentResolver } from "./rendering"
+
+export type SegmentEventCallbackHandler = (e: ThreeEvent<PointerEvent> | ThreeEvent<MouseEvent>) => boolean
 
 export enum SegmentVisibility {
   // the segment is visible, and the user explicitly requested to render it before the others
@@ -34,7 +37,10 @@ export enum SegmentEditionStatus {
   EDITABLE = "EDITABLE",
 
   // the segment is being resized
-  RESIZING = "RESIZING",
+  RESIZE_START = "RESIZE_START",
+
+  // the segment is being resized
+  RESIZE_END = "RESIZE_END",
 
   // the segment is being dragged around
   DRAGGING = "DRAGGING",
@@ -46,8 +52,18 @@ export enum SegmentEditionStatus {
 export enum SegmentArea {
   LEFT = 'LEFT',
   RIGHT = 'RIGHT',
-  MIDDLE = 'MIDLE'
+  MIDDLE = 'MIDDLE'
 }
+
+export enum SegmentPointerEvent {
+  DOWN = 'DOWN',
+  UP = 'UP',
+  MOVE = 'MOVE',
+  CLICK = 'CLICK',
+  DOUBLE_CLICK = 'DOUBLE_CLICK',
+  RIGHT_CLICK = 'RIGHT_CLICK'
+}
+
 
 // some data can only exist inside a browser session (eg. AudioBuffer)
 // or at least data that only make sense on client side
@@ -150,6 +166,8 @@ export type TimelineStoreProjectState = ClapMeta & {
   entitiesChanged: number
 
   isLoading: boolean
+
+  showBetaFeatures: boolean
 
   // -- metrics computed by computeContentSizeMetrics --
   nbMaxShots: number
@@ -269,15 +287,28 @@ export type TimelineStoreModifiers = {
   getCellHeight: (trackNumber?: number) => number
   getVerticalCellPosition: (start: number, end: number) => number
   setHoveredSegment: (params?: {
-    hoveredSegment?: TimelineSegment
+    segment?: TimelineSegment
     area?: SegmentArea 
   }) => void
-  setEditedSegment: (editedSegment?: TimelineSegment) => void
+  setEditedSegment: ({
+    segment,
+    status
+  }: {
+    segment?: TimelineSegment
+    status?: SegmentEditionStatus
+  }) => void
   setSelectedSegment: (params?: {
     segment?: TimelineSegment
     isSelected?: boolean
     onlyOneSelectedAtOnce?: boolean
   }) => void
+  handleSegmentEvent: ({
+    eventType,
+    segment,
+  }: {
+    eventType: SegmentPointerEvent
+    segment: TimelineSegment
+  }) => SegmentEventCallbackHandler
 
   // the purpose of those functions is to allow an external component
   // to modify the segments in-line, and then trigger a redraw

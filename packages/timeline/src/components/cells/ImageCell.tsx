@@ -31,7 +31,7 @@ export function ImageCell({
   }, [widthInPxAfterZoom, sectionWidth]);
 
   const handleHover = (isHovering: boolean) => {
-    setHoveredSegment(isHovering ? { hoveredSegment: s, area: SegmentArea.MIDDLE } : undefined);
+    setHoveredSegment(isHovering ? { segment: s, area: SegmentArea.MIDDLE } : undefined);
   };
 
   return (

@@ -14,10 +14,11 @@ import { TextCell } from "./TextCell"
 import { RedrawButton } from "./RedrawButton"
 import { AudioCell } from "./AudioCell"
 import { useThree } from "@react-three/fiber"
-import { SegmentArea } from "@/types/timeline"
+import { SegmentArea, SegmentPointerEvent } from "@/types/timeline"
 import { SegmentIcon } from "../icons/SegmentIcon"
 
 import { getSegmentColorScheme } from "@/utils/getSegmentColorScheme"
+import { setBodyCursor } from "@/utils"
 
 export function Cell({
   segment: s
@@ -25,6 +26,7 @@ export function Cell({
   segment: TimelineSegment
 }) {
   const { size } = useThree()
+  const showBetaFeatures = useTimeline(s => s.showBetaFeatures)
 
   // TODO JULIAN: we should optimize this component because it causes
   // some performance issues due to the numerous re-renders
@@ -80,8 +82,8 @@ export function Cell({
 
   const setHoveredSegment = useTimeline(s => s.setHoveredSegment)
     
-  const setSelectedSegment = useTimeline(s => s.setSelectedSegment)
-    
+  const handleSegmentEvent = useTimeline(s => s.handleSegmentEvent)
+
   // cells are rendered often (eg. whenever we mouse the mouse from one cell to another)
   // because we need to handle their color change on hover / transition
   // console.log(`re-rendering a <Cell>`)
@@ -98,50 +100,6 @@ export function Cell({
     -verticalCellPosition 
     + (cellHeight / 2)
 
-  const segmentWidth = widthInPx
-  const segmentHeight = cellHeight
-
-  const computeBoundaries = ({
-    pointX,
-    offsetX,
-    offsetY
-  }: {
-    pointX: number
-    offsetX: number
-    offsetY: number
-  }) => {
-    const isOutOfRange = offsetX < leftBarTrackScaleWidth ||offsetY < topBarTimeScaleHeight
-
-    const cursorX = pointX + (size.width / 2)
-    const cursorTimestampAtInMs = (cursorX / cellWidth) * useTimeline.getState().durationInMsPerStep
-    
-    //console.log("cells.Cell:onClick() e:", e)
-
-    const wMin = cursorTimestampAtInMs - s.startTimeInMs
-    const wMax = s.endTimeInMs - s.startTimeInMs
-    const cursorLeftPosInRatio = wMin / wMax
-
-    const cursorLeftPosInPx = cursorLeftPosInRatio * segmentWidth
-    const cursorRightPosInPx = segmentWidth - cursorLeftPosInPx 
-
-    // note: this should be "responsive", with a max width
-    const sideGrabHandleWidth = 8
-    // let isInLeftArea = cursorLeftPosInRatio < 0.5
-    // let isInRightArea = cursorLeftPosInRatio > 0.5
-  
-    const area =
-      (cursorRightPosInPx < 8) ? SegmentArea.LEFT
-     : (cursorRightPosInPx < 8) ? SegmentArea.RIGHT
-     : SegmentArea.MIDDLE
-
-    return {
-      isOutOfRange,
-      cursorLeftPosInPx,
-      cursorRightPosInPx,
-      area
-    }
-  }
-
   return (
     <a.mesh
       key={s.id}
@@ -150,74 +108,35 @@ export function Cell({
         posY,
         -3
       ]}
-      onPointerMove={(e) => {
-        const {
-          isOutOfRange,
-          cursorLeftPosInPx,
-          cursorRightPosInPx,
-          area
-        } = computeBoundaries({
-          pointX: e.point.x,
-          offsetX: e.offsetX,
-          offsetY: e.offsetY
-        })
-        if (isOutOfRange) {
-          setHoveredSegment({
-            hoveredSegment: undefined,
-            area,
-          })
-        } else {
-          setHoveredSegment({
-            hoveredSegment: s,
-            area
-          })
-        }
+      onPointerMove={handleSegmentEvent({
+          eventType: SegmentPointerEvent.MOVE,
+          segment: s
+      })}
+
+      onPointerDown={handleSegmentEvent({
+        eventType: SegmentPointerEvent.DOWN,
+        segment: s
+      })}
+    
+      onPointerUp={handleSegmentEvent({
+        eventType: SegmentPointerEvent.UP,
+        segment: s
+      })}
+
+      onClick={handleSegmentEvent({
+        eventType: SegmentPointerEvent.CLICK,
+        segment: s,
+      })}
+      onContextMenu={(e) => {
+        console.log('TODO @julian: show the context menu')
 
         e.stopPropagation()
         return false
       }}
-
-      onPointerLeave={(e) => {
-        // console.log('leave')
-        setHoveredSegment({
-          hoveredSegment: undefined,
-          // area,
-        })
-
-        e.stopPropagation()
-        return false
-      }}
-
-      onClick={(e) => {
-        const {
-          isOutOfRange,
-          cursorLeftPosInPx,
-          cursorRightPosInPx
-        } = computeBoundaries({
-          pointX: e.point.x,
-          offsetX: e.offsetX,
-          offsetY: e.offsetY
-        })
-
-        if (!isOutOfRange) {
-          setSelectedSegment({
-            segment: s,
-
-            // we leave it unspecified to create a toggle
-            // isSelected: true,
-
-            onlyOneSelectedAtOnce: true,
-          })
-        }
-
-        e.stopPropagation()
-        return false
-      }}
-      onContextMenu={(e) => console.log('context menu')}
-      onDoubleClick={(e) => {
-        console.log('double click')
-        // TODO: do something eg. switch to an edit mode
-      }}
+      onDoubleClick={handleSegmentEvent({
+        eventType: SegmentPointerEvent.DOUBLE_CLICK,
+        segment: s
+      })}
       // onWheel={(e) => console.log('wheel spins')}
       // onPointerUp={(e) => console.log('up')}
       // onPointerDown={(e) => console.log('down')}
