@@ -59,11 +59,22 @@ export async function runLipSync(
     }
 
     try {
+
       // console.log(`requested model:`, request.settings.videoLipsyncWorkflow.data)
       const response = (await replicate.run(
         request.settings.videoLipsyncWorkflow.data as any,
         {
-          input: {
+          input: 
+           // TODO @julian: I'm not a fan of those hard-coded if/else
+           // we should read the params from the workflow parameters instead
+           request.settings.videoLipsyncWorkflow.id === 'replicate://douwantech/musetalk'
+            ? {
+            video_input: segment.assetUrl,
+            audio_input: firstDialogueAudio,
+
+            disable_safety_checker:
+              !request.settings.censorNotForAllAudiencesContent,
+            } : {
             // note: this is actually a VIDEO (they call it face, but it's a face video)
             face: segment.assetUrl,
             input_audio: firstDialogueAudio,
