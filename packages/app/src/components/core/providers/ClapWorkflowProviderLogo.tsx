@@ -19,7 +19,7 @@ export function ClapWorkflowProviderLogo({
     ClapWorkflowProvidersLogos.NONE
 
   return (
-    <img
+    <img // eslint-disable-line @next/next/no-img-element
       src={src}
       width={height as any}
       height={height as any}

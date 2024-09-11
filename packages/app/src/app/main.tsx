@@ -279,8 +279,9 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
             `opacity-90`
           )}
         >
-          <img
+          <img // eslint-disable-line @next/next/no-img-element
             src="/images/onboarding/get-started.png"
+            alt="To get started please open the menu"
             width="180"
             className=""
           ></img>
@@ -292,7 +293,11 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
             isTopMenuOpen ? 'scale-100 opacity-90' : 'scale-90 opacity-0'
           )}
         >
-          <img src="/images/onboarding/pick-an-example.png" width="140"></img>
+          <img // eslint-disable-line @next/next/no-img-element
+            src="/images/onboarding/pick-an-example.png"
+            alt="Then open an example"
+            width="140"
+          ></img>
         </div>
         <div className="flex flex-col items-center justify-center space-y-6">
           <h1 className="text-6xl font-bold">

@@ -15,12 +15,30 @@ import {
 } from '@aitube/client'
 
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
+import {
+  builtinProviderCredentialsAitube,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function resolveSegment(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
-  if (!request.settings.aiTubeApiKey) {
-    throw new Error(`Missing API key for "AiTube"`)
+  let apiKey = request.settings.aiTubeApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "AiTube"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsAitube
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsAitube
+    }
   }
 
   // TODO: the request should directly contain theCclap,
@@ -37,7 +55,7 @@ export async function resolveSegment(
       clap,
       completionMode: ClapCompletionMode.PARTIAL,
       turbo: true,
-      token: '<TODO>',
+      token: apiKey,
     })
 
     const storyboardImages = resolvedClap.segments.filter(
@@ -59,7 +77,7 @@ export async function resolveSegment(
       clap,
       completionMode: ClapCompletionMode.PARTIAL,
       turbo: true,
-      token: '<TODO>',
+      token: apiKey,
     })
 
     const videos = resolvedClap.segments.filter(
@@ -81,7 +99,7 @@ export async function resolveSegment(
       clap,
       completionMode: ClapCompletionMode.PARTIAL,
       turbo: true,
-      token: '<TODO>',
+      token: apiKey,
     })
 
     const sounds = resolvedClap.segments.filter(
@@ -103,7 +121,7 @@ export async function resolveSegment(
       clap,
       completionMode: ClapCompletionMode.PARTIAL,
       turbo: true,
-      token: '<TODO>',
+      token: apiKey,
     })
 
     const musics = resolvedClap.segments.filter(

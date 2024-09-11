@@ -32,7 +32,9 @@ function useFilteredStoryboardImages(input?: string): string | undefined {
 
   const currentFiltersWithParams: FilterWithParams[] = current || []
 
-  console.log('current changed?', current)
+  const currentFilterParamsChanged = JSON.stringify(currentFiltersWithParams)
+
+  // console.log('current changed?', current)
 
   useEffect(() => {
     const fn = async (input?: string) => {
@@ -48,12 +50,13 @@ function useFilteredStoryboardImages(input?: string): string | undefined {
       }
     }
     fn(input)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     input,
     // whenever the pipeline, filter, input values.. change,
     // we re-generate the output as well
-    currentFiltersWithParams,
-    JSON.stringify(currentFiltersWithParams),
+    runFilterPipeline,
+    currentFilterParamsChanged,
   ])
 
   return result ? result : undefined
@@ -177,7 +180,12 @@ export function FilterViewer() {
         ))}
       </div>
       <div className="flex w-2/3 flex-col">
-        {output ? <img src={output}></img> : null}
+        {output ? (
+          <img // eslint-disable-line @next/next/no-img-element
+            alt="Filter output"
+            src={output}
+          ></img>
+        ) : null}
       </div>
     </div>
   )

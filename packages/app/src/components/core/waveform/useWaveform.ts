@@ -134,6 +134,8 @@ export function useWaveform({
     width,
     mode,
     cacheKey,
+    audioBuffer,
+    canvasRenderingContext,
   ])
 
   return {

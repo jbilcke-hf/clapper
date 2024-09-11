@@ -1,16 +1,34 @@
 import { TimelineSegment } from '@aitube/timeline'
 import { ResolveRequest } from '@aitube/clapper-services'
 import { Civitai } from 'civitai'
+import {
+  builtinProviderCredentialsCivitai,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function resolveSegment(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
-  if (!request.settings.civitaiApiKey) {
-    throw new Error(`Missing API key for "Civitai"`)
+  let apiKey = request.settings.civitaiApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "Civitai"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsCivitai
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsCivitai
+    }
   }
 
   const civitai = new Civitai({
-    auth: request.settings.civitaiApiKey,
+    auth: apiKey,
   })
 
   const segment: TimelineSegment = request.segment

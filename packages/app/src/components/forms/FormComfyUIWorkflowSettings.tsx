@@ -33,6 +33,7 @@ export function FormComfyUIWorkflowSettings({
     workflow: null,
   })
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedOnChangeClapWorkflow = useCallback(
     debounce((clapWorkflow: ClapWorkflow) => {
       onChange(clapWorkflow)

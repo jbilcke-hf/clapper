@@ -3,12 +3,30 @@ import { TimelineSegment } from '@aitube/timeline'
 import { ResolveRequest } from '@aitube/clapper-services'
 import { generateImage } from './generateImage'
 import { generateVideo } from './generateVideo'
+import {
+  builtinProviderCredentialsStabilityai,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function resolveSegment(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
-  if (!request.settings.stabilityAiApiKey) {
-    throw new Error(`Missing API key for "Stability.ai"`)
+  let apiKey = request.settings.stabilityAiApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "Stability.ai"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsStabilityai
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsStabilityai
+    }
   }
 
   const segment = request.segment

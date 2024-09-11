@@ -672,6 +672,7 @@ wake of the euro-zone debt crisis.`
     const storyboardImage = segments.find(
       (s) => s.category === ClapSegmentCategory.IMAGE
     )
+    // console.log('storyboardImage:', storyboardImage)
 
     const dialogue = segments.find(
       (s) => s.category === ClapSegmentCategory.DIALOGUE

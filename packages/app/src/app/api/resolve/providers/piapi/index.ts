@@ -6,12 +6,30 @@ import { getWorkflowInputValues } from '../getWorkflowInputValues'
 import { createImage } from './midjourney/createImage'
 import { createAndFetchDreamMachineVideo } from './lumalabs/createAndFetchDreamMachineVideo'
 import { createAndFetchKlingVideo } from './kling/createAndFetchKlingVideo'
+import {
+  builtinProviderCredentialsPiapi,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function resolveSegment(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
-  if (!request.settings.piApiApiKey) {
-    throw new Error(`Missing API key for "PiApi"`)
+  let apiKey = request.settings.piApiApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "PiApi"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsPiapi
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsPiapi
+    }
   }
 
   const segment: TimelineSegment = request.segment
@@ -43,7 +61,7 @@ export async function resolveSegment(
     const aspectRatio =
       width > height ? '16:9' : height > width ? '9:16' : '1:1'
 
-    const result = await createImage(request.settings.piApiApiKey, {
+    const result = await createImage(apiKey, {
       prompt: request.prompts.image.positive,
       aspect_ratio: aspectRatio,
       // skip_prompt_check?: boolean;
@@ -83,41 +101,38 @@ export async function resolveSegment(
             ? '9:16'
             : '16:9'
 
-      const result = await createAndFetchKlingVideo(
-        request.settings.piApiApiKey,
-        {
-          prompt: request.prompts.image.positive,
-          negative_prompt: request.prompts.image.negative,
+      const result = await createAndFetchKlingVideo(apiKey, {
+        prompt: request.prompts.image.positive,
+        negative_prompt: request.prompts.image.negative,
 
-          // a number between 0 to 1, the lower the more creative
-          // creativity?: number
+        // a number between 0 to 1, the lower the more creative
+        // creativity?: number
 
-          // can only be 5 or 10, defaults to 5
-          duration: 5,
+        // can only be 5 or 10, defaults to 5
+        duration: 5,
 
-          aspect_ratio: aspectRatio,
+        aspect_ratio: aspectRatio,
 
-          // PAID KLING PLAN NEEDED. Default to false, visit Kling AI official product to get the definition of professional mode
-          // professional_mode?: boolean
+        // PAID KLING PLAN NEEDED. Default to false, visit Kling AI official product to get the definition of professional mode
+        // professional_mode?: boolean
 
-          // initial frame of the video, DO NOT pass this param if you just want text-to-video
-          image_url: request.prompts.video.image,
+        // initial frame of the video, DO NOT pass this param if you just want text-to-video
+        image_url: request.prompts.video.image,
 
-          // PAID KLING PLAN NEEDED. End frame of the video, DO NOT pass this param if you just want text-to-video
-          // tail_image_url?: string
+        // PAID KLING PLAN NEEDED. End frame of the video, DO NOT pass this param if you just want text-to-video
+        // tail_image_url?: string
 
-          // camera control of the video, effective in text-to-image ONLY. TRY it on Kling official website before using this param
-          // camera?: {
-          //   type?: string
-          //   horizontal?: number
-          //   vertical?: number
-          //   zoom?: number
-          //   tilt?: number
-          //   pan?: number
-          //   roll?: number
-          // }
-        }
-      )
+        // camera control of the video, effective in text-to-image ONLY. TRY it on Kling official website before using this param
+        // camera?: {
+        //   type?: string
+        //   horizontal?: number
+        //   vertical?: number
+        //   zoom?: number
+        //   tilt?: number
+        //   pan?: number
+        //   roll?: number
+        // }
+      })
 
       const work = result.data.works[0]
 
@@ -131,17 +146,14 @@ export async function resolveSegment(
 
       segment.assetUrl = `${work.resource || ''}`
     } else if (workflow.id === 'piapi://luma/v1/video') {
-      const result = await createAndFetchDreamMachineVideo(
-        request.settings.piApiApiKey,
-        {
-          prompt: request.prompts.image.positive,
-          expand_prompt: false,
-          image_url: request.prompts.video.image,
+      const result = await createAndFetchDreamMachineVideo(apiKey, {
+        prompt: request.prompts.image.positive,
+        expand_prompt: false,
+        image_url: request.prompts.video.image,
 
-          // nice feature! we should use it :)
-          // image_end_url?: string;
-        }
-      )
+        // nice feature! we should use it :)
+        // image_end_url?: string;
+      })
 
       if (!result.data.generation.video) {
         throw new Error(`Failed to generate at least one video`)

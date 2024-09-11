@@ -1,14 +1,12 @@
+import {
+  builtinProviderCredentialsStabilityai,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 import { ClapImageRatio } from '@aitube/clap'
 
 import { ResolveRequest, StabilityAiImageSize } from '@aitube/clapper-services'
 
 export async function generateImage(request: ResolveRequest): Promise<string> {
-  if (!request.settings.stabilityAiApiKey) {
-    throw new Error(
-      `StabilityAI.generateImage: cannot generate without a valid stabilityAiApiKey`
-    )
-  }
-
   if (!request.settings.imageGenerationWorkflow.data) {
     throw new Error(
       `StabilityAI.generateImage: cannot generate without a valid stabilityAiModelForImage`
@@ -19,6 +17,24 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
     throw new Error(
       `StabilityAI.generateImage: cannot generate without a valid positive prompt`
     )
+  }
+
+  let apiKey = request.settings.stabilityAiApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "Stability.ai"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsStabilityai
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsStabilityai
+    }
   }
 
   const aspectRatio =
@@ -49,7 +65,7 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
     {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${request.settings.stabilityAiApiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         Accept: 'image/*',
       },
       body,

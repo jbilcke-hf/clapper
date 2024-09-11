@@ -1,3 +1,7 @@
+import {
+  builtinProviderCredentialsStabilityai,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 import { base64DataUriToBlob } from '@/lib/utils/base64DataUriToBlob'
 import { ResolveRequest } from '@aitube/clapper-services'
 import sharp from 'sharp'
@@ -23,10 +27,6 @@ type StabilityAIVImageToVideoFetchGenerationResponse = {
 }
 
 export async function generateVideo(request: ResolveRequest): Promise<string> {
-  if (!request.settings.stabilityAiApiKey) {
-    throw new Error(`${TAG}: cannot generate without a valid stabilityAiApiKey`)
-  }
-
   if (!request.settings.videoGenerationWorkflow.data) {
     throw new Error(
       `${TAG}: cannot generate without a valid videoGenerationWorkflow`
@@ -35,6 +35,24 @@ export async function generateVideo(request: ResolveRequest): Promise<string> {
 
   if (!request.prompts.video.image) {
     throw new Error(`${TAG}: cannot generate without a valid image input`)
+  }
+
+  let apiKey = request.settings.stabilityAiApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "Stability.ai"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsStabilityai
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsStabilityai
+    }
   }
 
   // what's cool about the ultra model is its capacity to take in
@@ -58,7 +76,7 @@ export async function generateVideo(request: ResolveRequest): Promise<string> {
     {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${request.settings.stabilityAiApiKey}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body,
       cache: 'no-store',

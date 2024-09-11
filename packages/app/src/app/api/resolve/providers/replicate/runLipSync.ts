@@ -7,15 +7,32 @@ const Replicate = require('replicate')
 import { ClapSegmentCategory } from '@aitube/clap'
 import { TimelineSegment } from '@aitube/timeline'
 import { ResolveRequest } from '@aitube/clapper-services'
+import {
+  builtinProviderCredentialsReplicate,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function runLipSync(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
-  if (!request.settings.replicateApiKey) {
-    throw new Error(`Missing API key for "Replicate.com"`)
+  let apiKey = request.settings.replicateApiKey
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "Replicate.com"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsReplicate
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsReplicate
+    }
   }
 
-  const replicate = new Replicate({ auth: request.settings.replicateApiKey })
+  const replicate = new Replicate({ auth: apiKey })
 
   const segment: TimelineSegment = request.segment
 

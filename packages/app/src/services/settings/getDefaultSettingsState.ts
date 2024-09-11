@@ -16,6 +16,7 @@ export function getDefaultSettingsState(): SettingsState {
     huggingFaceApiKey: '',
     modelsLabApiKey: '',
     falAiApiKey: '',
+    clapperApiKey: '',
     aiTubeApiKey: '',
     openaiApiKey: '',
     googleApiKey: '',

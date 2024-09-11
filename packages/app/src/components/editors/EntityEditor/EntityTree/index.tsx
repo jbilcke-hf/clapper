@@ -25,9 +25,11 @@ export function EntityTree({
   const entitiesChanged: number = useTimeline((s) => s.entitiesChanged)
   const entities: ClapEntity[] = useTimeline((s) => s.entities)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setProjectEntities(entities)
-  }, [entitiesChanged, entities.map((e) => e.id).join(',')])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entitiesChanged, setProjectEntities, entities.map((e) => e.id).join(',')])
 
   const setCurrent = useEntityEditor((s) => s.setCurrent)
   const selectedNodeItem = useEntityTree((s) => s.selectedNodeItem)
@@ -46,7 +48,7 @@ export function EntityTree({
     } else {
       // must be a different kind of node (eg. a collection, list or folder)
     }
-  }, [selectedNodeType, selectedNodeItem])
+  }, [selectedNodeType, selectedNodeItem, setCurrent])
 
   return (
     <Tree.Root<LibraryNodeType, TreeNodeItem>

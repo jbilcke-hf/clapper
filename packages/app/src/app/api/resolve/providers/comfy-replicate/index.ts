@@ -8,12 +8,30 @@ import { ResolveRequest } from '@aitube/clapper-services'
 
 import { runWorkflow } from './runWorkflow'
 import { TimelineSegment } from '@aitube/timeline'
+import {
+  builtinProviderCredentialsReplicate,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function resolveSegment(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
-  if (!request.settings.replicateApiKey) {
-    throw new Error(`Missing API key for "Replicate.com"`)
+  let apiKey = request.settings.replicateApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "Replicate.com"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsReplicate
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsReplicate
+    }
   }
 
   const segment: TimelineSegment = request.segment
@@ -44,7 +62,7 @@ export async function resolveSegment(
 
     try {
       segment.assetUrl = await runWorkflow({
-        apiKey: request.settings.replicateApiKey,
+        apiKey,
         workflow,
       })
       segment.assetSourceType = getClapAssetSourceType(segment.assetUrl)

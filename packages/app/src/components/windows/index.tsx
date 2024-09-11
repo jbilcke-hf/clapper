@@ -309,17 +309,18 @@ export const FruityWindow: React.FC<{
       [isFullscreen, win, theme]
     )
 
+    const isFocused = win.isFocused
     const windowClassName = useMemo(
       () =>
         win
           ? cn(
               `absolute overflow-hidden shadow-lg`,
               `border border-white/5`,
-              win.isFocused ? 'shadow-xl' : '',
+              isFocused ? 'shadow-xl' : '',
               isFullscreen ? 'fixed inset-0' : ''
             )
           : 'display-none',
-      [win, win?.isFocused, isFullscreen]
+      [win, isFocused, isFullscreen]
     )
 
     if (!win) return null

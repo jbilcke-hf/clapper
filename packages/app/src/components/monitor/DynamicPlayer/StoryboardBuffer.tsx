@@ -12,7 +12,7 @@ export function StoryboardBuffer({
   }
 
   return (
-    <img
+    <img // eslint-disable-line @next/next/no-img-element
       className={cn(
         `absolute`,
         `h-full overflow-hidden rounded-md`,

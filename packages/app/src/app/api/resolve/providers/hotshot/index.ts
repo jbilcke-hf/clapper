@@ -1,13 +1,30 @@
 import { TimelineSegment } from '@aitube/timeline'
 import { ResolveRequest } from '@aitube/clapper-services'
+import {
+  builtinProviderCredentialsHotshot,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function resolveSegment(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
-  if (!request.settings.hotshotApiKey) {
-    throw new Error(`Missing API key for "Hotshot"`)
-  }
+  let apiKey = request.settings.hotshotApiKey
 
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "Hotshot"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsHotshot
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsHotshot
+    }
+  }
   const segment: TimelineSegment = request.segment
 
   // TODO: implement the Hotshot API

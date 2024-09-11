@@ -35,11 +35,11 @@ export function ReactFlowCanvas() {
     const { nodes, edges } = glifToReactWorkflow(glifs[0])
     setNodes(nodes)
     setEdges(edges)
-  }, [])
+  }, [setEdges, setNodes])
 
   const onConnect: OnConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
-    []
+    [setEdges]
   )
 
   return (

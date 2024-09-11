@@ -40,6 +40,7 @@ export function useQueryStringLoader() {
     prompt,
     openClapUrl,
     openScreenplayUrl,
+    processUserMessage,
     fileUrl,
     interactive,
     imageStrategy,
