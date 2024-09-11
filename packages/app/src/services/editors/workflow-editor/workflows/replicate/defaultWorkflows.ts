@@ -51,10 +51,43 @@ export const defaultWorkflows: ClapWorkflow[] = [
     },
   },
   {
+    id: 'replicate://douwantech/musetalk',
+    label: 'MuseTalk by @douwantech',
+    description: '',
+    tags: ['lipsync', 'musetalk'],
+    author: '@douwantech',
+    thumbnailUrl: '',
+    nonCommercial: false,
+    engine: ClapWorkflowEngine.REST_API,
+    category: ClapWorkflowCategory.VIDEO_LIPSYNC,
+    provider: ClapWorkflowProvider.REPLICATE,
+    data: 'douwantech/musetalk:5501004e78525e4bbd9fa20d1e75ad51fddce5a274bec07b9b16d685e34eeaf8',
+    schema: '',
+    inputFields: [
+      {
+        ...genericVideo,
+        id: 'video_input',
+      },
+      {
+        ...genericAudio,
+        id: 'audio_input',
+      },
+    ],
+    inputValues: {
+      video_input: genericVideo.defaultValue,
+      audio_input: genericAudio.defaultValue,
+
+      // see https://replicate.com/douwantech/musetalk
+      // other params include:
+      // bbox_shift (0)
+      // fps (25)
+    },
+  },
+  {
     id: 'replicate://chenxwh/video-retalking',
     label: 'Video Retalking by @chenxwh',
     description: '',
-    tags: ['video retalking'],
+    tags: ['lipsync', 'video retalking'],
     author: '@chenxwh',
     thumbnailUrl: '',
     nonCommercial: false,

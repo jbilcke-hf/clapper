@@ -47,7 +47,7 @@ export async function runLipSync(
 
     if (!videoLipsyncWorkflowModel) {
       throw new Error(
-        `cannot run the lip sync without an videoLipsyncWorkflowModel`
+        `cannot run the lip sync without a videoLipsyncWorkflowModel`
       )
     }
     if (!segment.assetUrl) {
