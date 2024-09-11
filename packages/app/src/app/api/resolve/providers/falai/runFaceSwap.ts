@@ -3,16 +3,34 @@ import { TimelineSegment } from '@aitube/timeline'
 import { ResolveRequest } from '@aitube/clapper-services'
 import { FalAiImageResponse } from './types'
 import { ClapSegmentCategory } from '@aitube/clap'
+import {
+  builtinProviderCredentialsFalai,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function runFaceSwap(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
-  if (!request.settings.falAiApiKey) {
-    throw new Error(`Missing API key for "Fal.ai"`)
+  let apiKey = request.settings.falAiApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "Fal.ai"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsFalai
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsFalai
+    }
   }
 
   fal.config({
-    credentials: request.settings.falAiApiKey,
+    credentials: apiKey,
   })
 
   const segment: TimelineSegment = request.segment

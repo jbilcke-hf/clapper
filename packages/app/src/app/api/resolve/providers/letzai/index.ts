@@ -4,12 +4,30 @@ import { ClapSegmentCategory, generateSeed } from '@aitube/clap'
 
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
 import { callCreateImage } from './callCreateImage'
+import {
+  builtinProviderCredentialsLetzai,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function resolveSegment(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
-  if (!request.settings.letzAiApiKey) {
-    throw new Error(`Missing API key for "LetzAi"`)
+  let apiKey = request.settings.letzAiApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "LetzAi"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsLetzai
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsLetzai
+    }
   }
 
   const segment: TimelineSegment = request.segment
@@ -30,7 +48,7 @@ export async function resolveSegment(
       request.settings.imageGenerationWorkflow
     )
 
-    const result = await callCreateImage(request.settings.letzAiApiKey, {
+    const result = await callCreateImage(apiKey, {
       prompt: request.prompts.image.positive,
       negativePrompt: request.prompts.image.negative,
       // model: string;

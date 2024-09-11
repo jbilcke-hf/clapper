@@ -3,12 +3,30 @@ import { ResolveRequest } from '@aitube/clapper-services'
 import { ClapSegmentCategory } from '@aitube/clap'
 
 import { callCogVideoX } from './callCogVideoX'
+import {
+  builtinProviderCredentialsBigmodel,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function resolveSegment(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
-  if (!request.settings.bigModelApiKey) {
-    throw new Error(`Missing API key for "BigModel.cn"`)
+  let apiKey = request.settings.bigModelApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "BigModel.cn"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsBigmodel
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsBigmodel
+    }
   }
 
   const segment: TimelineSegment = request.segment
@@ -33,7 +51,7 @@ export async function resolveSegment(
     }
 
     // https://bigmodel.cn/dev/api#cogvideox
-    const result = await callCogVideoX(request.settings.bigModelApiKey, {
+    const result = await callCogVideoX(apiKey, {
       model: request.settings.videoGenerationWorkflow.data,
       image_url: request.prompts.video.image,
     })

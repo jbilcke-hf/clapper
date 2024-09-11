@@ -114,6 +114,14 @@ export const useSettings = create<SettingsStore>()(
           ),
         })
       },
+      setClapperApiKey: (clapperApiKey?: string) => {
+        set({
+          clapperApiKey: getValidString(
+            clapperApiKey,
+            getDefaultSettingsState().clapperApiKey
+          ),
+        })
+      },
       setAiTubeApiKey: (aiTubeApiKey?: string) => {
         set({
           aiTubeApiKey: getValidString(
@@ -923,6 +931,9 @@ export const useSettings = create<SettingsStore>()(
 
           huggingFaceApiKey:
             state.huggingFaceApiKey || defaultSettings.huggingFaceApiKey,
+
+          clapperApiKey: state.clapperApiKey || defaultSettings.clapperApiKey,
+
           aiTubeApiKey: state.aiTubeApiKey || defaultSettings.aiTubeApiKey,
 
           falAiApiKey: state.falAiApiKey || defaultSettings.falAiApiKey,

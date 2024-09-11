@@ -18,7 +18,8 @@ import { ChatAnthropic } from '@langchain/anthropic'
 import { ChatCohere } from '@langchain/cohere'
 import { ChatMistralAI } from '@langchain/mistralai'
 import { ChatVertexAI } from '@langchain/google-vertexai'
-// Hugging Face will be supported once the following package becomes available
+// to properly support Replicate and Hugging Face we need the following packages:
+// import { ChatReplicate } from "@langchain/replicate"
 // import { ChatHuggingFace } from "@langchain/huggingface"
 
 import {
@@ -36,6 +37,15 @@ import { isValidNumber } from '@/lib/utils'
 import { assistantMessageParser, formatInstructions } from './parser'
 import { parseRawInputToAction } from '@/services/assistant/parseRawInputToAction'
 import { parseLangChainResponse } from './parseLangChainResponse'
+import { getApiKey } from '../getApiKey'
+import {
+  builtinProviderCredentialsAnthropic,
+  builtinProviderCredentialsCohere,
+  builtinProviderCredentialsGoogle,
+  builtinProviderCredentialsGroq,
+  builtinProviderCredentialsMistralai,
+  builtinProviderCredentialsOpenai,
+} from '../globalSettings'
 
 /**
  * Query the preferred language model on the user prompt + the segments of the current scene
@@ -77,37 +87,61 @@ export async function askAnyAssistant({
     | RunnableLike<ChatPromptValueInterface, AIMessageChunk> =
     provider === ClapWorkflowProvider.GROQ
       ? new ChatGroq({
-          apiKey: settings.groqApiKey,
+          apiKey: getApiKey(
+            settings.groqApiKey,
+            builtinProviderCredentialsGroq,
+            settings.clapperApiKey
+          ),
           modelName,
           // temperature: 0.7,
         })
       : provider === ClapWorkflowProvider.OPENAI
         ? new ChatOpenAI({
-            openAIApiKey: settings.openaiApiKey,
+            openAIApiKey: getApiKey(
+              settings.openaiApiKey,
+              builtinProviderCredentialsOpenai,
+              settings.clapperApiKey
+            ),
             modelName,
             // temperature: 0.7,
           })
         : provider === ClapWorkflowProvider.ANTHROPIC
           ? new ChatAnthropic({
-              anthropicApiKey: settings.anthropicApiKey,
+              anthropicApiKey: getApiKey(
+                settings.anthropicApiKey,
+                builtinProviderCredentialsAnthropic,
+                settings.clapperApiKey
+              ),
               modelName,
               // temperature: 0.7,
             })
           : provider === ClapWorkflowProvider.COHERE
             ? new ChatCohere({
-                apiKey: settings.cohereApiKey,
+                apiKey: getApiKey(
+                  settings.cohereApiKey,
+                  builtinProviderCredentialsCohere,
+                  settings.clapperApiKey
+                ),
                 model: modelName,
                 // temperature: 0.7,
               })
             : provider === ClapWorkflowProvider.MISTRALAI
               ? new ChatMistralAI({
-                  apiKey: settings.mistralAiApiKey,
+                  apiKey: getApiKey(
+                    settings.mistralAiApiKey,
+                    builtinProviderCredentialsMistralai,
+                    settings.clapperApiKey
+                  ),
                   modelName,
                   // temperature: 0.7,
                 })
               : provider === ClapWorkflowProvider.GOOGLE
                 ? new ChatVertexAI({
-                    apiKey: settings.googleApiKey,
+                    apiKey: getApiKey(
+                      settings.googleApiKey,
+                      builtinProviderCredentialsGoogle,
+                      settings.clapperApiKey
+                    ),
                     modelName,
                     // temperature: 0.7,
                   })

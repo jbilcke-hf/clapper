@@ -24,6 +24,15 @@ const nextConfig = {
         // "sharp$": false,
         "onnxruntime-node$": false,
     }
+
+    // see https://github.com/replicate/replicate-javascript/issues/273#issuecomment-2248635353
+    config.ignoreWarnings = [
+      {
+        module: /replicate/,
+         message: /require function is used in a way in which dependencies cannot be statically extracted/,
+      },
+    ]
+
     return config;
 },
   async headers() {

@@ -66,7 +66,7 @@ export function FormArea<T>(
 
       onChange(rawStringValue as T)
     },
-    [defaultValue, disabled, onChange]
+    [disabled, onChange]
   )
 
   return (

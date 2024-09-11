@@ -5,13 +5,32 @@ import {
   getClapAssetSourceType,
 } from '@aitube/clap'
 import { TimelineSegment } from '@aitube/timeline'
+import {
+  builtinProviderCredentialsModelslab,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function resolveSegment(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
-  if (!request.settings.modelsLabApiKey) {
-    throw new Error(`Missing API key for "ModelsLab.com"`)
+  let apiKey = request.settings.modelsLabApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "ModelsLab.com"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsModelslab
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsModelslab
+    }
   }
+
   if (request.segment.category !== ClapSegmentCategory.IMAGE) {
     throw new Error(
       `Clapper doesn't support ${request.segment.category} generation for provider "ModelsLab". Please open a pull request with (working code) to solve this!`

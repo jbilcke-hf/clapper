@@ -34,9 +34,11 @@ export function FilterTree({
   const current = useFilterEditor((s) => s.current)
   const setCurrent = useFilterEditor((s) => s.setCurrent)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setAvailableFilters(availableFilters)
-  }, [availableFilters.map((f) => f.id).join(',')])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setAvailableFilters, availableFilters.map((f) => f.id).join(',')])
 
   const selectedNodeItem = useFilterTree((s) => s.selectedNodeItem)
   const selectedNodeType = useFilterTree((s) => s.selectedNodeType)
@@ -79,7 +81,7 @@ export function FilterTree({
       console.log('is not a filter..')
       // must be a different kind of node (eg. a collection, list or folder)
     }
-  }, [selectedNodeType, selectedNodeItem])
+  }, [selectedNodeType, selectedNodeItem, availableFilters, setCurrent])
 
   return (
     <Tree.Root<LibraryNodeType, TreeNodeItem>

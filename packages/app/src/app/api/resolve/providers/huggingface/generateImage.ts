@@ -4,6 +4,10 @@ import { decodeOutput } from '@/lib/utils/decodeOutput'
 import { ResolveRequest } from '@aitube/clapper-services'
 import { blobToBase64DataUri } from '@/lib/utils'
 import { addBase64Header } from '@/lib/utils/addBase64Header'
+import {
+  builtinProviderCredentialsHuggingface,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function generateImage(request: ResolveRequest): Promise<string> {
   if (!request.settings.imageGenerationWorkflow.data) {
@@ -18,15 +22,25 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
     )
   }
 
-  if (!request.settings.huggingFaceApiKey) {
-    throw new Error(
-      `HuggingFace.generateImage: cannot generate without a valid huggingFaceApiKey`
-    )
+  let apiKey = request.settings.huggingFaceApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "Hugging Face"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsHuggingface
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsHuggingface
+    }
   }
 
-  const hf: HfInferenceEndpoint = new HfInference(
-    request.settings.huggingFaceApiKey
-  )
+  const hf: HfInferenceEndpoint = new HfInference(apiKey)
 
   const blob: Blob = await hf.textToImage({
     model: request.settings.imageGenerationWorkflow.data,

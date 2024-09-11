@@ -75,5 +75,15 @@ export function useSetupIframeOnce(isEnabled = false) {
         setCanUseBellhop(false)
       }
     }
-  }, [canUseBellhop, isEnabled, hasLoadedBellhop, isPlaying])
+  }, [
+    canUseBellhop,
+    isEnabled,
+    hasLoadedBellhop,
+    isPlaying,
+    onMessage,
+    sendMessage,
+    setCanUseBellhop,
+    setHasLoadedBellhop,
+    togglePlayback,
+  ])
 }

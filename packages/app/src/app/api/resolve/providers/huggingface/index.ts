@@ -7,19 +7,35 @@ import { generateImage } from './generateImage'
 import { generateVoice } from './generateVoice'
 import { generateVideo } from './generateVideo'
 import { TimelineSegment } from '@aitube/timeline'
+import {
+  builtinProviderCredentialsHuggingface,
+  clapperApiKeyToUseBuiltinCredentials,
+} from '@/app/api/globalSettings'
 
 export async function resolveSegment(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
-  if (!request.settings.huggingFaceApiKey) {
-    throw new Error(`Missing API key for "Hugging Face"`)
+  let apiKey = request.settings.huggingFaceApiKey
+
+  if (!apiKey) {
+    if (clapperApiKeyToUseBuiltinCredentials) {
+      if (
+        request.settings.clapperApiKey !== clapperApiKeyToUseBuiltinCredentials
+      ) {
+        throw new Error(`Missing API key for "Hugging Face"`)
+      } else {
+        // user has a valid Clapper API key, so they are allowed to use the built-in credentials
+        apiKey = builtinProviderCredentialsHuggingface
+      }
+    } else {
+      // no Clapper API key is defined, so we give free access to the built-in credentials
+      apiKey = builtinProviderCredentialsHuggingface
+    }
   }
 
   const segment = request.segment
 
-  const hf: HfInferenceEndpoint = new HfInference(
-    request.settings.huggingFaceApiKey
-  )
+  // const hf: HfInferenceEndpoint = new HfInference(apiKey)
 
   if (request.segment.category === ClapSegmentCategory.IMAGE) {
     segment.assetUrl = await generateImage(request)

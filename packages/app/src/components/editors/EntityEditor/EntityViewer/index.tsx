@@ -136,7 +136,7 @@ export function EntityViewer({
               />
               {draft.imageId && (
                 <div className="mt-2">
-                  <img
+                  <img // eslint-disable-line @next/next/no-img-element
                     src={draft.imageId}
                     alt="Entity Preview"
                     className="h-auto max-w-full"

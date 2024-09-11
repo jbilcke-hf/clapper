@@ -60,6 +60,7 @@ export function useRenderLoop(): void {
     soundRenderingStrategy,
     voiceRenderingStrategy,
     musicRenderingStrategy,
+    setUserDefinedRenderingStrategies,
   ])
 
   // used to control transitions between buffers

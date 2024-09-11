@@ -12,6 +12,10 @@ import { FormInput } from '../forms/FormInput'
 import { useUI } from '@/services/ui'
 import { FormSwitch } from '../forms/FormSwitch'
 
+export const hideThirdpartyProviders =
+  `${process.env.NEXT_PUBLIC_DISABLE_PROVIDER_CREDENTIALS_IN_USER_SETTINGS || ''}`.toLowerCase() ===
+  'true'
+
 function GetItHere({ href, children }: { href: string; children: ReactNode }) {
   return (
     <span>
@@ -55,6 +59,9 @@ export function SettingsSectionProvider() {
 
   const comfyIcuAccelerator = useSettings((s) => s.comfyIcuAccelerator)
   const setComfyIcuAccelerator = useSettings((s) => s.setComfyIcuAccelerator)
+
+  const clapperApiKey = useSettings((s) => s.clapperApiKey)
+  const setClapperApiKey = useSettings((s) => s.setClapperApiKey)
 
   const huggingFaceApiKey = useSettings((s) => s.huggingFaceApiKey)
   const setHuggingFaceApiKey = useSettings((s) => s.setHuggingFaceApiKey)
@@ -127,230 +134,242 @@ export function SettingsSectionProvider() {
         />
 
         <FormInput
-          label="Hugging Face API key"
-          value={huggingFaceApiKey}
+          label="Clapper API key"
+          value={clapperApiKey}
           defaultValue={''}
-          onChange={setHuggingFaceApiKey}
+          onChange={setClapperApiKey}
           type={apiKeyType}
         />
 
-        <FormInput
-          label="Replicate API key"
-          value={replicateApiKey}
-          defaultValue={defaultSettings.replicateApiKey}
-          onChange={setReplicateApiKey}
-          type={apiKeyType}
-        />
+        {!hideThirdpartyProviders && (
+          <>
+            <FormInput
+              label="Hugging Face API key"
+              value={huggingFaceApiKey}
+              defaultValue={''}
+              onChange={setHuggingFaceApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label="ComfyUI API URL"
-          value={comfyUiApiUrl}
-          defaultValue={defaultSettings.comfyUiApiUrl}
-          onChange={setComfyUiApiUrl}
-          type="text"
-        />
+            <FormInput
+              label="Replicate API key"
+              value={replicateApiKey}
+              defaultValue={defaultSettings.replicateApiKey}
+              onChange={setReplicateApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label="ComfyUI Client ID"
-          value={comfyUiClientId}
-          defaultValue={defaultSettings.comfyUiClientId}
-          onChange={setComfyUiClientId}
-          type="text"
-        />
+            <FormInput
+              label="ComfyUI API URL"
+              value={comfyUiApiUrl}
+              defaultValue={defaultSettings.comfyUiApiUrl}
+              onChange={setComfyUiApiUrl}
+              type="text"
+            />
 
-        <FormInput
-          label="ComfyUI HTTP Auth login (optional)"
-          value={comfyUiHttpAuthLogin}
-          defaultValue={defaultSettings.comfyUiHttpAuthLogin}
-          onChange={setComfyUiHttpAuthLogin}
-          type="text"
-        />
+            <FormInput
+              label="ComfyUI Client ID"
+              value={comfyUiClientId}
+              defaultValue={defaultSettings.comfyUiClientId}
+              onChange={setComfyUiClientId}
+              type="text"
+            />
 
-        <FormInput
-          label="ComfyUI HTTP Auth password (optional)"
-          value={comfyUiHttpAuthPassword}
-          defaultValue={defaultSettings.comfyUiHttpAuthPassword}
-          onChange={setComfyUiHttpAuthPassword}
-          type={apiKeyType}
-        />
+            <FormInput
+              label="ComfyUI HTTP Auth login (optional)"
+              value={comfyUiHttpAuthLogin}
+              defaultValue={defaultSettings.comfyUiHttpAuthLogin}
+              onChange={setComfyUiHttpAuthLogin}
+              type="text"
+            />
 
-        <FormInput
-          label="Comfy.icu API key"
-          value={comfyIcuApiKey}
-          defaultValue={defaultSettings.comfyIcuApiKey}
-          onChange={setComfyIcuApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label="ComfyUI HTTP Auth password (optional)"
+              value={comfyUiHttpAuthPassword}
+              defaultValue={defaultSettings.comfyUiHttpAuthPassword}
+              onChange={setComfyUiHttpAuthPassword}
+              type={apiKeyType}
+            />
 
-        <FormSelect<ComfyIcuAccelerator>
-          label="Comfy.icu hardware accelerator"
-          selectedItemId={comfyIcuAccelerator}
-          selectedItemLabel={
-            (availableComfyIcuAccelerators as any)[comfyIcuAccelerator] ||
-            ComfyIcuAccelerator.L4
-          }
-          items={Object.entries(availableComfyIcuAccelerators).map(
-            ([accelerator, label]) => ({
-              id: accelerator,
-              label,
-              disabled: false,
-              value: accelerator as ComfyIcuAccelerator,
-            })
-          )}
-          onSelect={setComfyIcuAccelerator}
-        />
+            <FormInput
+              label="Comfy.icu API key"
+              value={comfyIcuApiKey}
+              defaultValue={defaultSettings.comfyIcuApiKey}
+              onChange={setComfyIcuApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label={
-            <GetItHere href="https://fal.ai/dashboard/keys">
-              Fal.ai API Key
-            </GetItHere>
-          }
-          value={falAiApiKey}
-          defaultValue={defaultSettings.falAiApiKey}
-          onChange={setFalAiApiKey}
-          type={apiKeyType}
-        />
+            <FormSelect<ComfyIcuAccelerator>
+              label="Comfy.icu hardware accelerator"
+              selectedItemId={comfyIcuAccelerator}
+              selectedItemLabel={
+                (availableComfyIcuAccelerators as any)[comfyIcuAccelerator] ||
+                ComfyIcuAccelerator.L4
+              }
+              items={Object.entries(availableComfyIcuAccelerators).map(
+                ([accelerator, label]) => ({
+                  id: accelerator,
+                  label,
+                  disabled: false,
+                  value: accelerator as ComfyIcuAccelerator,
+                })
+              )}
+              onSelect={setComfyIcuAccelerator}
+            />
 
-        <FormInput
-          label="ModelsLab API Key"
-          value={modelsLabApiKey}
-          defaultValue={defaultSettings.modelsLabApiKey}
-          onChange={setModelsLabApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label={
+                <GetItHere href="https://fal.ai/dashboard/keys">
+                  Fal.ai API Key
+                </GetItHere>
+              }
+              value={falAiApiKey}
+              defaultValue={defaultSettings.falAiApiKey}
+              onChange={setFalAiApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label={
-            <GetItHere href="https://platform.openai.com/api-keys">
-              OpenAI API Key
-            </GetItHere>
-          }
-          value={openaiApiKey}
-          defaultValue={defaultSettings.openaiApiKey}
-          onChange={setOpenaiApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label="ModelsLab API Key"
+              value={modelsLabApiKey}
+              defaultValue={defaultSettings.modelsLabApiKey}
+              onChange={setModelsLabApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label="Groq API Key"
-          value={groqApiKey}
-          defaultValue={defaultSettings.groqApiKey}
-          onChange={setGroqApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label={
+                <GetItHere href="https://platform.openai.com/api-keys">
+                  OpenAI API Key
+                </GetItHere>
+              }
+              value={openaiApiKey}
+              defaultValue={defaultSettings.openaiApiKey}
+              onChange={setOpenaiApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label={
-            <GetItHere href="https://aistudio.google.com/app/apikey">
-              Google API Key
-            </GetItHere>
-          }
-          value={googleApiKey}
-          defaultValue={defaultSettings.googleApiKey}
-          onChange={setGoogleApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label="Groq API Key"
+              value={groqApiKey}
+              defaultValue={defaultSettings.groqApiKey}
+              onChange={setGroqApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label={
-            <GetItHere href="https://console.anthropic.com/settings/keys">
-              Anthropic API Key
-            </GetItHere>
-          }
-          value={anthropicApiKey}
-          defaultValue={defaultSettings.anthropicApiKey}
-          onChange={setAnthropicApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label={
+                <GetItHere href="https://aistudio.google.com/app/apikey">
+                  Google API Key
+                </GetItHere>
+              }
+              value={googleApiKey}
+              defaultValue={defaultSettings.googleApiKey}
+              onChange={setGoogleApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label={
-            <GetItHere href="https://dashboard.cohere.com/api-keys">
-              Cohere API Key
-            </GetItHere>
-          }
-          value={cohereApiKey}
-          defaultValue={defaultSettings.cohereApiKey}
-          onChange={setCohereApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label={
+                <GetItHere href="https://console.anthropic.com/settings/keys">
+                  Anthropic API Key
+                </GetItHere>
+              }
+              value={anthropicApiKey}
+              defaultValue={defaultSettings.anthropicApiKey}
+              onChange={setAnthropicApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label="MistralAI API Key"
-          value={mistralAiApiKey}
-          defaultValue={defaultSettings.mistralAiApiKey}
-          onChange={setMistralAiApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label={
+                <GetItHere href="https://dashboard.cohere.com/api-keys">
+                  Cohere API Key
+                </GetItHere>
+              }
+              value={cohereApiKey}
+              defaultValue={defaultSettings.cohereApiKey}
+              onChange={setCohereApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label={
-            <GetItHere href="https://platform.stability.ai/account/keys">
-              StabilityAI API Key
-            </GetItHere>
-          }
-          value={stabilityAiApiKey}
-          defaultValue={defaultSettings.stabilityAiApiKey}
-          onChange={setStabilityAiApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label="MistralAI API Key"
+              value={mistralAiApiKey}
+              defaultValue={defaultSettings.mistralAiApiKey}
+              onChange={setMistralAiApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label="ElevenLabs API Key"
-          value={elevenLabsApiKey}
-          defaultValue={defaultSettings.elevenLabsApiKey}
-          onChange={setElevenLabsApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label={
+                <GetItHere href="https://platform.stability.ai/account/keys">
+                  StabilityAI API Key
+                </GetItHere>
+              }
+              value={stabilityAiApiKey}
+              defaultValue={defaultSettings.stabilityAiApiKey}
+              onChange={setStabilityAiApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label="KitsAI API Key"
-          value={kitsAiApiKey}
-          defaultValue={defaultSettings.kitsAiApiKey}
-          onChange={setKitsAiApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label="ElevenLabs API Key"
+              value={elevenLabsApiKey}
+              defaultValue={defaultSettings.elevenLabsApiKey}
+              onChange={setElevenLabsApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label="LetzAI API Key"
-          value={letzAiApiKey}
-          defaultValue={defaultSettings.letzAiApiKey}
-          onChange={setLetzAiApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label="KitsAI API Key"
+              value={kitsAiApiKey}
+              defaultValue={defaultSettings.kitsAiApiKey}
+              onChange={setKitsAiApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label="BigModel API Key"
-          value={bigModelApiKey}
-          defaultValue={defaultSettings.bigModelApiKey}
-          onChange={setBigModelApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label="LetzAI API Key"
+              value={letzAiApiKey}
+              defaultValue={defaultSettings.letzAiApiKey}
+              onChange={setLetzAiApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label="PiApi API Key"
-          value={piApiApiKey}
-          defaultValue={defaultSettings.piApiApiKey}
-          onChange={setPiApiApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label="BigModel API Key"
+              value={bigModelApiKey}
+              defaultValue={defaultSettings.bigModelApiKey}
+              onChange={setBigModelApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label="Civitai API Key"
-          value={civitaiApiKey}
-          defaultValue={defaultSettings.civitaiApiKey}
-          onChange={setCivitaiApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label="PiApi API Key"
+              value={piApiApiKey}
+              defaultValue={defaultSettings.piApiApiKey}
+              onChange={setPiApiApiKey}
+              type={apiKeyType}
+            />
 
-        <FormInput
-          label="Hotshot API Key"
-          value={hotshotApiKey}
-          defaultValue={defaultSettings.hotshotApiKey}
-          onChange={setHotshotApiKey}
-          type={apiKeyType}
-        />
+            <FormInput
+              label="Civitai API Key"
+              value={civitaiApiKey}
+              defaultValue={defaultSettings.civitaiApiKey}
+              onChange={setCivitaiApiKey}
+              type={apiKeyType}
+            />
+
+            <FormInput
+              label="Hotshot API Key"
+              value={hotshotApiKey}
+              defaultValue={defaultSettings.hotshotApiKey}
+              onChange={setHotshotApiKey}
+              type={apiKeyType}
+            />
+          </>
+        )}
       </FormSection>
     </div>
   )
