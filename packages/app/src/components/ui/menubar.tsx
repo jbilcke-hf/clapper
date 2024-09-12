@@ -2,8 +2,16 @@
 
 import * as React from 'react'
 import * as MenubarPrimitive from '@radix-ui/react-menubar'
-import { Check, ChevronRight, Circle, Menu, X, ChevronLeft, ChevronUp, ChevronDown } from 'lucide-react'
-
+import {
+  Check,
+  ChevronRight,
+  Circle,
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronUp,
+  ChevronDown,
+} from 'lucide-react'
 
 import { cn } from '@/lib/utils/cn'
 import { useBreakpoints } from '@/lib/hooks/useBreakpoints'
@@ -26,7 +34,7 @@ const MobileMenuTrigger = React.forwardRef<
   <button
     ref={ref}
     className={cn(
-      'md:hidden p-2 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800',
+      'rounded-md p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden',
       className
     )}
     {...props}
@@ -38,12 +46,15 @@ MobileMenuTrigger.displayName = 'MobileMenuTrigger'
 
 const MobileMenuDrawer = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { isOpen: boolean; onClose: () => void }
+  React.HTMLAttributes<HTMLDivElement> & {
+    isOpen: boolean
+    onClose: () => void
+  }
 >(({ className, isOpen, onClose, children, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      'fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-neutral-900 shadow-lg transform transition-transform duration-300 ease-in-out',
+      'fixed inset-y-0 left-0 z-50 w-64 transform bg-white shadow-lg transition-transform duration-300 ease-in-out dark:bg-neutral-900',
       isOpen ? 'translate-x-0' : '-translate-x-full',
       className
     )}
@@ -51,13 +62,11 @@ const MobileMenuDrawer = React.forwardRef<
   >
     <button
       onClick={onClose}
-      className="absolute top-4 right-4 p-2 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800"
+      className="absolute right-4 top-4 rounded-md p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
     >
       <X className="h-6 w-6" />
     </button>
-    <div className="p-4 overflow-y-auto h-full">
-      {children}
-    </div>
+    <div className="h-full overflow-y-auto p-4">{children}</div>
   </div>
 ))
 MobileMenuDrawer.displayName = 'MobileMenuDrawer'
@@ -69,9 +78,9 @@ interface MobileMenuProps {
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ items, onBack, title }) => (
-  <div className="flex flex-col w-full h-full">
+  <div className="flex h-full w-full flex-col">
     {(onBack || title) && (
-      <div className="flex items-center px-4 py-3 border-b border-neutral-200 dark:border-neutral-700">
+      <div className="flex items-center border-b border-neutral-200 px-4 py-3 dark:border-neutral-700">
         {onBack && (
           <button onClick={onBack} className="mr-2">
             <ChevronLeft className="h-5 w-5" />
@@ -80,18 +89,16 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items, onBack, title }) => (
         {title && <h2 className="text-lg font-semibold">{title}</h2>}
       </div>
     )}
-    <div className="flex-1 overflow-y-auto">
-      {items}
-    </div>
+    <div className="flex-1 overflow-y-auto">{items}</div>
   </div>
 )
 
 MobileMenu.displayName = 'MobileMenu'
 
-const MobileMenuItem: React.FC<{ 
-  label: React.ReactNode; 
-  children?: React.ReactNode;
-  onClick?: () => void;
+const MobileMenuItem: React.FC<{
+  label: React.ReactNode
+  children?: React.ReactNode
+  onClick?: () => void
 }> = ({ label, children, onClick }) => {
   const [isOpen, setIsOpen] = React.useState(false)
 
@@ -110,10 +117,15 @@ const MobileMenuItem: React.FC<{
         className="flex w-full items-center justify-between px-4 py-3 text-base font-medium"
       >
         {label}
-        {children && (isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />)}
+        {children &&
+          (isOpen ? (
+            <ChevronUp className="h-5 w-5" />
+          ) : (
+            <ChevronDown className="h-5 w-5" />
+          ))}
       </button>
       {children && (
-        <div className={cn("pl-6", isOpen ? "block" : "hidden")}>
+        <div className={cn('pl-6', isOpen ? 'block' : 'hidden')}>
           {children}
         </div>
       )}
@@ -128,13 +140,20 @@ const Menubar = React.forwardRef<
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
   const { isMd } = useBreakpoints()
 
-  const renderMobileMenuItems = (items: React.ReactNode, depth = 0): React.ReactNode => {
+  const renderMobileMenuItems = (
+    items: React.ReactNode,
+    depth = 0
+  ): React.ReactNode => {
     return React.Children.map(items, (child) => {
       if (React.isValidElement(child)) {
         if (child.type === MenubarMenu) {
-          const trigger = child.props.children.find((c: React.ReactElement) => c.type === MenubarTrigger)
-          const content = child.props.children.find((c: React.ReactElement) => c.type === MenubarContent)
-          
+          const trigger = child.props.children.find(
+            (c: React.ReactElement) => c.type === MenubarTrigger
+          )
+          const content = child.props.children.find(
+            (c: React.ReactElement) => c.type === MenubarContent
+          )
+
           return (
             <MobileMenuItem label={trigger.props.children}>
               {renderMobileMenuItems(content.props.children, depth + 1)}
@@ -142,8 +161,8 @@ const Menubar = React.forwardRef<
           )
         } else if (child.type === MenubarItem) {
           return (
-            <MobileMenuItem 
-              label={child.props.children} 
+            <MobileMenuItem
+              label={child.props.children}
               onClick={() => {
                 if (child.props.onClick) {
                   child.props.onClick()
@@ -153,8 +172,12 @@ const Menubar = React.forwardRef<
             />
           )
         } else if (child.type === MenubarSub) {
-          const subTrigger = child.props.children.find((c: React.ReactElement) => c.type === MenubarSubTrigger)
-          const subContent = child.props.children.find((c: React.ReactElement) => c.type === MenubarSubContent)
+          const subTrigger = child.props.children.find(
+            (c: React.ReactElement) => c.type === MenubarSubTrigger
+          )
+          const subContent = child.props.children.find(
+            (c: React.ReactElement) => c.type === MenubarSubContent
+          )
           return (
             <MobileMenuItem label={subTrigger.props.children}>
               {renderMobileMenuItems(subContent.props.children, depth + 1)}
@@ -177,7 +200,7 @@ const Menubar = React.forwardRef<
       {!isMd && (
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800"
+          className="rounded-md p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
         >
           <Menu className="h-6 w-6" />
         </button>
@@ -185,14 +208,17 @@ const Menubar = React.forwardRef<
       {!isMd && (
         <div
           className={cn(
-            'fixed inset-0 z-50 bg-white dark:bg-neutral-900 transform transition-transform duration-300 ease-in-out overflow-y-auto',
+            'fixed inset-0 z-50 transform overflow-y-auto bg-white transition-transform duration-300 ease-in-out dark:bg-neutral-900',
             isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           )}
         >
-          <div className="flex flex-col h-full">
-            <div className="flex justify-between items-center p-4 border-b border-neutral-200 dark:border-neutral-700">
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between border-b border-neutral-200 p-4 dark:border-neutral-700">
               <h2 className="text-lg font-semibold">Menu</h2>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2">
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2"
+              >
                 <X className="h-6 w-6" />
               </button>
             </div>
