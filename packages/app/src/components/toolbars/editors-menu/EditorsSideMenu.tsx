@@ -23,12 +23,18 @@ import { EditorView } from '@aitube/clapper-services'
 import { useTheme } from '@/services/ui/useTheme'
 import { EditorsSideMenuItem } from './EditorsSideMenuItem'
 import { NatureIcon } from './NatureIcon'
+import { cn } from '@/lib/utils'
 
 export function EditorsSideMenu() {
   const theme = useTheme()
   return (
     <div
-      className="flex h-full w-10 flex-col items-center justify-between border-r transition-all duration-200 ease-in-out md:w-11 lg:w-12 xl:w-13"
+      className={cn(
+        `hidden flex-col md:flex`,
+        `items-center justify-between border-r`,
+        `transition-all duration-200 ease-in-out`,
+        `h-full w-10 md:w-11 lg:w-12 xl:w-13`
+      )}
       style={{
         backgroundColor:
           theme.editorMenuBgColor || theme.defaultBgColor || '#eeeeee',
