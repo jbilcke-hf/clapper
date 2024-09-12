@@ -2,11 +2,9 @@
 
 import * as React from 'react'
 import * as MenubarPrimitive from '@radix-ui/react-menubar'
-import { Check, ChevronRight, Circle, Menu, X, ChevronLeft, ChevronUp, ChevronDown } from 'lucide-react'
-
+import { Check, ChevronRight, Circle } from 'lucide-react'
 
 import { cn } from '@/lib/utils/cn'
-import { useBreakpoints } from '@/lib/hooks/useBreakpoints'
 
 const MenubarMenu = MenubarPrimitive.Menu
 
@@ -18,198 +16,19 @@ const MenubarSub = MenubarPrimitive.Sub
 
 const MenubarRadioGroup = MenubarPrimitive.RadioGroup
 
-// Add new components for mobile menu
-const MobileMenuTrigger = React.forwardRef<
-  HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, ...props }, ref) => (
-  <button
-    ref={ref}
-    className={cn(
-      'md:hidden p-2 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800',
-      className
-    )}
-    {...props}
-  >
-    <Menu className="h-6 w-6" />
-  </button>
-))
-MobileMenuTrigger.displayName = 'MobileMenuTrigger'
-
-const MobileMenuDrawer = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { isOpen: boolean; onClose: () => void }
->(({ className, isOpen, onClose, children, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-neutral-900 shadow-lg transform transition-transform duration-300 ease-in-out',
-      isOpen ? 'translate-x-0' : '-translate-x-full',
-      className
-    )}
-    {...props}
-  >
-    <button
-      onClick={onClose}
-      className="absolute top-4 right-4 p-2 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800"
-    >
-      <X className="h-6 w-6" />
-    </button>
-    <div className="p-4 overflow-y-auto h-full">
-      {children}
-    </div>
-  </div>
-))
-MobileMenuDrawer.displayName = 'MobileMenuDrawer'
-
-interface MobileMenuProps {
-  items: React.ReactNode
-  onBack?: () => void
-  title?: string
-}
-
-const MobileMenu: React.FC<MobileMenuProps> = ({ items, onBack, title }) => (
-  <div className="flex flex-col w-full h-full">
-    {(onBack || title) && (
-      <div className="flex items-center px-4 py-3 border-b border-neutral-200 dark:border-neutral-700">
-        {onBack && (
-          <button onClick={onBack} className="mr-2">
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-        )}
-        {title && <h2 className="text-lg font-semibold">{title}</h2>}
-      </div>
-    )}
-    <div className="flex-1 overflow-y-auto">
-      {items}
-    </div>
-  </div>
-)
-
-MobileMenu.displayName = 'MobileMenu'
-
-const MobileMenuItem: React.FC<{ 
-  label: React.ReactNode; 
-  children?: React.ReactNode;
-  onClick?: () => void;
-}> = ({ label, children, onClick }) => {
-  const [isOpen, setIsOpen] = React.useState(false)
-
-  const handleClick = () => {
-    if (children) {
-      setIsOpen(!isOpen)
-    } else if (onClick) {
-      onClick()
-    }
-  }
-
-  return (
-    <div className="border-b border-neutral-200 dark:border-neutral-700">
-      <button
-        onClick={handleClick}
-        className="flex w-full items-center justify-between px-4 py-3 text-base font-medium"
-      >
-        {label}
-        {children && (isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />)}
-      </button>
-      {children && (
-        <div className={cn("pl-6", isOpen ? "block" : "hidden")}>
-          {children}
-        </div>
-      )}
-    </div>
-  )
-}
-
 const Menubar = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Root>
->(({ className, children, ...props }, ref) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
-  const { isMd } = useBreakpoints()
-
-  const renderMobileMenuItems = (items: React.ReactNode, depth = 0): React.ReactNode => {
-    return React.Children.map(items, (child) => {
-      if (React.isValidElement(child)) {
-        if (child.type === MenubarMenu) {
-          const trigger = child.props.children.find((c: React.ReactElement) => c.type === MenubarTrigger)
-          const content = child.props.children.find((c: React.ReactElement) => c.type === MenubarContent)
-          
-          return (
-            <MobileMenuItem label={trigger.props.children}>
-              {renderMobileMenuItems(content.props.children, depth + 1)}
-            </MobileMenuItem>
-          )
-        } else if (child.type === MenubarItem) {
-          return (
-            <MobileMenuItem 
-              label={child.props.children} 
-              onClick={() => {
-                if (child.props.onClick) {
-                  child.props.onClick()
-                }
-                setIsMobileMenuOpen(false)
-              }}
-            />
-          )
-        } else if (child.type === MenubarSub) {
-          const subTrigger = child.props.children.find((c: React.ReactElement) => c.type === MenubarSubTrigger)
-          const subContent = child.props.children.find((c: React.ReactElement) => c.type === MenubarSubContent)
-          return (
-            <MobileMenuItem label={subTrigger.props.children}>
-              {renderMobileMenuItems(subContent.props.children, depth + 1)}
-            </MobileMenuItem>
-          )
-        } else if (child.type === MenubarSeparator) {
-          return <hr className="my-2 border-gray-200 dark:border-gray-700" />
-        }
-      }
-      return child
-    })
-  }
-
-  return (
-    <MenubarPrimitive.Root
-      ref={ref}
-      className={cn('relative', className)}
-      {...props}
-    >
-      {!isMd && (
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800"
-        >
-          <Menu className="h-6 w-6" />
-        </button>
-      )}
-      {!isMd && (
-        <div
-          className={cn(
-            'fixed inset-0 z-50 bg-white dark:bg-neutral-900 transform transition-transform duration-300 ease-in-out overflow-y-auto',
-            isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-          )}
-        >
-          <div className="flex flex-col h-full">
-            <div className="flex justify-between items-center p-4 border-b border-neutral-200 dark:border-neutral-700">
-              <h2 className="text-lg font-semibold">Menu</h2>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2">
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              {renderMobileMenuItems(children)}
-            </div>
-          </div>
-        </div>
-      )}
-      {isMd && (
-        <div className="flex h-full items-center space-x-0 border border-none border-neutral-100/50 bg-white/50 p-1 shadow-none dark:border-none dark:border-neutral-950/50 dark:bg-neutral-950/50">
-          {children}
-        </div>
-      )}
-    </MenubarPrimitive.Root>
-  )
-})
+>(({ className, ...props }, ref) => (
+  <MenubarPrimitive.Root
+    ref={ref}
+    className={cn(
+      'flex h-full items-center space-x-0 border border-none border-neutral-100/50 bg-white/50 p-1 shadow-none dark:border-none dark:border-neutral-950/50 dark:bg-neutral-950/50',
+      className
+    )}
+    {...props}
+  />
+))
 Menubar.displayName = MenubarPrimitive.Root.displayName
 
 const MenubarTrigger = React.forwardRef<

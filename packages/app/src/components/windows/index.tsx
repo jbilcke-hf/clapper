@@ -288,7 +288,7 @@ export const FruityWindow: React.FC<{
           ? {
               width: isFullscreen ? '100vw' : `${win?.width}px`,
               height: isFullscreen
-                ? '100vh'
+                ? '100svh'
                 : win.isReduced
                   ? 'auto'
                   : `${win.height}px`,
