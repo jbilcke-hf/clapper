@@ -20,7 +20,7 @@ import { TopBar } from '@/components/toolbars/top-bar'
 import { Timeline } from '@/components/core/timeline'
 import { ChatView } from '@/components/assistant/ChatView'
 import { Editors } from '@/components/editors/Editors'
-import { BottomToolbar } from '@/components/toolbars/bottom-bar'
+import { BottomBar } from '@/components/toolbars/bottom-bar'
 import { FruityDesktop, FruityWindow } from '@/components/windows'
 import { ScriptEditor } from '@/components/editors/ScriptEditor'
 import { SegmentEditor } from '@/components/editors/SegmentEditor'
@@ -35,6 +35,7 @@ import { useDynamicWorkflows } from '@/services/editors/workflow-editor/useDynam
 import { useQueryStringLoader } from '@/components/toolbars/top-menu/file/useQueryStringLoader'
 import { useSetupIframeOnce } from './embed/useSetupIframeOnce'
 import { TimelineZoom } from '@/components/core/timeline/TimelineZoom'
+import { useBreakpoints } from '@/lib/hooks/useBreakpoints'
 
 export enum ClapperIntegrationMode {
   APP = 'APP',
@@ -56,6 +57,8 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
   const windowLayout = useUI((s) => s.windowLayout)
 
   const isIframe = mode === ClapperIntegrationMode.IFRAME
+
+  const { isMd } = useBreakpoints()
 
   // this has to be done at the root of the app, that way it can
   // perform its routine even when the monitor component is hidden
@@ -323,14 +326,14 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
         `dark fixed flex h-screen w-screen select-none flex-col overflow-hidden font-light text-neutral-900/90 dark:text-neutral-100/90`
       )}
     >
-      <TopBar className={isIframe ? 'fixed scale-0 opacity-0' : ''} />
+      <TopBar className={isIframe ? 'hidden' : ''} />
       <div
         className={cn(
           `flex w-screen flex-row overflow-hidden`,
           isIframe
             ? 'h-screen'
             : windowLayout === UIWindowLayout.GRID
-              ? 'h-[calc(100vh-64px)]'
+              ? 'h-[calc(100vh-48px)] md:h-[calc(100vh-64px)]'
               : 'h-[calc(100vh-36px)]'
         )}
         style={
@@ -346,12 +349,12 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
             : gridLayout}
       </div>
 
-      {!isIframe && welcomeScreen}
+      {!isIframe && isMd && welcomeScreen}
 
       <SettingsDialog />
       <LoadingDialog />
       <Toaster />
-      {!isIframe && windowLayout === UIWindowLayout.GRID && <BottomToolbar />}
+      {!isIframe && windowLayout === UIWindowLayout.GRID && <BottomBar />}
     </div>
   )
 }

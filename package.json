@@ -43,5 +43,6 @@
     "packages/app"
   ],
   "dependencies": {
+    "react-responsive": "^10.0.0"
   }
 }
