@@ -265,7 +265,7 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
         showWelcomeScreen
           ? 'pointer-events-auto z-[101] flex'
           : 'pointer-events-none hidden',
-        `fixed top-9 h-[calc(100vh-36px)] w-screen flex-row overflow-hidden`,
+        `fixed top-9 h-[calc(100svh-36px)] w-screen flex-row overflow-hidden`,
         `items-center justify-center`,
         `bg-neutral-950`
       )}
@@ -323,7 +323,7 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
     <div
       ref={ref}
       className={cn(
-        `dark fixed flex h-screen w-screen select-none flex-col overflow-hidden font-light text-neutral-900/90 dark:text-neutral-100/90`
+        `dark fixed flex h-svh w-screen select-none flex-col overflow-hidden font-light text-neutral-900/90 dark:text-neutral-100/90`
       )}
     >
       <TopBar className={isIframe ? 'hidden' : ''} />
@@ -331,10 +331,10 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
         className={cn(
           `flex w-screen flex-row overflow-hidden`,
           isIframe
-            ? 'h-screen'
+            ? 'h-svh'
             : windowLayout === UIWindowLayout.GRID
-              ? 'h-[calc(100vh-48px)] md:h-[calc(100vh-64px)]'
-              : 'h-[calc(100vh-36px)]'
+              ? 'h-[calc(100svh-48px)] md:h-[calc(100svh-64px)]'
+              : 'h-[calc(100svh-36px)]'
         )}
         style={
           isIframe || windowLayout === UIWindowLayout.GRID

@@ -12,7 +12,7 @@ export function DeprecatedLoader({
   return (
     <div
       className={cn(
-        `fixed z-[100] flex h-screen w-screen`,
+        `fixed z-[100] flex h-svh w-screen`,
 
         // the purpose here is to make the background blur work a bit more nicely
         // by going outside the edges

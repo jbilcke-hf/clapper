@@ -83,7 +83,7 @@ export function SettingsDialog() {
           <DialogFooter>
             <Button
               variant="outline"
-              className="text-sm font-light dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400"
+              className="hidden text-sm font-light dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 md:flex"
               onClick={() => {
                 setShowSettings(SettingsCategory.NONE)
               }}
