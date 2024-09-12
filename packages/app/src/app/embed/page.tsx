@@ -26,10 +26,12 @@ export default function EmbedPage() {
           href="https://fonts.googleapis.com"
           crossOrigin="anonymous"
         />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta
-          name="viewport"
-          content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
         />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <Script id="gtm">{`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

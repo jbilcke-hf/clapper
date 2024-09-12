@@ -134,8 +134,8 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
           </ReflexElement>
           <ReflexSplitter />
           <ReflexElement
-            size={showTimeline ? 400 : 1}
-            minSize={showTimeline ? 200 : 1}
+            size={showTimeline ? (isMd ? 400 : 250) : 1}
+            minSize={showTimeline ? 50 : 1}
             maxSize={showTimeline ? 1600 : 1}
           >
             <Timeline />

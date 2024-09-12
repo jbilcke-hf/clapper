@@ -18,7 +18,7 @@ export function TopBar(
 
   return (
     <div
-      className={cn(`h-9 w-full hidden md:flex md:w-full`, className)}
+      className={cn(`hidden h-9 w-full md:flex md:w-full`, className)}
       style={{
         backgroundColor: theme.defaultBgColor || '#000000',
       }}
