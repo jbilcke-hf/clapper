@@ -22,10 +22,15 @@ export function TimelineControls({
   zoomSpeed: number
   zoomDampingFactor: number
 }) {
-  const { size, camera } = useThree()
+  const { size, camera, invalidate } = useThree()
+  const setInvalidate = useTimeline(s => s.setInvalidate)
   const timelineControls = useTimeline(s => s.timelineControls)
   const setTimelineControls = useTimeline(s => s.setTimelineControls)
   const initialPinchDistanceRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    setInvalidate(invalidate)
+  }, [invalidate, setInvalidate])
 
   useEffect(() => {
     if (!timelineControls || !camera) return
@@ -206,7 +211,7 @@ export function TimelineControls({
       makeDefault
 
       // I don't remember why we put enabled false here
-      enabled={false}
+      enabled
 
       // minDistance={10}
       // maxDistance={10}

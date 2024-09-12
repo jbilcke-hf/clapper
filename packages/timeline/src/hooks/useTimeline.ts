@@ -3,16 +3,15 @@ import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
 import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
 
-import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler } from "@/types/timeline"
+import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler, Invalidate } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
 import { DEFAULT_NB_TRACKS, leftBarTrackScaleWidth } from "@/constants"
-import { hslToHex, findFreeTrack, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment, timelineSegmentToClapSegment } from "@/utils"
-import { ClapSegmentCategoryColors, ClapSegmentColorScheme, ClapTimelineTheme, SegmentResolver } from "@/types"
+import { findFreeTrack, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment, timelineSegmentToClapSegment } from "@/utils"
+import { ClapTimelineTheme, SegmentResolver } from "@/types"
 import { TimelineControlsImpl } from "@/components/controls/types"
 import { TimelineCameraImpl } from "@/components/camera/types"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
-import { useThree } from "@react-three/fiber"
 import { topBarTimeScaleHeight } from "@/constants/themes"
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
@@ -347,10 +346,14 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     area?: SegmentArea 
   } = {}) => {
     const {
+      invalidate,
       hoveredSegment: previousHoveredSegment,
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
       allSegmentsChanged: previousAllSegmentsChanged,
     } = get()
+
+    // since we are un frameloop="demand" mode, we need to manual invalidate the scene
+    invalidate()
 
     // note: we do all of this in order to avoid useless state updates
     if (segment && area) {
@@ -401,10 +404,14 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     status: SegmentEditionStatus.EDITING
   }) => {
     const {
+      invalidate,
       editedSegment: previousEditedSegment,
       allSegmentsChanged: previousAllSegmentsChanged,
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged
     } = get()
+
+    // since we are un frameloop="demand" mode, we need to manual invalidate the scene
+    invalidate()
 
     // note: we do all of this in order to avoid useless state updates
     if (segment) {
@@ -447,11 +454,16 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   } = {
   }) => {
     const {
+      invalidate,
       segments,
       selectedSegments: previousSelectedSegments,
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
       allSegmentsChanged: previousAllSegmentsChanged
     } = get()
+
+    // since we are un frameloop="demand" mode, we need to manual invalidate the scene
+    invalidate()
+
     /*
     console.log(`setSelectedSegment() called with:`, {
       segment,
@@ -1293,6 +1305,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         entitiesChanged: previousEntitiesChanged + 1,
       })
     }
+  },
+
+  setInvalidate: (invalidate?: Invalidate) => {
+    set({ invalidate: invalidate || (() => {}) })
   }
 }
 ))

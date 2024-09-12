@@ -91,7 +91,9 @@ export function getDefaultPreferencesState(): TimelineStorePreferencesState {
     segmentResolver: async (segment) => segment,
     jumpAt: () => {},
     isPlaying: () => false,
-    togglePlayback: () => ({ wasPlaying: false, isPlaying: false })
+    togglePlayback: () => ({ wasPlaying: false, isPlaying: false }),
+
+    invalidate: () => {},
   }
 }
 

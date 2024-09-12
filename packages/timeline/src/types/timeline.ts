@@ -10,6 +10,8 @@ import { SegmentResolver } from "./rendering"
 
 export type SegmentEventCallbackHandler = (e: ThreeEvent<PointerEvent> | ThreeEvent<MouseEvent>) => boolean
 
+export type Invalidate = (frames?: number) => void
+
 export enum SegmentVisibility {
   // the segment is visible, and the user explicitly requested to render it before the others
   DEMANDED = "DEMANDED",
@@ -269,6 +271,8 @@ export type TimelineStorePreferencesState = {
   jumpAt: JumpAt
   isPlaying: IsPlaying
   togglePlayback: TogglePlayback
+
+  invalidate: Invalidate
 }
 
 export type TimelineStoreState = TimelineStoreProjectState & TimelineStorePreferencesState
@@ -396,6 +400,8 @@ export type TimelineStoreModifiers = {
   addEntities: (entities: ClapEntity[]) => Promise<void>
   updateEntities: (entities: ClapEntity[]) => Promise<void>
   deleteEntities: (entities: (ClapEntity|string)[]) => Promise<void>
+
+  setInvalidate: (invalidate?: Invalidate) => void
 }
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers
