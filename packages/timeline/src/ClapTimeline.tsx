@@ -58,8 +58,10 @@ export function ClapTimeline({
     // frameloop: DEFAULT_FRAMELOOP
   }) {
   const theme = useTimeline(s => s.theme)
+  const invalidate = useTimeline(s => s.invalidate)
   const canvas = useTimeline(s => s.canvas)
   const setCanvas = useTimeline(s => s.setCanvas)
+  const handleMouseWheel = useTimeline(s => s.handleMouseWheel)
 
   const handleIsCreated = () => {
     useTimeline.setState({ isReady: true })
@@ -73,9 +75,37 @@ export function ClapTimeline({
     // for instance if the edited segment is being grabbed,
     // we are going to want to display the segments that are around it
     // console.log(`TODO @julian: implement edit here`)
+    
+    // since we are un frameloop="demand" mode, we need to manual invalidate the scene
+    invalidate()
 
     event.stopPropagation()
     return false
+  }
+
+  const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    const rect = canvas?.getBoundingClientRect()
+    if (!rect) { return }
+
+    const clientY = event.clientY
+    const containerY = rect.y
+    const posY = clientY - containerY
+
+    // apparently we cannot stop the propagation from the scroll wheel event
+    // we attach to our to bar from the scroll wheel event set on the canvas
+    // (that makes sense, one is in DOM space, the other in WebGL space)
+    //
+    // there are probably better ways to do this, but for now here is a very
+    // crude fix to ignore global X-Y scroll events when we are over the timeline
+    if (posY <= topBarTimeScaleHeight) { return }
+
+    // since we are un frameloop="demand" mode, we need to manual invalidate the scene
+    invalidate()
+
+    handleMouseWheel({
+      deltaX: event.deltaX,
+      deltaY: event.deltaY
+    })
   }
 
   return (
@@ -99,7 +129,13 @@ export function ClapTimeline({
             id="clap-timeline"
 
             // must be active when playing back a video
-            frameloop="always"
+            // UPDATE on 20240912: right now we have disabled video preview from the timeline
+            // we don't need it anymore since we are displaying split frames for a video segment
+            // so we can disable the always on frame loop -> this should help cooling down the GPU
+            // frameloop="always"
+            frameloop="demand"
+            // note: if you disable frameloop="demand" then you need to
+            // search in the code for places that reference if (eg. manual instanciations)
             
             // those must stay ON otherwise colors will be washed out
             flat
@@ -115,29 +151,8 @@ export function ClapTimeline({
             }}
 
             onCreated={handleIsCreated}
-  
-            onWheel={(wheelEvent) => {
-              const rect = canvas?.getBoundingClientRect()
-              if (!rect) { return }
 
-              const clientY = wheelEvent.clientY
-              const containerY = rect.y
-              const posY = clientY - containerY
- 
-              // apparently we cannot stop the propagation from the scroll wheel event
-              // we attach to our to bar from the scroll wheel event set on the canvas
-              // (that makes sense, one is in DOM space, the other in WebGL space)
-              //
-              // there are probably better ways to do this, but for now here is a very
-              // crude fix to ignore global X-Y scroll events when we are over the timeline
-              if (posY <= topBarTimeScaleHeight) { return }
- 
-              useTimeline.getState().handleMouseWheel({
-                deltaX: wheelEvent.deltaX,
-                deltaY: wheelEvent.deltaY
-              })
-            }}
-
+            onWheel={handleWheel}
             onMouseMove={handleMouseMove}
             onTouchMove={handleMouseMove}
             >
