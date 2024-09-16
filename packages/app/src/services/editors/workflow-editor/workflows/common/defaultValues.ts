@@ -1,3 +1,8 @@
+import {
+  sampleDrivingVideo,
+  sampleFace,
+  sampleVoice,
+} from '@/lib/core/constants'
 import { ClapInputField } from '@aitube/clap'
 import { ClapInputCategory } from '@aitube/clap'
 
@@ -36,6 +41,16 @@ export const genericPrompt: ClapInputField = {
   defaultValue: '',
 }
 
+export const genericNegativePrompt: ClapInputField = {
+  id: 'negative_prompt',
+  label: 'Negative prompt',
+  description: 'Negative prompt',
+  category: ClapInputCategory.NEGATIVE_PROMPT,
+  type: 'string',
+  allowedValues: [],
+  defaultValue: '',
+}
+
 export const genericRatio: ClapInputField = {
   id: 'ratio',
   label: 'Image ratio',
@@ -52,9 +67,20 @@ export const genericSeed: ClapInputField = {
   description: 'Seed',
   category: ClapInputCategory.SEED,
   type: 'number', // <-- TODO: replace by 'integer' (might break stuff)
-  minValue: 0,
+  minValue: -1,
   maxValue: Math.pow(2, 31),
-  defaultValue: 0,
+  defaultValue: -1,
+}
+
+export const genericTrueCFG: ClapInputField = {
+  id: 'true_cfg',
+  label: 'True CFG',
+  description: 'True CFG scale (1.0 for fake CFG, >1.0 for true CFG)',
+  category: ClapInputCategory.SEED,
+  type: 'number',
+  minValue: 1,
+  maxValue: 10,
+  defaultValue: 1,
 }
 
 export const genericLora: ClapInputField = {
@@ -164,7 +190,7 @@ export const genericFaceImage: ClapInputField = {
   category: ClapInputCategory.IMAGE_URL,
   type: 'string',
   allowedValues: [],
-  defaultValue: '',
+  defaultValue: sampleFace,
 }
 
 export const genericDrivingVideo: ClapInputField = {
@@ -174,7 +200,7 @@ export const genericDrivingVideo: ClapInputField = {
   category: ClapInputCategory.VIDEO_URL,
   type: 'string',
   allowedValues: [],
-  defaultValue: '',
+  defaultValue: sampleDrivingVideo,
 }
 
 export const genericVoice: ClapInputField = {
@@ -184,7 +210,7 @@ export const genericVoice: ClapInputField = {
   category: ClapInputCategory.SOUND_URL,
   type: 'string',
   allowedValues: [],
-  defaultValue: '',
+  defaultValue: sampleVoice,
 }
 
 export const genericAudio: ClapInputField = {
@@ -225,6 +251,40 @@ export const genericInferenceSteps: ClapInputField = {
   minValue: 1,
   maxValue: 50,
   defaultValue: 28,
+}
+
+export const genericGuidanceScale: ClapInputField = {
+  id: 'guidance_scale',
+  label: 'Guidance scale',
+  description: 'Guidance scale for text prompt influence',
+  category: ClapInputCategory.GUIDANCE_SCALE,
+  type: 'number',
+  minValue: 1,
+  maxValue: 10,
+  defaultValue: 4,
+}
+
+export const genericStartStep: ClapInputField = {
+  id: 'start_step',
+  label: 'Start step',
+  description:
+    'Timestep to start inserting ID (0-4 recommended, lower for higher fidelity, higher for more editability)',
+  category: ClapInputCategory.START_STEP,
+  type: 'number',
+  minValue: 0,
+  maxValue: 10,
+  defaultValue: 0, // 0-4 recommended, lower for higher fidelity, higher for more editability
+}
+
+export const genericIdWeight: ClapInputField = {
+  id: 'id_weight',
+  label: 'ID Weight',
+  description: 'Weight of the ID image influence',
+  category: ClapInputCategory.ID_WEIGHT,
+  type: 'number',
+  minValue: 0,
+  maxValue: 3,
+  defaultValue: 1,
 }
 
 export const genericUpscalingFactor: ClapInputField = {

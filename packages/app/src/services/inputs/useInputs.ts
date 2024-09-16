@@ -5,6 +5,11 @@ import { create } from 'zustand'
 import { InputsStore } from './types'
 import { getDefaultInputsState } from './getDefaultInputsState'
 
+/**
+ * A store to access gamepad controllers
+ *
+ * For models such as GameGen-O and beyond.
+ */
 export const useInputs = create<InputsStore>((set, get) => ({
   ...getDefaultInputsState(),
   init: () => {

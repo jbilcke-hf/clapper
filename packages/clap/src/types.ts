@@ -508,6 +508,7 @@ export type ClapSegment = {
 // that will help determine the semantic meaning of each field
 export enum ClapInputCategory {
   PROMPT = "PROMPT",
+  NEGATIVE_PROMPT = "NEGATIVE_PROMPT",
   IMAGE_URL = "IMAGE_URL",
   SOUND_URL = "SOUND_URL",
   VIDEO_URL = "VIDEO_URL",
@@ -526,7 +527,9 @@ export enum ClapInputCategory {
   //MISC_HF_MODEL = "MISC_HF_MODEL",
   // MISC_WEIGHT_URL = "MISC_WEIGHT_URL",
   ITERATION_STEPS = "ITERATION_STEPS",
+  START_STEP = "START_STEP",
   GUIDANCE_SCALE = "GUIDANCE_SCALE",
+  ID_WEIGHT = "ID_WEIGHT",
   UPSCALING_FACTOR = "UPSCALING_FACTOR",
   UNKNOWN = "UNKNOWN",
 }
@@ -790,11 +793,21 @@ export type ClapWorkflow = {
 
   /**
    * Inputs of the workflow (this is used to build an UI for the workflow automatically)
+   *
+   * Those must match the min and max values of the target API
+   * 
+   * This contains the *original* default values as well.
+   * (the values defined by the creator of the original workflow or API)
    */
   inputFields: ClapInputFields 
 
   /**
-   * Default values (this is used to initialize the workflow automatically)
+   * *Custom* default values (this is used to initialize the workflow automatically)
+   * 
+   * Those values can be different from the inputFields values.
+   * 
+   * The idea here is that the Clapper team can decide to make arbitrary changes
+   * to the original default values, eg more or less inferences steps.
    */
   inputValues: ClapInputValues
 }

@@ -3,6 +3,7 @@ import {
   ClapWorkflowEngine,
   ClapWorkflowCategory,
   ClapWorkflowProvider,
+  ClapInputCategory,
 } from '@aitube/clap'
 
 import {
@@ -10,19 +11,28 @@ import {
   genericBaseImageUrl,
   genericDrivingVideo,
   genericFaceImage,
+  genericGuidanceScale,
   genericHeight1024,
   genericHeight2048,
+  genericIdWeight,
   genericImage,
   genericImageUrl,
+  genericInferenceSteps,
   genericLora,
+  genericNegativePrompt,
   genericPrompt,
+  genericReferenceImages,
+  genericSeed,
+  genericStartStep,
   genericSwapImage,
   genericSwapImageUrl,
   genericTargetImage,
+  genericTrueCFG,
   genericVideo,
   genericWidth1024,
   genericWidth2048,
 } from '../common/defaultValues'
+import { sampleDrivingVideo } from '@/lib/core/constants'
 
 // ------------------------------------------------------------------------------
 // if a user is already using one of those workflows and you change its settings,
@@ -31,6 +41,63 @@ import {
 // -> we can create a ticket to fix this
 // ------------------------------------------------------------------------------
 export const defaultWorkflows: ClapWorkflow[] = [
+  {
+    // see https://replicate.com/zsxkib/flux-pulid
+    id: 'replicate://zsxkib/flux-pulid',
+    label: 'FLUX PuLID by @zsxkib',
+    description: '',
+    tags: ['flux'],
+    author: 'zsxkib (https://replicate.com/zsxkib)',
+    thumbnailUrl:
+      'https://replicate.delivery/yhqm/62V15z9KebyTaKt3lAXjO00CwnM2TehXq3Heo22ZRhvGwB5mA/output.webp',
+    nonCommercial: false,
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.REPLICATE,
+    category: ClapWorkflowCategory.IMAGE_GENERATION,
+    data: 'zsxkib/flux-pulid:8baa7ef2255075b46f4d91cd238c21d31181b3e6a864463f967960bb0112525b',
+    schema: '',
+    /**
+     * Inputs of the workflow (this is used to build an UI for the workflow automatically)
+     */
+    inputFields: [
+      {
+        ...genericReferenceImages,
+        id: 'main_face_image',
+      },
+      genericPrompt,
+      genericNegativePrompt,
+      genericWidth2048,
+      genericHeight2048,
+      {
+        id: 'num_steps',
+        label: 'Inference steps',
+        description: 'Number of inference steps',
+        category: ClapInputCategory.ITERATION_STEPS,
+        type: 'number',
+        minValue: 1,
+        maxValue: 20,
+        defaultValue: 20, // <- note the def value override
+      },
+      genericStartStep,
+      genericGuidanceScale,
+      genericIdWeight,
+      genericSeed,
+      genericTrueCFG,
+    ],
+    inputValues: {
+      main_face_image: genericReferenceImages.defaultValue,
+      [genericPrompt.id]: genericPrompt.defaultValue,
+      [genericNegativePrompt.id]: genericNegativePrompt.defaultValue,
+      [genericWidth2048.id]: genericWidth2048.defaultValue,
+      [genericHeight2048.id]: genericHeight2048.defaultValue,
+      num_steps: 20, // <- note the def value override
+      [genericStartStep.id]: genericGuidanceScale.defaultValue,
+      [genericGuidanceScale.id]: genericGuidanceScale.defaultValue,
+      [genericIdWeight.id]: genericIdWeight.defaultValue,
+      [genericSeed.id]: genericSeed.defaultValue,
+      [genericTrueCFG.id]: genericTrueCFG.defaultValue,
+    },
+  },
   {
     id: 'replicate://cuuupid/cogvideox-5b',
     label: 'CogVideoX-5b by @cuuupid',
@@ -112,6 +179,8 @@ export const defaultWorkflows: ClapWorkflow[] = [
     },
   },
   {
+    // https://replicate.com/fofr/live-portrait
+
     id: 'replicate://fofr/live-portrait',
     label: 'Live Portrait by @fofr',
     description: '',
@@ -124,13 +193,65 @@ export const defaultWorkflows: ClapWorkflow[] = [
     provider: ClapWorkflowProvider.REPLICATE,
     data: 'fofr/live-portrait:067dd98cc3e5cb396c4a9efb4bba3eec6c4a9d271211325c477518fc6485e146',
     schema: '',
-    inputFields: [genericFaceImage, genericDrivingVideo],
+    inputFields: [
+      genericFaceImage,
+      genericDrivingVideo,
+      {
+        id: 'video_select_every_n_frames',
+        label: 'Select every nth frame',
+        description:
+          'Select every nth frame from the driving video. Set to 1 to use all frames.',
+        category: ClapInputCategory.UNKNOWN,
+        type: 'number',
+        minValue: 1,
+        maxValue: Number.MAX_SAFE_INTEGER,
+        defaultValue: 1,
+      },
+      {
+        id: 'live_portrait_dsize',
+        label: 'Live portrait dsize',
+        description: 'Size of the output image',
+        category: ClapInputCategory.UNKNOWN,
+        type: 'number',
+        minValue: 64,
+        maxValue: 2048,
+        defaultValue: 512,
+      },
+      {
+        id: 'live_portrait_scale',
+        label: 'Live portrait live_portrait_scale',
+        description: 'Scaling factor for the face',
+        category: ClapInputCategory.UNKNOWN,
+        type: 'number',
+        minValue: 1,
+        maxValue: 4,
+        defaultValue: 2.3,
+      },
+      {
+        id: 'live_portrait_stitching',
+        label: 'Live portrait stitching',
+        description: 'Enable stitching',
+        category: ClapInputCategory.UNKNOWN,
+        type: 'boolean',
+        defaultValue: true,
+      },
+      {
+        id: 'live_portrait_relative',
+        label: 'Live portrait relative',
+        description: 'Use relative positioning',
+        category: ClapInputCategory.UNKNOWN,
+        type: 'boolean',
+        defaultValue: true,
+      },
+    ],
     inputValues: {
       [genericFaceImage.id]: genericFaceImage.defaultValue,
       [genericDrivingVideo.id]: genericDrivingVideo.defaultValue,
-
-      // there are a lot of other params, check them here:
-      // https://replicate.com/fofr/live-portrait
+      video_select_every_n_frames: 1,
+      live_portrait_dsize: 512,
+      live_portrait_scale: 2.3,
+      live_portrait_stitching: true,
+      live_portrait_relative: true,
     },
   },
   {

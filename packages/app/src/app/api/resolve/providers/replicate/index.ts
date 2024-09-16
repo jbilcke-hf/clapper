@@ -9,7 +9,7 @@ import { ResolveRequest } from '@aitube/clapper-services'
 import { TimelineSegment } from '@aitube/timeline'
 import { getWorkflowInputValues } from '../getWorkflowInputValues'
 import { getWorkflowLora } from '@/services/editors/workflow-editor/workflows/common/loras/getWorkflowLora'
-import { sampleDrivingVideo } from '@/lib/core/constants'
+import { sampleDrivingVideo, sampleFace } from '@/lib/core/constants'
 import {
   builtinProviderCredentialsReplicate,
   clapperApiKeyToUseBuiltinCredentials,
@@ -41,6 +41,8 @@ export async function resolveSegment(
   const segment = request.segment
 
   if (request.segment.category == ClapSegmentCategory.IMAGE) {
+    const model: string = request.settings.imageGenerationWorkflow.data as any
+
     const { workflowValues } = getWorkflowInputValues(
       request.settings.imageGenerationWorkflow
     )
@@ -53,25 +55,51 @@ export async function resolveSegment(
           : '16:9'
 
     let params: object = {
+      // apply the default values from the workflow
+      ...workflowValues,
+
+      // apply the custom values from the request
       prompt: request.prompts.image.positive,
       width: request.meta.width,
       height: request.meta.height,
       aspect_ratio: aspectRatio,
+
+      // always enforce this
       disable_safety_checker: !request.settings.censorNotForAllAudiencesContent,
     }
 
-    if (
-      request.settings.imageGenerationWorkflow.data ===
-        'fofr/pulid-lightning' &&
+    if (model.startsWith('zsxkib/flux-pulid')) {
+      // see https://replicate.com/zsxkib/flux-pulid
+
+      params = {
+        ...params,
+
+        // TODO add seed control (generate it or pass as param)
+        // seed: generateSeed()
+
+        main_face_image: request.prompts.image.identity || sampleFace,
+        negative_prompt: request.prompts.image.negative,
+        num_steps: workflowValues.num_steps,
+        start_step: workflowValues.start_step,
+        guidance_scale: workflowValues.guidance_scale,
+
+        // with this approach we should be able to always use 'zsxkib/flux-pulid'
+        // regardless of the presence of an image identity or not
+        id_weight: request.prompts.image.identity
+          ? workflowValues.id_weight
+          : 0,
+
+        true_cfg: workflowValues.true_cfg,
+      }
+    } else if (
+      model.startsWith('fofr/pulid-lightning') &&
       request.prompts.image.identity
     ) {
       params = {
         ...params,
         face_image: request.prompts.image.identity,
       }
-    } else if (
-      request.settings.imageGenerationWorkflow.data === 'lucataco/flux-dev-lora'
-    ) {
+    } else if (model.startsWith('lucataco/flux-dev-lora')) {
       // note: this isn't the right place to do this, because maybe the LoRAs are dynamic
       const loraModel = getWorkflowLora(
         request.settings.imageGenerationWorkflow
@@ -81,9 +109,9 @@ export async function resolveSegment(
         throw new Error(`this model cannot be used without a valid LoRA`)
       }
 
+      // for some reason this model doesn't support arbitrary width and height,
+      // at least not at the time of writing.. so we re-create the whole params object
       params = {
-        // for some reason this model doesn't support arbitrary width and height,
-        // at least not at the time of writing..
         aspect_ratio: aspectRatio,
 
         hf_lora: workflowValues['hf_lora'] || '',
@@ -96,7 +124,7 @@ export async function resolveSegment(
           !request.settings.censorNotForAllAudiencesContent,
       }
     } else if (
-      request.settings.imageGenerationWorkflow.data === 'zsxkib/pulid' &&
+      model.startsWith('zsxkib/pulid') &&
       request.prompts.image.identity
     ) {
       params = {
@@ -105,25 +133,32 @@ export async function resolveSegment(
       }
     }
 
-    const response = (await replicate.run(
-      request.settings.imageGenerationWorkflow.data as any,
-      { input: params }
-    )) as any
+    // console.log(`calling Replicate model ${model} with data:`, params)
+    const response = (await replicate.run(model, { input: params })) as any
 
     segment.assetUrl = `${response[0] || ''}`
   } else if (request.segment.category === ClapSegmentCategory.DIALOGUE) {
+    const model = request.settings.voiceGenerationWorkflow.data as any
+
+    const { workflowValues } = getWorkflowInputValues(
+      request.settings.voiceGenerationWorkflow
+    )
+
+    let params: object = {
+      // apply the default values from the workflow
+      ...workflowValues,
+
+      // always enforce this
+      disable_safety_checker: !request.settings.censorNotForAllAudiencesContent,
+    }
+
     if (request.prompts.voice.positive && request.prompts.voice.identity) {
-      const response = (await replicate.run(
-        request.settings.voiceGenerationWorkflow.data as any,
-        {
-          input: {
-            text: request.prompts.voice.positive,
-            audio: request.prompts.voice.identity,
-            disable_safety_checker:
-              !request.settings.censorNotForAllAudiencesContent,
-          },
-        }
-      )) as any
+      const response = (await replicate.run(model, {
+        input: {
+          text: request.prompts.voice.positive,
+          audio: request.prompts.voice.identity,
+        },
+      })) as any
       segment.assetUrl = `${response[0] || ''}`
     } else {
       console.log(`cannot generate a dialogue without a voice identity`)
@@ -131,82 +166,63 @@ export async function resolveSegment(
   } else if (request.segment.category === ClapSegmentCategory.VIDEO) {
     const model = request.settings.videoGenerationWorkflow.data as any
 
+    const { workflowValues } = getWorkflowInputValues(
+      request.settings.videoGenerationWorkflow
+    )
+
+    const aspectRatio =
+      request.meta.orientation === ClapImageRatio.SQUARE
+        ? '1:1'
+        : request.meta.orientation === ClapImageRatio.PORTRAIT
+          ? '9:16'
+          : '16:9'
+
+    let params: object = {
+      // apply the default values from the workflow
+      ...workflowValues,
+
+      // apply the custom values from the request
+      width: request.meta.width,
+      height: request.meta.height,
+      aspect_ratio: aspectRatio,
+
+      // always enforce this
+      disable_safety_checker: !request.settings.censorNotForAllAudiencesContent,
+    }
+
     if (model.startsWith('fofr/live-portrait') && request.prompts.video.image) {
-      const response = (await replicate.run(
-        request.settings.videoGenerationWorkflow.data as any,
-        {
-          input: {
-            // TODO use the workflows fields to do this
-            face_image: request.prompts.video.image,
+      const response = (await replicate.run(model, {
+        input: {
+          ...params,
+          face_image: request.prompts.video.image,
 
-            // what we do here is that we generate an "idle" video
-            // now, the current driving video is just a dummy one I made for testing
-            // we can replace it by something better, that would reflect the current
-            // pacing of the scene (news anchor, peaceful dialogue, intense, aggressive etc)
-            driving_video: sampleDrivingVideo,
-
-            // Select every nth frame from the driving video. Set to 1 to use all frames.
-            // default: 1
-            video_select_every_n_frames: 1,
-
-            // Size of the output image
-            // min: 64, max: 2048
-            // default: 512
-            live_portrait_dsize: 512,
-
-            // Scaling factor for the face
-            // min: 1, max: 4
-            // default: 2.3
-            live_portrait_scale: 2.3,
-
-            // Enable stitching
-            // default: true
-            live_portrait_stitching: true,
-
-            // Use relative positioning
-            // default: true
-            live_portrait_relative: true,
-
-            // there are a lot of other params, check them here:
-            // https://replicate.com/fofr/live-portrait
-
-            disable_safety_checker:
-              !request.settings.censorNotForAllAudiencesContent,
-          },
-        }
-      )) as any
+          // todo use our driving video allocation (see in /experiments/)
+          driving_video: sampleDrivingVideo,
+        },
+      })) as any
       segment.assetUrl = `${response[0] || ''}`
     } else if (
       model.startsWith('cuuupid/cogvideox-5b') &&
       request.prompts.image.positive
     ) {
-      const response = (await replicate.run(
-        request.settings.videoGenerationWorkflow.data as any,
-        {
-          input: {
-            // TODO use the workflows fields to do this
-            prompt: request.prompts.image.positive,
+      const response = (await replicate.run(model, {
+        input: {
+          ...params,
 
-            // there are a lot of other params, check them here:
-            // https://replicate.com/cuuupid/cogvideox-5b
+          prompt: request.prompts.image.positive,
 
-            disable_safety_checker:
-              !request.settings.censorNotForAllAudiencesContent,
-          },
-        }
-      )) as any
+          // there are a lot of other params, check them here:
+          // https://replicate.com/cuuupid/cogvideox-5b
+        },
+      })) as any
       segment.assetUrl = `${response[0] || ''}`
     } else if (request.prompts.video.image) {
-      const response = (await replicate.run(
-        request.settings.videoGenerationWorkflow.data as any,
-        {
-          input: {
-            image: request.prompts.video.image,
-            disable_safety_checker:
-              !request.settings.censorNotForAllAudiencesContent,
-          },
-        }
-      )) as any
+      const response = (await replicate.run(model, {
+        input: {
+          ...params,
+          image: request.prompts.video.image,
+        },
+      })) as any
       segment.assetUrl = `${response[0] || ''}`
     }
   } else {

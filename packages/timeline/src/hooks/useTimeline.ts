@@ -352,9 +352,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       allSegmentsChanged: previousAllSegmentsChanged,
     } = get()
 
-    // since we are un frameloop="demand" mode, we need to manual invalidate the scene
-    invalidate()
-
     // note: we do all of this in order to avoid useless state updates
     if (segment && area) {
       if (previousHoveredSegment) {
@@ -393,6 +390,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         // nothing to do
       }
     }
+    // since we are un frameloop="demand" mode, we need to manual invalidate the scene
+    invalidate()
   },
   setEditedSegment: ({
     segment,
@@ -763,8 +762,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     set({ isDraggingCursor })
   },
   setCursorTimestampAtInMs: (cursorTimestampAtInMs: number = 0) => {
-    if (cursorTimestampAtInMs !== get().cursorTimestampAtInMs) {
+    const { invalidate, cursorTimestampAtInMs: previousCursorTimestampAtInMs } = get()
+    if (cursorTimestampAtInMs !== previousCursorTimestampAtInMs) {
       set({ cursorTimestampAtInMs })
+      invalidate()
     }
   },
   setJumpAt: (jumpAt: JumpAt) => {
