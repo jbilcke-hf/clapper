@@ -41,8 +41,5 @@
     "packages/broadway",
     "packages/clapper-services",
     "packages/app"
-  ],
-  "dependencies": {
-    "react-responsive": "^10.0.0"
-  }
+  ]
 }
