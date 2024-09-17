@@ -712,6 +712,10 @@ export enum ClapWorkflowCategory {
   VIDEO_UPSCALING = "VIDEO_UPSCALING",
   VIDEO_DEPTH_MAPPING = "VIDEO_DEPTH_MAPPING",
   VIDEO_SEGMENTATION = "VIDEO_SEGMENTATION",
+
+  // transitions are always based on time (they are animations)
+  AUDIO_TRANSITION = "AUDIO_TRANSITION",
+  VIDEO_TRANSITION = "VIDEO_TRANSITION",
 }
 
 export enum ClapWorkflowEngine {
