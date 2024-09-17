@@ -6,7 +6,6 @@ export function hasNoPublicAPI({ provider }: ClapWorkflow) {
     provider === ClapWorkflowProvider.SUNO ||
     provider === ClapWorkflowProvider.KUAISHOU ||
     provider === ClapWorkflowProvider.RUNWAYML ||
-    provider === ClapWorkflowProvider.LUMALABS ||
     provider === ClapWorkflowProvider.HEDRA ||
     provider === ClapWorkflowProvider.UDIO ||
     providerStr.includes('no public api') ||
