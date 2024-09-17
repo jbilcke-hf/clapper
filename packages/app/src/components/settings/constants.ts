@@ -35,7 +35,7 @@ export const ClapWorkflowProviderShortNames: Record<
   [ClapWorkflowProvider.MIDJOURNEY]: 'Midjourney (no API)',
   [ClapWorkflowProvider.SUNO]: 'Suno (no music API)',
   [ClapWorkflowProvider.UDIO]: 'Udio (no music API)',
-  [ClapWorkflowProvider.LUMALABS]: 'Luma Labs',
+  [ClapWorkflowProvider.LUMALABS]: 'Luma AI',
   [ClapWorkflowProvider.KUAISHOU]: 'KuaiShou: Kling (no API)',
   [ClapWorkflowProvider.RUNWAYML]: 'RunwayML (API soon)',
   [ClapWorkflowProvider.HEDRA]: 'Hedra: Character-1 (no API)',
