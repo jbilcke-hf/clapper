@@ -59,6 +59,12 @@ export async function resolveSegment(
       prompt: request.prompts.image.positive || '',
     }
 
+    // Luma crashes (and spends our money :/) if keyframes is an empty array
+    delete params.keyframes
+
+    /*
+    DISABLED because Luma doesn't support base64 it seems :/ 
+
     if (request.prompts.video.image) {
       // If an image prompt is provided, add it to the parameters
       params.keyframes = {
@@ -68,6 +74,7 @@ export async function resolveSegment(
         },
       }
     }
+    */
 
     // if we have neither a text prompt or a frame,
     // then there is no point in calling Luma Labs
@@ -77,6 +84,7 @@ export async function resolveSegment(
 
     try {
       // Create the generation
+      // console.log('params:', params)
       const generation = await luma.generations.create(params)
 
       // Poll for completion
