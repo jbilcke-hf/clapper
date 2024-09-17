@@ -103,6 +103,7 @@
     "fs-extra": "^11.2.0",
     "is-hotkey": "^0.2.0",
     "lucide-react": "^0.438.0",
+    "lumaai": "^1.0.2",
     "mediainfo.js": "^0.3.2",
     "mlt-xml": "^2.0.2",
     "monaco-editor": "^0.51.0",
