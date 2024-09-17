@@ -41,7 +41,7 @@ export const piApiWorkflows: ClapWorkflow[] = [
   },
   {
     id: 'piapi://luma/v1/video',
-    label: 'Luma Labs Dream Machine',
+    label: 'Luma AI Dream Machine',
     description: '',
     tags: ['Dream Machine'],
     author: '',

@@ -3,38 +3,13 @@ import {
   ClapWorkflowEngine,
   ClapWorkflowCategory,
   ClapWorkflowProvider,
-  ClapInputCategory,
 } from '@aitube/clap'
 
 import {
   genericAspectRatio,
-  genericAudio,
-  genericBaseImageUrl,
-  genericDrivingVideo,
-  genericFaceImage,
-  genericGuidanceScale,
-  genericHeight1024,
-  genericHeight2048,
-  genericIdWeight,
-  genericImage,
-  genericImageUrl,
-  genericInferenceSteps,
   genericKeyframes,
-  genericLora,
-  genericNegativePrompt,
   genericPrompt,
-  genericReferenceImages,
-  genericSeed,
-  genericStartStep,
-  genericSwapImage,
-  genericSwapImageUrl,
-  genericTargetImage,
-  genericTrueCFG,
-  genericVideo,
-  genericWidth1024,
-  genericWidth2048,
 } from '../common/defaultValues'
-import { sampleDrivingVideo } from '@/lib/core/constants'
 
 // ------------------------------------------------------------------------------
 // if a user is already using one of those workflows and you change its settings,
@@ -54,7 +29,7 @@ export const lumalabsWorkflows: ClapWorkflow[] = [
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.LUMALABS,
     category: ClapWorkflowCategory.VIDEO_GENERATION,
-    data: '',
+    data: 'dream-machine/v1',
     schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the workflow automatically)
