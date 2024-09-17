@@ -101,7 +101,7 @@ export function SettingsSectionProvider() {
 
   const letzAiApiKey = useSettings((s) => s.letzAiApiKey)
   const setLetzAiApiKey = useSettings((s) => s.setLetzAiApiKey)
-  
+
   const lumaLabsApiKey = useSettings((s) => s.lumaLabsApiKey)
   const setLumaLabsApiKey = useSettings((s) => s.setLumaLabsApiKey)
 
