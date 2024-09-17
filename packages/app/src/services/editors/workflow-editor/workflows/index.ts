@@ -18,6 +18,7 @@ import { groqWorkflows } from './groq'
 import { hotshotWorkflows } from './hotshot'
 import { huggingfaceWorkflows } from './huggingface'
 import { letzAiWorkflows } from './letzai'
+import { lumalabsWorkflows } from './lumalabs'
 import { mistralaiWorkflows } from './mistralai'
 import { openaiWorkflows } from './openai'
 import { piApiWorkflows } from './piapi'
@@ -47,6 +48,7 @@ export const staticWorkflows: ClapWorkflow[] = [
   ...hotshotWorkflows,
   ...huggingfaceWorkflows,
   ...letzAiWorkflows,
+  ...lumalabsWorkflows,
   ...mistralaiWorkflows,
   ...openaiWorkflows,
   ...piApiWorkflows,

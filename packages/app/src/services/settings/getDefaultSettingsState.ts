@@ -33,6 +33,7 @@ export function getDefaultSettingsState(): SettingsState {
     piApiApiKey: '',
     civitaiApiKey: '',
     hotshotApiKey: '',
+    lumaLabsApiKey: '',
 
     broadcastObsServerHost: '192.168.1.22',
     broadcastObsServerPort: 4455,

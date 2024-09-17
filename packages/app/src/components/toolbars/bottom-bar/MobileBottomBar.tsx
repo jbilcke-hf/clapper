@@ -33,7 +33,7 @@ export function MobileBottomBar() {
       setShowExplorer(false)
       setShowVideoPlayer(true)
     }
-  }, [isMd])
+  }, [isMd, setShowExplorer, setShowVideoPlayer, setShowAssistant])
 
   return (
     <div

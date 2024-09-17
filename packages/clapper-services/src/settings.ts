@@ -31,6 +31,7 @@ export type BaseSettings = {
   piApiApiKey: string
   civitaiApiKey: string
   hotshotApiKey: string
+  lumaLabsApiKey: string
 
   broadcastObsServerHost: string
   broadcastObsServerPort: number
@@ -155,11 +156,12 @@ export type SettingsControls = {
   setMistralAiApiKey: (mistralAiApiKey?: string) => void
   setKitsAiApiKey: (kitsAiApiKey?: string) => void
   setStabilityAiApiKey: (stabilityAiApiKey?: string) => void
-  setLetzAiApiKey: (letzAiApiKey?: string) =>  void
-  setBigModelApiKey: (bigModelApiKey?: string) =>  void
-  setPiApiApiKey: (piApiApiKey?: string) =>  void
-  setCivitaiApiKey: (civitaiApiKey?: string) =>  void
-  setHotshotApiKey: (hotshotApiKey?: string) =>  void
+  setLetzAiApiKey: (letzAiApiKey?: string) => void
+  setBigModelApiKey: (bigModelApiKey?: string) => void
+  setPiApiApiKey: (piApiApiKey?: string) => void
+  setCivitaiApiKey: (civitaiApiKey?: string) => void
+  setHotshotApiKey: (hotshotApiKey?: string) => void
+  setLumaLabsApiKey: (lumaLabsApiKey?: string) => void
 
   setCensorNotForAllAudiencesContent: (censorNotForAllAudiencesContent?: boolean) => void
   setImagePromptPrefix: (imagePromptPrefix?: string) => void

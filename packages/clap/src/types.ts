@@ -520,6 +520,8 @@ export enum ClapInputCategory {
 
   WIDTH = "WIDTH",
   HEIGHT = "HEIGHT",
+  ASPECT_RATIO = "ASPECT_RATIO",
+  KEYFRAMES = "KEYFRAMES",
   SEED = "SEED",
   LORA = "LORA",
   //LORA_HF_MODEL = "LORA_HF_MODEL",
@@ -557,6 +559,16 @@ export type ClapInputFieldString = {
 export type ClapInputFieldStrings = {
   type: 'string[]'
   defaultValue: string[]
+}
+
+export type ClapInputFieldObject = {
+  type: 'object'
+  defaultValue: {}
+}
+
+export type ClapInputFieldObjects = {
+  type: 'object[]'
+  defaultValue: []
 }
 
 export type ClapInputFieldBoolean = {
@@ -616,6 +628,8 @@ export type ClapInputField<T = Record<string, any>> = {
   | ClapInputFieldInteger
   | ClapInputFieldString
   | ClapInputFieldStrings
+  | ClapInputFieldObject
+  | ClapInputFieldObjects
   | ClapInputFieldBoolean
   | ClapInputFieldAny
 )

@@ -41,5 +41,8 @@
     "packages/broadway",
     "packages/clapper-services",
     "packages/app"
-  ]
+  ],
+  "dependencies": {
+    "lumaai": "^1.0.2"
+  }
 }

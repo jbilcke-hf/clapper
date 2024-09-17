@@ -259,7 +259,14 @@ export const useSettings = create<SettingsStore>()(
           ),
         })
       },
-
+      setLumaLabsApiKey: (lumaLabsApiKey?: string) => {
+        set({
+          lumaLabsApiKey: getValidString(
+            lumaLabsApiKey,
+            getDefaultSettingsState().lumaLabsApiKey
+          ),
+        })
+      },
       setBroadcastObsServerHost: (broadcastObsServerHost: string) => {
         set({ broadcastObsServerHost })
       },
@@ -960,6 +967,8 @@ export const useSettings = create<SettingsStore>()(
           piApiApiKey: state.piApiApiKey || defaultSettings.piApiApiKey,
           civitaiApiKey: state.civitaiApiKey || defaultSettings.civitaiApiKey,
           hotshotApiKey: state.hotshotApiKey || defaultSettings.hotshotApiKey,
+          lumaLabsApiKey:
+            state.lumaLabsApiKey || defaultSettings.lumaLabsApiKey,
 
           broadcastObsServerHost:
             state.broadcastObsServerHost ||
