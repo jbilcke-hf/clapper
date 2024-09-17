@@ -375,3 +375,22 @@ export const genericHeight2048: ClapInputField = {
   maxValue: 2048,
   defaultValue: 576,
 }
+
+export const genericAspectRatio: ClapInputField = {
+  id: 'aspect_ratio',
+  label: 'Aspect ratio',
+  description: 'Aspect ratio',
+  category: ClapInputCategory.ASPECT_RATIO,
+  type: 'string',
+  allowedValues: ['1:1', '16:9', '9:16', '4:3', '3:4', '21:9', '9:21'],
+  defaultValue: '16:9',
+}
+
+export const genericKeyframes: ClapInputField = {
+  id: 'keyframes',
+  label: 'Keyframes',
+  description: 'Keyframes',
+  category: ClapInputCategory.KEYFRAMES,
+  type: 'object[]',
+  defaultValue: [],
+}
