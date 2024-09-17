@@ -101,6 +101,9 @@ export function SettingsSectionProvider() {
 
   const letzAiApiKey = useSettings((s) => s.letzAiApiKey)
   const setLetzAiApiKey = useSettings((s) => s.setLetzAiApiKey)
+  
+  const lumaLabsApiKey = useSettings((s) => s.lumaLabsApiKey)
+  const setLumaLabsApiKey = useSettings((s) => s.setLumaLabsApiKey)
 
   const bigModelApiKey = useSettings((s) => s.bigModelApiKey)
   const setBigModelApiKey = useSettings((s) => s.setBigModelApiKey)
@@ -334,6 +337,14 @@ export function SettingsSectionProvider() {
               value={letzAiApiKey}
               defaultValue={defaultSettings.letzAiApiKey}
               onChange={setLetzAiApiKey}
+              type={apiKeyType}
+            />
+
+            <FormInput
+              label="Luma AI API Key"
+              value={lumaLabsApiKey}
+              defaultValue={defaultSettings.lumaLabsApiKey}
+              onChange={setLumaLabsApiKey}
               type={apiKeyType}
             />
 
