@@ -196,8 +196,8 @@ export const defaultWorkflows: ClapWorkflow[] = [
     },
   },
   {
-    id: 'falai://fal-ai/flux-pro',
-    label: 'FLUX.1 [pro]',
+    id: 'falai://fal-ai/flux-pro/v1.1',
+    label: 'FLUX1.1 [pro]',
     description: '',
     tags: ['flux'],
     author: 'BFL (https://BlackForestLabs.ai)',
@@ -206,7 +206,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.IMAGE_GENERATION,
-    data: 'fal-ai/flux-pro',
+    data: 'fal-ai/flux-pro/v1.1',
     schema: '',
     /**
      * Inputs of the workflow (this is used to build an UI for the workflow automatically)
@@ -226,6 +226,66 @@ export const defaultWorkflows: ClapWorkflow[] = [
       // TODO: add guidance scale and number of steps
     },
   },
+  /*
+  let's not keep old obsolete models
+
+  {
+    id: 'falai://fal-ai/flux-pro/new',
+    label: 'FLUX [pro]',
+    description: '',
+    tags: ['flux'],
+    author: 'BFL (https://BlackForestLabs.ai)',
+    thumbnailUrl: '',
+    nonCommercial: false,
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.FALAI,
+    category: ClapWorkflowCategory.IMAGE_GENERATION,
+    data: 'fal-ai/flux-pro/new',
+    schema: '',
+    inputFields: [
+      genericPrompt,
+      genericWidth2048,
+      genericHeight2048,
+
+      // TODO: add guidance scale and number of steps
+    ],
+    inputValues: {
+      [genericPrompt.id]: genericPrompt.defaultValue,
+      [genericWidth2048.id]: genericWidth2048.defaultValue,
+      [genericHeight2048.id]: genericHeight2048.defaultValue,
+
+      // TODO: add guidance scale and number of steps
+    },
+  },
+  {
+    id: 'falai://fal-ai/flux-pro',
+    label: 'FLUX [pro] (obsolete)',
+    description: '',
+    tags: ['flux'],
+    author: 'BFL (https://BlackForestLabs.ai)',
+    thumbnailUrl: '',
+    nonCommercial: false,
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.FALAI,
+    category: ClapWorkflowCategory.IMAGE_GENERATION,
+    data: 'fal-ai/flux-pro',
+    schema: '',
+    inputFields: [
+      genericPrompt,
+      genericWidth2048,
+      genericHeight2048,
+
+      // TODO: add guidance scale and number of steps
+    ],
+    inputValues: {
+      [genericPrompt.id]: genericPrompt.defaultValue,
+      [genericWidth2048.id]: genericWidth2048.defaultValue,
+      [genericHeight2048.id]: genericHeight2048.defaultValue,
+
+      // TODO: add guidance scale and number of steps
+    },
+  },
+  */
   {
     id: 'falai://fal-ai/flux/schnell',
     label: 'FLUX.1 [schnell]',
