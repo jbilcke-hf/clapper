@@ -299,6 +299,63 @@ export async function resolveSegment(
       }
 
       segment.assetUrl = result?.video?.url || ''
+    } else if (model === 'fal-ai/kling-video/v1/standard/text-to-video') {
+      if (!request.prompts.image.positive) {
+        throw new Error(`cannot generate a video without a storyboard prompt`)
+      }
+
+      const result = (await fal.run(model, {
+        input: {
+          ...getWorkflowInputValues(request.settings.videoGenerationWorkflow),
+
+          sync_mode: true,
+          enable_safety_checker:
+            request.settings.censorNotForAllAudiencesContent,
+        },
+      })) as FalAiVideoResponse
+
+      if (request.settings.censorNotForAllAudiencesContent) {
+        if (
+          Array.isArray(result.has_nsfw_concepts) &&
+          result.has_nsfw_concepts.includes(true)
+        ) {
+          throw new Error(
+            `The generated content has been filtered according to your safety settings`
+          )
+        }
+      }
+
+      segment.assetUrl = result?.video?.url || ''
+    }  else if (model === 'fal-ai/runway-gen3/turbo/image-to-video') {
+      const hasPromptOrImage = request.prompts.image.positive || request.prompts.video.image
+      if (!hasPromptOrImage) {
+        throw new Error(`cannot generate a video without a storyboard prompt or a storybaord text`)
+      }
+
+      const result = (await fal.run(model, {
+        input: {
+          ...getWorkflowInputValues(request.settings.videoGenerationWorkflow),
+
+          image_url: request.prompts.video.image,
+
+          sync_mode: true,
+          enable_safety_checker:
+            request.settings.censorNotForAllAudiencesContent,
+        },
+      })) as FalAiVideoResponse
+
+      if (request.settings.censorNotForAllAudiencesContent) {
+        if (
+          Array.isArray(result.has_nsfw_concepts) &&
+          result.has_nsfw_concepts.includes(true)
+        ) {
+          throw new Error(
+            `The generated content has been filtered according to your safety settings`
+          )
+        }
+      }
+
+      segment.assetUrl = result?.video?.url || ''
     } else {
       throw new Error(
         `model "${model}" with Fal.ai is supported by Clapper for the moment`
