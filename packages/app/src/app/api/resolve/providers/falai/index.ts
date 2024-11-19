@@ -326,10 +326,13 @@ export async function resolveSegment(
       }
 
       segment.assetUrl = result?.video?.url || ''
-    }  else if (model === 'fal-ai/runway-gen3/turbo/image-to-video') {
-      const hasPromptOrImage = request.prompts.image.positive || request.prompts.video.image
+    } else if (model === 'fal-ai/runway-gen3/turbo/image-to-video') {
+      const hasPromptOrImage =
+        request.prompts.image.positive || request.prompts.video.image
       if (!hasPromptOrImage) {
-        throw new Error(`cannot generate a video without a storyboard prompt or a storybaord text`)
+        throw new Error(
+          `cannot generate a video without a storyboard prompt or a storybaord text`
+        )
       }
 
       const result = (await fal.run(model, {
