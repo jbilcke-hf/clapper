@@ -248,7 +248,7 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
         defaultX={375}
         defaultY={527}
         canBeClosed={false}
-        toolbar={({ isFocused }) => (
+        toolbar={() => (
           <>
             <TimelineZoom />
           </>
