@@ -20,7 +20,7 @@
     "bun-types": "latest",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
-    "typescript": "^5.5.4"
+    "typescript": "5.5.2"
   },
   "repository": {
     "type": "git",
