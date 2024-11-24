@@ -50,7 +50,9 @@ COPY --chown=user . /app
 
 RUN bun i
 
-RUN bun run build
+# this step can be done by the developer,
+# and the file uploaded using HF CLI tools
+# RUN bun run build
 
 EXPOSE 3000
 
