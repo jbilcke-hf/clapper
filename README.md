@@ -65,7 +65,7 @@ Those generous sponsors are paying for code bounties:
 
 ### Licence
 
-Clapper is under a GPL v3 licence, see the [LICENCE](LICENSE.txt) file for more information. This is a similar licensing to apps like ComfyUI or Blender.
+Clapper is under a GPL v3 licence, see the [LICENCE](LICENSE.md) file for more information. This is a similar licensing to apps like ComfyUI or Blender.
 
 
 ### Installation
