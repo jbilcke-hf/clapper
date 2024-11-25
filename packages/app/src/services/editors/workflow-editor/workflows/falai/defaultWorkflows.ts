@@ -67,6 +67,27 @@ export const defaultWorkflows: ClapWorkflow[] = [
     },
   },
   {
+    id: 'falai://fal-ai/kling-video/v1/standard/text-to-video',
+    label: 'Kling 1.0',
+    description: '',
+    tags: ['video generation'],
+    author: '',
+    thumbnailUrl: '',
+    nonCommercial: false,
+
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.FALAI,
+    category: ClapWorkflowCategory.VIDEO_GENERATION,
+    data: 'fal-ai/kling-video/v1/standard/text-to-video',
+    schema: '',
+    inputFields: [genericPrompt],
+    inputValues: {
+      [genericPrompt.id]: genericPrompt.defaultValue,
+    },
+  },
+  // removed by Runway
+  /*
+  {
     id: 'falai://fal-ai/runway-gen3/turbo/image-to-video',
     label: 'RunwayML Gen 3',
     description: '',
@@ -86,6 +107,7 @@ export const defaultWorkflows: ClapWorkflow[] = [
       [genericImageUrl.id]: genericImageUrl.defaultValue,
     },
   },
+  */
   {
     id: 'falai://fal-ai/cogvideox-5b',
     label: 'CogVideoX-5b',
