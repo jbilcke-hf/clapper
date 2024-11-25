@@ -48,6 +48,45 @@ TODO: add those as well
 // ------------------------------------------------------------------------------
 export const defaultWorkflows: ClapWorkflow[] = [
   {
+    id: 'falai://fal-ai/ltx-video',
+    label: 'LTX Text-to-Video',
+    description: '',
+    tags: ['video generation'],
+    author: '',
+    thumbnailUrl: '',
+    nonCommercial: true,
+
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.FALAI,
+    category: ClapWorkflowCategory.VIDEO_GENERATION,
+    data: 'fal-ai/ltx-video',
+    schema: '',
+    inputFields: [genericPrompt],
+    inputValues: {
+      [genericPrompt.id]: genericPrompt.defaultValue,
+    },
+  },
+  {
+    id: 'falai://fal-ai/ltx-video/image-to-video',
+    label: 'LTX Image-to-Video',
+    description: '',
+    tags: ['video generation'],
+    author: '',
+    thumbnailUrl: '',
+    nonCommercial: true,
+
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.FALAI,
+    category: ClapWorkflowCategory.VIDEO_GENERATION,
+    data: 'fal-ai/ltx-video/image-to-video',
+    schema: '',
+    inputFields: [genericPrompt, genericImageUrl],
+    inputValues: {
+      [genericPrompt.id]: genericPrompt.defaultValue,
+      [genericImageUrl.id]: genericImageUrl.defaultValue,
+    },
+  },
+  {
     id: 'falai://fal-ai/minimax-video',
     label: 'Minimax',
     description: '',
