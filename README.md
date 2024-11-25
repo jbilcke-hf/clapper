@@ -27,7 +27,7 @@ Clapper's philosophy is for anyone to create videos using AI through an interact
 
 In Clapper you don't edit a sequence of video and audio files directly, but iterate (with the help from your AI assistant) over your story using high-level abstractions such as characters, locations, weather, time period, style etc.
 
-To this end I am also working on a Director's Mode, where you can just put the video in fullscreen, sit confortably in your director's chair (or couch), shouting orders at your AI set assistant to produce your movie.
+To this end I am also working on a Director's Mode, where you can just put the video in fullscreen, sit comfortably in your director's chair (or couch), shouting orders at your AI set assistant to produce your movie.
 
 # Public alpha access
 
@@ -101,7 +101,7 @@ Install the dependencies.
 bun i
 ```
 
-You can run the following command to build the app, making sure all the types are consistant and properly set:
+You can run the following command to build the app, making sure all the types are consistent and properly set:
 
 ```bash
 npm run build
