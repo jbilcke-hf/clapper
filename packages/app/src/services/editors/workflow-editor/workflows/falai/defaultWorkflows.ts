@@ -48,22 +48,42 @@ TODO: add those as well
 // ------------------------------------------------------------------------------
 export const defaultWorkflows: ClapWorkflow[] = [
   {
-    id: 'falai://fal-ai/kling-video/v1/standard/text-to-video',
-    label: 'Kling 1.0',
+    id: 'falai://fal-ai/minimax-video',
+    label: 'Minimax',
     description: '',
     tags: ['video generation'],
     author: '',
     thumbnailUrl: '',
-    nonCommercial: true,
+    nonCommercial: false,
 
     engine: ClapWorkflowEngine.REST_API,
     provider: ClapWorkflowProvider.FALAI,
     category: ClapWorkflowCategory.VIDEO_GENERATION,
-    data: 'fal-ai/kling-video/v1/standard/text-to-video',
+    data: 'fal-ai/minimax-video',
     schema: '',
     inputFields: [genericPrompt],
     inputValues: {
       [genericPrompt.id]: genericPrompt.defaultValue,
+    },
+  },
+  {
+    id: 'falai://fal-ai/minimax-video/image-to-video',
+    label: 'Minimax',
+    description: '',
+    tags: ['video generation'],
+    author: '',
+    thumbnailUrl: '',
+    nonCommercial: false,
+
+    engine: ClapWorkflowEngine.REST_API,
+    provider: ClapWorkflowProvider.FALAI,
+    category: ClapWorkflowCategory.VIDEO_GENERATION,
+    data: 'fal-ai/minimax-video/image-to-video',
+    schema: '',
+    inputFields: [genericPrompt, genericImageUrl],
+    inputValues: {
+      [genericPrompt.id]: genericPrompt.defaultValue,
+      [genericImageUrl.id]: genericImageUrl.defaultValue,
     },
   },
   {
