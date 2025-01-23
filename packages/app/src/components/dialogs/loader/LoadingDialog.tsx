@@ -35,7 +35,9 @@ export function LoadingDialog({ className = '' }: { className?: string }) {
             }
           )}
         >
-          <div className={cn(`text-lg`, className)}>{currentMessage}</div>
+          <div className={cn(`text-lg text-neutral-200`, className)}>
+            {currentMessage}
+          </div>
           <div className="flex w-full flex-col items-center justify-center p-8">
             <Progress value={progress} className="w-full" />
           </div>
