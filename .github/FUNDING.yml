@@ -1,7 +1,30 @@
-# These are supported funding model platforms
+# Support the author of this open-source project by using the links below
+# 
+# This project is developed and maintained by Julian Bilcke with the help of amazing contributors
+#
+# I develop open-source apps both for work (I usually work alone),
+# and for pleasure during my free time!
+#
+# I spend a lot of time working on my projects during the evening and weekend,
+# buy you know, I have absolutely zero regrets because #YOLO
+#
+# If you like my work, do not hesitate to give a tip! I appreciate it ☕🫶
+
+# GitHub(s):
+
+# pro account (newer best projects): https://github.com/jbilcke-hf
+# private account (older projects): https://github.com/jbilcke
+
+# Hugging Face
+# pro account: https://huggingface.co/jbilcke-hf
+
+# Buy Me A Coffee
+# https://buymeacoffee.com/flngr
 
 github: [jbilcke-hf]
+buy_me_a_coffee: flngr
 patreon: FLNGR
+
 #open_collective: # Replace with a single Open Collective username
 #ko_fi: # Replace with a single Ko-fi username
 #tidelift: # Replace with a single Tidelift platform-name/package-name e.g., npm/babel
@@ -10,5 +33,4 @@ patreon: FLNGR
 #issuehunt: # Replace with a single IssueHunt username
 #lfx_crowdfunding: # Replace with a single LFX Crowdfunding project-name e.g., cloud-foundry
 #polar: # Replace with a single Polar username
-buy_me_a_coffee: flngr
 #custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
