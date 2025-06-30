@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git lfs push:*)",
+      "Bash(git push:*)",
+      "Bash(find:*)",
+      "Bash(git lfs pointer:*)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "Bash(ls:*)",
+      "Bash(git checkout:*)",
+      "Bash(git fetch:*)",
+      "Bash(git filter-repo:*)",
+      "Bash(git remote add:*)"
+    ],
+    "deny": []
+  }
+}

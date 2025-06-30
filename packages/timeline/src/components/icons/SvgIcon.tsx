@@ -1,16 +1,18 @@
-import { GroupProps } from "@react-three/fiber";
+import { ReactProps } from "@react-three/fiber";
+import { Group } from "three";
 
 import { useSvgShapes } from "./useSvgShapes";
 import { SvgShapeMesh } from "./SvgShapeMesh";
 import { IconType } from "./types";
 import { icons } from "./icons";
 
+
 export function SvgIcon({
   icon = "misc",
   groupProps = {}
 }: {
   icon?: IconType
-  groupProps?: GroupProps
+  groupProps?: ReactProps<Group>
 }) {
   const iconUrl = icons[icon]
   const shapes = useSvgShapes(iconUrl)
