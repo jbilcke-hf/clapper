@@ -95,7 +95,7 @@ export function RovingTabindexRoot<T extends ElementType>({
       <Component
         {...{ [ROOT_SELECTOR]: true }}
         tabIndex={isShiftTabbing ? -1 : 0}
-        onFocus={(e) => {
+        onFocus={(e: any) => {
           if (e.target !== e.currentTarget) return
           if (isShiftTabbing) return
           const orderedItems = getOrderedItems()
@@ -110,8 +110,8 @@ export function RovingTabindexRoot<T extends ElementType>({
           focusFirst(candidates)
         }}
         onBlur={() => setIsShiftTabbing(false)}
-        ref={rootRef}
-        {...props}
+        ref={rootRef as any}
+        {...(props as any)}
       >
         {children}
       </Component>

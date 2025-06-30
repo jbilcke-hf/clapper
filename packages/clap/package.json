@@ -18,15 +18,15 @@
     "bun-types": "latest",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
-    "typescript": "5.5.2"
+    "typescript": "5.8.3"
   },
   "peerDependencies": {
     "yaml": "^2.5.0"
   },
   "dependencies": {
     "pure-uuid": "^1.8.1",
-    "ts-patch": "3.2.1",
-    "typescript-transform-paths": "3.5.2"
+    "ts-patch": "3.3.0",
+    "typescript-transform-paths": "3.5.5"
   },
   "repository": {
     "type": "git",
