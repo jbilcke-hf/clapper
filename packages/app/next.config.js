@@ -1,6 +1,16 @@
 /** @type {import('next').NextConfig} */
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
+const __dirname = dirname(__filename); // get the name of the directory
+
 const nextConfig = {
   output: 'standalone',
+
+  // this includes files from the monorepo base two directories up
+  // see: https://nextjs.org/docs/pages/api-reference/config/next-config-js/output#caveats
+  outputFileTracingRoot: join(__dirname, '../../'),
 
   experimental: {
     serverActions: {
@@ -62,4 +72,4 @@ const nextConfig = {
 }
 }
 
-module.exports = nextConfig
+export default nextConfig;

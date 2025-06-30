@@ -7,6 +7,7 @@
   "version": "0.2.4-3",
   "description": "Official API client for AiTube.at",
   "scripts": {
+    "clean": "rm -Rf ./dist",
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap && bun run build:declaration",
     "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
     "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",

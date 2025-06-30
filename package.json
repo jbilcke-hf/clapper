@@ -1,16 +1,26 @@
 {
   "name": "@aitube/clapper-monorepo",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "A monorepo for the Clapper project. Individual packages are in the packages directory.",
   "engines": {
     "bun": ">=1.0.0"
   },
-  "packageManager": "bun@1.0.25",
+  "packageManager": "bun@1.2.17",
   "private": true,
   "scripts": {
     "dev": "bun run --cwd packages/app dev",
     "start": "bun run --cwd packages/app start",
     "start:prod": "bun run --cwd packages/app start:prod",
+    "clean:all": "bun run clean:clap && bun run clean:timeline && bun run clean:client && bun run clean:io && bun run clean:colors && bun run clean:engine && bun run clean:broadway && bun run clean:clapper-services && bun run clean:app",
+    "clean:clap": "bun run --cwd packages/clap clean",
+    "clean:timeline": "bun run --cwd packages/timeline clean",
+    "clean:client": "bun run --cwd packages/client clean",
+    "clean:io": "bun run --cwd packages/io clean",
+    "clean:colors": "bun run --cwd packages/colors clean",
+    "clean:engine": "bun run --cwd packages/engine clean",
+    "clean:broadway": "bun run --cwd packages/broadway clean",
+    "clean:clapper-services": "bun run --cwd packages/clapper-services clean",
+    "clean:app": "bun run --cwd packages/app clean",
     "build": "bun run build:all",
     "build:all": "bun run build:clap && bun run build:timeline && bun run build:client && bun run build:io && bun run build:colors && bun run build:engine && bun run build:broadway && bun run build:clapper-services && bun run build:app",
     "build:clap": "bun run --cwd packages/clap build",

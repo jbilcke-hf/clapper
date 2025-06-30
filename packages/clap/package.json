@@ -5,9 +5,10 @@
   "private": false,
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Types and helpers to manipulate .clap files",
   "scripts": {
+    "clean": "rm -Rf ./dist",
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=yaml && bun run build:declaration",
     "build:declaration": "tspc --emitDeclarationOnly --project tsconfig.types.json",
     "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
