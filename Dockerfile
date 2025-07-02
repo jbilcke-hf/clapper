@@ -1,4 +1,12 @@
-FROM oven/bun:canary-alpine
+# Due to a bug in Bun or Next 🤷‍♂️ we are unable to build the app using only Bun
+# to fix this, we use a Docker image that contains both Bun and Node
+
+# a lot of people have the same issue but the Bun team closed the ticket 🤷‍♂️
+# https://github.com/oven-sh/bun/issues/8725
+FROM imbios/bun-node:latest-current-alpine-git
+
+# if the Bun team decides to fix the bug one day 🤷‍♂️ then we will be able to use this instead:
+# FROM oven/bun:alpine
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -18,13 +26,13 @@ RUN apk add font-arabic-misc font-inconsolata font-dejavu font-awesome
 RUN apk add ttf-opensans
 
 # For Puppeteer
-# DISABLEd - we don't actually need Puppeteer on Clapper right now
+# DISABLED: we don't actually need Puppeteer on Clapper right now
 # RUN apk add build-base gcompat udev chromium
 
 RUN apk add --no-cache ffmpeg
 
-# Set up a new user named "user" with user ID 1000
-RUN adduser --disabled-password --uid 1001 user
+# Set up a new user named "user" with user ID 1002
+RUN adduser --disabled-password --uid 1002 user
 
 # Switch to the "user" user
 USER user
@@ -50,9 +58,7 @@ COPY --chown=user . /app
 
 RUN bun i
 
-# this step can be done by the developer,
-# and the file uploaded using HF CLI tools
-# RUN bun run build
+RUN bun run build
 
 EXPOSE 3000
 

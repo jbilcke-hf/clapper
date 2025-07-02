@@ -15,7 +15,7 @@
   "scripts": {
     "dev": "bun run checks && next dev",
     "clean": "rm -Rf .next && rm -Rf node_modules",
-    "build": "bun run prepare && bun run checks && rm -Rf out && next build && bun run build:copyassets",
+    "build": "bun run prepare && bun run checks && rm -Rf out && next build -d && bun run build:copyassets",
     "build:copyassets": "cp -R public .next/standalone/packages/app/public && cp -R .next/static .next/standalone/packages/app/.next/static",
     "prepare": "cp -R ../../node_modules/mediainfo.js/dist/MediaInfoModule.wasm public/wasm/",
     "start": "next start",

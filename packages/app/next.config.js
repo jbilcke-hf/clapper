@@ -5,6 +5,10 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = dirname(__filename); // get the name of the directory
 
+process.on('unhandledRejection', error => {
+	console.log('unhandledRejection', error);
+});
+
 const nextConfig = {
   output: 'standalone',
 
@@ -16,7 +20,11 @@ const nextConfig = {
     serverActions: {
       // a clap file can be quite large - but that's OK
       bodySizeLimit: '32mb'
-    }
+    },
+
+
+    // https://nextjs.org/docs/app/guides/memory-usage#try-experimentalwebpackmemoryoptimizations
+    webpackMemoryOptimizations: true
   },
   images: {
     // temporary fix for:
