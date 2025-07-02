@@ -58,7 +58,19 @@ COPY --chown=user . /app
 
 RUN bun i
 
-RUN bun run build
+# we can use this all-in-one command, but it might timeout
+#RUN bun run build
+
+# this allows for a finer grained control
+RUN bun run build:clap
+RUN bun run build:timeline
+RUN bun run build:client
+RUN bun run build:io
+RUN bun run build:colors
+RUN bun run build:engine
+RUN bun run build:broadway
+RUN bun run build:clapper-services
+RUN bun run build:app
 
 EXPOSE 3000
 

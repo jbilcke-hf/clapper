@@ -13,7 +13,6 @@ export function IframeWarning() {
     setShowWarning(window.self !== window.top)
     return () => {}
   }, [])
-  // TODO: read our global state
 
   return (
     <div
