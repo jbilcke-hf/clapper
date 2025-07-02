@@ -31,7 +31,7 @@ export function EntityList({
         <h1 className="mb-4 inline px-4 text-xl font-bold">Entities</h1>
         <Button
           onClick={handleAddEntity}
-          className="absolute right-2 top-2"
+          className="absolute top-2 right-2"
           variant="secondary"
         >
           New +

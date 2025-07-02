@@ -98,7 +98,7 @@ export function FormArea<T>(
       {error && (
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
-            <div className="absolute right-0 top-0 m-2 h-4 w-4">
+            <div className="absolute top-0 right-0 m-2 h-4 w-4">
               <MdError color="red" className="h-full w-full" />
             </div>
           </TooltipTrigger>

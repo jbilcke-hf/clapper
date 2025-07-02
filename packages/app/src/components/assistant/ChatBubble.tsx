@@ -30,7 +30,7 @@ export function ChatBubble({
           className={cn(
             `flex flex-col p-4`,
             `rounded-lg`,
-            `select-text text-sm`
+            `text-sm select-text`
           )}
           style={{
             background: isCurrentUser
@@ -45,7 +45,7 @@ export function ChatBubble({
         </div>
         <div
           className={cn(
-            `select-text text-sm`,
+            `text-sm select-text`,
             isCurrentUser ? `text-sky-100/60` : `text-indigo-100/60`
           )}
         >

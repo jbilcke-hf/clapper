@@ -38,6 +38,7 @@
   },
   "trustedDependencies": [
     "@aitube/clapper",
+    "@tailwindcss/oxide",
     "bufferutil",
     "electron",
     "electron-winstaller",

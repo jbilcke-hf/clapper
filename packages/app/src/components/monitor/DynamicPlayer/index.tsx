@@ -15,7 +15,7 @@ export const DynamicPlayer = ({ className }: { className?: string }) => {
   return (
     <div
       className={cn(
-        `flex w-full flex-grow flex-col items-center @container`,
+        `@container flex w-full flex-grow flex-col items-center`,
         className
       )}
     >

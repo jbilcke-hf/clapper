@@ -77,7 +77,7 @@ export function FormComfyUIWorkflowSettings({
     return (
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <div className="absolute right-0 top-0 flex h-full w-auto items-center justify-center px-2">
+          <div className="absolute top-0 right-0 flex h-full w-auto items-center justify-center px-2">
             <div className="h-4 w-4">
               {tooltip.type == 'info' ? (
                 <MdInfo color="white" className="h-full w-full" />
@@ -89,7 +89,7 @@ export function FormComfyUIWorkflowSettings({
         </TooltipTrigger>
         <TooltipContent side="left">
           <p
-            className={clsx('max-w-96 text-xs font-bold leading-4', {
+            className={clsx('max-w-96 text-xs leading-4 font-bold', {
               'text-yellow-500': tooltip.type === 'warning',
               'text-slate-100': tooltip.type === 'info',
             })}

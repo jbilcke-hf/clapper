@@ -36,7 +36,7 @@ export function Monitor() {
         <UniversalPlayer />
         <PlayerControls />
         {windowLayout === UIWindowLayout.GRID && (
-          <div className="absolute right-0 top-0 z-20">
+          <div className="absolute top-0 right-0 z-20">
             <div
               onClick={() => setFullscreen()}
               className={cn(
@@ -57,7 +57,7 @@ export function Monitor() {
           `hidden h-full flex-col items-center justify-between overflow-hidden md:flex`
         )}
       >
-        <VUMeter className={cn(`ml-1 mr-2 mt-12 h-[80%] w-8`)} />
+        <VUMeter className={cn(`mt-12 mr-2 ml-1 h-[80%] w-8`)} />
       </div>
     </div>
   )

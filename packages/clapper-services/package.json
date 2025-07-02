@@ -29,7 +29,7 @@
     "monaco-editor": "0.51.0",
     "react": "*",
     "react-dom": "*",
-    "zustand": "4.5.2"
+    "zustand": "5.0.6"
   },
   "repository": {
     "type": "git",

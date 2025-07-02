@@ -9,7 +9,7 @@ export function BottomBar() {
       className={cn(
         `absolute bottom-0 flex flex-row`,
         `items-center justify-between`,
-        `left-0 right-0`
+        `right-0 left-0`
       )}
     >
       <MobileBottomBar />

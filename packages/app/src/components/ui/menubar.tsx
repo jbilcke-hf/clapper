@@ -34,7 +34,7 @@ const MobileMenuTrigger = React.forwardRef<
   <button
     ref={ref}
     className={cn(
-      'rounded-md p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 md:hidden',
+      'rounded-md p-2 hover:bg-neutral-100 md:hidden dark:hover:bg-neutral-800',
       className
     )}
     {...props}
@@ -62,7 +62,7 @@ const MobileMenuDrawer = React.forwardRef<
   >
     <button
       onClick={onClose}
-      className="absolute right-4 top-4 rounded-md p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+      className="absolute top-4 right-4 rounded-md p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
     >
       <X className="h-6 w-6" />
     </button>
@@ -251,7 +251,7 @@ const MenubarTrigger = React.forwardRef<
   <MenubarPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex cursor-default select-none items-center rounded-sm px-1.5 py-1.5 text-xs font-normal outline-none data-[state=open]:bg-neutral-100 data-[state=open]:text-neutral-900 focus:bg-neutral-100 focus:text-neutral-900 dark:text-neutral-400 dark:data-[state=open]:bg-neutral-800 dark:data-[state=open]:text-neutral-300 dark:focus:bg-neutral-800 dark:focus:text-neutral-300 lg:px-2 lg:text-sm',
+      'flex cursor-default items-center rounded-xs px-1.5 py-1.5 text-xs font-normal outline-hidden select-none focus:bg-neutral-100 focus:text-neutral-900 data-[state=open]:bg-neutral-100 data-[state=open]:text-neutral-900 lg:px-2 lg:text-sm dark:text-neutral-400 dark:focus:bg-neutral-800 dark:focus:text-neutral-300 dark:data-[state=open]:bg-neutral-800 dark:data-[state=open]:text-neutral-300',
       className
     )}
     {...props}
@@ -268,7 +268,7 @@ const MenubarSubTrigger = React.forwardRef<
   <MenubarPrimitive.SubTrigger
     ref={ref}
     className={cn(
-      'flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[state=open]:bg-neutral-100 data-[state=open]:text-neutral-900 focus:bg-neutral-100 focus:text-neutral-900 dark:data-[state=open]:bg-neutral-800 dark:data-[state=open]:text-neutral-200 dark:focus:bg-neutral-800 dark:focus:text-neutral-200',
+      'flex cursor-default items-center rounded-xs px-2 py-1.5 text-sm outline-hidden select-none focus:bg-neutral-100 focus:text-neutral-900 data-[state=open]:bg-neutral-100 data-[state=open]:text-neutral-900 dark:focus:bg-neutral-800 dark:focus:text-neutral-200 dark:data-[state=open]:bg-neutral-800 dark:data-[state=open]:text-neutral-200',
       inset && 'pl-8',
       className
     )}
@@ -287,7 +287,7 @@ const MenubarSubContent = React.forwardRef<
   <MenubarPrimitive.SubContent
     ref={ref}
     className={cn(
-      'z-50 min-w-[8rem] overflow-hidden rounded-md border border-neutral-200 bg-white p-1 text-neutral-900 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-200',
+      'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] overflow-hidden rounded-md border border-neutral-200 bg-white p-1 text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-200',
       className
     )}
     {...props}
@@ -310,7 +310,7 @@ const MenubarContent = React.forwardRef<
         alignOffset={alignOffset}
         sideOffset={sideOffset}
         className={cn(
-          'z-50 min-w-[12rem] overflow-hidden rounded-md border border-neutral-200 bg-white p-1 text-neutral-900 shadow-md data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-200',
+          'data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[12rem] overflow-hidden rounded-md border border-neutral-200 bg-white p-1 text-neutral-900 shadow-md dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-200',
           className
         )}
         {...props}
@@ -329,7 +329,7 @@ const MenubarItem = React.forwardRef<
   <MenubarPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-45 focus:bg-neutral-100 focus:text-neutral-900 dark:focus:bg-neutral-800 dark:focus:text-neutral-200',
+      'relative flex cursor-default items-center rounded-xs px-2 py-1.5 text-sm outline-hidden select-none focus:bg-neutral-100 focus:text-neutral-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-45 dark:focus:bg-neutral-800 dark:focus:text-neutral-200',
       inset && 'pl-8',
       className
     )}
@@ -345,7 +345,7 @@ const MenubarCheckboxItem = React.forwardRef<
   <MenubarPrimitive.CheckboxItem
     ref={ref}
     className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-45 focus:bg-neutral-100 focus:text-neutral-900 dark:focus:bg-neutral-800 dark:focus:text-neutral-200',
+      'relative flex cursor-default items-center rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-neutral-100 focus:text-neutral-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-45 dark:focus:bg-neutral-800 dark:focus:text-neutral-200',
       className
     )}
     checked={checked}
@@ -368,7 +368,7 @@ const MenubarRadioItem = React.forwardRef<
   <MenubarPrimitive.RadioItem
     ref={ref}
     className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-45 focus:bg-neutral-100 focus:text-neutral-900 dark:focus:bg-neutral-800 dark:focus:text-neutral-200',
+      'relative flex cursor-default items-center rounded-xs py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-neutral-100 focus:text-neutral-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-45 dark:focus:bg-neutral-800 dark:focus:text-neutral-200',
       className
     )}
     {...props}

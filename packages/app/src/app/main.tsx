@@ -278,7 +278,7 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
       >
         <div
           className={cn(
-            `pointer-events-none absolute left-[100px] top-[16px]`,
+            `pointer-events-none absolute top-[16px] left-[100px]`,
             `opacity-90`
           )}
         >
@@ -291,7 +291,7 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
         </div>
         <div
           className={cn(
-            `pointer-events-none absolute left-[305px] top-[136px]`,
+            `pointer-events-none absolute top-[136px] left-[305px]`,
             `transition-all duration-200 ease-out`,
             isTopMenuOpen ? 'scale-100 opacity-90' : 'scale-90 opacity-0'
           )}
@@ -323,7 +323,7 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
     <div
       ref={ref}
       className={cn(
-        `dark fixed flex h-svh w-screen select-none flex-col overflow-hidden font-light text-neutral-900/90 dark:text-neutral-100/90`
+        `dark fixed flex h-svh w-screen flex-col overflow-hidden font-light text-neutral-900/90 select-none dark:text-neutral-100/90`
       )}
     >
       <TopBar className={isIframe ? 'hidden' : ''} />

@@ -42,7 +42,7 @@ export function Node<S, T>({
     <li
       {...getTreeNodeProps({
         className: cn(
-          'relative cursor-pointer select-none flex flex-col focus:outline-none group'
+          'relative cursor-pointer select-none flex flex-col focus:outline-hidden group'
         ),
       })}
     >
@@ -56,7 +56,7 @@ export function Node<S, T>({
           className={cn(
             'group flex flex-row items-center space-x-2 border-[1.5px] border-transparent',
             isFocusable &&
-              'focus-within:border-transparent group-focus:border-gray-900/0',
+              'group-focus:border-gray-900/0 focus-within:border-transparent',
             /*
               isSelected 
               ? 'bg-gray-700/100 text-gray-200'
@@ -71,9 +71,9 @@ export function Node<S, T>({
           {node.children?.length ? (
             <>
               {showArrows ? (
-                <Arrow className="h-4 w-4 flex-shrink-0" open={isOpen} />
+                <Arrow className="h-4 w-4 shrink-0" open={isOpen} />
               ) : null}
-              <div className="flex h-5 w-5 flex-shrink-0 flex-col items-center justify-center">
+              <div className="flex h-5 w-5 shrink-0 flex-col items-center justify-center">
                 {node.icon ? (
                   <div className="flex h-full w-full scale-125 flex-col items-center justify-center">
                     <IconComponent />
@@ -86,7 +86,7 @@ export function Node<S, T>({
           ) : (
             <div
               className={cn(
-                `flex h-5 w-5 flex-shrink-0 flex-col items-center justify-center`,
+                `flex h-5 w-5 shrink-0 flex-col items-center justify-center`,
                 showArrows ? 'ml-6' : ''
               )}
             >
@@ -165,7 +165,7 @@ export function Node<S, T>({
 
                   `ml-3`,
 
-                  `absolute bottom-0 left-3.5 top-[31px] z-[-1] h-[calc(100%-30px)] -translate-x-1/2 transform`
+                  `absolute top-[31px] bottom-0 left-3.5 z-[-1] h-[calc(100%-30px)] -translate-x-1/2 transform`
                 )}
                 key={node.id + 'line'}
                 stroke="currentColor"

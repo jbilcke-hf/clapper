@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "bun-types": "latest",
-    "prettier": "^3.3.3",
+    "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
     "typescript": "5.8.3"
   },

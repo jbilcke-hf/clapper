@@ -92,7 +92,7 @@ export async function askAnyAssistant({
             builtinProviderCredentialsGroq,
             settings.clapperApiKey
           ),
-          modelName,
+          model: modelName,
           // temperature: 0.7,
         })
       : provider === ClapWorkflowProvider.OPENAI

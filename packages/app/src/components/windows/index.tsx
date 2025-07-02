@@ -399,15 +399,15 @@ export const FruityWindow: React.FC<{
         {!isFullscreen && !win.isReduced && (
           <>
             <div
-              className="absolute left-0 top-0 h-full w-2 cursor-ew-resize"
+              className="absolute top-0 left-0 h-full w-2 cursor-ew-resize"
               onMouseDown={(e) => handleResizeStart(e, 'w')}
             />
             <div
-              className="absolute right-0 top-0 h-full w-2 cursor-ew-resize"
+              className="absolute top-0 right-0 h-full w-2 cursor-ew-resize"
               onMouseDown={(e) => handleResizeStart(e, 'e')}
             />
             <div
-              className="absolute left-0 top-0 h-2 w-full cursor-ns-resize"
+              className="absolute top-0 left-0 h-2 w-full cursor-ns-resize"
               onMouseDown={(e) => handleResizeStart(e, 'n')}
             />
             <div
@@ -415,11 +415,11 @@ export const FruityWindow: React.FC<{
               onMouseDown={(e) => handleResizeStart(e, 's')}
             />
             <div
-              className="absolute left-0 top-0 h-2 w-2 cursor-nw-resize"
+              className="absolute top-0 left-0 h-2 w-2 cursor-nw-resize"
               onMouseDown={(e) => handleResizeStart(e, 'nw')}
             />
             <div
-              className="absolute right-0 top-0 h-2 w-2 cursor-ne-resize"
+              className="absolute top-0 right-0 h-2 w-2 cursor-ne-resize"
               onMouseDown={(e) => handleResizeStart(e, 'ne')}
             />
             <div
@@ -427,7 +427,7 @@ export const FruityWindow: React.FC<{
               onMouseDown={(e) => handleResizeStart(e, 'sw')}
             />
             <div
-              className="absolute bottom-0 right-0 h-2 w-2 cursor-se-resize"
+              className="absolute right-0 bottom-0 h-2 w-2 cursor-se-resize"
               onMouseDown={(e) => handleResizeStart(e, 'se')}
             />
           </>

@@ -122,7 +122,7 @@ export function SettingsSectionProvider() {
   return (
     <div className="flex flex-col justify-between space-y-6">
       <FormSection label="Compute providers">
-        <p className="max-w-80 text-sm italic text-neutral-500">
+        <p className="max-w-80 text-sm text-neutral-500 italic">
           Note: preferences and credentials are stored inside your browser local
           storage.
           <br />

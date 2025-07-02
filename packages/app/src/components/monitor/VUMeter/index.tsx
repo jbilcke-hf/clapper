@@ -8,7 +8,7 @@ const BOX_COUNT_YELLOW = 8
 const GRADUATIONS = [0, -5, -10, -15, -20, -30, -40, -50]
 
 const graduations = (
-  <div className="flex h-full flex-col justify-between text-right text-3xs text-white/25">
+  <div className="text-3xs flex h-full flex-col justify-between text-right text-white/25">
     {GRADUATIONS.map((db) => (
       <div key={db}>{db}</div>
     ))}

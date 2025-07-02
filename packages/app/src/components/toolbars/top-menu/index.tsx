@@ -117,7 +117,7 @@ export function TopMenu() {
           */}
 
             <ToggleView
-              className="col-span-1 col-start-3 row-span-2 border-b border-l border-r"
+              className="col-span-1 col-start-3 row-span-2 border-r border-b border-l"
               isVisible={showVideoPlayer}
               setVisible={setShowVideoPlayer}
             >
@@ -149,7 +149,7 @@ export function TopMenu() {
               </a>
             </div>
           </TooltipTrigger>
-          <TooltipContent className="mr-4 mt-2 text-xs font-light">
+          <TooltipContent className="mt-2 mr-4 text-xs font-light">
             Community
           </TooltipContent>
         </Tooltip>
@@ -162,7 +162,7 @@ export function TopMenu() {
               </a>
             </div>
           </TooltipTrigger>
-          <TooltipContent className="mr-4 mt-2 text-xs font-light">
+          <TooltipContent className="mt-2 mr-4 text-xs font-light">
             Code
           </TooltipContent>
         </Tooltip>

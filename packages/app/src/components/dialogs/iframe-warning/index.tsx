@@ -25,7 +25,7 @@ export function IframeWarning() {
   return (
     <div
       className={cn(
-        `fixed bottom-0 left-0 right-0 top-0 z-[999] m-0 flex h-svh w-screen items-center justify-center overflow-hidden bg-neutral-950 p-0 text-center`,
+        `fixed top-0 right-0 bottom-0 left-0 z-[999] m-0 flex h-svh w-screen items-center justify-center overflow-hidden bg-neutral-950 p-0 text-center`,
         showWarning
           ? 'pointer-events-auto opacity-100'
           : 'pointer-events-none opacity-0'

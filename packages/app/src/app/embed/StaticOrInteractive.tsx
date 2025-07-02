@@ -18,8 +18,8 @@ export function StaticOrInteractiveTag({
       className={cn(
         `flex flex-none flex-row items-center justify-center border font-medium uppercase`,
         {
-          'rounded-xs space-x-0.5 py-0.5 pl-0.5 pr-1 text-2xs': size === 'sm',
-          'space-x-1 rounded py-1 pl-1 pr-2 text-xs': size === 'md',
+          'text-2xs space-x-0.5 rounded-xs py-0.5 pr-1 pl-0.5': size === 'sm',
+          'space-x-1 rounded-sm py-1 pr-2 pl-1 text-xs': size === 'md',
           'border-yellow-600 text-yellow-600': isInteractive,
           // " text-red-500 border-red-500": isLive,
           'border-neutral-600 text-neutral-600': isStatic,
