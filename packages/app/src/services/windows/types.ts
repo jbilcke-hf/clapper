@@ -1,3 +1,5 @@
+import type { JSX } from 'react'
+
 // Define the window state type
 export type WindowState = {
   id: string

@@ -16,7 +16,7 @@ export function EmbeddedPlayer() {
 
   const [isOverlayVisible, setOverlayVisible] = useState(true)
 
-  const overlayTimerRef = useRef<NodeJS.Timeout>()
+  const overlayTimerRef = useRef<NodeJS.Timeout>(null)
   // const videoLayerRef = useRef<HTMLDivElement>(null)
   // const segmentationLayerRef = useRef<HTMLDivElement>(null)
 
@@ -24,12 +24,12 @@ export function EmbeddedPlayer() {
   isPlayingRef.current = isPlaying
 
   const scheduleOverlayInvisibility = () => {
-    clearTimeout(overlayTimerRef.current)
+    clearTimeout(overlayTimerRef.current!)
     overlayTimerRef.current = setTimeout(() => {
       if (isPlayingRef.current) {
         setOverlayVisible(!isPlayingRef.current)
       }
-      clearTimeout(overlayTimerRef.current)
+      clearTimeout(overlayTimerRef.current!)
     }, 3000)
   }
 

@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useMemo,
   memo,
+  JSX,
 } from 'react'
 import { IoClose } from 'react-icons/io5'
 import { LuPanelTopClose, LuPanelTopOpen } from 'react-icons/lu'

@@ -41,7 +41,7 @@ export function VUMeter({ className = 'w-24 h-full' }) {
   const leftMeterRef = useRef<HTMLDivElement>(null)
   const rightMeterRef = useRef<HTMLDivElement>(null)
   const prevActiveBoxesRef = useRef({ left: 0, right: 0 })
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number>(null)
 
   useEffect(() => {
     if (!audioContext) return

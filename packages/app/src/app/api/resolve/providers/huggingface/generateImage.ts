@@ -1,4 +1,4 @@
-import { HfInference, HfInferenceEndpoint } from '@huggingface/inference'
+import { InferenceClient } from '@huggingface/inference'
 
 import { decodeOutput } from '@/lib/utils/decodeOutput'
 import { ResolveRequest } from '@aitube/clapper-services'
@@ -40,29 +40,34 @@ export async function generateImage(request: ResolveRequest): Promise<string> {
     }
   }
 
-  const hf: HfInferenceEndpoint = new HfInference(apiKey)
+  const hf = new InferenceClient(apiKey)
 
-  const blob: Blob = await hf.textToImage({
-    model: request.settings.imageGenerationWorkflow.data,
-    inputs: request.prompts.image.positive,
-    parameters: {
-      height: request.meta.height,
-      width: request.meta.width,
+  const blob: Blob = await hf.textToImage(
+    {
+      model: request.settings.imageGenerationWorkflow.data,
+      inputs: request.prompts.image.positive,
+      parameters: {
+        height: request.meta.height,
+        width: request.meta.width,
 
-      // this triggers the following exception:
-      // Error: __call__() got an unexpected keyword argument 'negative_prompt'
-      // negative_prompt: request.prompts.image.negative || '',
+        // this triggers the following exception:
+        // Error: __call__() got an unexpected keyword argument 'negative_prompt'
+        // negative_prompt: request.prompts.image.negative || '',
 
-      /**
-       * The number of denoising steps. More denoising steps usually lead to a higher quality image at the expense of slower inference.
-       */
-      // num_inference_steps?: number;
-      /**
-       * Guidance scale: Higher guidance scale encourages to generate images that are closely linked to the text `prompt`, usually at the expense of lower image quality.
-       */
-      // guidance_scale?: number;
+        /**
+         * The number of denoising steps. More denoising steps usually lead to a higher quality image at the expense of slower inference.
+         */
+        // num_inference_steps?: number;
+        /**
+         * Guidance scale: Higher guidance scale encourages to generate images that are closely linked to the text `prompt`, usually at the expense of lower image quality.
+         */
+        // guidance_scale?: number;
+      },
     },
-  })
+    {
+      outputType: 'blob',
+    }
+  )
 
   // console.log('output from Hugging Face Inference API:', blob)
 

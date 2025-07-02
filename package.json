@@ -38,8 +38,17 @@
   },
   "trustedDependencies": [
     "@aitube/clapper",
+    "bufferutil",
+    "electron",
+    "electron-winstaller",
+    "esbuild",
+    "fs-xattr",
+    "macos-alias",
+    "msw",
     "onnxruntime-node",
-    "protobufjs"
+    "protobufjs",
+    "sharp",
+    "unrs-resolver"
   ],
   "workspaces": [
     "packages/clap",

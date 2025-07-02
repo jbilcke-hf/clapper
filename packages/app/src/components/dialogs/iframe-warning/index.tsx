@@ -5,6 +5,14 @@ import { cn } from '@/lib/utils'
 import { useTheme } from '@/services'
 import { useEffect, useState } from 'react'
 
+/**
+ * When Clapper is hosted in a space, using the fingers to scroll in the timeline
+ * make the page go back to the previous one, so the user loses all their data
+ *
+ * obviously people aren't happy about this, so with a heavy heart I took the decision
+ * to disable clapper on Hugging Face (I'll try to see of there are alternative solutions, maybe using the original subdomain)
+ * @returns
+ */
 export function IframeWarning() {
   const [showWarning, setShowWarning] = useState(false)
   const theme = useTheme()

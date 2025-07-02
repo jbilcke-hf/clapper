@@ -147,40 +147,46 @@ const Menubar = React.forwardRef<
     return React.Children.map(items, (child) => {
       if (React.isValidElement(child)) {
         if (child.type === MenubarMenu) {
-          const trigger = child.props.children.find(
+          const trigger = (child.props as any).children.find(
             (c: React.ReactElement) => c.type === MenubarTrigger
           )
-          const content = child.props.children.find(
+          const content = (child.props as any).children.find(
             (c: React.ReactElement) => c.type === MenubarContent
           )
 
           return (
-            <MobileMenuItem label={trigger.props.children}>
-              {renderMobileMenuItems(content.props.children, depth + 1)}
+            <MobileMenuItem label={(trigger.props as any).children}>
+              {renderMobileMenuItems(
+                (content.props as any).children,
+                depth + 1
+              )}
             </MobileMenuItem>
           )
         } else if (child.type === MenubarItem) {
           return (
             <MobileMenuItem
-              label={child.props.children}
+              label={(child.props as any).children}
               onClick={() => {
-                if (child.props.onClick) {
-                  child.props.onClick()
+                if ((child.props as any).onClick) {
+                  ;(child.props as any).onClick()
                 }
                 setIsMobileMenuOpen(false)
               }}
             />
           )
         } else if (child.type === MenubarSub) {
-          const subTrigger = child.props.children.find(
+          const subTrigger = (child.props as any).children.find(
             (c: React.ReactElement) => c.type === MenubarSubTrigger
           )
-          const subContent = child.props.children.find(
+          const subContent = (child.props as any).children.find(
             (c: React.ReactElement) => c.type === MenubarSubContent
           )
           return (
-            <MobileMenuItem label={subTrigger.props.children}>
-              {renderMobileMenuItems(subContent.props.children, depth + 1)}
+            <MobileMenuItem label={(subTrigger.props as any).children}>
+              {renderMobileMenuItems(
+                (subContent.props as any).children,
+                depth + 1
+              )}
             </MobileMenuItem>
           )
         } else if (child.type === MenubarSeparator) {

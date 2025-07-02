@@ -148,7 +148,9 @@ export function Node<S, T>({
                 },
               }}
               {...treeGroupProps}
-              className={cn('pl-3')}
+              // we can't use a className here work for some reason,
+              // sqo I've moved this to line 166
+              // className={cn('pl-3')}
             >
               <motion.svg
                 viewBox="0 0 3 60"
@@ -160,6 +162,8 @@ export function Node<S, T>({
                 className={cn(
                   // let's just hid it for flex-nowrap
                   `opacity-0`,
+
+                  `ml-3`,
 
                   `absolute bottom-0 left-3.5 top-[31px] z-[-1] h-[calc(100%-30px)] -translate-x-1/2 transform`
                 )}
