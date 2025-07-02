@@ -24,7 +24,8 @@ const nextConfig = {
 
 
     // https://nextjs.org/docs/app/guides/memory-usage#try-experimentalwebpackmemoryoptimizations
-    webpackMemoryOptimizations: true
+    // I suspect this might sometimes crash the build of the app
+    webpackMemoryOptimizations: false // let's set it to false
   },
   images: {
     // temporary fix for:
