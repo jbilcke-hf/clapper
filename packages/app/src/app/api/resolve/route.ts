@@ -159,7 +159,11 @@ export async function POST(req: NextRequest) {
         */
     }
   } catch (err) {
-    console.error(`failed to generate a segment: ${err}`)
+    if (typeof err?.['message'] === 'string') {
+      console.error(`failed to generate a segment: ${err?.['message']}`)
+    } else {
+      console.error(`failed to generate a segment:`, err)
+    }
     segment.assetUrl = ''
     segment.assetSourceType = ClapAssetSource.EMPTY
     segment.assetDurationInMs = 0

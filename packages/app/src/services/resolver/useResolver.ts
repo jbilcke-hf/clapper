@@ -779,7 +779,9 @@ wake of the euro-zone debt crisis.`
           try {
             newSegment.audioBuffer = await getAudioBuffer(newSegment.assetUrl)
           } catch (err) {
-            console.error(`failed to load the audio file: ${err}`)
+            console.warn(
+              `failed to load the audio file: ${err} (first 128 chars of assetUrl look like this: "${segment.assetUrl.slice(0, 128)}")`
+            )
           }
         }
       }

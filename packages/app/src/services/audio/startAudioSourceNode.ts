@@ -40,7 +40,7 @@ export function startAudioSourceNode({
    */
   onEnded: (sourceId: string) => void
 }): CurrentlyPlayingAudioSource | undefined {
-  if (!segment.audioBuffer) {
+  if (!segment?.audioBuffer) {
     // throw new Error(`startAudioSourceNode: cannot play a non-audio segment`)
     // console.error(`startAudioSourceNode: cannot play a non-audio segment`)
     return

@@ -72,6 +72,28 @@ export const genericSeed: ClapInputField = {
   defaultValue: -1,
 }
 
+export const genericFPS: ClapInputField = {
+  id: 'fps',
+  label: 'fps',
+  description: 'FPS',
+  category: ClapInputCategory.UNKNOWN,
+  type: 'number', // <-- TODO: replace by 'integer' (might break stuff)
+  minValue: 8,
+  maxValue: 60,
+  defaultValue: 16,
+}
+
+export const genericDuration: ClapInputField = {
+  id: 'duration',
+  label: 'duration',
+  description: 'Duration (in seconds)',
+  category: ClapInputCategory.UNKNOWN,
+  type: 'number', // <-- TODO: replace by 'integer' (might break stuff)
+  minValue: 1,
+  maxValue: 5,
+  defaultValue: 2,
+}
+
 export const genericTrueCFG: ClapInputField = {
   id: 'true_cfg',
   label: 'True CFG',

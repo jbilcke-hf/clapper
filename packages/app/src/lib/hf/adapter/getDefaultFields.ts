@@ -18,7 +18,11 @@ export function getDefaultFields(): SupportedFields {
     hasInputSteps: false,
     inputGuidance: 7,
     hasInputGuidance: false,
-    inputSeed: 0,
+    inputSeed: -1,
     hasInputSeed: false,
+    inputDuration: 2,
+    hasInputDuration: false,
+    inputFps: 16,
+    hasInputFps: false,
   }
 }

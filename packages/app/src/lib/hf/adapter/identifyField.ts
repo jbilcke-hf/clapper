@@ -105,6 +105,74 @@ export function identifyField(
         }
       }
 
+    case 'fps':
+    case 'framerate':
+    case 'frame_rate':
+    case 'frame_per_second':
+    case 'frame_per_seconds':
+    case 'frames_per_second':
+    case 'frames_per_seconds':
+      let strFps = ''
+      let fps = 0
+      if (typeof value === 'string' && value.length) {
+        strFps = value
+      }
+      let maybeFps = Number(strFps)
+      if (
+        typeof maybeFps === 'number' &&
+        isFinite(maybeFps) &&
+        !isNaN(maybeFps) &&
+        maybeFps
+      ) {
+        fps = maybeFps
+        return {
+          hasInputFps: true,
+          inputFps: fps,
+        }
+      } else if (strFps) {
+        return {
+          hasInputFps: true,
+          inputFps: strFps,
+        }
+      } else {
+        return {
+          hasInputFps: true,
+          // indexInputSFps: index,
+        }
+      }
+
+    case 'duration':
+    case 'duration_in_sec':
+    case 'duration_in_seconds':
+      let strDuration = ''
+      let duration = 0
+      if (typeof value === 'string' && value.length) {
+        strDuration = value
+      }
+      let maybeDuration = Number(strDuration)
+      if (
+        typeof maybeDuration === 'number' &&
+        isFinite(maybeDuration) &&
+        !isNaN(maybeDuration) &&
+        maybeDuration
+      ) {
+        duration = maybeDuration
+        return {
+          hasInputDuration: true,
+          inputDuration: duration,
+        }
+      } else if (strDuration) {
+        return {
+          hasInputDuration: true,
+          inputDuration: strDuration,
+        }
+      } else {
+        return {
+          hasInputDuration: true,
+          // indexInputDuration: index,
+        }
+      }
+
     case 'steps':
     case 'n_steps':
     case 'nb_steps':

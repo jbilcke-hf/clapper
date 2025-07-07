@@ -22,6 +22,7 @@ import { useSettings } from '../settings'
  * @returns
  */
 export function useRenderLoop(): void {
+  console.log('useRenderLoop() called (should only be initialized once)')
   const setDataUriBuffer1 = useRenderer((s) => s.setDataUriBuffer1)
   const setDataUriBuffer2 = useRenderer((s) => s.setDataUriBuffer2)
 

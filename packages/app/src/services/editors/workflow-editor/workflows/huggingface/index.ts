@@ -5,8 +5,13 @@ import {
   ClapWorkflowProvider,
 } from '@aitube/clap'
 import {
+  genericDuration,
+  genericFPS,
+  genericHeight1024,
   genericHeight2048,
   genericPrompt,
+  genericSeed,
+  genericWidth1024,
   genericWidth2048,
 } from '../common/defaultValues'
 
@@ -17,6 +22,37 @@ import {
 // -> we can create a ticket to fix this
 // ------------------------------------------------------------------------------
 export const huggingfaceWorkflows: ClapWorkflow[] = [
+  {
+    // for now let's use a basic system where we use a hard-coded Gradio server
+    id: 'huggingface://spaces/jbilcke-hf/fast-rendering-node-for-clapper',
+    label: 'Fast rendering node',
+    description:
+      'A fast but low-quality public rendering node (might be shutdown anytime)',
+    tags: ['Wan', 'Wan2.1 1.3B'],
+    author: 'Julian Bilcke',
+    thumbnailUrl: '',
+    nonCommercial: true,
+    engine: ClapWorkflowEngine.GRADIO_API,
+    provider: ClapWorkflowProvider.HUGGINGFACE,
+    category: ClapWorkflowCategory.VIDEO_GENERATION,
+    data: 'jbilcke-hf/fast-rendering-node-for-clapper',
+    schema: '',
+    inputFields: [
+      genericPrompt,
+      genericSeed,
+      genericFPS,
+      genericWidth1024,
+      genericHeight1024,
+      genericDuration,
+    ],
+    inputValues: {
+      prompt: genericPrompt.defaultValue,
+      seed: genericSeed.defaultValue,
+      width: genericWidth1024.defaultValue,
+      height: genericHeight1024.defaultValue,
+      duration: genericDuration.defaultValue,
+    },
+  },
   {
     id: 'huggingface://models/black-forest-labs/FLUX.1-schnell',
     label: 'FLUX.1 [schnell]',

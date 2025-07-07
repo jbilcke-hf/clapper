@@ -83,6 +83,9 @@ export function adaptAnyInputsToGradioInputs({
     if (fields.hasInputSeed) {
       gradioInputValue = allInputFields.inputSeed
     }
+    if (fields.hasInputDuration) {
+      gradioInputValue = allInputFields.inputDuration
+    }
 
     //console.log("parameter:", parameter)
     const valueSeemsToBeABase64Uri =
@@ -105,7 +108,7 @@ export function adaptAnyInputsToGradioInputs({
   }
 
   console.log(
-    `inputArray:`,
+    `gradio adapter inputArray:`,
     inputArray.map((x) => (typeof x === 'string' ? x.slice(0, 255) : x))
   )
 

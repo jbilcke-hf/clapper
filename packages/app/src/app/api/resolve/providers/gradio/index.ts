@@ -9,6 +9,8 @@ export async function resolveSegment(
 ): Promise<TimelineSegment> {
   const segment = request.segment
 
+  console.log('calling a Gradio API for a segment')
+
   if (request.segment.category === ClapSegmentCategory.IMAGE) {
     segment.assetUrl = await callGradioApi({
       url: request.settings.gradioApiUrlForImage,

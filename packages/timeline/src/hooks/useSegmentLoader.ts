@@ -154,6 +154,7 @@ export const useSegmentLoader = ({
         beforeTimeInMs: beforeTimeWithBufferInMs
       })
 
+      console.log(`useSegmentLoader(): sync(${forceRerendering}): calling setLoadedSegments(loadedSegments)`)
       setLoadedSegments(loadedSegments)
     }
 
@@ -175,6 +176,8 @@ export const useSegmentLoader = ({
         afterTimeInMs: afterTimeWithoutBufferInMs,
         beforeTimeInMs: beforeTimeWithoutBufferInMs
       })
+
+      console.log(`useSegmentLoader(): sync(${forceRerendering}): calling setVisibleSegments(visibleSegments)`)
       setVisibleSegments(visibleSegments)
     }
   }

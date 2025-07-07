@@ -4,6 +4,7 @@ import { getGradioApiInfo } from './getGradioApiInfo'
 import { parseHuggingFaceHubId } from './parseHuggingFaceHubId'
 import { adaptAnyInputsToGradioInputs } from './adapter/adaptAnyInputsToGradioInputs'
 import { getCurrentOwner } from './getCurrentOwner'
+import { downloadHLSAsMP4, HLSDownloadOptions } from './downloadHLSFromNodeJS'
 
 /**
  *
@@ -16,15 +17,15 @@ export async function callGradioApi<T>({
   apiKey,
 }: {
   url: string
-  inputs: Record<string, string | number | boolean | undefined | null>
+  inputs: Record<
+    string,
+    string | string[] | number | boolean | undefined | null
+  >
   apiKey?: string
 }): Promise<T> {
-  // console.log(`callGradioApi called on: `, { url, apiKey })
   // we can support either a call to the original space, or to the current user space
 
   const { owner: previousOwner, id } = parseHuggingFaceHubId(url, 'spaces')
-
-  // console.log(`then: `, { previousOwner, id })
 
   const owner = apiKey ? await getCurrentOwner(apiKey) : previousOwner
 
@@ -52,30 +53,46 @@ export async function callGradioApi<T>({
     apiKey,
   })
 
-  // console.log(`gradioApiInfo: `, gradioApiInfo)
-
   const gradioEndpointInputs = adaptAnyInputsToGradioInputs({
     inputs,
     gradioApiInfo,
   })
 
-  // console.log(`gradioEndpointInputs: `, gradioEndpointInputs)
-
   const app = await Client.connect(ownerAndId, {
     hf_token: apiKey as any,
   })
-  // console.log(`app: `, app)
 
-  console.log(
-    `calling Gradio API ${ownerAndId}:${gradioEndpointInputs.endpoint}`
-  )
   const output = await app.predict(
     gradioEndpointInputs.endpoint,
     gradioEndpointInputs.inputMap
   )
-  // console.log(`output: `, output)
 
-  const data1 = (Array.isArray(output.data) ? output.data[0] : '') || ''
+  let firstDataItem = (Array.isArray(output.data) ? output.data[0] : '') || ''
 
-  return data1 as unknown as T
+  if (typeof firstDataItem?.['video']?.['url'] == 'string') {
+    const videoUrl = `${firstDataItem?.['video']?.['url'] || ''}`
+
+    if (videoUrl.endsWith('m3u8')) {
+      // the gradio space might be private, in that case all download
+      // will have to happen using an API key
+      const options: HLSDownloadOptions | undefined = apiKey
+        ? {
+            bearerToken: apiKey,
+            verbose: false, // set to true to spit out more logs
+          }
+        : undefined
+
+      try {
+        firstDataItem = await downloadHLSAsMP4(videoUrl, options)
+      } catch (err) {
+        console.warn(`failed to download the video at ${videoUrl}:`, err)
+      }
+    } else if (videoUrl.startsWith('data:')) {
+      firstDataItem = videoUrl
+    } else {
+      console.log(`unrecognized video format ${videoUrl}`)
+    }
+  }
+
+  return firstDataItem as unknown as T
 }
