@@ -3,8 +3,8 @@ import { DependencyList, useEffect, useRef } from "react"
 export function useAnimationFrame(callback: (time: number) => void, deps: DependencyList | undefined = []) {
   // Use useRef for mutable variables that we want to persist
   // without triggering a re-render on their change
-  const requestRef = useRef<number>()
-  const previousTimeRef = useRef<number>()
+  const requestRef = useRef<number>(null)
+  const previousTimeRef = useRef<number>(null)
   
   const animate = (time: number) => {
     if (previousTimeRef.current != undefined) {

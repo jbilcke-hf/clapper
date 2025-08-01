@@ -1,3 +1,5 @@
+import { JSX } from 'react'
+
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -59,7 +61,7 @@ export function SettingsDialog() {
           `flex flex-row`
         )}
       >
-        <ScrollArea className="md:w-26 lg:w-30 flex h-full w-24 flex-col">
+        <ScrollArea className="flex h-full w-24 flex-col md:w-26 lg:w-30">
           <div className="flex flex-col items-end">
             {Object.keys(panels)
               .filter((key) => key !== 'NONE')
@@ -67,7 +69,7 @@ export function SettingsDialog() {
                 <Button
                   key={key}
                   variant="ghost"
-                  className="flex w-full flex-col items-end border-0 bg-transparent text-right text-base font-thin capitalize text-neutral-300 xl:text-lg"
+                  className="flex w-full flex-col items-end border-0 bg-transparent text-right text-base font-thin text-neutral-300 capitalize xl:text-lg"
                   onClick={() => setShowSettings(key as SettingsCategory)}
                 >
                   {panelLabels[key]}
@@ -76,14 +78,14 @@ export function SettingsDialog() {
           </div>
         </ScrollArea>
 
-        <div className="flex h-full max-w-[calc(100%-150px)] flex-grow select-none flex-col justify-between border-l border-neutral-800 pl-8">
+        <div className="flex h-full max-w-[calc(100%-150px)] flex-grow flex-col justify-between border-l border-neutral-800 pl-8 select-none">
           <ScrollArea className="flex h-full flex-row">
             {panels[showSettings]}
           </ScrollArea>
           <DialogFooter>
             <Button
               variant="outline"
-              className="hidden text-sm font-light dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 md:flex"
+              className="hidden text-sm font-light md:flex dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400"
               onClick={() => {
                 setShowSettings(SettingsCategory.NONE)
               }}

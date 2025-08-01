@@ -13,7 +13,7 @@ export function useDebounceFn<Func extends SomeFunction>(
   func: Func,
   delay = 1000
 ) {
-  const timer = useRef<Timer>()
+  const timer = useRef<Timer>(null)
 
   useEffect(() => {
     return () => {
@@ -26,7 +26,7 @@ export function useDebounceFn<Func extends SomeFunction>(
     const newTimer = setTimeout(() => {
       func(...args)
     }, delay)
-    clearTimeout(timer.current)
+    clearTimeout(timer.current!)
     timer.current = newTimer
   }) as Func
 

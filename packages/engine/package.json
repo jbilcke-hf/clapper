@@ -4,9 +4,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "The engine powering AiTube.at and Clapper.app",
   "scripts": {
+    "clean": "rm -Rf ./dist",
     "build": "bun build ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
     "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
     "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
@@ -15,9 +16,9 @@
   },
   "devDependencies": {
     "bun-types": "latest",
-    "prettier": "^3.3.3",
+    "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
-    "typescript": "5.5.2"
+    "typescript": "5.8.3"
   },
   "repository": {
     "type": "git",

@@ -1,21 +1,25 @@
-import { InferenceClient } from '@huggingface/inference'
-
 import { ResolveRequest } from '@aitube/clapper-services'
+import { callGradioApi } from '@/lib/hf/callGradioApi'
 import {
   builtinProviderCredentialsHuggingface,
   clapperApiKeyToUseBuiltinCredentials,
 } from '@/app/api/globalSettings'
 
-export async function generateMusic(request: ResolveRequest): Promise<string> {
-  if (!request.settings.musicGenerationWorkflow.data) {
+/**
+ * For now this is just an experiment, to try to see what we can do with TS streams
+ */
+export async function EXPERIMENTAL_generateVideoStream(
+  request: ResolveRequest
+): Promise<string> {
+  if (!request.settings.videoGenerationWorkflow.data) {
     throw new Error(
-      `HuggingFace.generateMusic: cannot generate without a valid musicGenerationWorkflow`
+      `HuggingFace.EXPERIMENTAL_generateVideoStream: cannot generate without a valid videoGenerationWorkflow.data`
     )
   }
 
-  if (!request.prompts.music.positive) {
+  if (!request.prompts.video.image) {
     throw new Error(
-      `HuggingFace.generateMusic: cannot generate without a valid music prompt`
+      `HuggingFace.EXPERIMENTAL_generateVideoStream: cannot generate without a valid input image prompt`
     )
   }
 
@@ -37,17 +41,12 @@ export async function generateMusic(request: ResolveRequest): Promise<string> {
     }
   }
 
-  const hf = new InferenceClient(apiKey)
-  /*
-  hf.textToMusic doesn't exist yet!
-
-  const blob: Blob = await hf.textToMusic({
-    model: request.settings.musicGenerationWorkflow.data,
-    inputs: request.prompts.music.positive,
+  // TODO pass a type to the template function
+  const assetUrl = await callGradioApi<string>({
+    url: request.settings.videoGenerationWorkflow.data,
+    inputs: request.prompts.video,
+    apiKey,
   })
 
-  console.log('output from Hugging Face Inference API:', blob)
-  */
-
-  throw new Error(`finish me`)
+  return assetUrl
 }

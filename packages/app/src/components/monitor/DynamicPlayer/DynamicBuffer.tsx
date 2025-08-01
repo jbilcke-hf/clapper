@@ -1,5 +1,7 @@
 'use client'
 
+import { JSX } from 'react'
+
 import { ClapOutputType, ClapSegment } from '@aitube/clap'
 
 import { cn } from '@/lib/utils'

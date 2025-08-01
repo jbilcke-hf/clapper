@@ -1,3 +1,5 @@
+import { JSX } from 'react'
+
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -64,7 +66,7 @@ export function ProjectCreationWizard() {
               <Button
                 key={key}
                 variant="ghost"
-                className="flex w-full flex-col items-end text-right text-lg font-thin capitalize text-neutral-300"
+                className="flex w-full flex-col items-end text-right text-lg font-thin text-neutral-300 capitalize"
                 onClick={() =>
                   setProjectCreationWizardStep(key as ProjectCreationWizardStep)
                 }
@@ -75,7 +77,7 @@ export function ProjectCreationWizard() {
           </div>
         </ScrollArea>
 
-        <div className="flex h-full max-w-[calc(100%-150px)] flex-grow select-none flex-col justify-between border-l border-neutral-800 pl-8">
+        <div className="flex h-full max-w-[calc(100%-150px)] flex-grow flex-col justify-between border-l border-neutral-800 pl-8 select-none">
           <ScrollArea className="flex h-full flex-row">
             {stepPanels[projectCreationWizardStep]}
           </ScrollArea>

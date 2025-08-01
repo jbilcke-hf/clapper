@@ -54,6 +54,12 @@ export type SupportedFields = {
 
   inputSeed: string | number
   hasInputSeed: boolean
+
+  inputDuration: string | number
+  hasInputDuration: boolean
+
+  inputFps: string | number
+  hasInputFps: boolean
 }
 
 export type GradioEndpoint = {

@@ -8,7 +8,7 @@ const BOX_COUNT_YELLOW = 8
 const GRADUATIONS = [0, -5, -10, -15, -20, -30, -40, -50]
 
 const graduations = (
-  <div className="flex h-full flex-col justify-between text-right text-3xs text-white/25">
+  <div className="text-3xs flex h-full flex-col justify-between text-right text-white/25">
     {GRADUATIONS.map((db) => (
       <div key={db}>{db}</div>
     ))}
@@ -41,7 +41,7 @@ export function VUMeter({ className = 'w-24 h-full' }) {
   const leftMeterRef = useRef<HTMLDivElement>(null)
   const rightMeterRef = useRef<HTMLDivElement>(null)
   const prevActiveBoxesRef = useRef({ left: 0, right: 0 })
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number>(null)
 
   useEffect(() => {
     if (!audioContext) return

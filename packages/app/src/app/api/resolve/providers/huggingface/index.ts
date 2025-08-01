@@ -1,4 +1,4 @@
-import { HfInference, HfInferenceEndpoint } from '@huggingface/inference'
+import { InferenceClient } from '@huggingface/inference'
 
 import { ResolveRequest } from '@aitube/clapper-services'
 import { ClapSegmentCategory } from '@aitube/clap'

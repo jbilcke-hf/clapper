@@ -44,7 +44,7 @@ export function SettingsSectionImage() {
           checked={!censorNotForAllAudiencesContent}
           onCheckedChange={setCensorNotForAllAudiencesContent}
         />
-        <p className="text-xs italic text-white/50">
+        <p className="text-xs text-white/50 italic">
           Note: API providers each have their own policies regarding NFAA.
           Don&apos;t use Clapper for illegal purposes.
         </p>

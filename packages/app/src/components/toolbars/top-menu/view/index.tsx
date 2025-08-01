@@ -65,7 +65,7 @@ export function TopMenuView() {
         >
           <div
             className={cn(
-              `grid h-4 w-5 scale-100 cursor-pointer grid-cols-4 grid-rows-4 overflow-hidden rounded border border-neutral-100 opacity-70 transition-all duration-200 ease-in-out hover:scale-110 hover:opacity-100`
+              `grid h-4 w-5 scale-100 cursor-pointer grid-cols-4 grid-rows-4 overflow-hidden rounded-sm border border-neutral-100 opacity-70 transition-all duration-200 ease-in-out hover:scale-110 hover:opacity-100`
             )}
           >
             <div className="flex h-4 w-4 items-center justify-center">
@@ -103,7 +103,7 @@ export function TopMenuView() {
         >
           <div
             className={cn(
-              `grid h-4 w-5 scale-100 cursor-pointer grid-cols-4 grid-rows-4 overflow-hidden rounded border border-neutral-100 opacity-70 transition-all duration-200 ease-in-out hover:scale-110 hover:opacity-100`
+              `grid h-4 w-5 scale-100 cursor-pointer grid-cols-4 grid-rows-4 overflow-hidden rounded-sm border border-neutral-100 opacity-70 transition-all duration-200 ease-in-out hover:scale-110 hover:opacity-100`
             )}
           >
             <div className="flex h-4 w-4 items-center justify-center">

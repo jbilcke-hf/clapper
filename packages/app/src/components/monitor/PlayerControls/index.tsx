@@ -33,7 +33,7 @@ export function PlayerControls({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        `flex flex-row items-center justify-between @container`,
+        `@container flex flex-row items-center justify-between`,
         `transition-all duration-200 ease-out`,
         `w-full max-w-[500px] @md:w-[50%]`,
         className

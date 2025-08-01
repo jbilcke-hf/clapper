@@ -27,7 +27,11 @@ export function ChatBubble({
         )}
       >
         <div
-          className={cn(`flex flex-col p-4`, `rounded-lg`)}
+          className={cn(
+            `flex flex-col p-4`,
+            `rounded-lg`,
+            `text-sm select-text`
+          )}
           style={{
             background: isCurrentUser
               ? theme.assistantUserBgColor || theme.defaultBgColor || ''
@@ -37,16 +41,11 @@ export function ChatBubble({
               : theme.assistantRobotTextColor || theme.defaultTextColor || '',
           }}
         >
-          <Markdown
-            className={cn(`select-text text-sm`)}
-            remarkPlugins={[remarkGfm]}
-          >
-            {message}
-          </Markdown>
+          <Markdown remarkPlugins={[remarkGfm]}>{message}</Markdown>
         </div>
         <div
           className={cn(
-            `select-text text-sm`,
+            `text-sm select-text`,
             isCurrentUser ? `text-sky-100/60` : `text-indigo-100/60`
           )}
         >

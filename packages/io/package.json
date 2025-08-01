@@ -4,9 +4,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Collection of useful I/O utilities for NodeJS. Used by AiTube.at",
   "scripts": {
+    "clean": "rm -Rf ./dist",
     "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
     "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
     "postbuild": "rimraf tsconfig.types.tsbuildinfo",
@@ -17,7 +18,7 @@
     "bun-types": "latest",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.7",
-    "typescript": "^5.4.5"
+    "typescript": "5.8.3"
   },
   "dependencies": {
     "mime-types": "^2.1.35",

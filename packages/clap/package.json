@@ -5,9 +5,10 @@
   "private": false,
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Types and helpers to manipulate .clap files",
   "scripts": {
+    "clean": "rm -Rf ./dist",
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=yaml && bun run build:declaration",
     "build:declaration": "tspc --emitDeclarationOnly --project tsconfig.types.json",
     "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
@@ -17,15 +18,15 @@
     "bun-types": "latest",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
-    "typescript": "5.5.2"
+    "typescript": "5.8.3"
   },
   "peerDependencies": {
-    "yaml": "^2.5.0"
+    "yaml": "2.8.0"
   },
   "dependencies": {
     "pure-uuid": "^1.8.1",
-    "ts-patch": "3.2.1",
-    "typescript-transform-paths": "3.5.2"
+    "ts-patch": "3.3.0",
+    "typescript-transform-paths": "3.5.5"
   },
   "repository": {
     "type": "git",

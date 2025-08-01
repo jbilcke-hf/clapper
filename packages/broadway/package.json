@@ -7,6 +7,7 @@
   "version": "0.2.4-2",
   "description": "Convert a script to a clap file",
   "scripts": {
+    "clean": "rm -Rf ./dist",
     "test": "bun test --preload ./src/tests/setup.js",
     "build": "bun build ./src/index.ts --outfile=dist/index.js --external=@aitube/clap --external=@aitube/colors && bun run build:declaration",
     "build:declaration": "tsc --emitDeclarationOnly --project tsconfig.types.json",
@@ -20,7 +21,7 @@
     "bun-types": "latest",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
-    "typescript": "5.5.2"
+    "typescript": "5.8.3"
   },
   "repository": {
     "type": "git",

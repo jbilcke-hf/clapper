@@ -1,4 +1,4 @@
-import { HfInference, HfInferenceEndpoint } from '@huggingface/inference'
+import { InferenceClient } from '@huggingface/inference'
 
 import { ResolveRequest } from '@aitube/clapper-services'
 import {
@@ -37,7 +37,7 @@ export async function generateVoice(request: ResolveRequest): Promise<string> {
     }
   }
 
-  const hf: HfInferenceEndpoint = new HfInference(apiKey)
+  const hf = new InferenceClient(apiKey)
 
   const blob: Blob = await hf.textToSpeech({
     model: request.settings.voiceGenerationWorkflow.data,

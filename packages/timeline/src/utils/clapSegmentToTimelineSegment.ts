@@ -36,12 +36,12 @@ export async function clapSegmentToTimelineSegment(clapSegment: ClapSegment): Pr
 
   segment.colors = getSegmentColorScheme(segment)
 
-  if (!segment.audioBuffer) {
-    if (segment.outputType === ClapOutputType.AUDIO) {
+  if (!segment?.audioBuffer) {
+    if (segment?.outputType === ClapOutputType.AUDIO) {
       try {
         segment.audioBuffer = await getAudioBuffer(segment.assetUrl)
       } catch (err) {
-        console.error(`failed to load the audio file: ${err}`)
+        console.warn(`failed to load the audio file: ${err} (first 128 chars of assetUrl look like this: "${segment.assetUrl.slice(0, 128)}")`)
       }
     }
   }

@@ -16,7 +16,7 @@ export function EmbeddedPlayer() {
 
   const [isOverlayVisible, setOverlayVisible] = useState(true)
 
-  const overlayTimerRef = useRef<NodeJS.Timeout>()
+  const overlayTimerRef = useRef<NodeJS.Timeout>(null)
   // const videoLayerRef = useRef<HTMLDivElement>(null)
   // const segmentationLayerRef = useRef<HTMLDivElement>(null)
 
@@ -24,12 +24,12 @@ export function EmbeddedPlayer() {
   isPlayingRef.current = isPlaying
 
   const scheduleOverlayInvisibility = () => {
-    clearTimeout(overlayTimerRef.current)
+    clearTimeout(overlayTimerRef.current!)
     overlayTimerRef.current = setTimeout(() => {
       if (isPlayingRef.current) {
         setOverlayVisible(!isPlayingRef.current)
       }
-      clearTimeout(overlayTimerRef.current)
+      clearTimeout(overlayTimerRef.current!)
     }, 3000)
   }
 
@@ -38,7 +38,7 @@ export function EmbeddedPlayer() {
       {/* content overlay, with the gradient, buttons etc */}
       <div
         className={cn(
-          `pointer-events-none absolute mb-0 ml-0 mr-0 mt-0 flex flex-col items-center justify-end px-3 pb-1 pt-5 transition-opacity duration-300 ease-in-out`,
+          `pointer-events-none absolute mt-0 mr-0 mb-0 ml-0 flex flex-col items-center justify-end px-3 pt-5 pb-1 transition-opacity duration-300 ease-in-out`,
           isOverlayVisible ? 'opacity-100' : 'opacity-0'
         )}
         onMouseMove={() => {

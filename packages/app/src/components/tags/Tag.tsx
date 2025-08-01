@@ -29,7 +29,7 @@ export function Tag({
   return (
     <span
       className={cn(
-        `mr-2 flex items-center justify-center rounded border px-1 pb-[3px] pt-[2px] text-xs`,
+        `mr-2 flex items-center justify-center rounded-sm border px-1 pt-[2px] pb-[3px] text-xs`,
         tailwindClasses,
         {
           'w-12': size === 'xs',

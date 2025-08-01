@@ -23,7 +23,7 @@ export function Timeline({ width, height }: { width: number; height: number }) {
   const contentHeight = useTimeline(s => s.contentHeight)
   const contentWidth = useTimeline(s => s.contentWidth)
 
-  // console.log(`re-rendering <Timeline>`)
+  console.log(`re-rendering <Timeline>`)
   return (
     <mesh
       position={[0,0,0]}

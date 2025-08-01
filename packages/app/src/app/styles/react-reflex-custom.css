@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /*
 This extends the original react-reflex.css (from react-reflex@4.1.0),
 with some custom colors and sizes
@@ -11,31 +7,43 @@ body .reflex-splitter {
   opacity: 0.2;
 }
 
-@layer components {
-  body .reflex-container > .reflex-splitter {
-    @apply bg-neutral-400 transition-all duration-200 ease-in-out;
-  }
+body .reflex-container > .reflex-splitter {
+  background-color: #a3a3a3; /* bg-neutral-400 */
+  transition: all 200ms ease-in-out;
+}
 
-  body .reflex-container > .reflex-splitter.active,
-  body .reflex-container > .reflex-splitter:hover {
-    @apply bg-neutral-200 transition-all duration-200 ease-in-out;
-  }
+body .reflex-container > .reflex-splitter.active,
+body .reflex-container > .reflex-splitter:hover {
+  background-color: #e5e5e5; /* bg-neutral-200 */
+  transition: all 200ms ease-in-out;
+}
 
-  body .horizontal > .reflex-splitter {
-    @apply h-[3px] border-b-neutral-400 border-t-neutral-400 bg-neutral-400;
-  }
+body .horizontal > .reflex-splitter {
+  height: 3px;
+  border-top: 1px solid #a3a3a3; /* border-t-neutral-400 */
+  border-bottom: 1px solid #a3a3a3; /* border-b-neutral-400 */
+  background-color: #a3a3a3; /* bg-neutral-400 */
+}
 
-  body .reflex-container.horizontal > .reflex-splitter:hover,
-  body .reflex-container.horizontal > .reflex-splitter.active {
-    @apply h-[3px] border-b-neutral-200 border-t-neutral-200 bg-neutral-200;
-  }
+body .reflex-container.horizontal > .reflex-splitter:hover,
+body .reflex-container.horizontal > .reflex-splitter.active {
+  height: 3px;
+  border-top: 1px solid #e5e5e5; /* border-t-neutral-200 */
+  border-bottom: 1px solid #e5e5e5; /* border-b-neutral-200 */
+  background-color: #e5e5e5; /* bg-neutral-200 */
+}
 
-  body .reflex-container.vertical > .reflex-splitter {
-    @apply w-[3px] border-l-neutral-400 border-r-neutral-400 bg-neutral-400;
-  }
+body .reflex-container.vertical > .reflex-splitter {
+  width: 3px;
+  border-right: 1px solid #a3a3a3; /* border-r-neutral-400 */
+  border-left: 1px solid #a3a3a3; /* border-l-neutral-400 */
+  background-color: #a3a3a3; /* bg-neutral-400 */
+}
 
-  body .reflex-container.vertical > .reflex-splitter:hover,
-  body .reflex-container.vertical > .reflex-splitter.active {
-    @apply w-[3px] border-l-neutral-200 border-r-neutral-200 bg-neutral-200;
-  }
+body .reflex-container.vertical > .reflex-splitter:hover,
+body .reflex-container.vertical > .reflex-splitter.active {
+  width: 3px;
+  border-right: 1px solid #e5e5e5; /* border-r-neutral-200 */
+  border-left: 1px solid #e5e5e5; /* border-l-neutral-200 */
+  background-color: #e5e5e5; /* bg-neutral-200 */
 }

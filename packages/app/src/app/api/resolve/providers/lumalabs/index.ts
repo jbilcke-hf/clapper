@@ -57,6 +57,7 @@ export async function resolveSegment(
 
       aspect_ratio: aspectRatio,
       prompt: request.prompts.image.positive || '',
+      model: 'ray-flash-2',
     }
 
     // Luma crashes (and spends our money :/) if keyframes is an empty array

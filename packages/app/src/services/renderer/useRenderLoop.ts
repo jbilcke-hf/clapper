@@ -22,6 +22,7 @@ import { useSettings } from '../settings'
  * @returns
  */
 export function useRenderLoop(): void {
+  console.log('useRenderLoop() called (should only be initialized once)')
   const setDataUriBuffer1 = useRenderer((s) => s.setDataUriBuffer1)
   const setDataUriBuffer2 = useRenderer((s) => s.setDataUriBuffer2)
 
@@ -33,7 +34,7 @@ export function useRenderLoop(): void {
   const currentSegmentKey = useRenderer((s) => s.currentSegmentKey)
   const preloadSegmentKey = useRenderer((s) => s.preloadSegmentKey)
 
-  const timeoutRef = useRef<NodeJS.Timeout>()
+  const timeoutRef = useRef<NodeJS.Timeout>(null)
 
   const setUserDefinedRenderingStrategies = useRenderer(
     (s) => s.setUserDefinedRenderingStrategies
@@ -65,7 +66,7 @@ export function useRenderLoop(): void {
 
   // used to control transitions between buffers
   useEffect(() => {
-    clearTimeout(timeoutRef.current)
+    clearTimeout(timeoutRef.current!)
 
     const newActiveBufferNumber = activeBufferNumber === 1 ? 2 : 1
     setActiveBufferNumber(newActiveBufferNumber)
@@ -86,7 +87,7 @@ export function useRenderLoop(): void {
     }, fadeDurationInMs)
 
     return () => {
-      clearTimeout(timeoutRef.current)
+      clearTimeout(timeoutRef.current!)
     }
     // eslint-disable-next-line
   }, [currentSegmentKey, preloadSegmentKey])

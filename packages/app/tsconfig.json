@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,13 +23,16 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
     "types": [
       "@types/fluent-ffmpeg",
       "@webgpu/types",
       "@types/dom-speech-recognition"
-    ]
+    ],
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
@@ -34,5 +41,7 @@
     ".next/types/**/*.ts",
     "vitest.config.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }
