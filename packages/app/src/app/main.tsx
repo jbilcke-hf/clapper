@@ -1,6 +1,8 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import Head from 'next/head'
+import Script from 'next/script'
 import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex'
 import { useSearchParams } from 'next/navigation'
 import { DndProvider, useDrop } from 'react-dnd'
@@ -8,6 +10,8 @@ import { HTML5Backend, NativeTypes } from 'react-dnd-html5-backend'
 import { UIWindowLayout } from '@aitube/clapper-services'
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 import { Bellhop } from 'bellhop-iframe'
+
+import ComfyWorkflowList from '../components/ComfyWorkflowList'
 
 import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/lib/utils'
@@ -42,6 +46,14 @@ export enum ClapperIntegrationMode {
   IFRAME = 'IFRAME',
 }
 
+// Define Workflow type to use for state and props
+type Workflow = {
+  id: string
+  name: string
+  description?: string
+  author?: string
+}
+
 export type DroppableThing = { files: File[] }
 
 function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
@@ -60,21 +72,16 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
 
   const { isMd } = useBreakpoints()
 
-  // this has to be done at the root of the app, that way it can
-  // perform its routine even when the monitor component is hidden
+  // Track selected ComfyUI workflow with proper type
+  const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null)
+
   useRenderLoop()
-
-  // this has to be done at the root of the app, that way it can
-  // sync workflows even when the workflow component is hidden
   useDynamicWorkflows()
-
-  // also has to be done here
   useSetupIframeOnce(isIframe)
 
   const [{ isOver, canDrop }, connectFileDrop] = useDrop({
     accept: [NativeTypes.FILE],
     drop: (item: DroppableThing): void => {
-      // console.log("DROP", item)
       openFiles(item.files)
     },
     collect: (monitor) => ({
@@ -106,38 +113,23 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
     <ReflexContainer orientation="vertical">
       <ReflexElement>
         <ReflexContainer orientation="horizontal">
-          <ReflexElement
-            // minSize={showTimeline ? 1 : 100}
-            // maxSize={2000}
-            size={showTimeline ? 1200 : 400}
-          >
+          <ReflexElement size={showTimeline ? 1200 : 400}>
             <ReflexContainer orientation="vertical">
               {showExplorer && (
-                <ReflexElement
-                  size={showExplorer ? undefined : 1}
-                  minSize={showExplorer ? 100 : 1}
-                  maxSize={showExplorer ? 2000 : 1}
-                >
+                <ReflexElement size={showExplorer ? undefined : 1} minSize={showExplorer ? 100 : 1} maxSize={showExplorer ? 2000 : 1}>
                   <Editors />
                 </ReflexElement>
               )}
               {showExplorer && showVideoPlayer && <ReflexSplitter />}
               {showVideoPlayer && (
-                <ReflexElement
-                  minSize={showVideoPlayer ? 200 : 1}
-                  size={showVideoPlayer ? undefined : 1}
-                >
+                <ReflexElement minSize={showVideoPlayer ? 200 : 1} size={showVideoPlayer ? undefined : 1}>
                   <Monitor />
                 </ReflexElement>
               )}
             </ReflexContainer>
           </ReflexElement>
           <ReflexSplitter />
-          <ReflexElement
-            size={showTimeline ? (isMd ? 400 : 250) : 1}
-            minSize={showTimeline ? 50 : 1}
-            maxSize={showTimeline ? 1600 : 1}
-          >
+          <ReflexElement size={showTimeline ? (isMd ? 400 : 250) : 1} minSize={showTimeline ? 50 : 1} maxSize={showTimeline ? 1600 : 1}>
             <Timeline />
           </ReflexElement>
         </ReflexContainer>
@@ -262,9 +254,7 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
   const welcomeScreen = (
     <div
       className={cn(
-        showWelcomeScreen
-          ? 'pointer-events-auto z-[101] flex'
-          : 'pointer-events-none hidden',
+        showWelcomeScreen ? 'pointer-events-auto z-[101] flex' : 'pointer-events-none hidden',
         `fixed top-9 h-[calc(100svh-36px)] w-screen flex-row overflow-hidden`,
         `items-center justify-center`,
         `bg-neutral-950`
@@ -286,8 +276,7 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
             src="/images/onboarding/get-started.png"
             alt="To get started please open the menu"
             width="180"
-            className=""
-          ></img>
+          />
         </div>
         <div
           className={cn(
@@ -300,9 +289,9 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
             src="/images/onboarding/pick-an-example.png"
             alt="Then open an example"
             width="140"
-          ></img>
+          />
         </div>
-        <div className="flex flex-col items-center justify-center space-y-6">
+        <div className="flex flex-col items-center justify-center space-y-6 text-center">
           <h1 className="text-6xl font-bold">
             Welcome to{' '}
             <span className="" style={{ color: theme.defaultPrimaryColor }}>
@@ -310,10 +299,10 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
             </span>
             .
           </h1>
-          <div className="flex flex-col items-center justify-center space-y-2 text-center text-2xl font-semibold">
-            <p>A free and open-source AI video editor,</p>
-            <p>designed for the age of generative filmmaking.</p>
-          </div>
+          <p className="text-2xl font-semibold">
+            A free and open-source AI video editor,
+          </p>
+          <p className="text-2xl font-semibold">designed for the age of generative filmmaking.</p>
         </div>
       </div>
     </div>
@@ -327,14 +316,31 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
       )}
     >
       <TopBar className={isIframe ? 'hidden' : ''} />
+
+      {/* ComfyWorkflowList added */}
+      {!isIframe && (
+        <div style={{ padding: 16, backgroundColor: '#222', color: 'white' }}>
+          <ComfyWorkflowList
+            serverUrl="http://localhost:8188"
+            onSelectWorkflow={setSelectedWorkflow}
+          />
+          {selectedWorkflow && (
+            <div style={{ marginTop: 10, padding: 10, border: '1px solid white' }}>
+              <h3>Selected Workflow</h3>
+              <pre>{JSON.stringify(selectedWorkflow, null, 2)}</pre>
+            </div>
+          )}
+        </div>
+      )}
+
       <div
         className={cn(
           `flex w-screen flex-row overflow-hidden`,
           isIframe
             ? 'h-svh'
             : windowLayout === UIWindowLayout.GRID
-              ? 'h-[calc(100svh-48px)] md:h-[calc(100svh-64px)]'
-              : 'h-[calc(100svh-36px)]'
+            ? 'h-[calc(100svh-48px)] md:h-[calc(100svh-64px)]'
+            : 'h-[calc(100svh-36px)]'
         )}
         style={
           isIframe || windowLayout === UIWindowLayout.GRID
@@ -342,11 +348,7 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
             : { backgroundImage: theme.wallpaperBgImage }
         }
       >
-        {isIframe
-          ? iframeLayout
-          : windowLayout === UIWindowLayout.FLYING
-            ? flyingLayout
-            : gridLayout}
+        {isIframe ? iframeLayout : windowLayout === UIWindowLayout.FLYING ? flyingLayout : gridLayout}
       </div>
 
       {!isIframe && isMd && welcomeScreen}
@@ -360,8 +362,6 @@ function MainContent({ mode }: { mode: ClapperIntegrationMode }) {
 }
 
 function fallbackRender({ error, resetErrorBoundary }: FallbackProps) {
-  // Call resetErrorBoundary() to reset the error boundary and retry the render.
-
   return (
     <div role="alert">
       <p>Something went wrong:</p>
