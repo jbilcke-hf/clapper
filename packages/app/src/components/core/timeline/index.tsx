@@ -4,6 +4,7 @@ import { ClapTimeline, useTimeline, SegmentResolver } from '@aitube/timeline'
 import { useMonitor } from '@/services/monitor/useMonitor'
 import { useResolver } from '@/services/resolver/useResolver'
 import { useUI } from '@/services/ui'
+import { TimelineToolbar } from '@/components/toolbars/TimelineToolbar'
 
 export function Timeline(
   {
@@ -11,8 +12,8 @@ export function Timeline(
   }: {
     className?: string
   } = {
-    className: '',
-  }
+      className: '',
+    }
 ) {
   const isReady = useTimeline((s) => s.isReady)
 
@@ -59,10 +60,16 @@ export function Timeline(
   if (className) {
     return (
       <div className={className}>
+        <TimelineToolbar />
         <ClapTimeline showFPS={false} />
       </div>
     )
   }
 
-  return <ClapTimeline showFPS={false} className={className} />
+  return (
+    <>
+      <TimelineToolbar />
+      <ClapTimeline showFPS={false} className={className} />
+    </>
+  )
 }

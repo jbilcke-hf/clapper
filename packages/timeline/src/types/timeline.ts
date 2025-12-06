@@ -108,7 +108,7 @@ export type BrowserOnlySegmentData = {
   // if the segment is hovered by the mouse (anywhere)
   // note: if the mouse is pressed, this will also trigger this to TRUE
   isHovered: boolean
-  
+
   // if the segment's body is hovered by the mouse
   isHoveredOnBody: boolean
 
@@ -129,10 +129,10 @@ export type BrowserOnlySegmentData = {
 
   // if the segment is currently crossed by the timeline cursor
   isActive: boolean
-  
+
   // if the segment is currently being played
   isPlaying: boolean
-  
+
   editionStatus: SegmentEditionStatus
 }
 
@@ -232,7 +232,7 @@ export type TimelineStoreProjectState = ClapMeta & {
 
 export type TimelineStorePreferencesState = {
   canvas?: HTMLCanvasElement
-  
+
   // used to track the timeline state
   // this helps informing parent app user
   // that the timeline has been recreated inside the React tree for instance
@@ -241,11 +241,11 @@ export type TimelineStorePreferencesState = {
   // container width and height
   containerWidth: number
   containerHeight: number
-  
+
   theme: ClapTimelineTheme
 
   durationInMsPerStep: number
-  
+
   /**
    * The timeline camera
    * 
@@ -292,7 +292,7 @@ export type TimelineStoreModifiers = {
   getVerticalCellPosition: (start: number, end: number) => number
   setHoveredSegment: (params?: {
     segment?: TimelineSegment
-    area?: SegmentArea 
+    area?: SegmentArea
   }) => void
   setEditedSegment: ({
     segment,
@@ -377,7 +377,7 @@ export type TimelineStoreModifiers = {
     segment: TimelineSegment
     startTimeInMs?: number
     track?: number
-}) => Promise<void>
+  }) => Promise<void>
 
   /**
    * Find an available free track
@@ -397,9 +397,37 @@ export type TimelineStoreModifiers = {
    */
   deleteSegments: (ids: string[]) => void
 
+  /**
+   * Create a new track with specified category
+   * @param category - The category/type of the track
+   * @returns The track ID
+   */
+  createTrack: (category: ClapSegmentCategory) => number
+
+  /**
+   * Create a new clip/segment on a track
+   * @param params - Parameters for creating the clip
+   * @returns The created segment
+   */
+  createClip: (params: {
+    track: number
+    category: ClapSegmentCategory
+    startTimeInMs: number
+    durationInMs?: number
+    prompt?: string
+  }) => Promise<TimelineSegment>
+
+  /**
+   * Move a segment to a different track
+   * @param segment - The segment to move
+   * @param newTrack - The target track number
+   * @returns true if move was successful, false if track type mismatch
+   */
+  moveSegmentToTrack: (segment: TimelineSegment, newTrack: number) => boolean
+
   addEntities: (entities: ClapEntity[]) => Promise<void>
   updateEntities: (entities: ClapEntity[]) => Promise<void>
-  deleteEntities: (entities: (ClapEntity|string)[]) => Promise<void>
+  deleteEntities: (entities: (ClapEntity | string)[]) => Promise<void>
 
   setInvalidate: (invalidate?: Invalidate) => void
 }

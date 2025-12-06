@@ -37,14 +37,14 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       console.log(`useTimeline: no clap to show`)
       return
     }
-    
+
     set({ isLoading: true })
 
     // actually you know what.. let's drop the concept of final video for the moment
     // in Clapper and the timeline
     // const finalVideo = await getFinalVideo(clap)
     const finalVideo = undefined
-    
+
     // we remove the big/long video
     const segments = await removeFinalVideosAndConvertToTimelineSegments(clap)
 
@@ -65,8 +65,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     let tracks: ClapTracks = []
 
     let defaultSegmentDurationInSteps = get().defaultSegmentDurationInSteps
- 
-  
+
+
     for (const s of segments) {
       if (s.category === ClapSegmentCategory.CAMERA) {
         const durationInSteps = (
@@ -87,7 +87,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     const defaultImageRatio = clap ? (
       (clap.meta.width || 896) / (clap.meta.height || 512)
     ) : (896 / 512)
-    
+
     // also storyboard images and videos might have different sizes / ratios
     const defaultPreviewHeight = Math.round(
       defaultSegmentLengthInPixels / defaultImageRatio
@@ -96,7 +96,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     const lineNumberToMentionedSegments: Record<number, TimelineSegment[]> = {}
 
     for (const segment of segments) {
-      
+
       // TODO: move this idCollision detector into the state,
       // so that we can use it later?
       if (idCollisionDetector.has(segment.id)) {
@@ -106,7 +106,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
       // --------
       const isSegmentDirectlyMentionedInTheScript = segment.category === ClapSegmentCategory.DIALOGUE || segment.category === ClapSegmentCategory.ACTION
-      
+
       if (isSegmentDirectlyMentionedInTheScript) {
         for (let i = segment.startTimeInLines; i <= segment.endTimeInLines; i++) {
           // we only add the segment if it is not already in the map
@@ -122,7 +122,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
       if (!tracks[segment.track]) {
         const isPreview =
-        segment.category === ClapSegmentCategory.IMAGE ||
+          segment.category === ClapSegmentCategory.IMAGE ||
           segment.category === ClapSegmentCategory.VIDEO
 
         tracks[segment.track] = {
@@ -132,14 +132,14 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           isPreview,
           height:
             isPreview
-            ? defaultPreviewHeight
-            : defaultCellHeight,
+              ? defaultPreviewHeight
+              : defaultCellHeight,
           hue: 0,
           occupied: true,
           visible: true,
         }
       } else {
-        
+
         const track = tracks[segment.track]
         const categories: string[] = track.name.split(",").map((x: string) => x.trim())
         if (!categories.includes(segment.category)) {
@@ -154,12 +154,12 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           }
           */
         }
-        
+
       }
 
     }
 
-   // ---------- FILL-IN THE TRACKS ---------------
+    // ---------- FILL-IN THE TRACKS ---------------
     for (let id = 0; id < DEFAULT_NB_TRACKS; id++) {
       if (!tracks[id]) {
         tracks[id] = {
@@ -223,7 +223,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     get().jumpAt(0)
   },
   getClap: async (): Promise<ClapProject> => {
-    const { 
+    const {
       getClapMeta,
       entities,
       scenes,
@@ -240,7 +240,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     return clap
   },
   getClapMeta: (): ClapMeta => {
-    const { 
+    const {
       id,
       title,
       description,
@@ -295,7 +295,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       durationInMs,
     } = get()
     const cellWidth = Math.min(maxHorizontalZoomLevel, Math.max(minHorizontalZoomLevel, newHorizontalZoomLevel))
-    
+
     // nothing changed
     if (Math.round(cellWidth) === Math.round(previousCellWidth)) { return }
 
@@ -316,7 +316,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       })
     })
   },
-  
+
   setSegments: (segments: TimelineSegment[] = []) => {
     set({ segments, loadedSegments: [] })
   },
@@ -343,7 +343,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     area,
   }: {
     segment?: TimelineSegment
-    area?: SegmentArea 
+    area?: SegmentArea
   } = {}) => {
     const {
       invalidate,
@@ -400,8 +400,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     segment?: TimelineSegment
     status?: SegmentEditionStatus
   } = {
-    status: SegmentEditionStatus.EDITING
-  }) => {
+      status: SegmentEditionStatus.EDITING
+    }) => {
     const {
       invalidate,
       editedSegment: previousEditedSegment,
@@ -451,7 +451,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     isSelected?: boolean
     onlyOneSelectedAtOnce?: boolean
   } = {
-  }) => {
+    }) => {
     const {
       invalidate,
       segments,
@@ -483,7 +483,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       if (segment.isSelected === newValue) {
 
         // console.log('`setSelectedSegment(): nothing to do')
-    
+
         // nothing to do
         return
       }
@@ -494,7 +494,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       if (onlyOneSelectedAtOnce) {
 
         // console.log('`setSelectedSegment(): unselecting all previous segments')
-    
+
         segments.forEach(s => {
           s.isSelected = false
         })
@@ -502,7 +502,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       }
 
       // console.log('`setSelectedSegment(): assigning new value and propagating changes:', newValue)
-    
+
       segment.isSelected = newValue
 
       if (newValue) {
@@ -519,7 +519,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     } else {
 
       // console.log('`setSelectedSegment(): mass change requested')
-    
+
       segments.forEach(s => {
         s.isSelected = newValue
       })
@@ -571,28 +571,28 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       const segmentWidth = widthInPx
 
       const isOutOfRange = offsetX < leftBarTrackScaleWidth || offsetY < topBarTimeScaleHeight
-    
+
       const cursorX = pointX + (containerWidth / 2)
       const cursorTimestampAtInMs = (cursorX / cellWidth) * useTimeline.getState().durationInMsPerStep
-      
+
       //console.log("cells.Cell:onClick() e:", e)
-    
+
       const wMin = cursorTimestampAtInMs - segment.startTimeInMs
       const wMax = segment.endTimeInMs - segment.startTimeInMs
       const cursorLeftPosInRatio = wMin / wMax
-    
+
       const cursorLeftPosInPx = cursorLeftPosInRatio * segmentWidth
-      const cursorRightPosInPx = segmentWidth - cursorLeftPosInPx 
-    
+      const cursorRightPosInPx = segmentWidth - cursorLeftPosInPx
+
       // note: this should be "responsive", with a max width
       const sideGrabHandleWidth = 9
       // let isInLeftArea = cursorLeftPosInRatio < 0.5
       // let isInRightArea = cursorLeftPosInRatio > 0.5
-    
+
       const area =
         (cursorLeftPosInPx < sideGrabHandleWidth) ? SegmentArea.LEFT
-      : (cursorRightPosInPx < sideGrabHandleWidth) ? SegmentArea.RIGHT
-      : SegmentArea.MIDDLE
+          : (cursorRightPosInPx < sideGrabHandleWidth) ? SegmentArea.RIGHT
+            : SegmentArea.MIDDLE
 
       if (isOutOfRange) {
         event.stopPropagation()
@@ -606,10 +606,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         })
         setSelectedSegment({
           segment,
-    
+
           // we leave it unspecified to create an automated toggle
           // isSelected: true,
-    
+
           onlyOneSelectedAtOnce: true,
         })
         setEditedSegment({
@@ -637,7 +637,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           })
         } else if (area === SegmentArea.MIDDLE) {
           setEditedSegment({
-          segment,
+            segment,
             status: SegmentEditionStatus.DRAGGING
           })
         }
@@ -667,7 +667,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   },
   trackSilentChangeInSegments: (segmentIds: string[]) => {
     const { silentChangesInSegment, atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged } = get()
-    
+
     for (const id of segmentIds) {
       silentChangesInSegment[id] = 1 + (silentChangesInSegment[id] || 0)
     }
@@ -720,8 +720,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         height,
         tracks: tracks.map((t: any) => (
           t.id === trackId
-          ? { ...t, visible: !t.visible }
-          : t
+            ? { ...t, visible: !t.visible }
+            : t
         )),
         cellWidth,
         defaultSegmentDurationInSteps,
@@ -732,7 +732,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   },
   setContainerSize: ({ width, height }: { width: number; height: number }) => {
     const { containerWidth: previousWidth, containerHeight: previousHeight } = get()
-    const changed = 
+    const changed =
       (Math.round(previousWidth) !== Math.round(height))
       || (Math.round(previousHeight) !== Math.round(height))
     if (!changed) { return }
@@ -810,14 +810,14 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     // Create an object URL for the compressed clap blob
     const objectUrl = URL.createObjectURL(blob);
-  
+
     // Create an anchor element and force browser download
     const anchor = document.createElement("a");
     anchor.href = objectUrl;
     anchor.download = saveToFilePath || `${clap.meta.title}${extraLabel}.clap`;
     document.body.appendChild(anchor); // Append to the body (could be removed once clicked)
     anchor.click(); // Trigger the download
-  
+
     // Cleanup: revoke the object URL and remove the anchor element
     URL.revokeObjectURL(objectUrl);
     document.body.removeChild(anchor);
@@ -830,7 +830,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   resolveSegment: async (segment: TimelineSegment): Promise<TimelineSegment> => {
     const { segmentResolver, fitSegmentToAssetDuration } = get()
     if (!segmentResolver) { return segment }
-    
+
     segment = await segmentResolver(segment)
 
     // after a segment has ben resolved, it is possible that the size
@@ -898,7 +898,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     } = get()
 
     segment.track = track
-   
+
     let nbTracks = tracks.length
 
     // add the track if it is missing
@@ -906,7 +906,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       const isPreview =
         segment.category === ClapSegmentCategory.IMAGE ||
         segment.category === ClapSegmentCategory.VIDEO
-   
+
       tracks[segment.track] = {
         id: segment.track,
         // name: `Track ${s.track}`,
@@ -914,8 +914,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         isPreview,
         height:
           isPreview
-          ? defaultPreviewHeight
-          : defaultCellHeight,
+            ? defaultPreviewHeight
+            : defaultCellHeight,
         hue: 0,
         occupied: true,
         visible: true,
@@ -996,7 +996,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // also, we assume that we are adding a segment in a place where it's visible
     // (if we are wrong don't worry, our visibility detector will fix it anyway)
     segment.visibility = SegmentVisibility.VISIBLE
-    
+
     assignTrack({
       segment,
       track: availableTrack,
@@ -1007,7 +1007,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
 
     // we assume that the provided segment is valid, with a unique UUID
-  
+
     // then we need to update everything
 
     // ok so, I'm not a big fan of doing this,
@@ -1019,8 +1019,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     const durationInMs =
       segment.endTimeInMs > previousDurationInMs
-      ? segment.endTimeInMs
-      : previousDurationInMs
+        ? segment.endTimeInMs
+        : previousDurationInMs
 
     set({
       segments,
@@ -1051,7 +1051,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
   // resize and move the end of a segment, as well as the segment after it
   fitSegmentToAssetDuration: async (segment: TimelineSegment, requestedDurationInMs?: number): Promise<void> => {
-    
+
     const {
       width,
       height,
@@ -1069,8 +1069,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     let requestedDuration: number =
       typeof requestedDurationInMs === "number" && isFinite(requestedDurationInMs) && !isNaN(requestedDurationInMs)
-      ? requestedDurationInMs
-      : segment.assetDurationInMs
+        ? requestedDurationInMs
+        : segment.assetDurationInMs
 
 
     // trivial case: nothing to do!
@@ -1137,14 +1137,14 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
 
       if (referenceSegmentIsMusicOrSound) {
-        
+
         if (isSameCategoryAsReferenceSegment && isSamePromptAsReferenceSegment) {
-          if (s.endTimeInMs <= endTimeInMs) { 
+          if (s.endTimeInMs <= endTimeInMs) {
             // we delete
             console.log("TODO JULIAN: DELETE SEGMENT", s)
             // segmentsToDelete.push(s.id)
             // note: 
-          } else if (s.startTimeInMs < endTimeInMs) { 
+          } else if (s.startTimeInMs < endTimeInMs) {
             // we resize
             console.log("TODO JULIAN: resize segment")
             // s.startTimeInMs = endTimeInMs
@@ -1161,7 +1161,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           if (!(s.endTimeInMs <= startTimeInMs || s.startTimeInMs >= endTimeInMs)) {
             const newTrack = findFreeTrack({ startTimeInMs, endTimeInMs })
             //console.log(`ASSIGN NEW TRACK (${newTrack}) TO SEGMENT`, s)
-     
+
             assignTrack({
               segment,
               track: newTrack,
@@ -1169,9 +1169,9 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
               // we don't want to trigger a state change
               triggerChange: false,
             })
-            
+
           }
-      
+
         }
       } else {
         // this is a dialogue or a video, we can apply our regular strategy
@@ -1227,6 +1227,167 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       atLeastOneSegmentChanged: 1 + atLeastOneSegmentChanged,
       silentChangesInSegment,
     })
+  },
+  createTrack: (category: ClapSegmentCategory): number => {
+    const {
+      width,
+      height,
+      tracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs,
+      defaultPreviewHeight,
+      defaultCellHeight,
+    } = get()
+
+    // Find the first available track ID
+    const newTrackId = tracks.length
+
+    const isPreview =
+      category === ClapSegmentCategory.IMAGE ||
+      category === ClapSegmentCategory.VIDEO
+
+    const newTrack = {
+      id: newTrackId,
+      name: `${category}`,
+      isPreview,
+      height: isPreview ? defaultPreviewHeight : defaultCellHeight,
+      hue: 0,
+      occupied: false,
+      visible: true,
+    }
+
+    const updatedTracks = [...tracks, newTrack]
+
+    set({
+      tracks: updatedTracks,
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks: updatedTracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs,
+      })
+    })
+
+    return newTrackId
+  },
+  createClip: async ({
+    track,
+    category,
+    startTimeInMs,
+    durationInMs: requestedDurationInMs,
+    prompt = "",
+  }: {
+    track: number
+    category: ClapSegmentCategory
+    startTimeInMs: number
+    durationInMs?: number
+    prompt?: string
+  }): Promise<TimelineSegment> => {
+    const {
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      addSegment,
+    } = get()
+
+    // Use default duration if not provided
+    const durationInMs = requestedDurationInMs || (defaultSegmentDurationInSteps * durationInMsPerStep)
+    const endTimeInMs = startTimeInMs + durationInMs
+
+    // Create a new segment
+    const newSegment: ClapSegment = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(7)}`,
+      track,
+      startTimeInMs,
+      endTimeInMs,
+      category,
+      prompt: prompt || `New ${category} clip`,
+      label: `${category}`,
+      outputType: category === ClapSegmentCategory.VIDEO ? "video" :
+        category === ClapSegmentCategory.IMAGE ? "image" :
+          category === ClapSegmentCategory.DIALOGUE ? "audio" :
+            category === ClapSegmentCategory.MUSIC ? "audio" :
+              category === ClapSegmentCategory.SOUND ? "audio" : "text",
+      renderId: "",
+      status: "to_generate",
+      assetUrl: "",
+      assetDurationInMs: durationInMs,
+      createdAt: new Date().toISOString(),
+      revision: 0,
+      assetSourceType: "empty",
+      workflowId: "",
+      workflowDefaultValues: "",
+      startTimeInLines: 0,
+      endTimeInLines: 0,
+    } as ClapSegment
+
+    // Convert to timeline segment and add it
+    const timelineSegment = await clapSegmentToTimelineSegment(newSegment)
+
+    await addSegment({
+      segment: timelineSegment,
+      startTimeInMs,
+      track,
+    })
+
+    return timelineSegment
+  },
+  moveSegmentToTrack: (segment: TimelineSegment, newTrack: number): boolean => {
+    const {
+      tracks,
+      segments,
+      assignTrack,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+      allSegmentsChanged: previousAllSegmentsChanged,
+    } = get()
+
+    // Check if the target track exists
+    if (!tracks[newTrack]) {
+      console.warn(`Target track ${newTrack} does not exist`)
+      return false
+    }
+
+    const targetTrack = tracks[newTrack]
+
+    // Check if track types are compatible
+    // A track is compatible if it's empty or has the same category
+    const isTrackEmpty = !targetTrack.occupied
+    const trackHasSameCategory = targetTrack.name === segment.category || targetTrack.name === "(misc)" || targetTrack.name === "(empty)"
+
+    if (!isTrackEmpty && !trackHasSameCategory) {
+      console.warn(`Cannot move ${segment.category} segment to track with type ${targetTrack.name}`)
+      return false
+    }
+
+    // Check for collisions with existing segments on the target track
+    const hasCollision = segments.some(s =>
+      s.id !== segment.id &&
+      s.track === newTrack &&
+      !(s.endTimeInMs <= segment.startTimeInMs || s.startTimeInMs >= segment.endTimeInMs)
+    )
+
+    if (hasCollision) {
+      console.warn(`Cannot move segment: collision detected on track ${newTrack}`)
+      return false
+    }
+
+    // Move the segment
+    assignTrack({
+      segment,
+      track: newTrack,
+      triggerChange: true,
+    })
+
+    set({
+      atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
+      allSegmentsChanged: 1 + previousAllSegmentsChanged,
+    })
+
+    return true
   },
   addEntities: async (newEntities: ClapEntity[]) => {
     const {
@@ -1284,7 +1445,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       })
     }
   },
-  deleteEntities: async (entitiesToDelete: (ClapEntity|string)[]) => {
+  deleteEntities: async (entitiesToDelete: (ClapEntity | string)[]) => {
     const {
       entities: previousEntities,
       entityIndex: previousentityIndex,
@@ -1292,7 +1453,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     } = get()
 
     let idsToDelete: string[] = []
-  
+
     for (const newEntityOrId of entitiesToDelete) {
       const id = typeof newEntityOrId === "string" ? newEntityOrId : newEntityOrId.id
       delete previousentityIndex[id]
@@ -1309,7 +1470,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   },
 
   setInvalidate: (invalidate?: Invalidate) => {
-    set({ invalidate: invalidate || (() => {}) })
+    set({ invalidate: invalidate || (() => { }) })
   }
 }
 ))
