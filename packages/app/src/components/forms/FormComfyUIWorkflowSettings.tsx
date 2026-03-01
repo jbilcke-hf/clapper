@@ -4,13 +4,15 @@ import { GrDocumentConfig } from 'react-icons/gr'
 import debounce from 'lodash/debounce'
 import { FormSelect } from './FormSelect'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
-import { MdInfo, MdWarning } from 'react-icons/md'
-import { ClapInputField, ClapWorkflow } from '@aitube/clap'
+import { MdInfo, MdWarning, MdSearch } from 'react-icons/md'
+import { ClapInputField, ClapWorkflow, ClapWorkflowCategory } from '@aitube/clap'
 import { FormArea } from './FormArea'
 import { useCallback, useState } from 'react'
 import clsx from 'clsx'
 import { ComfyUIWorkflowApiGraph } from '@/app/api/resolve/providers/comfyui/graph'
 import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/convertComfyUiWorkflowApiToClapWorkflow'
+import { ComfyUIWorkflowBrowser, ComfyUIWorkflowTemplate } from '@/components/comfyui/ComfyUIWorkflowBrowser'
+import { Button } from '../ui/button'
 
 export function FormComfyUIWorkflowSettings({
   label,
@@ -28,6 +30,8 @@ export function FormComfyUIWorkflowSettings({
   const [clapWorkflowDataDraft, setClapWorkflowDataDraft] = useState(
     clapWorkflow.data || defaultClapWorkflow.data
   )
+
+  const [browserOpen, setBrowserOpen] = useState(false)
 
   const [errors, setErrors] = useState<{ workflow: string | null }>({
     workflow: null,
@@ -177,16 +181,51 @@ export function FormComfyUIWorkflowSettings({
     })
   }
 
+  const handleSelectBrowserWorkflow = useCallback(
+    (template: ComfyUIWorkflowTemplate) => {
+      const json = template.workflowData
+      setClapWorkflowDataDraft(json)
+      if (ComfyUIWorkflowApiGraph.isValidWorkflow(json)) {
+        setErrors({ workflow: null })
+        debouncedOnChangeClapWorkflow(
+          structuredClone(
+            convertComfyUiWorkflowApiToClapWorkflow(json, clapWorkflow.category)
+          )
+        )
+      }
+    },
+    [clapWorkflow.category, debouncedOnChangeClapWorkflow]
+  )
+
   return (
     <>
-      <FormArea
-        label={label}
-        value={clapWorkflowDataDraft}
-        defaultValue={''}
-        onChange={handleOnChangeJson}
-        rows={8}
-        error={errors['workflow']}
+      <ComfyUIWorkflowBrowser
+        open={browserOpen}
+        onClose={() => setBrowserOpen(false)}
+        onSelectWorkflow={handleSelectBrowserWorkflow}
+        filterCategory={clapWorkflow.category}
       />
+      <div className="flex items-end gap-2">
+        <div className="flex-1">
+          <FormArea
+            label={label}
+            value={clapWorkflowDataDraft}
+            defaultValue={''}
+            onChange={handleOnChangeJson}
+            rows={8}
+            error={errors['workflow']}
+          />
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="mb-1 flex items-center gap-1.5 border-neutral-700 text-xs text-neutral-300 hover:text-neutral-100"
+          onClick={() => setBrowserOpen(true)}
+        >
+          <MdSearch className="text-sm" />
+          Browse
+        </Button>
+      </div>
       {Object.values(errors).filter(Boolean).length == 0 && (
         <div className={className}>
           <FormField

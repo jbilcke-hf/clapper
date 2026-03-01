@@ -11,6 +11,7 @@ import { FormSelect } from '../forms/FormSelect'
 import { FormInput } from '../forms/FormInput'
 import { useUI } from '@/services/ui'
 import { FormSwitch } from '../forms/FormSwitch'
+import { ComfyUIConnectionStatus } from '@/components/comfyui/ComfyUIConnectionStatus'
 
 export const hideThirdpartyProviders =
   `${process.env.NEXT_PUBLIC_DISABLE_PROVIDER_CREDENTIALS_IN_USER_SETTINGS || ''}`.toLowerCase() ===
@@ -193,6 +194,8 @@ export function SettingsSectionProvider() {
               onChange={setComfyUiHttpAuthPassword}
               type={apiKeyType}
             />
+
+            <ComfyUIConnectionStatus />
 
             <FormInput
               label="Comfy.icu API key"

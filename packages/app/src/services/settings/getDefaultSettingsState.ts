@@ -1,8 +1,36 @@
 import { RenderingStrategy } from '@aitube/timeline'
 import { ComfyIcuAccelerator, SettingsState } from '@aitube/clapper-services'
+import {
+  ClapWorkflow,
+  ClapWorkflowCategory,
+  ClapWorkflowEngine,
+  ClapWorkflowProvider,
+} from '@aitube/clap'
 
 import { defaultWorkflowForImages } from './workflows/image'
 import { defaultWorkflowForVideos } from './workflows/video'
+
+function createEmptyWorkflow(
+  category: ClapWorkflowCategory,
+  label: string
+): ClapWorkflow {
+  return {
+    id: `comfyui://empty-${category}`,
+    label,
+    description: '',
+    tags: [],
+    author: '',
+    thumbnailUrl: '',
+    nonCommercial: false,
+    engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
+    provider: ClapWorkflowProvider.COMFYUI,
+    category,
+    data: '{}',
+    schema: '',
+    inputFields: [],
+    inputValues: {},
+  }
+}
 
 export function getDefaultSettingsState(): SettingsState {
   const state: SettingsState = {
@@ -85,6 +113,18 @@ export function getDefaultSettingsState(): SettingsState {
 
     comfyClapWorkflowForImage: defaultWorkflowForImages,
     comfyClapWorkflowForVideo: defaultWorkflowForVideos,
+    comfyClapWorkflowForVoice: createEmptyWorkflow(
+      ClapWorkflowCategory.VOICE_GENERATION,
+      'Voice Generation Workflow'
+    ),
+    comfyClapWorkflowForSound: createEmptyWorkflow(
+      ClapWorkflowCategory.SOUND_GENERATION,
+      'Sound Generation Workflow'
+    ),
+    comfyClapWorkflowForMusic: createEmptyWorkflow(
+      ClapWorkflowCategory.MUSIC_GENERATION,
+      'Music Generation Workflow'
+    ),
     comfyWorkflowForVoice: '{}',
     comfyWorkflowForSound: '{}',
     comfyWorkflowForMusic: '{}',
