@@ -15,6 +15,17 @@ export const getMainInputIdsByClapWorkflowCategory = (
         ClapperComfyUiInputIds.OUTPUT,
       ]
     }
+    case ClapWorkflowCategory.VOICE_GENERATION:
+    case ClapWorkflowCategory.SOUND_GENERATION:
+    case ClapWorkflowCategory.MUSIC_GENERATION: {
+      // Audio workflows primarily need prompt and seed, not image dimensions
+      return [
+        ClapperComfyUiInputIds.PROMPT,
+        ClapperComfyUiInputIds.NEGATIVE_PROMPT,
+        ClapperComfyUiInputIds.SEED,
+        ClapperComfyUiInputIds.OUTPUT,
+      ]
+    }
     default: {
       return [
         ClapperComfyUiInputIds.PROMPT,
