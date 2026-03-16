@@ -68,6 +68,9 @@ export type BaseSettings = {
   // ------------ COMFY UI CLAP WORKFLOWS -----------------
   comfyClapWorkflowForImage: ClapWorkflow
   comfyClapWorkflowForVideo: ClapWorkflow
+  comfyClapWorkflowForVoice: ClapWorkflow
+  comfyClapWorkflowForSound: ClapWorkflow
+  comfyClapWorkflowForMusic: ClapWorkflow
   comfyWorkflowForVoice: string
   comfyWorkflowForSound: string
   comfyWorkflowForMusic: string
@@ -207,6 +210,9 @@ export type SettingsControls = {
 
   setComfyClapWorkflowForImage: (comfyClapWorkflowForImage?: ClapWorkflow) => void
   setComfyClapWorkflowForVideo: (comfyClapWorkflowForVideo?: ClapWorkflow) => void
+  setComfyClapWorkflowForVoice: (comfyClapWorkflowForVoice?: ClapWorkflow) => void
+  setComfyClapWorkflowForSound: (comfyClapWorkflowForSound?: ClapWorkflow) => void
+  setComfyClapWorkflowForMusic: (comfyClapWorkflowForMusic?: ClapWorkflow) => void
   setComfyWorkflowForVoice: (comfyWorkflowForVoice?: string) => void
   setComfyWorkflowForSound: (comfyWorkflowForSound?: string) => void
   setComfyWorkflowForMusic: (comfyWorkflowForMusic?: string) => void

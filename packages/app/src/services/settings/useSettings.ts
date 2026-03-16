@@ -711,6 +711,72 @@ export const useSettings = create<SettingsStore>()(
           console.error(e)
         }
       },
+      setComfyClapWorkflowForVoice: (
+        comfyClapWorkflowForVoice?: ClapWorkflow
+      ) => {
+        try {
+          if (!comfyClapWorkflowForVoice) throw new Error('Invalid workflow')
+          const currentWorkflowString = get().voiceGenerationWorkflow
+          const currentWorkflow = parseWorkflow(
+            currentWorkflowString,
+            ClapWorkflowCategory.VOICE_GENERATION
+          )
+          const newWorkflow = comfyClapWorkflowForVoice
+          set({
+            comfyClapWorkflowForVoice: newWorkflow,
+            voiceGenerationWorkflow:
+              currentWorkflow.engine === ClapWorkflowEngine.COMFYUI_WORKFLOW
+                ? JSON.stringify(newWorkflow)
+                : currentWorkflowString,
+          })
+        } catch (e) {
+          console.error(e)
+        }
+      },
+      setComfyClapWorkflowForSound: (
+        comfyClapWorkflowForSound?: ClapWorkflow
+      ) => {
+        try {
+          if (!comfyClapWorkflowForSound) throw new Error('Invalid workflow')
+          const currentWorkflowString = get().soundGenerationWorkflow
+          const currentWorkflow = parseWorkflow(
+            currentWorkflowString,
+            ClapWorkflowCategory.SOUND_GENERATION
+          )
+          const newWorkflow = comfyClapWorkflowForSound
+          set({
+            comfyClapWorkflowForSound: newWorkflow,
+            soundGenerationWorkflow:
+              currentWorkflow.engine === ClapWorkflowEngine.COMFYUI_WORKFLOW
+                ? JSON.stringify(newWorkflow)
+                : currentWorkflowString,
+          })
+        } catch (e) {
+          console.error(e)
+        }
+      },
+      setComfyClapWorkflowForMusic: (
+        comfyClapWorkflowForMusic?: ClapWorkflow
+      ) => {
+        try {
+          if (!comfyClapWorkflowForMusic) throw new Error('Invalid workflow')
+          const currentWorkflowString = get().musicGenerationWorkflow
+          const currentWorkflow = parseWorkflow(
+            currentWorkflowString,
+            ClapWorkflowCategory.MUSIC_GENERATION
+          )
+          const newWorkflow = comfyClapWorkflowForMusic
+          set({
+            comfyClapWorkflowForMusic: newWorkflow,
+            musicGenerationWorkflow:
+              currentWorkflow.engine === ClapWorkflowEngine.COMFYUI_WORKFLOW
+                ? JSON.stringify(newWorkflow)
+                : currentWorkflowString,
+          })
+        } catch (e) {
+          console.error(e)
+        }
+      },
       setComfyWorkflowForVoice: (comfyWorkflowForVoice?: string) => {
         set({
           comfyWorkflowForVoice: getValidComfyWorkflowTemplate(
@@ -1061,6 +1127,15 @@ export const useSettings = create<SettingsStore>()(
           comfyClapWorkflowForVideo:
             state.comfyClapWorkflowForVideo ||
             defaultSettings.comfyClapWorkflowForVideo,
+          comfyClapWorkflowForVoice:
+            state.comfyClapWorkflowForVoice ||
+            defaultSettings.comfyClapWorkflowForVoice,
+          comfyClapWorkflowForSound:
+            state.comfyClapWorkflowForSound ||
+            defaultSettings.comfyClapWorkflowForSound,
+          comfyClapWorkflowForMusic:
+            state.comfyClapWorkflowForMusic ||
+            defaultSettings.comfyClapWorkflowForMusic,
           comfyWorkflowForVoice:
             state.comfyWorkflowForVoice ||
             defaultSettings.comfyWorkflowForVoice,

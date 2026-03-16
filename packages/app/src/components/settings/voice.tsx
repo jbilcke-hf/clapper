@@ -1,23 +1,26 @@
-import { FormArea, FormSection } from '@/components/forms'
+import { FormSection } from '@/components/forms'
+import { FormComfyUIWorkflowSettings } from '@/components/forms/FormComfyUIWorkflowSettings'
 import { getDefaultSettingsState, useSettings } from '@/services/settings'
 
 export function SettingsSectionVoice() {
   const defaultSettings = getDefaultSettingsState()
 
-  const comfyWorkflowForVoice = useSettings((s) => s.comfyWorkflowForVoice)
-  const setComfyWorkflowForVoice = useSettings(
-    (s) => s.setComfyWorkflowForVoice
+  const comfyClapWorkflowForVoice = useSettings(
+    (s) => s.comfyClapWorkflowForVoice
+  )
+  const setComfyClapWorkflowForVoice = useSettings(
+    (s) => s.setComfyClapWorkflowForVoice
   )
 
   return (
     <div className="flex flex-col justify-between space-y-6">
       <FormSection label="Voice rendering">
-        <FormArea
+        <FormComfyUIWorkflowSettings
           label="Custom ComfyUI workflow for voice"
-          value={comfyWorkflowForVoice}
-          defaultValue={defaultSettings.comfyWorkflowForVoice}
-          onChange={setComfyWorkflowForVoice}
-          rows={8}
+          className="mt-2"
+          clapWorkflow={comfyClapWorkflowForVoice}
+          defaultClapWorkflow={defaultSettings.comfyClapWorkflowForVoice}
+          onChange={setComfyClapWorkflowForVoice}
         />
       </FormSection>
     </div>

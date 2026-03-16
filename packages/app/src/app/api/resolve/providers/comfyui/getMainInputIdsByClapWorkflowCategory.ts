@@ -15,6 +15,15 @@ export const getMainInputIdsByClapWorkflowCategory = (
         ClapperComfyUiInputIds.OUTPUT,
       ]
     }
+    case ClapWorkflowCategory.VOICE_GENERATION:
+    case ClapWorkflowCategory.SOUND_GENERATION:
+    case ClapWorkflowCategory.MUSIC_GENERATION: {
+      return [
+        ClapperComfyUiInputIds.PROMPT,
+        ClapperComfyUiInputIds.SEED,
+        ClapperComfyUiInputIds.OUTPUT,
+      ]
+    }
     default: {
       return [
         ClapperComfyUiInputIds.PROMPT,

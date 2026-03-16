@@ -11,6 +11,7 @@ import { FormSelect } from '../forms/FormSelect'
 import { FormInput } from '../forms/FormInput'
 import { useUI } from '@/services/ui'
 import { FormSwitch } from '../forms/FormSwitch'
+import { ComfyUIConnectionStatus } from '../comfyui/ComfyUIConnectionStatus'
 
 export const hideThirdpartyProviders =
   `${process.env.NEXT_PUBLIC_DISABLE_PROVIDER_CREDENTIALS_IN_USER_SETTINGS || ''}`.toLowerCase() ===
@@ -59,6 +60,9 @@ export function SettingsSectionProvider() {
 
   const comfyIcuAccelerator = useSettings((s) => s.comfyIcuAccelerator)
   const setComfyIcuAccelerator = useSettings((s) => s.setComfyIcuAccelerator)
+
+  const comfyDeployApiKey = useSettings((s) => s.comfyDeployApiKey)
+  const setComfyDeployApiKey = useSettings((s) => s.setComfyDeployApiKey)
 
   const clapperApiKey = useSettings((s) => s.clapperApiKey)
   const setClapperApiKey = useSettings((s) => s.setClapperApiKey)
@@ -162,6 +166,8 @@ export function SettingsSectionProvider() {
               type={apiKeyType}
             />
 
+            <ComfyUIConnectionStatus />
+
             <FormInput
               label="ComfyUI API URL"
               value={comfyUiApiUrl}
@@ -199,6 +205,18 @@ export function SettingsSectionProvider() {
               value={comfyIcuApiKey}
               defaultValue={defaultSettings.comfyIcuApiKey}
               onChange={setComfyIcuApiKey}
+              type={apiKeyType}
+            />
+
+            <FormInput
+              label={
+                <GetItHere href="https://www.comfydeploy.com/settings">
+                  ComfyDeploy API key
+                </GetItHere>
+              }
+              value={comfyDeployApiKey}
+              defaultValue={''}
+              onChange={setComfyDeployApiKey}
               type={apiKeyType}
             />
 
