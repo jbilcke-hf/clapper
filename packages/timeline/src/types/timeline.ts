@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapSegmentCategory, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -396,6 +396,29 @@ export type TimelineStoreModifiers = {
    * @returns 
    */
   deleteSegments: (ids: string[]) => void
+
+  /**
+   * Create a new track with a given category
+   * @returns the track number of the newly created track
+   */
+  createTrack: (category: ClapSegmentCategory) => number
+
+  /**
+   * Create a new clip/segment on a track at a given time position
+   */
+  createClip: (params: {
+    track: number
+    startTimeInMs: number
+    endTimeInMs?: number
+    category?: ClapSegmentCategory
+    prompt?: string
+  }) => Promise<TimelineSegment>
+
+  /**
+   * Move a segment to a different track, validating category compatibility
+   * @returns true if the move succeeded
+   */
+  moveSegmentToTrack: (segment: TimelineSegment, targetTrack: number) => boolean
 
   addEntities: (entities: ClapEntity[]) => Promise<void>
   updateEntities: (entities: ClapEntity[]) => Promise<void>
