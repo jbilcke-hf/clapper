@@ -2,10 +2,12 @@ export type ComfyIcuApiRequestRunWorkflow = {
   workflow_id: string
   prompt: string
   files: Record<string, any>
+  [key: string]: any
 }
 
 export type ComfyIcuApiResponseWorkflowStatus = {
   id: string
+  run_id?: string
   run_time?: number
   status: string
   name?: string
