@@ -1,6 +1,7 @@
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
 import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapSegmentCategory } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -378,6 +379,13 @@ export type TimelineStoreModifiers = {
     startTimeInMs?: number
     track?: number
 }) => Promise<void>
+  addTrack: (params?: { category?: ClapSegmentCategory }) => number
+  addClip: (params: {
+    category: ClapSegmentCategory
+    track: number
+    startTimeInMs?: number
+    durationInMs?: number
+  }) => Promise<void>
 
   /**
    * Find an available free track

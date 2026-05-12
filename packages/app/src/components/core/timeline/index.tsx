@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ClapTimeline, useTimeline, SegmentResolver } from '@aitube/timeline'
+import { ClapSegmentCategory } from '@aitube/clap'
 
 import { useMonitor } from '@/services/monitor/useMonitor'
 import { useResolver } from '@/services/resolver/useResolver'
@@ -28,6 +29,25 @@ export function Timeline(
   const setTogglePlayback = useTimeline((s) => s.setTogglePlayback)
 
   const startLoop = useResolver((s) => s.startLoop)
+  const tracks = useTimeline((s) => s.tracks)
+  const addTrack = useTimeline((s) => s.addTrack)
+  const addClip = useTimeline((s) => s.addClip)
+  const cursorTimestampAtInMs = useTimeline((s) => s.cursorTimestampAtInMs)
+  const [trackType, setTrackType] = useState<ClapSegmentCategory>(
+    ClapSegmentCategory.VIDEO
+  )
+  const [selectedTrackId, setSelectedTrackId] = useState<number>(0)
+  const categories = useMemo(
+    () => [
+      ClapSegmentCategory.VIDEO,
+      ClapSegmentCategory.IMAGE,
+      ClapSegmentCategory.DIALOGUE,
+      ClapSegmentCategory.SOUND,
+      ClapSegmentCategory.MUSIC,
+      ClapSegmentCategory.GENERIC,
+    ],
+    []
+  )
 
   // this is important: we connect the monitor to the timeline
   useEffect(() => {
@@ -59,10 +79,106 @@ export function Timeline(
   if (className) {
     return (
       <div className={className}>
+        <div className="flex items-center gap-2 p-2">
+          <select
+            value={trackType}
+            onChange={(e) =>
+              setTrackType(e.target.value as ClapSegmentCategory)
+            }
+            className="rounded border border-white/20 bg-black/40 px-2 py-1 text-xs"
+          >
+            {categories.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+          <button
+            className="rounded border border-white/20 px-2 py-1 text-xs"
+            onClick={() => {
+              const id = addTrack({ category: trackType })
+              setSelectedTrackId(id)
+            }}
+          >
+            Add Track
+          </button>
+          <select
+            value={selectedTrackId}
+            onChange={(e) => setSelectedTrackId(Number(e.target.value))}
+            className="rounded border border-white/20 bg-black/40 px-2 py-1 text-xs"
+          >
+            {tracks.map((t) => (
+              <option key={t.id} value={t.id}>
+                Track {t.id} ({t.name})
+              </option>
+            ))}
+          </select>
+          <button
+            className="rounded border border-white/20 px-2 py-1 text-xs"
+            onClick={() => {
+              addClip({
+                category: trackType,
+                track: selectedTrackId,
+                startTimeInMs: cursorTimestampAtInMs || 0,
+              })
+            }}
+          >
+            Add Clip
+          </button>
+        </div>
         <ClapTimeline showFPS={false} />
       </div>
     )
   }
 
-  return <ClapTimeline showFPS={false} className={className} />
+  return (
+    <div>
+      <div className="flex items-center gap-2 p-2">
+        <select
+          value={trackType}
+          onChange={(e) => setTrackType(e.target.value as ClapSegmentCategory)}
+          className="rounded border border-white/20 bg-black/40 px-2 py-1 text-xs"
+        >
+          {categories.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+        <button
+          className="rounded border border-white/20 px-2 py-1 text-xs"
+          onClick={() => {
+            const id = addTrack({ category: trackType })
+            setSelectedTrackId(id)
+          }}
+        >
+          Add Track
+        </button>
+        <select
+          value={selectedTrackId}
+          onChange={(e) => setSelectedTrackId(Number(e.target.value))}
+          className="rounded border border-white/20 bg-black/40 px-2 py-1 text-xs"
+        >
+          {tracks.map((t) => (
+            <option key={t.id} value={t.id}>
+              Track {t.id} ({t.name})
+            </option>
+          ))}
+        </select>
+        <button
+          className="rounded border border-white/20 px-2 py-1 text-xs"
+          onClick={() => {
+            addClip({
+              category: trackType,
+              track: selectedTrackId,
+              startTimeInMs: cursorTimestampAtInMs || 0,
+            })
+          }}
+        >
+          Add Clip
+        </button>
+      </div>
+      <ClapTimeline showFPS={false} className={className} />
+    </div>
+  )
 }
