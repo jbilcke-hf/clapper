@@ -20,7 +20,9 @@ import { cn } from "./utils"
 import { TimelineCamera } from "./components/camera"
 import { useTimeline } from "./hooks"
 import { topBarTimeScaleHeight } from "./constants/themes"
+import { leftBarTrackScaleWidth } from "./constants/themes"
 import { TimelineStore } from "./types"
+import { SegmentEditionStatus } from "./types/timeline"
 
 export function ClapTimeline({
   clap,
@@ -69,12 +71,44 @@ export function ClapTimeline({
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) => {
     const timeline: TimelineStore = useTimeline.getState()
-    const { editedSegment } = timeline
+    const { editedSegment, durationInMsPerStep, cellWidth, tracks, topBarTimeScale, leftBarTrackScale, allSegmentsChanged, atLeastOneSegmentChanged } = timeline
 
-    // do something based on the current status of the edited segment
-    // for instance if the edited segment is being grabbed,
-    // we are going to want to display the segments that are around it
-    // console.log(`TODO @julian: implement edit here`)
+    if (editedSegment) {
+      const rect = canvas?.getBoundingClientRect()
+      if (rect) {
+        const clientX = "touches" in event ? (event.touches[0]?.clientX || 0) : event.clientX
+        const clientY = "touches" in event ? (event.touches[0]?.clientY || 0) : event.clientY
+        const relativeX = Math.max(0, clientX - rect.left - leftBarTrackScaleWidth)
+        const relativeY = Math.max(0, clientY - rect.top - topBarTimeScaleHeight)
+        const cursorTimestampAtInMs = (relativeX / cellWidth) * durationInMsPerStep
+
+        const duration = editedSegment.endTimeInMs - editedSegment.startTimeInMs
+        if (editedSegment.editionStatus === SegmentEditionStatus.DRAGGING) {
+          editedSegment.startTimeInMs = Math.max(0, cursorTimestampAtInMs - (duration / 2))
+          editedSegment.endTimeInMs = editedSegment.startTimeInMs + duration
+
+          let y = relativeY
+          let trackId = 0
+          for (let i = 0; i < tracks.length; i++) {
+            const h = tracks[i]?.height || timeline.defaultCellHeight
+            if (y <= h) {
+              trackId = i
+              break
+            }
+            y -= h
+          }
+
+          const destinationTrack = tracks[trackId]
+          if (destinationTrack && (!destinationTrack.category || destinationTrack.category === editedSegment.category)) {
+            editedSegment.track = trackId
+          }
+          useTimeline.setState({
+            allSegmentsChanged: allSegmentsChanged + 1,
+            atLeastOneSegmentChanged: atLeastOneSegmentChanged + 1,
+          })
+        }
+      }
+    }
     
     // since we are un frameloop="demand" mode, we need to manual invalidate the scene
     invalidate()

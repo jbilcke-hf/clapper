@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
+import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta, newSegment } from "@aitube/clap"
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler, Invalidate } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
@@ -129,6 +129,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           id: segment.track,
           // name: `Track ${s.track}`,
           name: `${segment.category}`,
+          category: segment.category,
           isPreview,
           height:
             isPreview
@@ -165,6 +166,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         tracks[id] = {
           id,
           name: `(empty)`,
+          category: undefined,
           isPreview: false,
           height: defaultCellHeight,
           hue: 0,
@@ -911,6 +913,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         id: segment.track,
         // name: `Track ${s.track}`,
         name: `${segment.category}`,
+        category: segment.category,
         isPreview,
         height:
           isPreview
@@ -997,6 +1000,11 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // (if we are wrong don't worry, our visibility detector will fix it anyway)
     segment.visibility = SegmentVisibility.VISIBLE
     
+    const requestedTrackType = tracks[availableTrack]?.category
+    if (requestedTrackType && requestedTrackType !== segment.category) {
+      return
+    }
+
     assignTrack({
       segment,
       track: availableTrack,
@@ -1037,6 +1045,28 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         durationInMs,
       })
     })
+  },
+  addClip: async ({
+    category,
+    track,
+    startTimeInMs = 0,
+    durationInMs,
+  }: {
+    category: ClapSegmentCategory
+    track: number
+    startTimeInMs?: number
+    durationInMs?: number
+  }): Promise<void> => {
+    const { durationInMsPerStep, addSegment } = get()
+    const clipDuration = durationInMs || (durationInMsPerStep * 8)
+    const segment = newSegment({
+      category,
+      track,
+      label: `New ${category}`,
+      startTimeInMs,
+      endTimeInMs: startTimeInMs + clipDuration,
+    }) as TimelineSegment
+    await addSegment({ segment, track, startTimeInMs })
   },
   findFreeTrack: ({
     startTimeInMs,
@@ -1317,3 +1347,20 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 if (typeof window !== 'undefined') {
   (window as any).useTimeline = useTimeline
 }
+  addTrack: ({ category = ClapSegmentCategory.GENERIC }: { category?: ClapSegmentCategory } = {}): number => {
+    const { tracks, defaultCellHeight, defaultPreviewHeight } = get()
+    const trackId = tracks.length
+    const isPreview = category === ClapSegmentCategory.IMAGE || category === ClapSegmentCategory.VIDEO
+    tracks[trackId] = {
+      id: trackId,
+      name: `${category}`,
+      category,
+      isPreview,
+      height: isPreview ? defaultPreviewHeight : defaultCellHeight,
+      hue: 0,
+      occupied: false,
+      visible: true,
+    }
+    set({ tracks: [...tracks] })
+    return trackId
+  },

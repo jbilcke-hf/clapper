@@ -959,6 +959,7 @@ export type ClapEntity = {
 export type ClapTrack = {
   id: number
   name: string
+  category?: ClapSegmentCategory
   isPreview: boolean
   height: number
   hue: number
