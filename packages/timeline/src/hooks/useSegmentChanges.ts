@@ -27,6 +27,9 @@ function getKey(segment: TimelineSegment) {
     segment.status,
     segment.label,
     segment.prompt,
+    segment.startTimeInMs,
+    segment.endTimeInMs,
+    segment.track,
     segment.assetUrl.slice(0, 1024),
   ]
 

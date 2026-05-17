@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
+import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, newSegment, serializeClap, ClapTracks, ClapEntity, ClapMeta, parseSegmentCategory } from "@aitube/clap"
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler, Invalidate } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
@@ -606,10 +606,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         })
         setSelectedSegment({
           segment,
-    
+
           // we leave it unspecified to create an automated toggle
           // isSelected: true,
-    
+
           onlyOneSelectedAtOnce: true,
         })
         setEditedSegment({
@@ -640,6 +640,11 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           segment,
             status: SegmentEditionStatus.DRAGGING
           })
+          // start drag on pointer down for middle area
+          if (eventType === SegmentPointerEvent.DOWN) {
+            const { startDragSegment } = get()
+            startDragSegment(segment.id, event.point.x)
+          }
         }
       } else if (eventType === SegmentPointerEvent.UP) {
         setHoveredSegment({
@@ -649,6 +654,11 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         setEditedSegment({
           segment: undefined,
         })
+        // end drag on pointer up
+        const { isDraggingSegment, endDragSegment } = get()
+        if (isDraggingSegment) {
+          endDragSegment()
+        }
       }
 
       event.stopPropagation()
@@ -1310,7 +1320,234 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
   setInvalidate: (invalidate?: Invalidate) => {
     set({ invalidate: invalidate || (() => {}) })
-  }
+  },
+
+  addTrack: (category?: string) => {
+    const {
+      tracks,
+      width,
+      height,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs,
+      defaultCellHeight,
+      defaultPreviewHeight,
+    } = get()
+
+    const newId = tracks.length
+    const isPreview = category === ClapSegmentCategory.IMAGE || category === ClapSegmentCategory.VIDEO
+
+    tracks.push({
+      id: newId,
+      name: category || `(empty)`,
+      isPreview,
+      height: isPreview ? defaultPreviewHeight : defaultCellHeight,
+      hue: 0,
+      occupied: true,
+      visible: true,
+    })
+
+    set({
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs,
+      })
+    })
+  },
+
+  setTrackType: (trackId: number, category: string) => {
+    const {
+      tracks,
+      width,
+      height,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs,
+    } = get()
+
+    if (!tracks[trackId]) return
+
+    tracks[trackId] = {
+      ...tracks[trackId],
+      name: category,
+    }
+
+    set({
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs,
+      })
+    })
+  },
+
+  createClipOnTrack: async (trackId: number, startTimeInMs: number) => {
+    const {
+      tracks,
+      addSegment,
+      durationInMsPerStep,
+    } = get()
+
+    const track = tracks[trackId]
+    if (!track) return
+
+    // derive segment category from track name
+    const category = track.name.startsWith("(") ? ClapSegmentCategory.GENERIC : track.name as ClapSegmentCategory
+
+    // default clip duration: 4 steps (~2 seconds)
+    const clipDurationMs = 4 * durationInMsPerStep
+
+    const clapSegment = newSegment({
+      track: trackId,
+      startTimeInMs,
+      endTimeInMs: startTimeInMs + clipDurationMs,
+      category: parseSegmentCategory(category),
+      label: `Clip ${trackId}-${startTimeInMs}`,
+      prompt: `New ${track.name} clip`,
+    })
+
+    // convert to timeline segment
+    const { clapSegmentToTimelineSegment } = await import('@/utils')
+    const timelineSegment = await clapSegmentToTimelineSegment(clapSegment)
+
+    await addSegment({
+      segment: timelineSegment,
+      startTimeInMs,
+      track: trackId,
+    })
+  },
+
+  moveSegmentToTrack: (segmentId: string, targetTrackId: number) => {
+    const {
+      segments,
+      tracks,
+      assignTrack,
+    } = get()
+
+    const targetTrack = tracks[targetTrackId]
+    if (!targetTrack) return
+
+    const segment = segments.find(s => s.id === segmentId)
+    if (!segment) return
+
+    // validate type match: allow if track type matches segment category
+    // or if track has a generic/empty name
+    const trackType = targetTrack.name
+    const isTypeMatch = trackType.startsWith("(") || trackType === segment.category || trackType === "(misc)"
+
+    if (!isTypeMatch) return
+
+    assignTrack({
+      segment,
+      track: targetTrackId,
+      triggerChange: true,
+    })
+  },
+
+  startDragSegment: (segmentId: string, pointerX: number) => {
+    const { segments } = get()
+    const segment = segments.find(s => s.id === segmentId)
+    if (!segment) return
+
+    set({
+      isDraggingSegment: true,
+      dragSegmentStartX: pointerX,
+      dragSegmentOriginalStartTimeMs: segment.startTimeInMs,
+      dragSegmentOriginalEndTimeMs: segment.endTimeInMs,
+      dragSegmentId: segmentId,
+      dragTargetTrackId: null,
+    })
+  },
+
+  updateDragSegment: (pointerX: number, pointerY: number, containerWidth: number) => {
+    const {
+      isDraggingSegment,
+      dragSegmentStartX,
+      dragSegmentOriginalStartTimeMs,
+      dragSegmentOriginalEndTimeMs,
+      dragSegmentId,
+      segments,
+      durationInMsPerStep,
+      cellWidth,
+      tracks,
+    } = get()
+
+    if (!isDraggingSegment || !dragSegmentId) return
+
+    const segment = segments.find(s => s.id === dragSegmentId)
+    if (!segment) return
+
+    // horizontal drag: shift time
+    const deltaX = pointerX - dragSegmentStartX
+    const deltaTimeMs = (deltaX / cellWidth) * durationInMsPerStep
+
+    // snap to step grid
+    const snappedDelta = Math.round(deltaTimeMs / durationInMsPerStep) * durationInMsPerStep
+
+    segment.startTimeInMs = Math.max(0, dragSegmentOriginalStartTimeMs + snappedDelta)
+    segment.endTimeInMs = dragSegmentOriginalEndTimeMs + snappedDelta
+
+    // use pointerX, pointerY for track detection (offset from leftBar)
+    if (containerWidth > 0) {
+      // determine which track the pointer is over based on pointerY
+      // we need to track this from outside since we don't have vertical positions here
+      // simplified: just update the state, the drag overlay component handles visual
+    }
+
+    const { atLeastOneSegmentChanged: prev } = get()
+    set({
+      atLeastOneSegmentChanged: 1 + (prev || 0),
+    })
+  },
+
+  endDragSegment: () => {
+    const {
+      invalidate,
+      dragSegmentId,
+      dragHoveredTrackId,
+    } = get()
+
+    // if a different track is hovered during drop, move the segment there
+    if (dragSegmentId && dragHoveredTrackId !== null) {
+      const { segments, tracks, assignTrack, moveSegmentToTrack } = get()
+      const segment = segments.find(s => s.id === dragSegmentId)
+      if (segment && segment.track !== dragHoveredTrackId) {
+        const targetTrack = tracks[dragHoveredTrackId]
+        if (targetTrack) {
+          const trackType = targetTrack.name
+          const isTypeMatch = trackType.startsWith("(") || trackType === segment.category || trackType === "(misc)"
+          if (isTypeMatch) {
+            moveSegmentToTrack(dragSegmentId, dragHoveredTrackId)
+          }
+        }
+      }
+    }
+
+    set({
+      isDraggingSegment: false,
+      dragSegmentId: null,
+      dragSegmentStartX: 0,
+      dragTargetTrackId: null,
+      dragHoveredTrackId: null,
+    })
+
+    invalidate()
+  },
+
+  setDragHoveredTrack: (trackId: number | null) => {
+    set({ dragHoveredTrackId: trackId })
+  },
 }
 ))
 
