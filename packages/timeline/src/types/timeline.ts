@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapSegmentCategory, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -228,6 +228,15 @@ export type TimelineStoreProjectState = ClapMeta & {
 
   // position of the current timestamp
   cursorTimestampAtInMs: number
+
+  // drag operation state (for segment dragging)
+  isDraggingSegment: boolean
+  dragSegmentStartX: number
+  dragSegmentOriginalStartTimeMs: number
+  dragSegmentOriginalEndTimeMs: number
+  dragSegmentId: string | null
+  dragTargetTrackId: number | null
+  dragHoveredTrackId: number | null
 }
 
 export type TimelineStorePreferencesState = {
@@ -402,6 +411,49 @@ export type TimelineStoreModifiers = {
   deleteEntities: (entities: (ClapEntity|string)[]) => Promise<void>
 
   setInvalidate: (invalidate?: Invalidate) => void
+
+  /**
+   * Add a new track at the end of the track list.
+   * If category is provided, the track will be named after it.
+   */
+  addTrack: (category?: string) => void
+
+  /**
+   * Change the category/type of an existing track.
+   */
+  setTrackType: (trackId: number, category: string) => void
+
+  /**
+   * Create a new clip (segment) on a given track at a given timestamp.
+   * The segment category is derived from the track's type name.
+   */
+  createClipOnTrack: (trackId: number, startTimeInMs: number) => Promise<void>
+
+  /**
+   * Move a segment to a different track.
+   * Validates that the segment category matches the target track's type.
+   */
+  moveSegmentToTrack: (segmentId: string, targetTrackId: number) => void
+
+  /**
+   * Start dragging a segment (called on pointer down).
+   */
+  startDragSegment: (segmentId: string, pointerX: number) => void
+
+  /**
+   * Update segment position during drag (called on pointer move).
+   */
+  updateDragSegment: (pointerX: number, pointerY: number, containerWidth: number) => void
+
+  /**
+   * End dragging and finalize segment position (called on pointer up).
+   */
+  endDragSegment: () => void
+
+  /**
+   * Set the track being hovered during a drag operation.
+   */
+  setDragHoveredTrack: (trackId: number | null) => void
 }
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers
