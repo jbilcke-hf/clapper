@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
+import { ClapAssetSource, ClapOutputType, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, isValidNumber, newClap, newSegment, parseSegmentCategory, serializeClap, ClapTrack, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler, Invalidate } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
@@ -14,10 +14,106 @@ import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/compone
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 import { topBarTimeScaleHeight } from "@/constants/themes"
 
+const createTrackModel = ({
+  id,
+  category = ClapSegmentCategory.GENERIC,
+  defaultCellHeight,
+  defaultPreviewHeight,
+  occupied = false,
+}: {
+  id: number
+  category?: ClapSegmentCategory
+  defaultCellHeight: number
+  defaultPreviewHeight: number
+  occupied?: boolean
+}): ClapTrack => {
+  const isPreview =
+    category === ClapSegmentCategory.IMAGE ||
+    category === ClapSegmentCategory.VIDEO
+
+  return {
+    id,
+    name: category,
+    category,
+    isPreview,
+    height: isPreview ? defaultPreviewHeight : defaultCellHeight,
+    hue: 0,
+    occupied,
+    visible: true,
+  }
+}
+
+const getTrackCategory = (track?: ClapTrack): ClapSegmentCategory => {
+  return track?.category || parseSegmentCategory(track?.name)
+}
+
+const getOutputTypeForCategory = (category: ClapSegmentCategory): ClapOutputType => {
+  if (category === ClapSegmentCategory.IMAGE) {
+    return ClapOutputType.IMAGE
+  }
+  if (category === ClapSegmentCategory.VIDEO) {
+    return ClapOutputType.VIDEO
+  }
+  if (
+    category === ClapSegmentCategory.DIALOGUE ||
+    category === ClapSegmentCategory.MUSIC ||
+    category === ClapSegmentCategory.SOUND
+  ) {
+    return ClapOutputType.AUDIO
+  }
+  if (category === ClapSegmentCategory.INTERFACE) {
+    return ClapOutputType.INTERFACE
+  }
+  if (category === ClapSegmentCategory.TRANSITION) {
+    return ClapOutputType.TRANSITION
+  }
+  if (category === ClapSegmentCategory.EVENT) {
+    return ClapOutputType.EVENT
+  }
+  if (category === ClapSegmentCategory.PHENOMENON) {
+    return ClapOutputType.PHENOMENON
+  }
+  return ClapOutputType.TEXT
+}
+
+const ensureTracksThrough = ({
+  tracks,
+  track,
+  defaultCellHeight,
+  defaultPreviewHeight,
+}: {
+  tracks: ClapTracks
+  track: number
+  defaultCellHeight: number
+  defaultPreviewHeight: number
+}): ClapTracks => {
+  const nextTracks = [...tracks]
+
+  for (let id = 0; id <= track; id++) {
+    if (nextTracks[id]) {
+      continue
+    }
+
+    nextTracks[id] = createTrackModel({
+      id,
+      category: ClapSegmentCategory.GENERIC,
+      defaultCellHeight,
+      defaultPreviewHeight,
+      occupied: false,
+    })
+  }
+
+  return nextTracks
+}
+
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
 
   setCanvas: (canvas?: HTMLCanvasElement) => {
+    if (get().canvas === canvas) {
+      return
+    }
+
     set({ canvas })
   },
 
@@ -129,6 +225,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           id: segment.track,
           // name: `Track ${s.track}`,
           name: `${segment.category}`,
+          category: segment.category,
           isPreview,
           height:
             isPreview
@@ -159,12 +256,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     }
 
-   // ---------- FILL-IN THE TRACKS ---------------
+    // ---------- FILL-IN THE TRACKS ---------------
     for (let id = 0; id < DEFAULT_NB_TRACKS; id++) {
       if (!tracks[id]) {
         tracks[id] = {
           id,
           name: `(empty)`,
+          category: ClapSegmentCategory.GENERIC,
           isPreview: false,
           height: defaultCellHeight,
           hue: 0,
@@ -730,6 +828,122 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       })
     })
   },
+  createTrack: ({
+    track: requestedTrack,
+    category = ClapSegmentCategory.GENERIC,
+  }: {
+    track?: number
+    category?: ClapSegmentCategory
+  } = {}): number => {
+    const {
+      width,
+      height,
+      tracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs,
+      defaultCellHeight,
+      defaultPreviewHeight,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+    } = get()
+
+    const nextEmptyTrack = tracks.findIndex((t, index) => index > 0 && !t.occupied)
+    const track = isValidNumber(requestedTrack)
+      ? requestedTrack!
+      : (nextEmptyTrack >= 0 ? nextEmptyTrack : Math.max(1, tracks.length))
+
+    const nextTracks = ensureTracksThrough({
+      tracks,
+      track,
+      defaultCellHeight,
+      defaultPreviewHeight,
+    })
+    const previousTrack = nextTracks[track]
+
+    if (previousTrack?.occupied) {
+      return track
+    }
+
+    nextTracks[track] = createTrackModel({
+      id: track,
+      category,
+      defaultCellHeight,
+      defaultPreviewHeight,
+      occupied: false,
+    })
+    nextTracks[track].visible = previousTrack?.visible ?? true
+
+    set({
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks: nextTracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs,
+      }),
+    })
+
+    return track
+  },
+  setTrackCategory: ({
+    track,
+    category,
+  }: {
+    track: number
+    category: ClapSegmentCategory
+  }) => {
+    const {
+      width,
+      height,
+      tracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs,
+      defaultCellHeight,
+      defaultPreviewHeight,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+    } = get()
+
+    const nextTracks = ensureTracksThrough({
+      tracks,
+      track,
+      defaultCellHeight,
+      defaultPreviewHeight,
+    })
+    const previousTrack = nextTracks[track]
+    if (previousTrack?.occupied) {
+      return
+    }
+
+    nextTracks[track] = {
+      ...createTrackModel({
+        id: track,
+        category,
+        defaultCellHeight,
+        defaultPreviewHeight,
+        occupied: previousTrack?.occupied || false,
+      }),
+      visible: previousTrack?.visible ?? true,
+    }
+
+    set({
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks: nextTracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs,
+      }),
+    })
+  },
   setContainerSize: ({ width, height }: { width: number; height: number }) => {
     const { containerWidth: previousWidth, containerHeight: previousHeight } = get()
     const changed = 
@@ -903,24 +1117,19 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     // add the track if it is missing
     if (!tracks[segment.track]) {
-      const isPreview =
-        segment.category === ClapSegmentCategory.IMAGE ||
-        segment.category === ClapSegmentCategory.VIDEO
-   
-      tracks[segment.track] = {
+      tracks[segment.track] = createTrackModel({
         id: segment.track,
-        // name: `Track ${s.track}`,
-        name: `${segment.category}`,
-        isPreview,
-        height:
-          isPreview
-          ? defaultPreviewHeight
-          : defaultCellHeight,
-        hue: 0,
+        category: segment.category,
+        defaultCellHeight,
+        defaultPreviewHeight,
         occupied: true,
-        visible: true,
-      }
+      })
+    } else if (!tracks[segment.track].category) {
+      tracks[segment.track].category = segment.category
+      tracks[segment.track].name = `${segment.category}`
     }
+
+    tracks[segment.track].occupied = true
 
     if (triggerChange) {
       set({
@@ -992,6 +1201,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     // we just make sure to sanitize it before adding it
     segment = await clapSegmentToTimelineSegment(segment)
+    segment.startTimeInMs = startTimeInMs
+    segment.endTimeInMs = endTimeInMs
 
     // also, we assume that we are adding a segment in a place where it's visible
     // (if we are wrong don't worry, our visibility detector will fix it anyway)
@@ -1037,6 +1248,157 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         durationInMs,
       })
     })
+  },
+  createClipOnTrack: async ({
+    track,
+    category,
+    startTimeInMs,
+    durationInMs,
+    label,
+    prompt,
+  }: {
+    track: number
+    category?: ClapSegmentCategory
+    startTimeInMs?: number
+    durationInMs?: number
+    label?: string
+    prompt?: string
+  }): Promise<void> => {
+    const {
+      tracks,
+      durationInMsPerStep,
+      defaultSegmentDurationInSteps,
+      createTrack,
+      setTrackCategory,
+      addSegment,
+    } = get()
+
+    if (!tracks[track]) {
+      createTrack({ track, category: category || ClapSegmentCategory.GENERIC })
+    }
+
+    const currentTrack = get().tracks[track]
+    const currentTrackCategory = getTrackCategory(currentTrack)
+    const trackCategory = currentTrack?.occupied
+      ? currentTrackCategory
+      : (category || currentTrackCategory)
+
+    if (!currentTrack?.occupied && category && currentTrackCategory !== category) {
+      setTrackCategory({ track, category })
+    }
+
+    const start = isValidNumber(startTimeInMs) ? startTimeInMs! : 0
+    const duration = isValidNumber(durationInMs)
+      ? durationInMs!
+      : defaultSegmentDurationInSteps * durationInMsPerStep
+
+    await addSegment({
+      track,
+      startTimeInMs: start,
+      segment: newSegment({
+        track,
+        startTimeInMs: start,
+        endTimeInMs: start + duration,
+        assetDurationInMs: duration,
+        category: trackCategory,
+        outputType: getOutputTypeForCategory(trackCategory),
+        status: ClapSegmentStatus.TO_GENERATE,
+        assetSourceType: ClapAssetSource.EMPTY,
+        label: label || `New ${trackCategory.toLowerCase()} clip`,
+        prompt: prompt || "",
+        createdBy: "human",
+        editedBy: "human",
+      }) as TimelineSegment,
+    })
+  },
+  moveSegmentTo: async ({
+    segment,
+    startTimeInMs,
+    track,
+  }: {
+    segment: TimelineSegment
+    startTimeInMs?: number
+    track?: number
+  }): Promise<boolean> => {
+    const {
+      width,
+      height,
+      tracks,
+      segments,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs: previousDurationInMs,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+      allSegmentsChanged: previousAllSegmentsChanged,
+      defaultCellHeight,
+      defaultPreviewHeight,
+    } = get()
+
+    const nextTrack = isValidNumber(track) ? track! : segment.track
+    const nextTracks = ensureTracksThrough({
+      tracks,
+      track: nextTrack,
+      defaultCellHeight,
+      defaultPreviewHeight,
+    })
+
+    const trackCategory = getTrackCategory(nextTracks[nextTrack])
+    if (trackCategory !== segment.category) {
+      return false
+    }
+
+    const currentSegmentIndex = segments.findIndex(s => s.id === segment.id)
+    if (currentSegmentIndex < 0) {
+      return false
+    }
+
+    const currentSegment = segments[currentSegmentIndex]
+    const duration = currentSegment.endTimeInMs - currentSegment.startTimeInMs
+    const nextStartTimeInMs = isValidNumber(startTimeInMs)
+      ? Math.max(0, startTimeInMs!)
+      : currentSegment.startTimeInMs
+    const nextEndTimeInMs = nextStartTimeInMs + duration
+
+    const nextSegments = [...segments]
+    nextSegments[currentSegmentIndex] = {
+      ...currentSegment,
+      track: nextTrack,
+      startTimeInMs: nextStartTimeInMs,
+      endTimeInMs: nextEndTimeInMs,
+    }
+
+    const occupiedTrackIds = new Set(nextSegments.map(nextSegment => nextSegment.track))
+    for (let index = 0; index < nextTracks.length; index++) {
+      const trackModel = nextTracks[index]
+      if (!trackModel) {
+        continue
+      }
+      nextTracks[index] = {
+        ...trackModel,
+        occupied: occupiedTrackIds.has(trackModel.id),
+      }
+    }
+
+    const durationInMs = Math.max(previousDurationInMs, nextEndTimeInMs)
+
+    set({
+      segments: nextSegments,
+      durationInMs,
+      allSegmentsChanged: previousAllSegmentsChanged + 1,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks: nextTracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs,
+      }),
+    })
+
+    return true
   },
   findFreeTrack: ({
     startTimeInMs,

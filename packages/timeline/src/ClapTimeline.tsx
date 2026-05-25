@@ -1,6 +1,8 @@
+import { useCallback } from "react"
 import AutoSizer, { Size } from "react-virtualized-auto-sizer"
 import { Canvas } from "@react-three/fiber"
 import { Stats } from "@react-three/drei"
+import { ClapSegmentCategory } from "@aitube/clap"
 
 import {
   TimelineControls,
@@ -19,8 +21,140 @@ import {
 import { cn } from "./utils"
 import { TimelineCamera } from "./components/camera"
 import { useTimeline } from "./hooks"
-import { topBarTimeScaleHeight } from "./constants/themes"
-import { TimelineStore } from "./types"
+import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "./constants/themes"
+import { SegmentEditionStatus, TimelineStore } from "./types"
+
+const editableTrackCategories = [
+  ClapSegmentCategory.GENERIC,
+  ClapSegmentCategory.DIALOGUE,
+  ClapSegmentCategory.ACTION,
+  ClapSegmentCategory.IMAGE,
+  ClapSegmentCategory.VIDEO,
+  ClapSegmentCategory.MUSIC,
+  ClapSegmentCategory.SOUND,
+  ClapSegmentCategory.INTERFACE,
+  ClapSegmentCategory.TRANSITION,
+  ClapSegmentCategory.EVENT,
+]
+
+function TrackControlsOverlay() {
+  const tracks = useTimeline(s => s.tracks)
+  const createTrack = useTimeline(s => s.createTrack)
+  const setTrackCategory = useTimeline(s => s.setTrackCategory)
+  const createClipOnTrack = useTimeline(s => s.createClipOnTrack)
+
+  return (
+    <div
+      aria-label="Track controls"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "4px",
+        left: "8px",
+        maxWidth: `${leftBarTrackScaleWidth - 16}px`,
+        position: "absolute",
+        top: `${topBarTimeScaleHeight + 8}px`,
+        zIndex: 20,
+      }}
+    >
+      {tracks.map(track => (
+        <div
+          key={track.id}
+          style={{
+            alignItems: "center",
+            background: "rgba(17, 24, 39, 0.86)",
+            border: "1px solid rgba(255, 255, 255, 0.16)",
+            borderRadius: "4px",
+            display: "grid",
+            gap: "4px",
+            gridTemplateColumns: "20px minmax(0, 1fr)",
+            padding: "4px",
+          }}
+        >
+          <span
+            style={{
+              color: "#f9fafb",
+              fontSize: "11px",
+              fontWeight: 700,
+              lineHeight: "24px",
+              textAlign: "center",
+            }}
+          >
+            {track.id}
+          </span>
+          <select
+            aria-label={`Track ${track.id} type`}
+            value={track.category || ClapSegmentCategory.GENERIC}
+            disabled={track.occupied}
+            onChange={(event) => {
+              setTrackCategory({
+                track: track.id,
+                category: event.target.value as ClapSegmentCategory,
+              })
+            }}
+            style={{
+              background: "#111827",
+              border: "1px solid rgba(255,255,255,0.22)",
+              borderRadius: "4px",
+              color: "#f9fafb",
+              fontSize: "11px",
+              height: "24px",
+              minWidth: 0,
+            }}
+          >
+            {editableTrackCategories.map(category => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={() => {
+              createClipOnTrack({
+                track: track.id,
+                category: track.category || ClapSegmentCategory.GENERIC,
+              })
+            }}
+            style={{
+              background: "#f9fafb",
+              border: "1px solid rgba(17,24,39,0.2)",
+              borderRadius: "4px",
+              color: "#111827",
+              cursor: "pointer",
+              fontSize: "11px",
+              gridColumn: "1 / -1",
+              height: "24px",
+            }}
+          >
+            + Clip
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={() => {
+          createTrack({
+            track: tracks.length,
+            category: ClapSegmentCategory.GENERIC,
+          })
+        }}
+        style={{
+          background: "#f9fafb",
+          border: "1px solid rgba(17,24,39,0.2)",
+          borderRadius: "4px",
+          color: "#111827",
+          cursor: "pointer",
+          fontSize: "12px",
+          fontWeight: 700,
+          height: "28px",
+        }}
+      >
+        + Track
+      </button>
+    </div>
+  )
+}
 
 export function ClapTimeline({
   clap,
@@ -67,14 +201,59 @@ export function ClapTimeline({
     useTimeline.setState({ isReady: true })
   }
 
+  const handleCanvasRef = useCallback((canvas: HTMLCanvasElement | null) => {
+    if (!canvas) {
+      return
+    }
+
+    setCanvas(canvas)
+  }, [setCanvas])
+
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) => {
     const timeline: TimelineStore = useTimeline.getState()
-    const { editedSegment } = timeline
+    const {
+      canvas,
+      cellWidth,
+      durationInMsPerStep,
+      editedSegment,
+      getCellHeight,
+      moveSegmentTo,
+      scrollX,
+      scrollY,
+      tracks,
+    } = timeline
 
     // do something based on the current status of the edited segment
     // for instance if the edited segment is being grabbed,
     // we are going to want to display the segments that are around it
     // console.log(`TODO @julian: implement edit here`)
+    if (editedSegment?.editionStatus === SegmentEditionStatus.DRAGGING && canvas) {
+      const pointer = "touches" in event ? event.touches[0] : event
+      const rect = canvas.getBoundingClientRect()
+      const pointerX = pointer.clientX - rect.left
+      const pointerY = pointer.clientY - rect.top
+      const nextStartTimeInMs = Math.max(
+        0,
+        ((pointerX - leftBarTrackScaleWidth + scrollX) / cellWidth) * durationInMsPerStep
+      )
+
+      let nextTrack = editedSegment.track
+      let verticalCursor = Math.max(0, pointerY - topBarTimeScaleHeight + scrollY)
+      for (const track of tracks) {
+        const cellHeight = getCellHeight(track.id)
+        if (verticalCursor <= cellHeight) {
+          nextTrack = track.id
+          break
+        }
+        verticalCursor -= cellHeight
+      }
+
+      moveSegmentTo({
+        segment: editedSegment,
+        startTimeInMs: nextStartTimeInMs,
+        track: nextTrack,
+      })
+    }
     
     // since we are un frameloop="demand" mode, we need to manual invalidate the scene
     invalidate()
@@ -112,8 +291,10 @@ export function ClapTimeline({
     <div
       className={cn(`w-full h-full`, className)}
       style={{
-        backgroundColor: theme.grid.backgroundColor
+        backgroundColor: theme.grid.backgroundColor,
+        position: "relative",
       }}>
+      <TrackControlsOverlay />
       <AutoSizer style={{
         height: "100%", // <-- mandatory otherwise the timeline won't show up
         width: "100%" // <-- mandatory otherwise the horizontal scroller won't show up
@@ -123,9 +304,7 @@ export function ClapTimeline({
         <div className="flex flex-grow flex-col w-full h-full">
           <HorizontalScroller />
           <Canvas
-            ref={(canvas) => {
-              setCanvas(canvas || undefined)
-            }}
+            ref={handleCanvasRef}
             id="clap-timeline"
 
             // must be active when playing back a video

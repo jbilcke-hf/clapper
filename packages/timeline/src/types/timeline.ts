@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapSegmentCategory, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -327,6 +327,14 @@ export type TimelineStoreModifiers = {
   setScrollX: (scrollX: number) => void
   handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number; deltaY: number }) => void
   toggleTrackVisibility: (trackId: number) => void
+  createTrack: (params?: {
+    track?: number
+    category?: ClapSegmentCategory
+  }) => number
+  setTrackCategory: (params: {
+    track: number
+    category: ClapSegmentCategory
+  }) => void
   setContainerSize: ({ width, height }: { width: number; height: number }) => void
   setTimelineCursor: (timelineCursor?: TimelineCursorImpl) => void
   setIsDraggingCursor: (isDraggingCursor: boolean) => void
@@ -378,6 +386,19 @@ export type TimelineStoreModifiers = {
     startTimeInMs?: number
     track?: number
 }) => Promise<void>
+  createClipOnTrack: (params: {
+    track: number
+    category?: ClapSegmentCategory
+    startTimeInMs?: number
+    durationInMs?: number
+    label?: string
+    prompt?: string
+  }) => Promise<void>
+  moveSegmentTo: (params: {
+    segment: TimelineSegment
+    startTimeInMs?: number
+    track?: number
+  }) => Promise<boolean>
 
   /**
    * Find an available free track
