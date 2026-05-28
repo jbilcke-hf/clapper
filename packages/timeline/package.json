@@ -14,6 +14,7 @@
     "postbuild": "rimraf tsconfig.types.tsbuildinfo && bun run build:declaration",
     "publish": "npm publish --access public",
     "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build",
+    "test": "bun test",
     "dev": "vite",
     "serve": "vite preview"
   },
