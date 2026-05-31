@@ -1,4 +1,4 @@
-import { ClapMeta, newClap } from "@aitube/clap"
+import { ClapMeta, ClapSegmentCategory, newClap } from "@aitube/clap"
 
 import { DEFAULT_NB_TRACKS, pastel, PROMPT_STEP_HEIGHT_IN_PX } from "@/constants"
 import { TimelineStorePreferencesState, TimelineStoreProjectState, TimelineStoreState } from "@/types/timeline"
@@ -67,6 +67,9 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     
     cursorTimestampAtInMs: 0,
     isDraggingCursor: false,
+    selectedTrackId: undefined,
+    selectedTrackCategory: ClapSegmentCategory.VIDEO,
+    timelineDrag: undefined,
   }
 }
 

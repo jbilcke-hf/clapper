@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
+import { ClapAssetSource, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler, Invalidate } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
@@ -13,6 +13,15 @@ import { TimelineCameraImpl } from "@/components/camera/types"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 import { topBarTimeScaleHeight } from "@/constants/themes"
+import {
+  findNextAvailableStartTime,
+  getTrackAtPointY,
+  getTrackCategory,
+  hasTrackOverlap,
+  isPreviewCategory,
+  outputTypeForCategory,
+  snapTimeToStep,
+} from "@/utils/timelineAuthoring"
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -554,7 +563,19 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         }, null, 2))
       */
 
-      const { cellWidth, containerWidth, durationInMsPerStep, setSelectedSegment, setHoveredSegment, setEditedSegment } = get()
+      const {
+        cellWidth,
+        containerWidth,
+        durationInMsPerStep,
+        setSelectedSegment,
+        setHoveredSegment,
+        setEditedSegment,
+        setSelectedTrack,
+        startSegmentDrag,
+        updateSegmentDrag,
+        finishSegmentDrag,
+        timelineDrag,
+      } = get()
 
       const durationInSteps = (
         (segment.endTimeInMs - segment.startTimeInMs) / durationInMsPerStep
@@ -616,15 +637,22 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           segment,
           status: SegmentEditionStatus.EDITING
         })
-      } else if (
-        eventType === SegmentPointerEvent.CLICK ||
-        eventType === SegmentPointerEvent.DOWN ||
-        eventType === SegmentPointerEvent.MOVE
-      ) {
+      } else if (eventType === SegmentPointerEvent.CLICK) {
         setHoveredSegment({
           segment,
           area
         })
+        setSelectedSegment({
+          segment,
+          onlyOneSelectedAtOnce: true,
+        })
+        setSelectedTrack(segment.track)
+      } else if (eventType === SegmentPointerEvent.DOWN) {
+        setHoveredSegment({
+          segment,
+          area
+        })
+        setSelectedTrack(segment.track)
         if (area === SegmentArea.LEFT) {
           setEditedSegment({
             segment,
@@ -637,8 +665,31 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           })
         } else if (area === SegmentArea.MIDDLE) {
           setEditedSegment({
-          segment,
+            segment,
             status: SegmentEditionStatus.DRAGGING
+          })
+          startSegmentDrag({
+            segment,
+            pointX,
+            pointY: event.point.y,
+          })
+          const pointerId = (event as unknown as { pointerId?: number }).pointerId
+          const pointerTarget = event.target as unknown as { setPointerCapture?: (pointerId: number) => void }
+          if (typeof pointerId === "number") {
+            pointerTarget.setPointerCapture?.(pointerId)
+          }
+        }
+      } else if (eventType === SegmentPointerEvent.MOVE) {
+        if (timelineDrag?.segmentId === segment.id) {
+          updateSegmentDrag({
+            segment,
+            pointX,
+            pointY: event.point.y,
+          })
+        } else {
+          setHoveredSegment({
+            segment,
+            area
           })
         }
       } else if (eventType === SegmentPointerEvent.UP) {
@@ -649,6 +700,12 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         setEditedSegment({
           segment: undefined,
         })
+        finishSegmentDrag()
+        const pointerId = (event as unknown as { pointerId?: number }).pointerId
+        const pointerTarget = event.target as unknown as { releasePointerCapture?: (pointerId: number) => void }
+        if (typeof pointerId === "number") {
+          pointerTarget.releasePointerCapture?.(pointerId)
+        }
       }
 
       event.stopPropagation()
@@ -729,6 +786,415 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         durationInMs,
       })
     })
+  },
+  setSelectedTrack: (selectedTrackId?: number) => {
+    set({ selectedTrackId })
+  },
+  setSelectedTrackCategory: (selectedTrackCategory: ClapSegmentCategory) => {
+    set({ selectedTrackCategory })
+  },
+  createTrack: (requestedCategory?: ClapSegmentCategory): number => {
+    const {
+      width,
+      height,
+      tracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs,
+      defaultPreviewHeight,
+      defaultCellHeight,
+      selectedTrackCategory,
+    } = get()
+
+    const category = requestedCategory || selectedTrackCategory
+    const trackId = tracks.reduce((max, track) => Math.max(max, track?.id ?? -1), -1) + 1
+    const isPreview = isPreviewCategory(category)
+    const nextTracks = [...tracks]
+
+    nextTracks[trackId] = {
+      id: trackId,
+      name: category,
+      isPreview,
+      height: isPreview ? defaultPreviewHeight : defaultCellHeight,
+      hue: 0,
+      occupied: false,
+      visible: true,
+    }
+
+    set({
+      selectedTrackId: trackId,
+      selectedTrackCategory: category,
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks: nextTracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs,
+      })
+    })
+
+    return trackId
+  },
+  setTrackCategory: (trackId: number, category: ClapSegmentCategory): boolean => {
+    const {
+      width,
+      height,
+      tracks,
+      segments,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs,
+      defaultPreviewHeight,
+      defaultCellHeight,
+    } = get()
+    const track = tracks[trackId]
+
+    if (!track) {
+      return false
+    }
+
+    const trackSegments = segments.filter(segment => segment.track === trackId)
+    if (trackSegments.some(segment => segment.category !== category)) {
+      return false
+    }
+
+    const isPreview = isPreviewCategory(category)
+    const nextTracks = [...tracks]
+    nextTracks[trackId] = {
+      ...track,
+      name: category,
+      isPreview,
+      height: isPreview ? defaultPreviewHeight : defaultCellHeight,
+      occupied: track.occupied || trackSegments.length > 0,
+    }
+
+    set({
+      selectedTrackId: trackId,
+      selectedTrackCategory: category,
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks: nextTracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs,
+      })
+    })
+
+    return true
+  },
+  createClipOnTrack: async ({
+    trackId: requestedTrackId,
+    category: requestedCategory,
+    startTimeInMs: requestedStartTimeInMs,
+    durationInMs: requestedDurationInMs,
+  }: {
+    trackId?: number
+    category?: ClapSegmentCategory
+    startTimeInMs?: number
+    durationInMs?: number
+  } = {}): Promise<TimelineSegment | undefined> => {
+    const {
+      addSegment,
+      createTrack,
+      cursorTimestampAtInMs,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      selectedTrackCategory,
+      selectedTrackId,
+      segments,
+      setTrackCategory,
+      tracks,
+    } = get()
+
+    const category = requestedCategory || selectedTrackCategory
+    const trackId = typeof requestedTrackId === "number"
+      ? requestedTrackId
+      : typeof selectedTrackId === "number"
+      ? selectedTrackId
+      : createTrack(category)
+    const track = tracks[trackId] || get().tracks[trackId]
+
+    if (!track) {
+      return undefined
+    }
+
+    const trackCategory = getTrackCategory(track)
+    const trackSegments = segments.filter(segment => segment.track === trackId)
+    if (trackCategory && trackCategory !== category) {
+      return undefined
+    }
+    if (!trackCategory && trackSegments.length && trackSegments.some(segment => segment.category !== category)) {
+      return undefined
+    }
+    if (!trackCategory && !setTrackCategory(trackId, category)) {
+      return undefined
+    }
+
+    const durationInMs = Math.max(
+      durationInMsPerStep,
+      requestedDurationInMs || defaultSegmentDurationInSteps * durationInMsPerStep
+    )
+    const initialStartTimeInMs = snapTimeToStep(
+      typeof requestedStartTimeInMs === "number" ? requestedStartTimeInMs : cursorTimestampAtInMs,
+      durationInMsPerStep
+    )
+    const startTimeInMs = findNextAvailableStartTime({
+      segments,
+      track: trackId,
+      startTimeInMs: initialStartTimeInMs,
+      durationInMs,
+    })
+    const createdAt = new Date().toISOString()
+    const segment: TimelineSegment = {
+      id: globalThis.crypto?.randomUUID?.() || `segment-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      parentId: "",
+      childrenIds: [],
+      track: trackId,
+      startTimeInMs,
+      endTimeInMs: startTimeInMs + durationInMs,
+      category,
+      entityId: "",
+      workflowId: "",
+      sceneId: "",
+      startTimeInLines: 0,
+      endTimeInLines: 0,
+      prompt: `New ${category.toLowerCase()} clip`,
+      label: `New ${category}`,
+      outputType: outputTypeForCategory(category),
+      renderId: "",
+      status: ClapSegmentStatus.TO_GENERATE,
+      assetUrl: "",
+      assetDurationInMs: durationInMs,
+      assetSourceType: ClapAssetSource.EMPTY,
+      assetFileFormat: "",
+      createdAt,
+      createdBy: "user",
+      revision: 0,
+      editedBy: "user",
+      outputGain: 1,
+      seed: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+      visibility: SegmentVisibility.VISIBLE,
+      textures: {},
+      colors: {
+        baseHue: 0,
+        baseSaturation: 0,
+        baseLightness: 0,
+        backgroundColor: "",
+        backgroundColorHover: "",
+        backgroundColorDisabled: "",
+        foregroundColor: "",
+        borderColor: "",
+        textColor: "",
+        textColorHover: "",
+        waveformLineSpacing: 0,
+        waveformGradientStart: 0,
+        waveformGradientEnd: 0,
+      },
+      isSelected: false,
+      isHovered: false,
+      isHoveredOnBody: false,
+      isHoveredOnLeftHandle: false,
+      isHoveredOnRightHandle: false,
+      isGrabbedOnBody: false,
+      isGrabbedOnLeftHandle: false,
+      isGrabbedOnRightHandle: false,
+      isActive: false,
+      isPlaying: false,
+      editionStatus: SegmentEditionStatus.EDITABLE,
+    }
+
+    await addSegment({
+      segment,
+      startTimeInMs,
+      track: trackId,
+    })
+
+    return segment
+  },
+  moveSegment: ({
+    segment,
+    track: requestedTrack,
+    startTimeInMs: requestedStartTimeInMs,
+  }: {
+    segment: TimelineSegment
+    track?: number
+    startTimeInMs?: number
+  }): boolean => {
+    const {
+      width,
+      height,
+      tracks,
+      segments,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs: previousDurationInMs,
+      defaultPreviewHeight,
+      defaultCellHeight,
+      allSegmentsChanged,
+      atLeastOneSegmentChanged,
+      silentChangesInSegment,
+    } = get()
+
+    const targetTrackId = typeof requestedTrack === "number" ? requestedTrack : segment.track
+    const targetTrack = tracks[targetTrackId]
+    if (!targetTrack) {
+      return false
+    }
+
+    const isSameTrack = targetTrackId === segment.track
+    const targetCategory = getTrackCategory(targetTrack)
+    const targetTrackSegments = segments.filter(candidate => candidate.track === targetTrackId && candidate.id !== segment.id)
+    if (!isSameTrack && targetCategory && targetCategory !== segment.category) {
+      return false
+    }
+    if (
+      !isSameTrack &&
+      !targetCategory &&
+      targetTrackSegments.length &&
+      targetTrackSegments.some(candidate => candidate.category !== segment.category)
+    ) {
+      return false
+    }
+
+    const durationInMs = segment.endTimeInMs - segment.startTimeInMs
+    const startTimeInMs = snapTimeToStep(
+      typeof requestedStartTimeInMs === "number" ? requestedStartTimeInMs : segment.startTimeInMs,
+      durationInMsPerStep
+    )
+    const endTimeInMs = startTimeInMs + durationInMs
+
+    if (hasTrackOverlap({
+      segments,
+      track: targetTrackId,
+      startTimeInMs,
+      endTimeInMs,
+      excludeSegmentId: segment.id,
+    })) {
+      return false
+    }
+
+    const nextTracks = [...tracks]
+    if (!targetCategory && targetTrackSegments.length === 0) {
+      const isPreview = isPreviewCategory(segment.category)
+      nextTracks[targetTrackId] = {
+        ...targetTrack,
+        name: segment.category,
+        isPreview,
+        height: isPreview ? defaultPreviewHeight : defaultCellHeight,
+        occupied: true,
+      }
+    } else if (!targetTrack.occupied) {
+      nextTracks[targetTrackId] = {
+        ...targetTrack,
+        occupied: true,
+      }
+    }
+
+    const previousTrack = nextTracks[segment.track]
+    segment.track = targetTrackId
+    segment.startTimeInMs = startTimeInMs
+    segment.endTimeInMs = endTimeInMs
+    silentChangesInSegment[segment.id] = 1 + (silentChangesInSegment[segment.id] || 0)
+
+    if (previousTrack && previousTrack.id !== targetTrackId) {
+      const previousStillOccupied = segments.some(candidate => (
+        candidate.id !== segment.id && candidate.track === previousTrack.id
+      ))
+      nextTracks[previousTrack.id] = {
+        ...previousTrack,
+        occupied: previousStillOccupied,
+      }
+    }
+
+    const durationInMsAfterMove = Math.max(previousDurationInMs, endTimeInMs)
+
+    set({
+      segments,
+      loadedSegments: [],
+      silentChangesInSegment,
+      durationInMs: durationInMsAfterMove,
+      selectedTrackId: targetTrackId,
+      selectedTrackCategory: segment.category,
+      allSegmentsChanged: allSegmentsChanged + 1,
+      atLeastOneSegmentChanged: atLeastOneSegmentChanged + 1,
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks: nextTracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs: durationInMsAfterMove,
+      })
+    })
+
+    return true
+  },
+  startSegmentDrag: ({
+    segment,
+    pointX,
+    pointY,
+  }: {
+    segment: TimelineSegment
+    pointX: number
+    pointY: number
+  }) => {
+    set({
+      timelineDrag: {
+        segmentId: segment.id,
+        pointX,
+        pointY,
+        startTimeInMs: segment.startTimeInMs,
+        endTimeInMs: segment.endTimeInMs,
+        track: segment.track,
+      }
+    })
+  },
+  updateSegmentDrag: ({
+    segment,
+    pointX,
+    pointY,
+  }: {
+    segment: TimelineSegment
+    pointX: number
+    pointY: number
+  }) => {
+    const {
+      timelineDrag,
+      cellWidth,
+      durationInMsPerStep,
+      tracks,
+      defaultCellHeight,
+      moveSegment,
+    } = get()
+
+    if (!timelineDrag || timelineDrag.segmentId !== segment.id || cellWidth <= 0) {
+      return
+    }
+
+    const deltaInSteps = Math.round((pointX - timelineDrag.pointX) / cellWidth)
+    const startTimeInMs = timelineDrag.startTimeInMs + (deltaInSteps * durationInMsPerStep)
+    const track = getTrackAtPointY({
+      tracks,
+      pointY,
+      defaultCellHeight,
+    }) ?? timelineDrag.track
+
+    moveSegment({
+      segment,
+      track,
+      startTimeInMs,
+    })
+  },
+  finishSegmentDrag: () => {
+    set({ timelineDrag: undefined })
   },
   setContainerSize: ({ width, height }: { width: number; height: number }) => {
     const { containerWidth: previousWidth, containerHeight: previousHeight } = get()
@@ -899,8 +1365,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     segment.track = track
    
-    let nbTracks = tracks.length
-
     // add the track if it is missing
     if (!tracks[segment.track]) {
       const isPreview =
@@ -919,6 +1383,24 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         hue: 0,
         occupied: true,
         visible: true,
+      }
+    } else if (!tracks[segment.track].occupied) {
+      const track = tracks[segment.track]
+      const category = getTrackCategory(track)
+      const isPreview =
+        segment.category === ClapSegmentCategory.IMAGE ||
+        segment.category === ClapSegmentCategory.VIDEO
+
+      tracks[segment.track] = {
+        ...track,
+        name: category || `${segment.category}`,
+        isPreview: category ? track.isPreview : isPreview,
+        height: category
+          ? track.height
+          : isPreview
+          ? defaultPreviewHeight
+          : defaultCellHeight,
+        occupied: true,
       }
     }
 
@@ -972,6 +1454,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     const startTimeInMs = isValidNumber(requestedStartTimeInMs) ? requestedStartTimeInMs! : segment.startTimeInMs
 
     const endTimeInMs = startTimeInMs + segmentDuration
+    segment.startTimeInMs = startTimeInMs
+    segment.endTimeInMs = endTimeInMs
 
     // for now let's do something simple: to always search for an available track
     const availableTrack = isValidNumber(requestedTrack) ? requestedTrack! : findFreeTrack({
