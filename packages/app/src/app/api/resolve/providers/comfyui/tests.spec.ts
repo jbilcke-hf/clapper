@@ -6,6 +6,17 @@ import {
 import { ComfyUIWorkflowApiGraph } from './graph'
 import { createPromptBuilder } from './createPromptBuilder'
 import { ClapperComfyUiInputIds } from './types'
+import {
+  configureComfyWorkflow,
+  getComfyOutputAssetPaths,
+  getComfyWorkflowCategoryForSegment,
+} from './runtime'
+import {
+  ClapSegmentCategory,
+  ClapWorkflowCategory,
+  ClapWorkflowEngine,
+  ClapWorkflowProvider,
+} from '@aitube/clap'
 
 // Default workflow used by ComfyUI, downloaded for API
 const workflowRaw = {
@@ -205,6 +216,13 @@ test('should return the correct output node', () => {
       title: 'Save Image',
     },
   })
+})
+
+test('should return the same output node across repeated reads', () => {
+  const workflow = new ComfyUIWorkflowApiGraph(workflowRaw)
+
+  expect(workflow.getOutputNode()?.id).toBe('9')
+  expect(workflow.getOutputNode()?.id).toBe('9')
 })
 
 test('should build the correct graph from the workflow', () => {
@@ -598,4 +616,114 @@ test('should fail if workflow has cycles', () => {
   }).toThrow(
     'The provided workflow has cycles, impossible to get the output node.'
   )
+})
+
+test('should map ComfyUI segment categories to workflow categories', () => {
+  expect(getComfyWorkflowCategoryForSegment(ClapSegmentCategory.IMAGE)).toBe(
+    ClapWorkflowCategory.IMAGE_GENERATION
+  )
+  expect(getComfyWorkflowCategoryForSegment(ClapSegmentCategory.VIDEO)).toBe(
+    ClapWorkflowCategory.VIDEO_GENERATION
+  )
+  expect(getComfyWorkflowCategoryForSegment(ClapSegmentCategory.SOUND)).toBe(
+    ClapWorkflowCategory.SOUND_GENERATION
+  )
+  expect(getComfyWorkflowCategoryForSegment(ClapSegmentCategory.MUSIC)).toBe(
+    ClapWorkflowCategory.MUSIC_GENERATION
+  )
+  expect(getComfyWorkflowCategoryForSegment(ClapSegmentCategory.DIALOGUE)).toBe(
+    ClapWorkflowCategory.VOICE_GENERATION
+  )
+})
+
+test('should inject category-specific audio prompts into ComfyUI workflows', () => {
+  const audioWorkflow = {
+    '1': {
+      inputs: {
+        prompt: 'old prompt',
+        negative_prompt: 'old negative',
+        seed: 1,
+      },
+      class_type: 'AudioPrompt',
+      _meta: {
+        title: 'Audio Prompt',
+      },
+    },
+    '2': {
+      inputs: {
+        audio: ['1', 0],
+        filename_prefix: 'Clapper',
+      },
+      class_type: 'SaveAudio',
+      _meta: {
+        title: 'Save Audio',
+      },
+    },
+  }
+
+  const configured = configureComfyWorkflow({
+    segment: {
+      category: ClapSegmentCategory.SOUND,
+      prompt: 'fallback sound prompt',
+    },
+    meta: {},
+    prompts: {
+      image: { positive: '', negative: '', identity: '' },
+      video: { image: '', voice: '' },
+      voice: { positive: '', negative: '', identity: '' },
+      audio: {
+        positive: 'waves in a cave',
+        negative: 'distortion',
+      },
+      music: { positive: '', negative: '' },
+    },
+    settings: {
+      soundGenerationWorkflow: {
+        id: 'comfyui://settings.comfyWorkflowForSound',
+        label: 'Custom Sound Workflow',
+        description: '',
+        tags: [],
+        author: '',
+        thumbnailUrl: '',
+        nonCommercial: false,
+        engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
+        provider: ClapWorkflowProvider.COMFYUI,
+        category: ClapWorkflowCategory.SOUND_GENERATION,
+        data: JSON.stringify(audioWorkflow),
+        schema: '',
+        inputFields: [],
+        inputValues: {},
+      },
+    },
+  } as any)
+
+  const workflowJson = configured.workflowGraph.toJson()
+
+  expect(workflowJson['1'].inputs.prompt).toBe('waves in a cave')
+  expect(workflowJson['1'].inputs.negative_prompt).toBe('distortion')
+  expect(typeof workflowJson['1'].inputs.seed).toBe('number')
+  expect(configured.outputNodeId).toBe('2')
+})
+
+test('should extract image, video, audio, and generic file outputs', () => {
+  const outputPaths = getComfyOutputAssetPaths(
+    {
+      '@clapper/output': {
+        images: [{ filename: 'image.png', subfolder: '', type: 'output' }],
+        videos: [{ filename: 'clip.mp4', subfolder: '', type: 'output' }],
+        audio: [{ filename: 'voice.wav', subfolder: '', type: 'output' }],
+        files: [{ url: 'https://example.com/result.bin' }],
+      },
+    },
+    {
+      toLocalPath: (asset) => `/view/${asset.filename}`,
+    }
+  )
+
+  expect(outputPaths).toEqual([
+    '/view/image.png',
+    '/view/clip.mp4',
+    '/view/voice.wav',
+    'https://example.com/result.bin',
+  ])
 })

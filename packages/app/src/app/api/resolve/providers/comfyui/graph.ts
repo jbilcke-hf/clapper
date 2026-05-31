@@ -243,7 +243,8 @@ export class ComfyUIWorkflowApiGraph {
    * TODO: multiple outputs.
    */
   getOutputNode(): NodeData | null {
-    const { adjList, inDegree } = this
+    const adjList = this.adjList
+    const inDegree = { ...this.inDegree }
     const queue: string[] = []
     const sortedOrder: string[] = []
 

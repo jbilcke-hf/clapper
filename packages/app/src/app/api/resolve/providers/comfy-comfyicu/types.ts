@@ -16,6 +16,15 @@ export type ComfyIcuApiResponseWorkflowStatus = {
   device?: string
 }
 
+export type ComfyIcuApiRunResponse = {
+  id?: string
+  run_id?: string
+  status?: string
+  message?: string
+  error?: string
+  output?: ComfyIcuWorkflowOutput[]
+}
+
 export type ComfyIcuWorkflowOutput = {
   filename: string
   url: string

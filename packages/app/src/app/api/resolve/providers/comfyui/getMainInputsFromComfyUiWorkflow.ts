@@ -7,11 +7,13 @@ import {
 import unionBy from 'lodash/unionBy'
 
 import {
+  findAudioInputsFromWorkflow,
   findHeightInputsFromWorkflow,
   findImageInputsFromWorkflow,
   findNegativePromptInputsFromWorkflow,
   findPromptInputsFromWorkflow,
   findSeedInputsFromWorkflow,
+  findVideoInputsFromWorkflow,
   findWidthInputsFromWorkflow,
   MainClapWorkflowInputsLabels,
 } from './utils'
@@ -44,19 +46,26 @@ export function getMainInputsFromComfyUiWorkflow(
   const heightNodeInputs = findHeightInputsFromWorkflow(workflowGraph)
   const seedNodeInputs = findSeedInputsFromWorkflow(workflowGraph)
   const imageNodeInputs = findImageInputsFromWorkflow(workflowGraph)
+  const audioNodeInputs = findAudioInputsFromWorkflow(workflowGraph)
+  const videoNodeInputs = findVideoInputsFromWorkflow(workflowGraph)
   const outputNode = workflowGraph.getOutputNode()
 
+  const promptNodeInput = promptNodeInputs?.[0] || textInputs?.[0]
+  const negativePromptNodeInput =
+    negativePromptNodeInputs?.[0] ||
+    textInputs.find((input) => /negative/i.test(input.name))
+
   const inputValues = {
-    [ClapperComfyUiInputIds.PROMPT]: promptNodeInputs?.[0]
+    [ClapperComfyUiInputIds.PROMPT]: promptNodeInput
       ? {
-          id: promptNodeInputs?.[0].id,
-          label: `${promptNodeInputs?.[0].id} (from node ${promptNodeInputs?.[0].node.id})`,
+          id: promptNodeInput.id,
+          label: `${promptNodeInput.id} (from node ${promptNodeInput.node.id})`,
         }
       : undefined,
-    [ClapperComfyUiInputIds.NEGATIVE_PROMPT]: negativePromptNodeInputs?.[0]
+    [ClapperComfyUiInputIds.NEGATIVE_PROMPT]: negativePromptNodeInput
       ? {
-          id: negativePromptNodeInputs?.[0].id,
-          label: `${negativePromptNodeInputs?.[0].id} (from node ${negativePromptNodeInputs?.[0].node.id})`,
+          id: negativePromptNodeInput.id,
+          label: `${negativePromptNodeInput.id} (from node ${negativePromptNodeInput.node.id})`,
         }
       : undefined,
     [ClapperComfyUiInputIds.WIDTH]: widthNodeInputs?.[0]
@@ -81,6 +90,18 @@ export function getMainInputsFromComfyUiWorkflow(
       ? {
           id: imageNodeInputs?.[0].id,
           label: `${imageNodeInputs?.[0].id} (from node ${imageNodeInputs?.[0].node.id})`,
+        }
+      : undefined,
+    [ClapperComfyUiInputIds.AUDIO]: audioNodeInputs?.[0]
+      ? {
+          id: audioNodeInputs?.[0].id,
+          label: `${audioNodeInputs?.[0].id} (from node ${audioNodeInputs?.[0].node.id})`,
+        }
+      : undefined,
+    [ClapperComfyUiInputIds.VIDEO]: videoNodeInputs?.[0]
+      ? {
+          id: videoNodeInputs?.[0].id,
+          label: `${videoNodeInputs?.[0].id} (from node ${videoNodeInputs?.[0].node.id})`,
         }
       : undefined,
     [ClapperComfyUiInputIds.OUTPUT]: outputNode
@@ -222,6 +243,44 @@ export function getMainInputsFromComfyUiWorkflow(
               `,
               type: 'info',
             },
+          },
+        })
+        return
+      }
+      case ClapperComfyUiInputIds.AUDIO: {
+        inputFields.push({
+          id: ClapperComfyUiInputIds.AUDIO,
+          label: MainClapWorkflowInputsLabels[ClapperComfyUiInputIds.AUDIO],
+          type: 'nodeInput' as any,
+          category: ClapInputCategory.SOUND_URL,
+          description:
+            'The node input where Clapper will set an audio or voice reference',
+          defaultValue: '',
+          metadata: {
+            options: getOptionsItems(audioNodeInputs),
+            tooltip: {
+              message: `
+                Clapper passes audio references as strings. Use a ComfyUI
+                string/base64 loader input rather than a browser file upload
+                input.
+              `,
+              type: 'info',
+            },
+          },
+        })
+        return
+      }
+      case ClapperComfyUiInputIds.VIDEO: {
+        inputFields.push({
+          id: ClapperComfyUiInputIds.VIDEO,
+          label: MainClapWorkflowInputsLabels[ClapperComfyUiInputIds.VIDEO],
+          type: 'nodeInput' as any,
+          category: ClapInputCategory.VIDEO_URL,
+          description:
+            'The node input where Clapper will set a video reference',
+          defaultValue: '',
+          metadata: {
+            options: getOptionsItems(videoNodeInputs),
           },
         })
         return
