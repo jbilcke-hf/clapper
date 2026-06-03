@@ -1,7 +1,9 @@
 import { ResolveRequest } from '@aitube/clapper-services'
 import {
   ClapAssetSource,
+  ClapInputField,
   ClapSegmentCategory,
+  ClapWorkflow,
   ClapWorkflowCategory,
   generateSeed,
 } from '@aitube/clap'
@@ -9,12 +11,15 @@ import { ClapInputValueObject } from '@aitube/clap/dist/types'
 
 import { TimelineSegment } from '@aitube/timeline'
 
-import { BasicCredentials, CallWrapper, ComfyApi } from '@saintno/comfyui-sdk'
-
-import { decodeOutput } from '@/lib/utils/decodeOutput'
 import { ClapperComfyUiInputIds } from './types'
-import { createPromptBuilder } from './createPromptBuilder'
 import { ComfyUIWorkflowApiGraph } from './graph'
+import {
+  ComfyUiClient,
+  extractComfyUiOutputAssets,
+  normalizeComfyUiPromptValue,
+} from './client'
+
+type MainInput = [ClapperComfyUiInputIds, unknown]
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -24,150 +29,242 @@ export async function resolveSegment(
   }
 
   const segment: TimelineSegment = { ...request.segment }
+  const clapWorkflow = getComfyWorkflowForSegment(request)
 
-  const credentials: BasicCredentials = {
-    type: 'basic',
-    username: request.settings.comfyUiHttpAuthLogin,
-    password: request.settings.comfyUiHttpAuthPassword,
+  if (!clapWorkflow?.data) {
+    throw new Error(`Missing ComfyUI workflow for ${request.segment.category}`)
   }
 
-  // for API doc please see:
-  // https://github.com/tctien342/comfyui-sdk/blob/main/examples/example-t2i.ts
-  const api = new ComfyApi(
-    request.settings.comfyUiApiUrl || 'http://localhost:8188',
-    request.settings.comfyUiClientId,
+  validateWorkflowBindings(clapWorkflow)
 
-    // HTTP Auth is optional
-    // also in the future, we might support other things (bearer tokens?)
-    request.settings.comfyUiHttpAuthLogin
-      ? {
-          credentials,
-        }
-      : undefined
-  ).init()
+  const client = new ComfyUiClient({
+    apiUrl: request.settings.comfyUiApiUrl || 'http://localhost:8188',
+    clientId: request.settings.comfyUiClientId,
+    credentials: {
+      username: request.settings.comfyUiHttpAuthLogin,
+      password: request.settings.comfyUiHttpAuthPassword,
+      bearerToken: request.settings.comfyUiApiKey,
+    },
+  })
 
-  if (
-    [ClapSegmentCategory.IMAGE, ClapSegmentCategory.VIDEO].includes(
-      request.segment.category
-    )
-  ) {
-    const clapWorkflow = {
-      [ClapSegmentCategory.IMAGE]: request.settings.imageGenerationWorkflow,
-      [ClapSegmentCategory.VIDEO]: request.settings.videoGenerationWorkflow,
-    }[request.segment.category]
+  const workflowGraph = ComfyUIWorkflowApiGraph.fromString(clapWorkflow.data)
 
-    if (
-      clapWorkflow.category === ClapWorkflowCategory.IMAGE_GENERATION &&
-      !clapWorkflow.inputValues[ClapperComfyUiInputIds.PROMPT]
-    ) {
-      throw new Error(
-        `This workflow doesn't seem to have an input required by Clapper (e.g. a node with an input called "prompt")`
-      )
-    }
+  applyWorkflowDefaults(workflowGraph, clapWorkflow)
+  await applyMainInputs({
+    workflowGraph,
+    clapWorkflow,
+    request,
+    client,
+  })
 
-    if (!clapWorkflow.inputValues[ClapperComfyUiInputIds.OUTPUT]) {
-      throw new Error(
-        `This workflow doesn't seem to have a node output required by Clapper (e.g. a 'Save Image' node)`
-      )
-    }
+  const result = await client.runPrompt(workflowGraph.toJson())
+  const outputNodeId = getMappedInputId(
+    clapWorkflow,
+    ClapperComfyUiInputIds.OUTPUT
+  )
+  const asset = extractComfyUiOutputAssets(result.history, outputNodeId).at(0)
 
-    const comfyApiWorkflowPromptBuilder = createPromptBuilder(
-      ComfyUIWorkflowApiGraph.fromString(clapWorkflow.data)
-    )
-
-    const { inputFields, inputValues } = clapWorkflow
-
-    inputFields.forEach((inputField) => {
-      comfyApiWorkflowPromptBuilder.input(
-        inputField.id,
-        inputValues[inputField.id]
-      )
-    })
-
-    const mainInputs = [
-      [ClapperComfyUiInputIds.PROMPT, request.prompts.image.positive],
-      [ClapperComfyUiInputIds.NEGATIVE_PROMPT, request.prompts.image.negative],
-      [ClapperComfyUiInputIds.WIDTH, request.meta.width],
-      [ClapperComfyUiInputIds.HEIGHT, request.meta.height],
-      [ClapperComfyUiInputIds.SEED, generateSeed()],
-      [
-        ClapperComfyUiInputIds.IMAGE,
-        request.prompts.video.image.split(';base64,')?.[1],
-      ],
-    ]
-
-    mainInputs.forEach((mainInput) => {
-      if (
-        inputValues[mainInput[0]]?.id &&
-        inputValues[mainInput[0]]?.id != ClapperComfyUiInputIds.NULL
-      ) {
-        comfyApiWorkflowPromptBuilder.input(
-          inputValues[mainInput[0]]?.id,
-          mainInput[1]
-        )
-      }
-    })
-
-    // Set output
-    comfyApiWorkflowPromptBuilder.setOutputNode(
-      ClapperComfyUiInputIds.OUTPUT,
-      (inputValues[ClapperComfyUiInputIds.OUTPUT] as ClapInputValueObject)
-        .id as string
-    )
-
-    const pipeline = new CallWrapper(api, comfyApiWorkflowPromptBuilder)
-      .onPending(() => console.log('Task is pending'))
-      .onStart(() => console.log('Task is started'))
-      .onPreview((blob) => console.log(blob))
-      .onFinished((data) => {
-        console.log('Pipeline finished')
-      })
-      .onProgress((info) =>
-        console.log('Processing node', info.node, `${info.value}/${info.max}`)
-      )
-      .onFailed((err) => console.log('Task is failed', err))
-
-    const rawOutput = await pipeline.run()
-
-    if (!rawOutput) {
-      throw new Error(`failed to run the pipeline (no output)`)
-    }
-
-    const getAssetPaths = (rawOutput) => {
-      if (clapWorkflow.category == ClapWorkflowCategory.VIDEO_GENERATION) {
-        return (
-          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.videos ||
-          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.gifs ||
-          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images
-        ).map((asset: any) => api.getPathImage(asset))
-      } else {
-        return rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images.map(
-          (img: any) => api.getPathImage(img)
-        )
-      }
-    }
-    const assetPaths = getAssetPaths(rawOutput)
-
-    console.log(`assetPaths:`, assetPaths)
-
-    const assetPath = assetPaths.at(0)
-    if (!assetPath) {
-      throw new Error(`failed to run the pipeline (no image)`)
-    }
-
-    // TODO: check what the imagePath looks like exactly
-    const assetUrl = await decodeOutput(assetPath)
-
-    console.log(`assetUrl:`, assetPath)
-    segment.assetUrl = assetUrl
-    segment.assetSourceType = ClapAssetSource.DATA
-
-    // TODO:
-  } else {
+  if (!asset) {
     throw new Error(
-      `Clapper doesn't support ${request.segment.category} generation for provider "ComfyUI". Please open a pull request with (working code) to solve this!`
+      `ComfyUI finished prompt ${result.promptId} without an output asset`
     )
   }
+
+  segment.assetUrl = await client.readAssetAsDataUri(asset)
+  segment.assetSourceType = ClapAssetSource.DATA
 
   return segment
+}
+
+function getComfyWorkflowForSegment(request: ResolveRequest): ClapWorkflow {
+  switch (request.segment.category) {
+    case ClapSegmentCategory.IMAGE:
+      return request.settings.imageGenerationWorkflow
+    case ClapSegmentCategory.VIDEO:
+      return request.settings.videoGenerationWorkflow
+    case ClapSegmentCategory.DIALOGUE:
+      return request.settings.voiceGenerationWorkflow
+    case ClapSegmentCategory.SOUND:
+      return request.settings.soundGenerationWorkflow
+    case ClapSegmentCategory.MUSIC:
+      return request.settings.musicGenerationWorkflow
+    default:
+      throw new Error(
+        `Clapper doesn't support ${request.segment.category} generation for provider "ComfyUI" yet.`
+      )
+  }
+}
+
+function validateWorkflowBindings(clapWorkflow: ClapWorkflow) {
+  if (!clapWorkflow.inputValues?.[ClapperComfyUiInputIds.OUTPUT]) {
+    throw new Error(
+      `This workflow doesn't seem to have an output node required by Clapper. Please map @clapper/output to the ComfyUI save/output node.`
+    )
+  }
+
+  const needsPrompt = [
+    ClapWorkflowCategory.IMAGE_GENERATION,
+    ClapWorkflowCategory.VOICE_GENERATION,
+    ClapWorkflowCategory.SOUND_GENERATION,
+    ClapWorkflowCategory.MUSIC_GENERATION,
+  ].includes(clapWorkflow.category)
+
+  if (
+    needsPrompt &&
+    !clapWorkflow.inputValues?.[ClapperComfyUiInputIds.PROMPT]
+  ) {
+    throw new Error(
+      `This workflow doesn't seem to have a prompt input required by Clapper. Please map @clapper/prompt to the ComfyUI prompt input.`
+    )
+  }
+}
+
+function applyWorkflowDefaults(
+  workflowGraph: ComfyUIWorkflowApiGraph,
+  clapWorkflow: ClapWorkflow
+) {
+  flattenInputFields(clapWorkflow.inputFields).forEach((inputField) => {
+    if (isClapperReservedInput(inputField.id)) return
+    const value = normalizeComfyUiPromptValue(
+      clapWorkflow.inputValues?.[inputField.id] ?? inputField.defaultValue
+    )
+    workflowGraph.setInputValue(inputField.id, value, { ignoreErrors: true })
+  })
+}
+
+function getMappedInputId(
+  clapWorkflow: ClapWorkflow,
+  inputId: ClapperComfyUiInputIds
+): string {
+  const mappedInput = clapWorkflow.inputValues?.[inputId]
+
+  if (typeof mappedInput === 'string') {
+    return mappedInput
+  }
+
+  if (mappedInput && typeof mappedInput === 'object' && 'id' in mappedInput) {
+    return `${mappedInput.id}`
+  }
+
+  return ''
+}
+
+async function applyMainInputs({
+  workflowGraph,
+  clapWorkflow,
+  request,
+  client,
+}: {
+  workflowGraph: ComfyUIWorkflowApiGraph
+  clapWorkflow: ClapWorkflow
+  request: ResolveRequest
+  client: ComfyUiClient
+}) {
+  const mainInputs = await getMainInputs(request, client)
+
+  for (const [mainInputId, value] of mainInputs) {
+    const mappedInput = clapWorkflow.inputValues?.[
+      mainInputId
+    ] as ClapInputValueObject
+
+    const mappedInputId =
+      typeof mappedInput?.id === 'string' ? mappedInput.id : ''
+
+    if (!mappedInputId || mappedInputId === ClapperComfyUiInputIds.NULL) {
+      continue
+    }
+
+    workflowGraph.setInputValue(mappedInputId, value, { ignoreErrors: true })
+  }
+}
+
+async function getMainInputs(
+  request: ResolveRequest,
+  client: ComfyUiClient
+): Promise<MainInput[]> {
+  const seed = generateSeed()
+  const shared: MainInput[] = [
+    [ClapperComfyUiInputIds.WIDTH, request.meta.width],
+    [ClapperComfyUiInputIds.HEIGHT, request.meta.height],
+    [ClapperComfyUiInputIds.SEED, seed],
+  ]
+
+  switch (request.segment.category) {
+    case ClapSegmentCategory.IMAGE:
+      return [
+        [ClapperComfyUiInputIds.PROMPT, request.prompts.image.positive],
+        [
+          ClapperComfyUiInputIds.NEGATIVE_PROMPT,
+          request.prompts.image.negative,
+        ],
+        ...shared,
+      ]
+    case ClapSegmentCategory.VIDEO: {
+      const image = await prepareImageInput(request.prompts.video.image, client)
+      return [
+        [ClapperComfyUiInputIds.PROMPT, request.prompts.image.positive],
+        [
+          ClapperComfyUiInputIds.NEGATIVE_PROMPT,
+          request.prompts.image.negative,
+        ],
+        [ClapperComfyUiInputIds.IMAGE, image],
+        ...shared,
+      ]
+    }
+    case ClapSegmentCategory.DIALOGUE:
+      return [
+        [ClapperComfyUiInputIds.PROMPT, request.prompts.voice.positive],
+        [
+          ClapperComfyUiInputIds.NEGATIVE_PROMPT,
+          request.prompts.voice.negative,
+        ],
+        ...shared,
+      ]
+    case ClapSegmentCategory.SOUND:
+      return [
+        [ClapperComfyUiInputIds.PROMPT, request.prompts.audio.positive],
+        [
+          ClapperComfyUiInputIds.NEGATIVE_PROMPT,
+          request.prompts.audio.negative,
+        ],
+        ...shared,
+      ]
+    case ClapSegmentCategory.MUSIC:
+      return [
+        [ClapperComfyUiInputIds.PROMPT, request.prompts.music.positive],
+        [
+          ClapperComfyUiInputIds.NEGATIVE_PROMPT,
+          request.prompts.music.negative,
+        ],
+        ...shared,
+      ]
+    default:
+      return shared
+  }
+}
+
+async function prepareImageInput(
+  image: string,
+  client: ComfyUiClient
+): Promise<string> {
+  if (!image) return ''
+  if (!image.startsWith('data:')) return image
+  return client.uploadImage({
+    dataUri: image,
+  })
+}
+
+function flattenInputFields(inputFields: ClapInputField[]): ClapInputField[] {
+  return inputFields.flatMap((inputField: any) => [
+    inputField,
+    ...(Array.isArray(inputField.inputFields)
+      ? flattenInputFields(inputField.inputFields)
+      : []),
+  ])
+}
+
+function isClapperReservedInput(inputId: string): boolean {
+  return Object.values(ClapperComfyUiInputIds).includes(
+    inputId as ClapperComfyUiInputIds
+  )
 }

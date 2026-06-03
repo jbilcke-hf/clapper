@@ -15,12 +15,16 @@ export function getTypeAndExtension(base64: string = ''): {
 
   outputType: ClapOutputType
 } {
-  if (!base64.startsWith('data:') || !base64.includes('base64,')) {
+  if (!base64.startsWith('data:')) {
     throw new Error('Invalid base64 data uri provided.')
   }
 
-  const base64Index = base64.indexOf('base64,')
-  const mimeType = base64.slice(5, base64Index - 1)
+  const header = base64.slice(0, 128)
+  const base64Index = header.indexOf(';base64,', 5)
+  if (base64Index === -1) {
+    throw new Error('Invalid base64 data uri provided.')
+  }
+  const mimeType = header.slice(5, base64Index)
 
   // this should be enough for most media formats (jpeg, png, webp, mp4)
   const [category, extension] = mimeType.split('/')

@@ -39,6 +39,13 @@ export const useSettings = create<SettingsStore>()(
           ),
         })
       },
+      setComfyUiApiKey: (comfyUiApiKey?: string) => {
+        const { comfyUiApiKey: defaultComfyUiApiKey } =
+          getDefaultSettingsState()
+        set({
+          comfyUiApiKey: getValidString(comfyUiApiKey, defaultComfyUiApiKey),
+        })
+      },
       setComfyUiHttpAuthLogin: (comfyUiHttpAuthLogin?: string) => {
         const { comfyUiHttpAuthLogin: defaultComfyUiHttpAuthLogin } =
           getDefaultSettingsState()
@@ -93,6 +100,16 @@ export const useSettings = create<SettingsStore>()(
           comfyDeployApiKey: getValidString(
             comfyDeployApiKey,
             defaultComfyDeployApiKey
+          ),
+        })
+      },
+      setComfyDeployDeploymentId: (comfyDeployDeploymentId?: string) => {
+        const { comfyDeployDeploymentId: defaultComfyDeployDeploymentId } =
+          getDefaultSettingsState()
+        set({
+          comfyDeployDeploymentId: getValidString(
+            comfyDeployDeploymentId,
+            defaultComfyDeployDeploymentId
           ),
         })
       },
@@ -922,6 +939,7 @@ export const useSettings = create<SettingsStore>()(
 
           comfyUiClientId:
             state.comfyUiClientId || defaultSettings.comfyUiClientId,
+          comfyUiApiKey: state.comfyUiApiKey || defaultSettings.comfyUiApiKey,
           comfyUiHttpAuthLogin:
             state.comfyUiHttpAuthLogin || defaultSettings.comfyUiHttpAuthLogin,
           comfyUiHttpAuthPassword:
@@ -935,6 +953,9 @@ export const useSettings = create<SettingsStore>()(
             state.comfyIcuAccelerator || defaultSettings.comfyIcuAccelerator,
           comfyDeployApiKey:
             state.comfyDeployApiKey || defaultSettings.comfyDeployApiKey,
+          comfyDeployDeploymentId:
+            state.comfyDeployDeploymentId ||
+            defaultSettings.comfyDeployDeploymentId,
 
           huggingFaceApiKey:
             state.huggingFaceApiKey || defaultSettings.huggingFaceApiKey,

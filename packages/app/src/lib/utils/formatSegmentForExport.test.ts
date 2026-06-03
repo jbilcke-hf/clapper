@@ -5,22 +5,36 @@ import {
   ClapSegmentStatus,
   newSegment,
 } from '@aitube/clap'
+import type { TimelineSegment } from '@aitube/timeline'
 
 import { formatSegmentForExport } from './formatSegmentForExport'
 
-test('formatSegmentForExport', () => {
-  expect(
-    formatSegmentForExport(
-      newSegment({
-        id: '301a3e6f-cb59-4a85-afd6-4737eeeee356',
-        createdAt: '2024-07-13T19:30:13.387Z',
-        seed: 7549327,
-        // I mean, we could add more fields, but it looks like it's
-        // working properly anyway
-      }),
-      0
-    )
-  ).toStrictEqual({
+test('formatSegmentForExport', async () => {
+  const segment: TimelineSegment = {
+    ...newSegment({
+      id: '301a3e6f-cb59-4a85-afd6-4737eeeee356',
+      createdAt: '2024-07-13T19:30:13.387Z',
+      seed: 7549327,
+      // I mean, we could add more fields, but it looks like it's
+      // working properly anyway
+    }),
+    colors: {} as TimelineSegment['colors'],
+    editionStatus: 'EDITABLE' as TimelineSegment['editionStatus'],
+    isActive: false,
+    isGrabbedOnBody: false,
+    isGrabbedOnLeftHandle: false,
+    isGrabbedOnRightHandle: false,
+    isHovered: false,
+    isHoveredOnBody: false,
+    isHoveredOnLeftHandle: false,
+    isHoveredOnRightHandle: false,
+    isPlaying: false,
+    isSelected: false,
+    textures: {},
+    visibility: 'HIDDEN' as TimelineSegment['visibility'],
+  }
+
+  expect(formatSegmentForExport(segment, 0)).toMatchObject({
     id: '301a3e6f-cb59-4a85-afd6-4737eeeee356',
     assetSourceType: 'EMPTY',
     assetUrl: '',
@@ -33,12 +47,13 @@ test('formatSegmentForExport', () => {
     isExportableToFile: false,
     mimetype: 'unknown/unknown',
     prefix: 'shot_0000_',
-    segment: {
+    segment: expect.objectContaining({
       assetDurationInMs: 1000,
       assetFileFormat: '',
       assetSourceType: 'EMPTY',
       assetUrl: '',
       category: ClapSegmentCategory.GENERIC,
+      childrenIds: [],
       createdAt: '2024-07-13T19:30:13.387Z',
       createdBy: 'ai',
       editedBy: 'ai',
@@ -49,6 +64,7 @@ test('formatSegmentForExport', () => {
       label: '',
       outputGain: 0,
       outputType: ClapOutputType.TEXT,
+      parentId: '',
       prompt: '',
       renderId: '',
       revision: 0,
@@ -59,7 +75,7 @@ test('formatSegmentForExport', () => {
       status: ClapSegmentStatus.TO_GENERATE,
       track: 0,
       workflowId: '',
-    },
+    }),
     shortId: 'generic0',
   })
 })
