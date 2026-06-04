@@ -1,4 +1,4 @@
-import { expect, test } from 'vitest'
+import { afterEach, expect, test, vi } from 'vitest'
 import {
   findNegativePromptInputsFromWorkflow,
   findPromptInputsFromWorkflow,
@@ -6,6 +6,25 @@ import {
 import { ComfyUIWorkflowApiGraph } from './graph'
 import { createPromptBuilder } from './createPromptBuilder'
 import { ClapperComfyUiInputIds } from './types'
+import {
+  configureComfyWorkflow,
+  getComfyOutputAssetPaths,
+  getComfyWorkflowCategoryForSegment,
+} from './runtime'
+import {
+  ClapSegmentCategory,
+  ClapWorkflowCategory,
+  ClapWorkflowEngine,
+  ClapWorkflowProvider,
+} from '@aitube/clap'
+import { resolveSegment as resolveComfyIcuSegment } from '../comfy-comfyicu'
+import { resolveSegment as resolveComfyDeploySegment } from '../comfy-comfydeploy'
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.useRealTimers()
+  vi.restoreAllMocks()
+})
 
 // Default workflow used by ComfyUI, downloaded for API
 const workflowRaw = {
@@ -205,6 +224,13 @@ test('should return the correct output node', () => {
       title: 'Save Image',
     },
   })
+})
+
+test('should return the same output node across repeated reads', () => {
+  const workflow = new ComfyUIWorkflowApiGraph(workflowRaw)
+
+  expect(workflow.getOutputNode()?.id).toBe('9')
+  expect(workflow.getOutputNode()?.id).toBe('9')
 })
 
 test('should build the correct graph from the workflow', () => {
@@ -599,3 +625,338 @@ test('should fail if workflow has cycles', () => {
     'The provided workflow has cycles, impossible to get the output node.'
   )
 })
+
+test('should map ComfyUI segment categories to workflow categories', () => {
+  expect(getComfyWorkflowCategoryForSegment(ClapSegmentCategory.IMAGE)).toBe(
+    ClapWorkflowCategory.IMAGE_GENERATION
+  )
+  expect(getComfyWorkflowCategoryForSegment(ClapSegmentCategory.VIDEO)).toBe(
+    ClapWorkflowCategory.VIDEO_GENERATION
+  )
+  expect(getComfyWorkflowCategoryForSegment(ClapSegmentCategory.SOUND)).toBe(
+    ClapWorkflowCategory.SOUND_GENERATION
+  )
+  expect(getComfyWorkflowCategoryForSegment(ClapSegmentCategory.MUSIC)).toBe(
+    ClapWorkflowCategory.MUSIC_GENERATION
+  )
+  expect(getComfyWorkflowCategoryForSegment(ClapSegmentCategory.DIALOGUE)).toBe(
+    ClapWorkflowCategory.VOICE_GENERATION
+  )
+})
+
+test('should inject category-specific audio prompts into ComfyUI workflows', () => {
+  const audioWorkflow = {
+    '1': {
+      inputs: {
+        prompt: 'old prompt',
+        negative_prompt: 'old negative',
+        seed: 1,
+      },
+      class_type: 'AudioPrompt',
+      _meta: {
+        title: 'Audio Prompt',
+      },
+    },
+    '2': {
+      inputs: {
+        audio: ['1', 0],
+        filename_prefix: 'Clapper',
+      },
+      class_type: 'SaveAudio',
+      _meta: {
+        title: 'Save Audio',
+      },
+    },
+  }
+
+  const configured = configureComfyWorkflow({
+    segment: {
+      category: ClapSegmentCategory.SOUND,
+      prompt: 'fallback sound prompt',
+    },
+    meta: {},
+    prompts: {
+      image: { positive: '', negative: '', identity: '' },
+      video: { image: '', voice: '' },
+      voice: { positive: '', negative: '', identity: '' },
+      audio: {
+        positive: 'waves in a cave',
+        negative: 'distortion',
+      },
+      music: { positive: '', negative: '' },
+    },
+    settings: {
+      soundGenerationWorkflow: {
+        id: 'comfyui://settings.comfyWorkflowForSound',
+        label: 'Custom Sound Workflow',
+        description: '',
+        tags: [],
+        author: '',
+        thumbnailUrl: '',
+        nonCommercial: false,
+        engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
+        provider: ClapWorkflowProvider.COMFYUI,
+        category: ClapWorkflowCategory.SOUND_GENERATION,
+        data: JSON.stringify(audioWorkflow),
+        schema: '',
+        inputFields: [],
+        inputValues: {},
+      },
+    },
+  } as any)
+
+  const workflowJson = configured.workflowGraph.toJson()
+
+  expect(workflowJson['1'].inputs.prompt).toBe('waves in a cave')
+  expect(workflowJson['1'].inputs.negative_prompt).toBe('distortion')
+  expect(typeof workflowJson['1'].inputs.seed).toBe('number')
+  expect(configured.outputNodeId).toBe('2')
+})
+
+test('should extract image, video, audio, and generic file outputs', () => {
+  const outputPaths = getComfyOutputAssetPaths(
+    {
+      '@clapper/output': {
+        images: [{ filename: 'image.png', subfolder: '', type: 'output' }],
+        videos: [{ filename: 'clip.mp4', subfolder: '', type: 'output' }],
+        audio: [{ filename: 'voice.wav', subfolder: '', type: 'output' }],
+        files: [{ url: 'https://example.com/result.bin' }],
+      },
+    },
+    {
+      toLocalPath: (asset) => `/view/${asset.filename}`,
+    }
+  )
+
+  expect(outputPaths).toEqual([
+    '/view/image.png',
+    '/view/clip.mp4',
+    '/view/voice.wav',
+    'https://example.com/result.bin',
+  ])
+})
+
+test('should surface invalid workflow data with ComfyUI context', () => {
+  expect(() =>
+    configureComfyWorkflow(
+      createImageResolveRequest({
+        imageGenerationWorkflow: createComfyWorkflow({
+          data: '{invalid json',
+        }),
+      })
+    )
+  ).toThrow(/Invalid ComfyUI workflow data/)
+})
+
+test('should submit and poll Comfy.icu runs with a configured prompt', async () => {
+  vi.useFakeTimers()
+
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValueOnce(
+      jsonResponse({
+        run_id: 'run-1',
+        status: 'queued',
+      })
+    )
+    .mockResolvedValueOnce(
+      jsonResponse({
+        id: 'run-1',
+        status: 'completed',
+        output: [
+          {
+            filename: 'result.png',
+            url: 'https://cdn.example.com/result.png',
+            thumbnail_url: 'https://cdn.example.com/result-thumb.png',
+          },
+        ],
+      })
+    )
+  vi.stubGlobal('fetch', fetchMock)
+
+  const segmentPromise = resolveComfyIcuSegment(
+    createImageResolveRequest({
+      comfyIcuApiKey: 'test-api-key',
+      imageGenerationWorkflow: createComfyWorkflow({
+        id: 'comfyicu://workflow-1',
+      }),
+    })
+  )
+
+  await Promise.resolve()
+  await Promise.resolve()
+  await vi.runOnlyPendingTimersAsync()
+
+  await expect(segmentPromise).resolves.toMatchObject({
+    assetUrl: 'https://cdn.example.com/result.png',
+  })
+
+  expect(fetchMock).toHaveBeenCalledTimes(2)
+  expect(fetchMock).toHaveBeenNthCalledWith(
+    1,
+    'https://comfy.icu/api/v1/workflows/workflow-1/runs',
+    expect.objectContaining({
+      method: 'POST',
+      headers: expect.objectContaining({
+        authorization: 'Bearer test-api-key',
+      }),
+    })
+  )
+  expect(fetchMock).toHaveBeenNthCalledWith(
+    2,
+    'https://comfy.icu/api/v1/workflows/workflow-1/runs/run-1',
+    expect.objectContaining({
+      method: 'GET',
+    })
+  )
+
+  const body = JSON.parse(fetchMock.mock.calls[0][1].body)
+  const prompt = JSON.parse(body.prompt)
+  expect(prompt['6'].inputs.text).toBe('a neon lighthouse')
+  expect(prompt['7'].inputs.text).toBe('low quality')
+})
+
+test('should submit and poll ComfyDeploy runs with mapped inputs', async () => {
+  vi.useFakeTimers()
+
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValueOnce(
+      jsonResponse({
+        run_id: 'run-1',
+        live_status: 'queued',
+      })
+    )
+    .mockResolvedValueOnce(
+      jsonResponse({
+        run_id: 'run-1',
+        live_status: 'success',
+        outputs: [
+          {
+            url: 'https://cdn.example.com/deploy-result.mp4',
+          },
+        ],
+      })
+    )
+  vi.stubGlobal('fetch', fetchMock)
+
+  const segmentPromise = resolveComfyDeploySegment(
+    createImageResolveRequest({
+      comfyDeployApiKey: 'deploy-api-key',
+      imageGenerationWorkflow: createComfyWorkflow({
+        id: 'comfydeploy://deployment-1',
+        inputValues: {
+          style: 'cinematic',
+        },
+      }),
+    })
+  )
+
+  await Promise.resolve()
+  await Promise.resolve()
+  await vi.runOnlyPendingTimersAsync()
+
+  await expect(segmentPromise).resolves.toMatchObject({
+    assetUrl: 'https://cdn.example.com/deploy-result.mp4',
+  })
+
+  expect(fetchMock).toHaveBeenCalledTimes(2)
+  expect(fetchMock).toHaveBeenNthCalledWith(
+    1,
+    'https://api.comfydeploy.com/api/run/deployment/queue',
+    expect.objectContaining({
+      method: 'POST',
+      headers: expect.objectContaining({
+        authorization: 'Bearer deploy-api-key',
+      }),
+    })
+  )
+  expect(fetchMock).toHaveBeenNthCalledWith(
+    2,
+    'https://api.comfydeploy.com/api/run/run-1',
+    expect.objectContaining({
+      method: 'GET',
+    })
+  )
+
+  const body = JSON.parse(fetchMock.mock.calls[0][1].body)
+  expect(body).toEqual({
+    deployment_id: 'deployment-1',
+    inputs: expect.objectContaining({
+      prompt: 'a neon lighthouse',
+      negative_prompt: 'low quality',
+      width: 640,
+      height: 360,
+      seed: expect.any(Number),
+      style: 'cinematic',
+    }),
+  })
+})
+
+function createImageResolveRequest(settings: Record<string, any> = {}) {
+  return {
+    segment: {
+      category: ClapSegmentCategory.IMAGE,
+      prompt: 'fallback prompt',
+    },
+    meta: {
+      width: 640,
+      height: 360,
+    },
+    prompts: {
+      image: {
+        positive: 'a neon lighthouse',
+        negative: 'low quality',
+        identity: '',
+      },
+      video: {
+        image: '',
+        voice: '',
+      },
+      voice: {
+        positive: '',
+        negative: '',
+        identity: '',
+      },
+      audio: {
+        positive: '',
+        negative: '',
+      },
+      music: {
+        positive: '',
+        negative: '',
+      },
+    },
+    settings: {
+      imageGenerationWorkflow: createComfyWorkflow(),
+      ...settings,
+    },
+  } as any
+}
+
+function createComfyWorkflow(overrides: Record<string, any> = {}) {
+  return {
+    id: 'comfyui://settings.comfyWorkflowForImage',
+    label: 'Custom Image Workflow',
+    description: '',
+    tags: [],
+    author: '',
+    thumbnailUrl: '',
+    nonCommercial: false,
+    engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
+    provider: ClapWorkflowProvider.COMFYUI,
+    category: ClapWorkflowCategory.IMAGE_GENERATION,
+    data: JSON.stringify(workflowRaw),
+    schema: '',
+    inputFields: [],
+    inputValues: {},
+    ...overrides,
+  }
+}
+
+function jsonResponse(json: unknown, ok = true) {
+  return {
+    ok,
+    json: async () => json,
+  } as Response
+}

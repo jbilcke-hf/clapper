@@ -5,6 +5,8 @@ export enum ClapperComfyUiInputIds {
   HEIGHT = '@clapper/height',
   SEED = '@clapper/seed',
   IMAGE = '@clapper/image',
+  AUDIO = '@clapper/audio',
+  VIDEO = '@clapper/video',
   OUTPUT = '@clapper/output',
   NULL = '@clapper/null',
 }

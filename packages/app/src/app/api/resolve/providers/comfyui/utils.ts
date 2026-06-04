@@ -38,7 +38,10 @@ export function findNegativePromptInputsFromWorkflow(
       nodeOutputToNodeInput: /.*negative.*/i,
     }),
     workflow.findInput({
-      value: (value) => /.*\@clapper\/prompt_negative.*/i.test(value),
+      value: (value) =>
+        /.*\@clapper\/(prompt_negative|negative\/prompt|negative).*/i.test(
+          value
+        ),
     }),
     'id'
   )
@@ -106,7 +109,41 @@ export function findImageInputsFromWorkflow(
 ): ComfyUiWorkflowApiNodeInput[] {
   return unionBy(
     workflow.findInput({
+      name: /.*(image|img).*/i,
+      type: 'string',
+    }),
+    workflow.findInput({
       value: (value) => /.*\@clapper\/image.*/i.test(value),
+    }),
+    'id'
+  )
+}
+
+export function findAudioInputsFromWorkflow(
+  workflow: ComfyUIWorkflowApiGraph
+): ComfyUiWorkflowApiNodeInput[] {
+  return unionBy(
+    workflow.findInput({
+      name: /.*(audio|sound|voice|music).*/i,
+      type: 'string',
+    }),
+    workflow.findInput({
+      value: (value) => /.*\@clapper\/(audio|sound|voice|music).*/i.test(value),
+    }),
+    'id'
+  )
+}
+
+export function findVideoInputsFromWorkflow(
+  workflow: ComfyUIWorkflowApiGraph
+): ComfyUiWorkflowApiNodeInput[] {
+  return unionBy(
+    workflow.findInput({
+      name: /.*(video|movie|clip).*/i,
+      type: 'string',
+    }),
+    workflow.findInput({
+      value: (value) => /.*\@clapper\/video.*/i.test(value),
     }),
     'id'
   )
@@ -119,5 +156,7 @@ export const MainClapWorkflowInputsLabels = {
   [ClapperComfyUiInputIds.HEIGHT]: 'Height node input',
   [ClapperComfyUiInputIds.SEED]: 'Seed node input',
   [ClapperComfyUiInputIds.IMAGE]: 'Image node input',
+  [ClapperComfyUiInputIds.AUDIO]: 'Audio node input',
+  [ClapperComfyUiInputIds.VIDEO]: 'Video node input',
   [ClapperComfyUiInputIds.OUTPUT]: 'Output node',
 }
