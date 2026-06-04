@@ -42,6 +42,10 @@ function getTrackCategory(track?: ClapTrack): ClapSegmentCategory | undefined {
     : undefined
 }
 
+function getTrackById(tracks: ClapTracks, trackId: number): ClapTrack | undefined {
+  return tracks.find(track => track.id === trackId)
+}
+
 function getTrackPatchForCategory(track: ClapTrack, category: ClapSegmentCategory, defaultCellHeight: number, defaultPreviewHeight: number): ClapTrack {
   const isPreview = isPreviewCategory(category)
   return {
@@ -55,6 +59,10 @@ function getTrackPatchForCategory(track: ClapTrack, category: ClapSegmentCategor
 
 function rangesOverlap(startA: number, endA: number, startB: number, endB: number) {
   return startA < endB && endA > startB
+}
+
+function getNextTrackId(tracks: ClapTracks) {
+  return Math.max(-1, ...tracks.map(track => track.id)) + 1
 }
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
@@ -1294,7 +1302,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     } = get()
 
     const reusableTrack = tracks.find(track => !track.occupied || track.name === "(empty)")
-    const trackId = reusableTrack?.id ?? tracks.length
+    const trackId = reusableTrack?.id ?? getNextTrackId(tracks)
     const typedTrack = getTrackPatchForCategory({
       id: trackId,
       name: category,
@@ -1341,7 +1349,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
     } = get()
 
-    const existingTrack = tracks[track]
+    const existingTrack = getTrackById(tracks, track)
     if (!existingTrack) { return false }
 
     const hasIncompatibleSegment = segments.some(segment =>
@@ -1385,7 +1393,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     category: ClapSegmentCategory
   }): boolean => {
     const { tracks, segments } = get()
-    const targetTrack = tracks[track]
+    const targetTrack = getTrackById(tracks, track)
     if (!targetTrack) { return false }
     if (startTimeInMs < 0 || endTimeInMs <= startTimeInMs) { return false }
 
@@ -1425,13 +1433,12 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       canPlaceSegment,
     } = get()
 
-    const targetTrack = tracks[track]
+    const targetTrack = getTrackById(tracks, track)
     if (!targetTrack) { return undefined }
 
     const trackCategory = getTrackCategory(targetTrack)
     const segmentCategory = category || trackCategory || ClapSegmentCategory.GENERIC
     if (trackCategory && trackCategory !== segmentCategory) { return undefined }
-    if (!trackCategory && !setTrackCategory(track, segmentCategory)) { return undefined }
 
     const durationInMs = Math.max(
       durationInMsPerStep,
@@ -1459,6 +1466,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     }
 
     if (attempts >= 1000) { return undefined }
+    if (!trackCategory && !setTrackCategory(track, segmentCategory)) { return undefined }
 
     const segment = await clapSegmentToTimelineSegment(newSegment({
       track,
@@ -1507,7 +1515,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     } = get()
 
     const segment = segments.find(s => s.id === segmentId)
-    const targetTrack = tracks[track]
+    const targetTrack = getTrackById(tracks, track)
     if (!segment || !targetTrack) { return false }
 
     const segmentDurationInMs = segment.endTimeInMs - segment.startTimeInMs
