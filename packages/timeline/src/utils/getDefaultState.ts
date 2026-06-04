@@ -67,6 +67,11 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     
     cursorTimestampAtInMs: 0,
     isDraggingCursor: false,
+    draggedSegmentId: undefined,
+    dragStartTimelineX: undefined,
+    dragOriginalStartTimeInMs: undefined,
+    dragOriginalEndTimeInMs: undefined,
+    dragOriginalTrack: undefined,
   }
 }
 

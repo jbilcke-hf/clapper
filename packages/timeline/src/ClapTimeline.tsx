@@ -22,6 +22,40 @@ import { useTimeline } from "./hooks"
 import { topBarTimeScaleHeight } from "./constants/themes"
 import { TimelineStore } from "./types"
 
+function getClientPoint(event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) {
+  if ("touches" in event) {
+    const touch = event.touches[0]
+    return touch ? { clientX: touch.clientX, clientY: touch.clientY } : undefined
+  }
+  return {
+    clientX: event.clientX,
+    clientY: event.clientY,
+  }
+}
+
+function getTrackAtClientY(timeline: TimelineStore, clientY: number, canvasRect: DOMRect): number | undefined {
+  const { timelineCamera, contentHeight, tracks } = timeline
+  if (!timelineCamera) { return undefined }
+
+  const yInCanvas = clientY - canvasRect.top
+  if (yInCanvas < topBarTimeScaleHeight) { return undefined }
+
+  const worldY = (canvasRect.height / 2) - yInCanvas + timelineCamera.position.y
+  const distanceFromContentTop = (contentHeight / 2) - worldY
+  if (distanceFromContentTop < 0) { return undefined }
+
+  let cursor = 0
+  for (const track of tracks) {
+    const trackHeight = timeline.getCellHeight(track.id)
+    if (distanceFromContentTop >= cursor && distanceFromContentTop < cursor + trackHeight) {
+      return track.id
+    }
+    cursor += trackHeight
+  }
+
+  return undefined
+}
+
 export function ClapTimeline({
   clap,
   className = "",
@@ -69,18 +103,32 @@ export function ClapTimeline({
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) => {
     const timeline: TimelineStore = useTimeline.getState()
-    const { editedSegment } = timeline
+    const { draggedSegmentId, timelineCamera } = timeline
 
-    // do something based on the current status of the edited segment
-    // for instance if the edited segment is being grabbed,
-    // we are going to want to display the segments that are around it
-    // console.log(`TODO @julian: implement edit here`)
+    if (draggedSegmentId && canvas && timelineCamera) {
+      const point = getClientPoint(event)
+      const canvasRect = canvas.getBoundingClientRect()
+      if (point && canvasRect) {
+        timeline.updateSegmentDrag({
+          pointerTimelineX: (point.clientX - canvasRect.left) + timelineCamera.position.x,
+          targetTrack: getTrackAtClientY(timeline, point.clientY, canvasRect),
+        })
+      }
+    }
     
     // since we are un frameloop="demand" mode, we need to manual invalidate the scene
     invalidate()
 
     event.stopPropagation()
     return false
+  }
+
+  const handlePointerEnd = () => {
+    const timeline: TimelineStore = useTimeline.getState()
+    if (timeline.draggedSegmentId) {
+      timeline.finishSegmentDrag()
+      invalidate()
+    }
   }
 
   const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
@@ -155,6 +203,8 @@ export function ClapTimeline({
             onWheel={handleWheel}
             onMouseMove={handleMouseMove}
             onTouchMove={handleMouseMove}
+            onPointerUp={handlePointerEnd}
+            onTouchEnd={handlePointerEnd}
             >
               <TimelineCamera />
               <TimelineControls

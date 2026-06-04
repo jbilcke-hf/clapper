@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapSegmentCategory, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -228,6 +228,12 @@ export type TimelineStoreProjectState = ClapMeta & {
 
   // position of the current timestamp
   cursorTimestampAtInMs: number
+
+  draggedSegmentId?: string
+  dragStartTimelineX?: number
+  dragOriginalStartTimeInMs?: number
+  dragOriginalEndTimeInMs?: number
+  dragOriginalTrack?: number
 }
 
 export type TimelineStorePreferencesState = {
@@ -396,6 +402,37 @@ export type TimelineStoreModifiers = {
    * @returns 
    */
   deleteSegments: (ids: string[]) => void
+
+  createTrack: (category: ClapSegmentCategory) => number
+  setTrackCategory: (track: number, category: ClapSegmentCategory) => boolean
+  createClip: (params: {
+    track: number
+    startTimeInMs: number
+    endTimeInMs?: number
+    category?: ClapSegmentCategory
+    prompt?: string
+  }) => Promise<TimelineSegment | undefined>
+  canPlaceSegment: (params: {
+    segmentId?: string
+    track: number
+    startTimeInMs: number
+    endTimeInMs: number
+    category: ClapSegmentCategory
+  }) => boolean
+  moveSegmentToTrack: (params: {
+    segmentId: string
+    track: number
+    startTimeInMs?: number
+  }) => boolean
+  startSegmentDrag: (params: {
+    segment: TimelineSegment
+    pointerTimelineX: number
+  }) => void
+  updateSegmentDrag: (params: {
+    pointerTimelineX: number
+    targetTrack?: number
+  }) => void
+  finishSegmentDrag: () => void
 
   addEntities: (entities: ClapEntity[]) => Promise<void>
   updateEntities: (entities: ClapEntity[]) => Promise<void>
