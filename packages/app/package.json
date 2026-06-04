@@ -102,6 +102,7 @@
     "framer-motion": "11.3.31",
     "fs-extra": "11.2.0",
     "is-hotkey": "0.2.0",
+    "lodash": "4.17.21",
     "lucide-react": "0.438.0",
     "lumaai": "1.0.2",
     "mediainfo.js": "0.3.2",
