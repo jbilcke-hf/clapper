@@ -132,7 +132,13 @@ export function configureComfyWorkflow(
     throw new Error(`Missing ComfyUI workflow data`)
   }
 
-  const workflowGraph = ComfyUIWorkflowApiGraph.fromString(clapWorkflow.data)
+  let workflowGraph: ComfyUIWorkflowApiGraph
+  try {
+    workflowGraph = ComfyUIWorkflowApiGraph.fromString(clapWorkflow.data)
+  } catch (err) {
+    throw new Error(`Invalid ComfyUI workflow data: ${getErrorMessage(err)}`)
+  }
+
   const inputValues = getEffectiveComfyInputValues(clapWorkflow)
   const workflowInputs = workflowGraph.getInputs()
 
@@ -219,8 +225,12 @@ function getEffectiveComfyInputValues(clapWorkflow: ClapWorkflow) {
         inputValues[inputId] = inputValue
       }
     })
-  } catch {
-    // The caller will surface the parse error while building the graph.
+  } catch (err) {
+    if (!Object.keys(inputValues).length) {
+      throw new Error(
+        `Unable to detect ComfyUI workflow inputs: ${getErrorMessage(err)}`
+      )
+    }
   }
 
   return inputValues
@@ -314,4 +324,8 @@ function uniqueStrings(values: string[]): string[] {
 
 function isRecord(value: unknown): value is Record<string, any> {
   return !!value && typeof value === 'object'
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : `${error}`
 }

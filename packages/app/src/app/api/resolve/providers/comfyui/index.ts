@@ -1,5 +1,5 @@
 import { ResolveRequest } from '@aitube/clapper-services'
-import { ClapAssetSource } from '@aitube/clap'
+import { ClapAssetSource, getClapAssetSourceType } from '@aitube/clap'
 
 import { TimelineSegment } from '@aitube/timeline'
 
@@ -50,16 +50,20 @@ export async function resolveSegment(
     api,
     createConfiguredPromptBuilder(configuredWorkflow)
   )
-    .onPending(() => console.log('Task is pending'))
-    .onStart(() => console.log('Task is started'))
-    .onPreview((blob) => console.log(blob))
+    .onPending(() => debugComfyUiRuntime('Task is pending'))
+    .onStart(() => debugComfyUiRuntime('Task is started'))
+    .onPreview((blob) => debugComfyUiRuntime('Preview blob', blob))
     .onFinished(() => {
-      console.log('Pipeline finished')
+      debugComfyUiRuntime('Pipeline finished')
     })
     .onProgress((info) =>
-      console.log('Processing node', info.node, `${info.value}/${info.max}`)
+      debugComfyUiRuntime(
+        'Processing node',
+        info.node,
+        `${info.value}/${info.max}`
+      )
     )
-    .onFailed((err) => console.log('Task is failed', err))
+    .onFailed((err) => debugComfyUiRuntime('Task is failed', err))
 
   const rawOutput = await pipeline.run()
 
@@ -72,21 +76,48 @@ export async function resolveSegment(
     toLocalPath: (asset) => api.getPathImage(asset),
   })
 
-  console.log(`assetPaths:`, assetPaths)
+  debugComfyUiRuntime('Output asset paths', assetPaths)
 
   const assetPath = assetPaths.at(0)
   if (!assetPath) {
     throw new Error(`failed to run the pipeline (no output asset)`)
   }
 
-  // TODO: check what the imagePath looks like exactly
-  const assetUrl = await decodeOutput(assetPath)
+  const { assetUrl, assetSourceType } =
+    await normalizeComfyUiOutputAsset(assetPath)
 
-  console.log(`assetUrl:`, assetPath)
+  debugComfyUiRuntime('Resolved output asset', assetPath)
   segment.assetUrl = assetUrl
-  segment.assetSourceType = ClapAssetSource.DATA
+  segment.assetSourceType = assetSourceType
 
   // TODO:
 
   return segment
+}
+
+async function normalizeComfyUiOutputAsset(assetPath: string): Promise<{
+  assetUrl: string
+  assetSourceType: ClapAssetSource
+}> {
+  const sourceType = getClapAssetSourceType(assetPath)
+
+  if (sourceType === ClapAssetSource.REMOTE) {
+    return {
+      assetUrl: assetPath,
+      assetSourceType: sourceType,
+    }
+  }
+
+  const decodedOutput = await decodeOutput(assetPath)
+
+  return {
+    assetUrl: decodedOutput,
+    assetSourceType: getClapAssetSourceType(decodedOutput),
+  }
+}
+
+function debugComfyUiRuntime(...args: unknown[]) {
+  if (process.env.CLAPPER_DEBUG_COMFYUI === 'true') {
+    console.debug('[ComfyUI]', ...args)
+  }
 }
