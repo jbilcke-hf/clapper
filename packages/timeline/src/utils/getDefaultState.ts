@@ -50,6 +50,7 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     hoveredSegment: undefined,
     editedSegment: undefined,
     selectedSegments: [],
+    segmentDragState: undefined,
     
     allSegmentsChanged: 0,
     atLeastOneSegmentChanged: 0,

@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
+import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, newSegment, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler, Invalidate } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
@@ -13,6 +13,71 @@ import { TimelineCameraImpl } from "@/components/camera/types"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 import { topBarTimeScaleHeight } from "@/constants/themes"
+
+function snapTimestamp(timestampInMs: number, durationInMsPerStep: number): number {
+  return Math.max(0, Math.round(timestampInMs / durationInMsPerStep) * durationInMsPerStep)
+}
+
+function getTimestampAtCanvasX({
+  offsetX,
+  cameraX,
+  cellWidth,
+  durationInMsPerStep,
+}: {
+  offsetX: number
+  cameraX: number
+  cellWidth: number
+  durationInMsPerStep: number
+}): number {
+  const timelineX = Math.max(0, offsetX - leftBarTrackScaleWidth + cameraX)
+  return snapTimestamp((timelineX / cellWidth) * durationInMsPerStep, durationInMsPerStep)
+}
+
+function getTrackAtCanvasY({
+  offsetY,
+  tracks,
+  defaultCellHeight,
+}: {
+  offsetY: number
+  tracks: ClapTracks
+  defaultCellHeight: number
+}): number {
+  const timelineY = Math.max(0, offsetY - topBarTimeScaleHeight)
+  let cursorY = 0
+
+  for (const track of tracks) {
+    if (!track) {
+      cursorY += defaultCellHeight
+      continue
+    }
+
+    const height = track?.height || defaultCellHeight
+    if (timelineY < cursorY + height) {
+      return track.id
+    }
+    cursorY += height
+  }
+
+  return tracks.length ? tracks[tracks.length - 1].id : 0
+}
+
+function capturePointer(event: ThreeEvent<PointerEvent> | ThreeEvent<MouseEvent>): void {
+  const target = event.target as EventTarget & { setPointerCapture?: (pointerId: number) => void }
+  const pointerId = (event as ThreeEvent<PointerEvent>).pointerId
+
+  if (typeof pointerId === "number") {
+    target.setPointerCapture?.(pointerId)
+  }
+}
+
+function releasePointer(event: ThreeEvent<PointerEvent> | ThreeEvent<MouseEvent>): void {
+  const target = event.target as EventTarget & { releasePointerCapture?: (pointerId: number) => void }
+  const pointerId = (event as ThreeEvent<PointerEvent>).pointerId
+
+  if (typeof pointerId === "number") {
+    target.releasePointerCapture?.(pointerId)
+  }
+}
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -538,7 +603,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     segment: TimelineSegment
   }): SegmentEventCallbackHandler => {
     function segmentEventCallbackHandler(event: ThreeEvent<PointerEvent> | ThreeEvent<MouseEvent>) {
-      const pointX = event.point.x
       const offsetX = event.offsetX
       const offsetY = event.offsetY
 
@@ -554,7 +618,19 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         }, null, 2))
       */
 
-      const { cellWidth, containerWidth, durationInMsPerStep, setSelectedSegment, setHoveredSegment, setEditedSegment } = get()
+      const {
+        cellWidth,
+        defaultCellHeight,
+        durationInMsPerStep,
+        moveSegment,
+        resizeSegment,
+        segmentDragState,
+        setEditedSegment,
+        setHoveredSegment,
+        setSelectedSegment,
+        timelineCamera,
+        tracks,
+      } = get()
 
       const durationInSteps = (
         (segment.endTimeInMs - segment.startTimeInMs) / durationInMsPerStep
@@ -572,8 +648,12 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
       const isOutOfRange = offsetX < leftBarTrackScaleWidth || offsetY < topBarTimeScaleHeight
     
-      const cursorX = pointX + (containerWidth / 2)
-      const cursorTimestampAtInMs = (cursorX / cellWidth) * useTimeline.getState().durationInMsPerStep
+      const cursorTimestampAtInMs = getTimestampAtCanvasX({
+        offsetX,
+        cameraX: timelineCamera?.position.x || 0,
+        cellWidth,
+        durationInMsPerStep,
+      })
       
       //console.log("cells.Cell:onClick() e:", e)
     
@@ -595,6 +675,43 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       : SegmentArea.MIDDLE
 
       if (isOutOfRange) {
+        event.stopPropagation()
+        return false
+      }
+
+      if (eventType === SegmentPointerEvent.DOWN) {
+        capturePointer(event)
+      }
+
+      if (
+        eventType === SegmentPointerEvent.MOVE &&
+        event.buttons > 0 &&
+        segmentDragState?.segmentId === segment.id
+      ) {
+        const track = getTrackAtCanvasY({
+          offsetY,
+          tracks,
+          defaultCellHeight,
+        })
+
+        if (segmentDragState.area === SegmentArea.MIDDLE) {
+          void moveSegment({
+            segment,
+            startTimeInMs: cursorTimestampAtInMs - segmentDragState.cursorOffsetInMs,
+            track,
+          })
+        } else {
+          const resizeTimestampInMs = segmentDragState.area === SegmentArea.LEFT
+            ? cursorTimestampAtInMs - segmentDragState.cursorOffsetInMs
+            : cursorTimestampAtInMs + segmentDragState.cursorOffsetInMs
+
+          resizeSegment({
+            segment,
+            edge: segmentDragState.area,
+            timestampInMs: resizeTimestampInMs,
+          })
+        }
+
         event.stopPropagation()
         return false
       }
@@ -626,16 +743,43 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           area
         })
         if (area === SegmentArea.LEFT) {
+          if (eventType === SegmentPointerEvent.DOWN) {
+            set({
+              segmentDragState: {
+                segmentId: segment.id,
+                area,
+                cursorOffsetInMs: cursorTimestampAtInMs - segment.startTimeInMs,
+              }
+            })
+          }
           setEditedSegment({
             segment,
             status: SegmentEditionStatus.RESIZE_START
           })
         } else if (area === SegmentArea.RIGHT) {
+          if (eventType === SegmentPointerEvent.DOWN) {
+            set({
+              segmentDragState: {
+                segmentId: segment.id,
+                area,
+                cursorOffsetInMs: segment.endTimeInMs - cursorTimestampAtInMs,
+              }
+            })
+          }
           setEditedSegment({
             segment,
             status: SegmentEditionStatus.RESIZE_END
           })
         } else if (area === SegmentArea.MIDDLE) {
+          if (eventType === SegmentPointerEvent.DOWN) {
+            set({
+              segmentDragState: {
+                segmentId: segment.id,
+                area,
+                cursorOffsetInMs: cursorTimestampAtInMs - segment.startTimeInMs,
+              }
+            })
+          }
           setEditedSegment({
           segment,
             status: SegmentEditionStatus.DRAGGING
@@ -648,6 +792,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         })
         setEditedSegment({
           segment: undefined,
+        })
+        releasePointer(event)
+        set({
+          segmentDragState: undefined,
         })
       }
 
@@ -729,6 +877,46 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         durationInMs,
       })
     })
+  },
+  addTrack: (name?: string): number => {
+    const {
+      width,
+      height,
+      tracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs,
+      defaultCellHeight,
+    } = get()
+
+    const id = tracks.length
+      ? Math.max(...tracks.map((track) => track.id)) + 1
+      : 0
+
+    const nextTracks: ClapTracks = tracks.concat({
+      id,
+      name: name || `Track ${id}`,
+      isPreview: false,
+      height: defaultCellHeight,
+      hue: 0,
+      occupied: false,
+      visible: true,
+    })
+
+    set({
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks: nextTracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs,
+      })
+    })
+
+    return id
   },
   setContainerSize: ({ width, height }: { width: number; height: number }) => {
     const { containerWidth: previousWidth, containerHeight: previousHeight } = get()
@@ -873,6 +1061,169 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         })
       }
     }
+  },
+  addClipAtPointer: async ({
+    offsetX,
+    offsetY,
+    label,
+  }: {
+    offsetX: number
+    offsetY: number
+    label?: string
+  }): Promise<void> => {
+    const {
+      addSegment,
+      cellWidth,
+      defaultCellHeight,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      timelineCamera,
+      tracks,
+    } = get()
+
+    const startTimeInMs = getTimestampAtCanvasX({
+      offsetX,
+      cameraX: timelineCamera?.position.x || 0,
+      cellWidth,
+      durationInMsPerStep,
+    })
+    const track = getTrackAtCanvasY({
+      offsetY,
+      tracks,
+      defaultCellHeight,
+    })
+    const durationInMs = defaultSegmentDurationInSteps * durationInMsPerStep
+    const clip = newSegment({
+      category: ClapSegmentCategory.GENERIC,
+      label: label || "New clip",
+      prompt: label || "New clip",
+      track,
+      startTimeInMs,
+      endTimeInMs: startTimeInMs + durationInMs,
+      assetDurationInMs: durationInMs,
+      createdBy: "human",
+      editedBy: "human",
+    }) as TimelineSegment
+
+    await addSegment({
+      segment: clip,
+      startTimeInMs,
+      track,
+    })
+  },
+  moveSegment: async ({
+    segment,
+    startTimeInMs,
+    track,
+  }: {
+    segment: TimelineSegment
+    startTimeInMs: number
+    track?: number
+  }): Promise<void> => {
+    const {
+      width,
+      height,
+      tracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs: previousDurationInMs,
+      segments,
+      assignTrack,
+      silentChangesInSegment,
+      allSegmentsChanged: previousAllSegmentsChanged,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+    } = get()
+
+    const durationInMs = segment.endTimeInMs - segment.startTimeInMs
+    const nextStartTimeInMs = snapTimestamp(startTimeInMs, durationInMsPerStep)
+    segment.startTimeInMs = nextStartTimeInMs
+    segment.endTimeInMs = nextStartTimeInMs + durationInMs
+
+    if (isValidNumber(track)) {
+      await assignTrack({
+        segment,
+        track: track!,
+        triggerChange: false,
+      })
+    }
+
+    silentChangesInSegment[segment.id] = 1 + (silentChangesInSegment[segment.id] || 0)
+
+    const nextDurationInMs = Math.max(previousDurationInMs, segment.endTimeInMs)
+    set({
+      segments: [...segments],
+      silentChangesInSegment,
+      durationInMs: nextDurationInMs,
+      allSegmentsChanged: previousAllSegmentsChanged + 1,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs: nextDurationInMs,
+      })
+    })
+  },
+  resizeSegment: ({
+    segment,
+    edge,
+    timestampInMs,
+  }: {
+    segment: TimelineSegment
+    edge: SegmentArea.LEFT | SegmentArea.RIGHT
+    timestampInMs: number
+  }): void => {
+    const {
+      width,
+      height,
+      tracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs: previousDurationInMs,
+      segments,
+      silentChangesInSegment,
+      allSegmentsChanged: previousAllSegmentsChanged,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+    } = get()
+    const minimumDurationInMs = durationInMsPerStep
+    const nextTimestampInMs = snapTimestamp(timestampInMs, durationInMsPerStep)
+
+    if (edge === SegmentArea.LEFT) {
+      segment.startTimeInMs = Math.min(
+        segment.endTimeInMs - minimumDurationInMs,
+        nextTimestampInMs
+      )
+    } else {
+      segment.endTimeInMs = Math.max(
+        segment.startTimeInMs + minimumDurationInMs,
+        nextTimestampInMs
+      )
+    }
+
+    silentChangesInSegment[segment.id] = 1 + (silentChangesInSegment[segment.id] || 0)
+
+    const nextDurationInMs = Math.max(previousDurationInMs, segment.endTimeInMs)
+    set({
+      segments: [...segments],
+      silentChangesInSegment,
+      durationInMs: nextDurationInMs,
+      allSegmentsChanged: previousAllSegmentsChanged + 1,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs: nextDurationInMs,
+      })
+    })
   },
   assignTrack: async ({
     segment,

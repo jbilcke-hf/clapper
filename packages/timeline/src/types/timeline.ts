@@ -153,6 +153,12 @@ export type ContentSizeMetrics = {
   defaultPreviewHeight: number
 }
 
+export type SegmentDragState = {
+  segmentId: string
+  area: SegmentArea
+  cursorOffsetInMs: number
+}
+
 export type TimelineStoreProjectState = ClapMeta & {
   scenes: ClapScene[]
 
@@ -203,6 +209,7 @@ export type TimelineStoreProjectState = ClapMeta & {
   hoveredSegment?: TimelineSegment
   editedSegment?: TimelineSegment
   selectedSegments: TimelineSegment[]
+  segmentDragState?: SegmentDragState
 
   allSegmentsChanged: number
   atLeastOneSegmentChanged: number
@@ -327,6 +334,7 @@ export type TimelineStoreModifiers = {
   setScrollX: (scrollX: number) => void
   handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number; deltaY: number }) => void
   toggleTrackVisibility: (trackId: number) => void
+  addTrack: (name?: string) => number
   setContainerSize: ({ width, height }: { width: number; height: number }) => void
   setTimelineCursor: (timelineCursor?: TimelineCursorImpl) => void
   setIsDraggingCursor: (isDraggingCursor: boolean) => void
@@ -360,6 +368,21 @@ export type TimelineStoreModifiers = {
     startTimeInMs?: number
     track?: number
   }) => Promise<void>
+  addClipAtPointer: (params: {
+    offsetX: number
+    offsetY: number
+    label?: string
+  }) => Promise<void>
+  moveSegment: (params: {
+    segment: TimelineSegment
+    startTimeInMs: number
+    track?: number
+  }) => Promise<void>
+  resizeSegment: (params: {
+    segment: TimelineSegment
+    edge: SegmentArea.LEFT | SegmentArea.RIGHT
+    timestampInMs: number
+  }) => void
   assignTrack: ({
     segment,
     track,

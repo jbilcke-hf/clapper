@@ -21,6 +21,7 @@ export function LeftBarTrackScale() {
   const getVerticalCellPosition = useTimeline((s) => s.getVerticalCellPosition)
 
   const tracks = useTimeline(s => s.tracks)
+  const addTrack = useTimeline(s => s.addTrack)
   const toggleTrackVisibility = useTimeline((s) => s.toggleTrackVisibility)
 
   const setLeftBarTrackScale = useTimeline(s => s.setLeftBarTrackScale)
@@ -37,6 +38,36 @@ export function LeftBarTrackScale() {
       }}
       position={[-leftBarTrackScaleWidth, contentHeight / 2, 0]}
       >
+      <Plane
+        args={[leftBarTrackScaleWidth, 24]}
+        position={[
+          leftBarTrackScaleWidth / 2,
+          18,
+          1
+        ]}
+        onClick={(e) => {
+          addTrack()
+          e.stopPropagation()
+        }}
+      >
+        <meshBasicMaterial
+          color={theme.leftBarTrackScale.backgroundColor}
+          transparent
+          opacity={0.95}
+        />
+        <Text
+          position={[0, 0, 2]}
+          scale={[11, 11, 1]}
+          lineHeight={1.0}
+          color={theme.leftBarTrackScale.textColor}
+          anchorX="center"
+          anchorY="middle"
+          fontWeight={600}
+          fillOpacity={0.9}
+        >
+          + Track
+        </Text>
+      </Plane>
       <group position={[0, 0, 0]}>
       {horizontalTrackLines.map((lineGeometry, idx) => (
         <line
