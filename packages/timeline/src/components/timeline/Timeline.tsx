@@ -11,6 +11,7 @@ import { Cursor } from "./Cursor"
 import { Grid } from "./Grid"
 import { LeftBarTrackScale } from "./LeftBarTrackScale"
 import { TopBarTimeScale } from "./TopBarTimeScale"
+import { leftBarTrackScaleWidth, topBarTimeScaleHeight } from "@/constants/themes"
 
 export function Timeline({ width, height }: { width: number; height: number }) {
   const { size } = useThree()
@@ -22,6 +23,7 @@ export function Timeline({ width, height }: { width: number; height: number }) {
 
   const contentHeight = useTimeline(s => s.contentHeight)
   const contentWidth = useTimeline(s => s.contentWidth)
+  const addClipAtPointer = useTimeline(s => s.addClipAtPointer)
 
   // console.log(`re-rendering <Timeline>`)
   return (
@@ -34,7 +36,22 @@ export function Timeline({ width, height }: { width: number; height: number }) {
           -(size.width / 2),
           0,
           -1
-        ]}>
+        ]}
+        onDoubleClick={(e) => {
+          if (
+            e.offsetX < leftBarTrackScaleWidth ||
+            e.offsetY < topBarTimeScaleHeight
+          ) {
+            return
+          }
+
+          void addClipAtPointer({
+            offsetX: e.offsetX,
+            offsetY: e.offsetY,
+          })
+          e.stopPropagation()
+          return false
+        }}>
         <meshBasicMaterial
           attach="material"
           transparent
