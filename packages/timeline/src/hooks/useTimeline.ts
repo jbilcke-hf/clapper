@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
+import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, newSegment, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler, Invalidate } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
@@ -730,6 +730,107 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       })
     })
   },
+  createTrack: (category: ClapSegmentCategory): number => {
+    const {
+      width,
+      height,
+      tracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs,
+      defaultPreviewHeight,
+      defaultCellHeight,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+      allSegmentsChanged: previousAllSegmentsChanged,
+    } = get()
+
+    const id = tracks.length
+    const isPreview =
+      category === ClapSegmentCategory.IMAGE ||
+      category === ClapSegmentCategory.VIDEO
+
+    tracks[id] = {
+      id,
+      name: category,
+      isPreview,
+      height: isPreview ? defaultPreviewHeight : defaultCellHeight,
+      hue: 0,
+      occupied: false,
+      visible: true,
+    }
+
+    set({
+      allSegmentsChanged: previousAllSegmentsChanged + 1,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs,
+      }),
+    })
+
+    return id
+  },
+  createClip: async ({
+    trackId,
+    category,
+    startTimeInMs,
+    durationInMs,
+  }: {
+    trackId: number
+    category?: ClapSegmentCategory
+    startTimeInMs?: number
+    durationInMs?: number
+  }): Promise<TimelineSegment> => {
+    const {
+      tracks,
+      cursorTimestampAtInMs,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      addSegment,
+    } = get()
+
+    const track = tracks[trackId]
+    const knownCategories = Object.values(ClapSegmentCategory) as string[]
+    const clipCategory =
+      category ||
+      (
+        knownCategories.includes(track?.name)
+          ? track.name as ClapSegmentCategory
+          : ClapSegmentCategory.GENERIC
+      )
+
+    const clipStartTimeInMs = isValidNumber(startTimeInMs)
+      ? startTimeInMs!
+      : cursorTimestampAtInMs
+
+    const clipDurationInMs = isValidNumber(durationInMs)
+      ? durationInMs!
+      : defaultSegmentDurationInSteps * durationInMsPerStep
+
+    const segment = await clapSegmentToTimelineSegment(newSegment({
+      category: clipCategory,
+      track: trackId,
+      startTimeInMs: clipStartTimeInMs,
+      endTimeInMs: clipStartTimeInMs + clipDurationInMs,
+      assetDurationInMs: clipDurationInMs,
+      label: `New ${clipCategory.toLowerCase()} clip`,
+      prompt: `New ${clipCategory.toLowerCase()} clip`,
+    }))
+
+    await addSegment({
+      segment,
+      startTimeInMs: clipStartTimeInMs,
+      track: trackId,
+    })
+
+    return segment
+  },
   setContainerSize: ({ width, height }: { width: number; height: number }) => {
     const { containerWidth: previousWidth, containerHeight: previousHeight } = get()
     const changed = 
@@ -897,6 +998,22 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       allSegmentsChanged: previousAllSegmentsChanged,
     } = get()
 
+    const targetTrack = tracks[track]
+    const knownCategories = Object.values(ClapSegmentCategory) as string[]
+    const targetCategory =
+      targetTrack && knownCategories.includes(targetTrack.name)
+        ? targetTrack.name as ClapSegmentCategory
+        : undefined
+    const targetAcceptsCategory =
+      !targetTrack ||
+      !targetCategory ||
+      targetCategory === segment.category
+
+    if (!targetAcceptsCategory) {
+      console.warn(`Cannot move ${segment.category} segment to ${targetTrack.name} track`)
+      return
+    }
+
     segment.track = track
    
     let nbTracks = tracks.length
@@ -920,6 +1037,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         occupied: true,
         visible: true,
       }
+    } else {
+      tracks[segment.track].occupied = true
     }
 
     if (triggerChange) {
