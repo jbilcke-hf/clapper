@@ -661,7 +661,7 @@ export enum ClapWorkflowProvider {
   COHERE = "COHERE", // https://cohere.com
   COMFYDEPLOY = "COMFYDEPLOY", // https://comfydeploy.com
   COMFYICU = "COMFYICU", // https://comfy.icu
-  COMFYUI = "COMFUI", // any ComfyUI server (local or remote)
+  COMFYUI = "COMFYUI", // any ComfyUI server (local or remote)
   ELEVENLABS = "ELEVENLABS", // https://elevenlabs.io
   EVERARTAI = "EVERARTAI",
   FALAI = "FALAI", // https://fal.ai
