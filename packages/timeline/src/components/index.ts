@@ -7,6 +7,6 @@ export {
   type SpecializedCellProps
 } from "./cells"
 
-export { TimelineControls } from "./controls"
+export { TimelineControls, TimelineQuickActions } from "./controls"
 export { HorizontalScroller, VerticalScroller } from "./scroller"
 export { Timeline, TopBarTimeScale, Cells, Grid, type JumpAt } from "./timeline"

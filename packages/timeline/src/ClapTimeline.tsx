@@ -5,6 +5,7 @@ import { Stats } from "@react-three/drei"
 import {
   TimelineControls,
   HorizontalScroller,
+  TimelineQuickActions,
   Timeline
 } from "@/components"
 import { ClapProject, isValidNumber } from "@aitube/clap"
@@ -20,7 +21,7 @@ import { cn } from "./utils"
 import { TimelineCamera } from "./components/camera"
 import { useTimeline } from "./hooks"
 import { topBarTimeScaleHeight } from "./constants/themes"
-import { TimelineStore } from "./types"
+import { SegmentEditionStatus, TimelineStore } from "./types"
 
 export function ClapTimeline({
   clap,
@@ -69,18 +70,65 @@ export function ClapTimeline({
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) => {
     const timeline: TimelineStore = useTimeline.getState()
-    const { editedSegment } = timeline
+    const {
+      editedSegment,
+      cellWidth,
+      durationInMsPerStep,
+      getVerticalCellPosition,
+      tracks,
+      scrollX,
+      moveSegment,
+    } = timeline
 
-    // do something based on the current status of the edited segment
-    // for instance if the edited segment is being grabbed,
-    // we are going to want to display the segments that are around it
-    // console.log(`TODO @julian: implement edit here`)
+    if (editedSegment?.editionStatus === SegmentEditionStatus.DRAGGING && canvas) {
+      const rect = canvas.getBoundingClientRect()
+      const clientX = "touches" in event ? event.touches[0]?.clientX : event.clientX
+      const clientY = "touches" in event ? event.touches[0]?.clientY : event.clientY
+
+      if (typeof clientX === "number" && typeof clientY === "number") {
+        const localX = clientX - rect.left
+        const localY = clientY - rect.top
+        const pointerTimeInMs = Math.round(((localX + scrollX) / cellWidth) * durationInMsPerStep)
+        const segmentDurationInMs = editedSegment.endTimeInMs - editedSegment.startTimeInMs
+        const startTimeInMs = Math.max(
+          0,
+          pointerTimeInMs - Math.round(segmentDurationInMs / 2)
+        )
+
+        let track = editedSegment.track
+        const trackY = Math.max(0, localY - topBarTimeScaleHeight)
+        let top = 0
+        for (const candidate of tracks) {
+          const height = timeline.getCellHeight(candidate.id)
+          const trackTop = top
+          const trackBottom = top + height
+          if (trackY >= trackTop && trackY <= trackBottom) {
+            track = candidate.id
+            break
+          }
+          top = getVerticalCellPosition(0, candidate.id + 1)
+        }
+
+        moveSegment({
+          segment: editedSegment,
+          startTimeInMs,
+          track,
+        })
+      }
+    }
     
     // since we are un frameloop="demand" mode, we need to manual invalidate the scene
     invalidate()
 
     event.stopPropagation()
     return false
+  }
+
+  const handlePointerRelease = () => {
+    const { editedSegment, setEditedSegment } = useTimeline.getState()
+    if (editedSegment?.editionStatus === SegmentEditionStatus.DRAGGING) {
+      setEditedSegment({ segment: undefined })
+    }
   }
 
   const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
@@ -110,7 +158,7 @@ export function ClapTimeline({
 
   return (
     <div
-      className={cn(`w-full h-full`, className)}
+      className={cn(`relative w-full h-full`, className)}
       style={{
         backgroundColor: theme.grid.backgroundColor
       }}>
@@ -121,6 +169,7 @@ export function ClapTimeline({
         {({ height, width }: Size) => (
       <div className="flex flex-grow flex-row w-full h-full">
         <div className="flex flex-grow flex-col w-full h-full">
+          <TimelineQuickActions />
           <HorizontalScroller />
           <Canvas
             ref={(canvas) => {
@@ -155,6 +204,8 @@ export function ClapTimeline({
             onWheel={handleWheel}
             onMouseMove={handleMouseMove}
             onTouchMove={handleMouseMove}
+            onMouseUp={handlePointerRelease}
+            onTouchEnd={handlePointerRelease}
             >
               <TimelineCamera />
               <TimelineControls

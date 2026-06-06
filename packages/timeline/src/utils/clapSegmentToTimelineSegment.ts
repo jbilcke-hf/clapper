@@ -36,7 +36,7 @@ export async function clapSegmentToTimelineSegment(clapSegment: ClapSegment): Pr
 
   segment.colors = getSegmentColorScheme(segment)
 
-  if (!segment.audioBuffer) {
+  if (!segment.audioBuffer && segment.assetUrl) {
     if (segment.outputType === ClapOutputType.AUDIO) {
       try {
         segment.audioBuffer = await getAudioBuffer(segment.assetUrl)
@@ -47,4 +47,4 @@ export async function clapSegmentToTimelineSegment(clapSegment: ClapSegment): Pr
   }
   
   return segment
-} 
+}
