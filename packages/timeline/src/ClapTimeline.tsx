@@ -20,7 +20,44 @@ import { cn } from "./utils"
 import { TimelineCamera } from "./components/camera"
 import { useTimeline } from "./hooks"
 import { topBarTimeScaleHeight } from "./constants/themes"
-import { TimelineStore } from "./types"
+import { SegmentEditionStatus, TimelineStore } from "./types"
+import { TimelineCreationControls } from "./components/timeline/TimelineCreationControls"
+
+const getPointerPosition = (
+  event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>
+) => {
+  if ("touches" in event) {
+    return event.touches[0] || event.changedTouches[0]
+  }
+  return event
+}
+
+const getTrackAtOffsetY = ({
+  timeline,
+  offsetY,
+}: {
+  timeline: TimelineStore
+  offsetY: number
+}) => {
+  const verticalOffsetInContent =
+    offsetY +
+    ((timeline.contentHeight - timeline.containerHeight) / 2) -
+    timeline.scrollY
+
+  let trackTop = 0
+  for (const track of timeline.tracks) {
+    const trackHeight = timeline.getCellHeight(track.id)
+    if (
+      verticalOffsetInContent >= trackTop &&
+      verticalOffsetInContent < trackTop + trackHeight
+    ) {
+      return track.id
+    }
+    trackTop += trackHeight
+  }
+
+  return undefined
+}
 
 export function ClapTimeline({
   clap,
@@ -69,12 +106,27 @@ export function ClapTimeline({
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) => {
     const timeline: TimelineStore = useTimeline.getState()
-    const { editedSegment } = timeline
+    const { editedSegment, moveClip } = timeline
 
-    // do something based on the current status of the edited segment
-    // for instance if the edited segment is being grabbed,
-    // we are going to want to display the segments that are around it
-    // console.log(`TODO @julian: implement edit here`)
+    if (editedSegment?.editionStatus === SegmentEditionStatus.DRAGGING) {
+      const rect = canvas?.getBoundingClientRect()
+      const pointer = getPointerPosition(event)
+
+      if (rect && pointer) {
+        const offsetX = pointer.clientX - rect.left
+        const offsetY = pointer.clientY - rect.top
+        const track = getTrackAtOffsetY({ timeline, offsetY })
+        const startTimeInSteps = Math.round(
+          (timeline.scrollX + offsetX) / timeline.cellWidth
+        )
+
+        moveClip({
+          segment: editedSegment,
+          startTimeInMs: startTimeInSteps * timeline.durationInMsPerStep,
+          track,
+        })
+      }
+    }
     
     // since we are un frameloop="demand" mode, we need to manual invalidate the scene
     invalidate()
@@ -119,7 +171,8 @@ export function ClapTimeline({
         width: "100%" // <-- mandatory otherwise the horizontal scroller won't show up
         }}>
         {({ height, width }: Size) => (
-      <div className="flex flex-grow flex-row w-full h-full">
+      <div className="relative flex flex-grow flex-row w-full h-full">
+        <TimelineCreationControls />
         <div className="flex flex-grow flex-col w-full h-full">
           <HorizontalScroller />
           <Canvas

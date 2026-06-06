@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
+import { ClapAssetSource, ClapOutputType, ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, isValidNumber, newClap, newSegment, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler, Invalidate } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
@@ -13,6 +13,50 @@ import { TimelineCameraImpl } from "@/components/camera/types"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 import { topBarTimeScaleHeight } from "@/constants/themes"
+
+const getTrackHeightForCategory = ({
+  category,
+  defaultCellHeight,
+  defaultPreviewHeight,
+}: {
+  category: ClapSegmentCategory
+  defaultCellHeight: number
+  defaultPreviewHeight: number
+}) => {
+  return (
+    category === ClapSegmentCategory.IMAGE ||
+    category === ClapSegmentCategory.VIDEO
+  ) ? defaultPreviewHeight : defaultCellHeight
+}
+
+const getOutputTypeForCategory = (category: ClapSegmentCategory): ClapOutputType => {
+  if (category === ClapSegmentCategory.IMAGE) {
+    return ClapOutputType.IMAGE
+  }
+  if (category === ClapSegmentCategory.VIDEO) {
+    return ClapOutputType.VIDEO
+  }
+  if (
+    category === ClapSegmentCategory.MUSIC ||
+    category === ClapSegmentCategory.SOUND ||
+    category === ClapSegmentCategory.DIALOGUE
+  ) {
+    return ClapOutputType.AUDIO
+  }
+  if (category === ClapSegmentCategory.INTERFACE) {
+    return ClapOutputType.INTERFACE
+  }
+  if (category === ClapSegmentCategory.EVENT) {
+    return ClapOutputType.EVENT
+  }
+  if (category === ClapSegmentCategory.PHENOMENON) {
+    return ClapOutputType.PHENOMENON
+  }
+  if (category === ClapSegmentCategory.TRANSITION) {
+    return ClapOutputType.TRANSITION
+  }
+  return ClapOutputType.TEXT
+}
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -874,6 +918,188 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       }
     }
   },
+  createTrack: ({
+    category,
+    name,
+  }: {
+    category: ClapSegmentCategory
+    name?: string
+  }): number => {
+    const {
+      width,
+      height,
+      tracks,
+      cellWidth,
+      defaultCellHeight,
+      defaultPreviewHeight,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs,
+      allSegmentsChanged: previousAllSegmentsChanged,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+    } = get()
+
+    const trackId = tracks.length
+    const isPreview =
+      category === ClapSegmentCategory.IMAGE ||
+      category === ClapSegmentCategory.VIDEO
+
+    const nextTracks: ClapTracks = tracks.concat({
+      id: trackId,
+      name: name || category,
+      isPreview,
+      height: getTrackHeightForCategory({
+        category,
+        defaultCellHeight,
+        defaultPreviewHeight,
+      }),
+      hue: 0,
+      occupied: false,
+      visible: true,
+    })
+
+    set({
+      allSegmentsChanged: previousAllSegmentsChanged + 1,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks: nextTracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs,
+      })
+    })
+
+    return trackId
+  },
+  createClip: async ({
+    category,
+    track,
+    startTimeInMs,
+    durationInMs,
+  }: {
+    category: ClapSegmentCategory
+    track?: number
+    startTimeInMs?: number
+    durationInMs?: number
+  }): Promise<TimelineSegment> => {
+    const {
+      cursorTimestampAtInMs,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      tracks,
+      createTrack,
+      addSegment,
+    } = get()
+
+    const clipStartTimeInMs = isValidNumber(startTimeInMs)
+      ? startTimeInMs!
+      : cursorTimestampAtInMs
+
+    const clipDurationInMs = isValidNumber(durationInMs)
+      ? durationInMs!
+      : defaultSegmentDurationInSteps * durationInMsPerStep
+
+    const requestedTrack = isValidNumber(track) ? track! : createTrack({ category })
+    const selectedTrack = tracks[requestedTrack]
+    const selectedTrackCategory = Object.values(ClapSegmentCategory).includes(selectedTrack?.name as ClapSegmentCategory)
+      ? selectedTrack.name as ClapSegmentCategory
+      : category
+
+    if (selectedTrackCategory !== category) {
+      throw new Error(`Cannot create a ${category} clip on a ${selectedTrackCategory} track.`)
+    }
+
+    const segment = await clapSegmentToTimelineSegment(newSegment({
+      track: requestedTrack,
+      startTimeInMs: clipStartTimeInMs,
+      endTimeInMs: clipStartTimeInMs + clipDurationInMs,
+      assetDurationInMs: clipDurationInMs,
+      category,
+      outputType: getOutputTypeForCategory(category),
+      status: ClapSegmentStatus.TO_GENERATE,
+      assetSourceType: ClapAssetSource.EMPTY,
+      prompt: `New ${category.toLowerCase()} clip`,
+      label: `New ${category.toLowerCase()} clip`,
+      createdBy: "human",
+      editedBy: "human",
+    }))
+
+    await addSegment({
+      segment,
+      startTimeInMs: clipStartTimeInMs,
+      track: requestedTrack,
+    })
+
+    return segment
+  },
+  moveClip: ({
+    segment,
+    startTimeInMs,
+    track,
+  }: {
+    segment: TimelineSegment
+    startTimeInMs?: number
+    track?: number
+  }): boolean => {
+    const {
+      width,
+      height,
+      tracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs: previousDurationInMs,
+      allSegmentsChanged: previousAllSegmentsChanged,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+      assignTrack,
+    } = get()
+
+    const requestedTrack = isValidNumber(track) ? track! : segment.track
+    const targetTrack = tracks[requestedTrack]
+    const targetTrackCategory = Object.values(ClapSegmentCategory).includes(targetTrack?.name as ClapSegmentCategory)
+      ? targetTrack.name as ClapSegmentCategory
+      : segment.category
+
+    if (targetTrackCategory !== segment.category) {
+      return false
+    }
+
+    const durationInMs = segment.endTimeInMs - segment.startTimeInMs
+    const nextStartTimeInMs = isValidNumber(startTimeInMs)
+      ? Math.max(0, startTimeInMs!)
+      : segment.startTimeInMs
+
+    segment.startTimeInMs = nextStartTimeInMs
+    segment.endTimeInMs = nextStartTimeInMs + durationInMs
+
+    void assignTrack({
+      segment,
+      track: requestedTrack,
+      triggerChange: false,
+    })
+
+    const nextDurationInMs = Math.max(previousDurationInMs, segment.endTimeInMs)
+
+    set({
+      allSegmentsChanged: previousAllSegmentsChanged + 1,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
+      durationInMs: nextDurationInMs,
+      ...computeContentSizeMetrics({
+        width,
+        height,
+        tracks,
+        cellWidth,
+        defaultSegmentDurationInSteps,
+        durationInMsPerStep,
+        durationInMs: nextDurationInMs,
+      })
+    })
+
+    return true
+  },
   assignTrack: async ({
     segment,
     track,
@@ -919,6 +1145,22 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         hue: 0,
         occupied: true,
         visible: true,
+      }
+    } else if (!tracks[segment.track].occupied) {
+      const isPreview =
+        segment.category === ClapSegmentCategory.IMAGE ||
+        segment.category === ClapSegmentCategory.VIDEO
+
+      tracks[segment.track] = {
+        ...tracks[segment.track],
+        name: `${segment.category}`,
+        isPreview,
+        height: getTrackHeightForCategory({
+          category: segment.category,
+          defaultCellHeight,
+          defaultPreviewHeight,
+        }),
+        occupied: true,
       }
     }
 

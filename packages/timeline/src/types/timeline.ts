@@ -360,6 +360,33 @@ export type TimelineStoreModifiers = {
     startTimeInMs?: number
     track?: number
   }) => Promise<void>
+  createTrack: ({
+    category,
+    name,
+  }: {
+    category: ClapSegment["category"]
+    name?: string
+  }) => number
+  createClip: ({
+    category,
+    track,
+    startTimeInMs,
+    durationInMs,
+  }: {
+    category: ClapSegment["category"]
+    track?: number
+    startTimeInMs?: number
+    durationInMs?: number
+  }) => Promise<TimelineSegment>
+  moveClip: ({
+    segment,
+    startTimeInMs,
+    track,
+  }: {
+    segment: TimelineSegment
+    startTimeInMs?: number
+    track?: number
+  }) => boolean
   assignTrack: ({
     segment,
     track,
