@@ -1,18 +1,85 @@
-import { create } from "zustand"
-import * as THREE from "three"
-import type { ThreeEvent } from "@react-three/fiber"
-import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
+import { create } from 'zustand'
+import * as THREE from 'three'
+import type { ThreeEvent } from '@react-three/fiber'
+import {
+  ClapProject,
+  ClapSegment,
+  ClapSegmentCategory,
+  isValidNumber,
+  newClap,
+  serializeClap,
+  ClapTracks,
+  ClapEntity,
+  ClapMeta,
+  ClapOutputType,
+  ClapSegmentStatus,
+  ClapAssetSource,
+} from '@aitube/clap'
 
-import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler, Invalidate } from "@/types/timeline"
-import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
-import { DEFAULT_NB_TRACKS, leftBarTrackScaleWidth } from "@/constants"
-import { findFreeTrack, removeFinalVideosAndConvertToTimelineSegments, clapSegmentToTimelineSegment, timelineSegmentToClapSegment } from "@/utils"
-import { ClapTimelineTheme, SegmentResolver } from "@/types"
-import { TimelineControlsImpl } from "@/components/controls/types"
-import { TimelineCameraImpl } from "@/components/camera/types"
-import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
-import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
-import { topBarTimeScaleHeight } from "@/constants/themes"
+import {
+  TimelineSegment,
+  SegmentEditionStatus,
+  SegmentVisibility,
+  TimelineStore,
+  SegmentArea,
+  SegmentPointerEvent,
+  SegmentEventCallbackHandler,
+  Invalidate,
+  CreateTrackParams,
+  CreateClipParams,
+} from '@/types/timeline'
+import { getDefaultProjectState, getDefaultState } from '@/utils/getDefaultState'
+import { DEFAULT_NB_TRACKS, leftBarTrackScaleWidth } from '@/constants'
+import {
+  findFreeTrack,
+  removeFinalVideosAndConvertToTimelineSegments,
+  clapSegmentToTimelineSegment,
+  timelineSegmentToClapSegment,
+} from '@/utils'
+import { ClapTimelineTheme, SegmentResolver } from '@/types'
+import { TimelineControlsImpl } from '@/components/controls/types'
+import { TimelineCameraImpl } from '@/components/camera/types'
+import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from '@/components/timeline/types'
+import { computeContentSizeMetrics } from '@/compute/computeContentSizeMetrics'
+import { topBarTimeScaleHeight } from '@/constants/themes'
+
+const previewCategories = new Set<ClapSegmentCategory>([ClapSegmentCategory.IMAGE, ClapSegmentCategory.VIDEO])
+
+const audioCategories = new Set<ClapSegmentCategory>([ClapSegmentCategory.DIALOGUE, ClapSegmentCategory.MUSIC, ClapSegmentCategory.SOUND])
+
+function getSegmentOutputType(category: ClapSegmentCategory): ClapOutputType {
+  if (category === ClapSegmentCategory.IMAGE) {
+    return ClapOutputType.IMAGE
+  }
+  if (category === ClapSegmentCategory.VIDEO) {
+    return ClapOutputType.VIDEO
+  }
+  if (audioCategories.has(category)) {
+    return ClapOutputType.AUDIO
+  }
+  return ClapOutputType.TEXT
+}
+
+function getCategoryFromTrackName(name?: string): ClapSegmentCategory | undefined {
+  return Object.values(ClapSegmentCategory).find(category => category === name)
+}
+
+function createSegmentId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return `segment-${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
+
+let activeSegmentDrag:
+  | {
+      id: string
+      startCursorTimestampInMs: number
+      startSegmentTimeInMs: number
+      durationInMs: number
+      track: number
+    }
+  | undefined
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -24,7 +91,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   clear: () => {
     // this re-initialize everything that is related to the current .clap project
     set({
-      ...getDefaultProjectState()
+      ...getDefaultProjectState(),
     })
   },
 
@@ -37,22 +104,18 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       console.log(`useTimeline: no clap to show`)
       return
     }
-    
+
     set({ isLoading: true })
 
     // actually you know what.. let's drop the concept of final video for the moment
     // in Clapper and the timeline
     // const finalVideo = await getFinalVideo(clap)
     const finalVideo = undefined
-    
+
     // we remove the big/long video
     const segments = await removeFinalVideosAndConvertToTimelineSegments(clap)
 
-    const {
-      defaultCellHeight,
-      durationInMsPerStep,
-      cellWidth,
-    } = get()
+    const { defaultCellHeight, durationInMsPerStep, cellWidth } = get()
 
     const meta = clap.meta
 
@@ -65,13 +128,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     let tracks: ClapTracks = []
 
     let defaultSegmentDurationInSteps = get().defaultSegmentDurationInSteps
- 
-  
+
     for (const s of segments) {
       if (s.category === ClapSegmentCategory.CAMERA) {
-        const durationInSteps = (
-          (s.endTimeInMs - s.startTimeInMs) / durationInMsPerStep
-        )
+        const durationInSteps = (s.endTimeInMs - s.startTimeInMs) / durationInMsPerStep
         // TODO: we should do this row by row
         // and look at the most recurring duration,
         // using a table
@@ -84,19 +144,14 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     // TODO: compute the exact image ratio instead of using the media orientation,
     // since it might not match the actual assets
-    const defaultImageRatio = clap ? (
-      (clap.meta.width || 896) / (clap.meta.height || 512)
-    ) : (896 / 512)
-    
+    const defaultImageRatio = clap ? (clap.meta.width || 896) / (clap.meta.height || 512) : 896 / 512
+
     // also storyboard images and videos might have different sizes / ratios
-    const defaultPreviewHeight = Math.round(
-      defaultSegmentLengthInPixels / defaultImageRatio
-    )
+    const defaultPreviewHeight = Math.round(defaultSegmentLengthInPixels / defaultImageRatio)
 
     const lineNumberToMentionedSegments: Record<number, TimelineSegment[]> = {}
 
     for (const segment of segments) {
-      
       // TODO: move this idCollision detector into the state,
       // so that we can use it later?
       if (idCollisionDetector.has(segment.id)) {
@@ -105,8 +160,9 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       }
 
       // --------
-      const isSegmentDirectlyMentionedInTheScript = segment.category === ClapSegmentCategory.DIALOGUE || segment.category === ClapSegmentCategory.ACTION
-      
+      const isSegmentDirectlyMentionedInTheScript =
+        segment.category === ClapSegmentCategory.DIALOGUE || segment.category === ClapSegmentCategory.ACTION
+
       if (isSegmentDirectlyMentionedInTheScript) {
         for (let i = segment.startTimeInLines; i <= segment.endTimeInLines; i++) {
           // we only add the segment if it is not already in the map
@@ -121,29 +177,23 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       idCollisionDetector.add(segment.id)
 
       if (!tracks[segment.track]) {
-        const isPreview =
-        segment.category === ClapSegmentCategory.IMAGE ||
-          segment.category === ClapSegmentCategory.VIDEO
+        const isPreview = segment.category === ClapSegmentCategory.IMAGE || segment.category === ClapSegmentCategory.VIDEO
 
         tracks[segment.track] = {
           id: segment.track,
           // name: `Track ${s.track}`,
           name: `${segment.category}`,
           isPreview,
-          height:
-            isPreview
-            ? defaultPreviewHeight
-            : defaultCellHeight,
+          height: isPreview ? defaultPreviewHeight : defaultCellHeight,
           hue: 0,
           occupied: true,
           visible: true,
         }
       } else {
-        
         const track = tracks[segment.track]
-        const categories: string[] = track.name.split(",").map((x: string) => x.trim())
+        const categories: string[] = track.name.split(',').map((x: string) => x.trim())
         if (!categories.includes(segment.category)) {
-          tracks[segment.track].name = "(misc)"
+          tracks[segment.track].name = '(misc)'
 
           /*
           if (categories.length < 2) {
@@ -154,12 +204,10 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           }
           */
         }
-        
       }
-
     }
 
-   // ---------- FILL-IN THE TRACKS ---------------
+    // ---------- FILL-IN THE TRACKS ---------------
     for (let id = 0; id < DEFAULT_NB_TRACKS; id++) {
       if (!tracks[id]) {
         tracks[id] = {
@@ -215,7 +263,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         defaultSegmentDurationInSteps,
         durationInMsPerStep,
         durationInMs,
-      })
+      }),
     })
 
     // one more thing: we need to call this,
@@ -223,24 +271,19 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     get().jumpAt(0)
   },
   getClap: async (): Promise<ClapProject> => {
-    const { 
-      getClapMeta,
-      entities,
-      scenes,
-      segments
-    } = get()
+    const { getClapMeta, entities, scenes, segments } = get()
 
     const clap = newClap({
       meta: getClapMeta(),
       entities: [...entities],
       scenes: [...scenes],
-      segments: segments.map(ts => timelineSegmentToClapSegment(ts))
+      segments: segments.map(ts => timelineSegmentToClapSegment(ts)),
     })
 
     return clap
   },
   getClapMeta: (): ClapMeta => {
-    const { 
+    const {
       id,
       title,
       description,
@@ -295,9 +338,11 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       durationInMs,
     } = get()
     const cellWidth = Math.min(maxHorizontalZoomLevel, Math.max(minHorizontalZoomLevel, newHorizontalZoomLevel))
-    
+
     // nothing changed
-    if (Math.round(cellWidth) === Math.round(previousCellWidth)) { return }
+    if (Math.round(cellWidth) === Math.round(previousCellWidth)) {
+      return
+    }
 
     const resizeStartedAt = performance.now()
     const isResizing = true
@@ -313,15 +358,19 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         defaultSegmentDurationInSteps,
         durationInMsPerStep,
         durationInMs,
-      })
+      }),
     })
   },
-  
+
   setSegments: (segments: TimelineSegment[] = []) => {
     set({ segments, loadedSegments: [] })
   },
-  setLoadedSegments: (loadedSegments: TimelineSegment[] = []) => { set({ loadedSegments }) },
-  setVisibleSegments: (visibleSegments: TimelineSegment[] = []) => { set({ visibleSegments }) },
+  setLoadedSegments: (loadedSegments: TimelineSegment[] = []) => {
+    set({ loadedSegments })
+  },
+  setVisibleSegments: (visibleSegments: TimelineSegment[] = []) => {
+    set({ visibleSegments })
+  },
 
   getCellHeight: (trackNumber?: number): number => {
     const { defaultCellHeight, tracks } = get()
@@ -343,7 +392,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     area,
   }: {
     segment?: TimelineSegment
-    area?: SegmentArea 
+    area?: SegmentArea
   } = {}) => {
     const {
       invalidate,
@@ -372,7 +421,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         set({
           hoveredSegment: segment,
           allSegmentsChanged: 1 + previousAllSegmentsChanged,
-          atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged
+          atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
         })
       }
     } else {
@@ -384,7 +433,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         set({
           hoveredSegment: undefined,
           allSegmentsChanged: 1 + previousAllSegmentsChanged,
-          atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged
+          atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
         })
       } else {
         // nothing to do
@@ -393,20 +442,22 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // since we are un frameloop="demand" mode, we need to manual invalidate the scene
     invalidate()
   },
-  setEditedSegment: ({
-    segment,
-    status = SegmentEditionStatus.EDITING
-  }: {
-    segment?: TimelineSegment
-    status?: SegmentEditionStatus
-  } = {
-    status: SegmentEditionStatus.EDITING
-  }) => {
+  setEditedSegment: (
+    {
+      segment,
+      status = SegmentEditionStatus.EDITING,
+    }: {
+      segment?: TimelineSegment
+      status?: SegmentEditionStatus
+    } = {
+      status: SegmentEditionStatus.EDITING,
+    }
+  ) => {
     const {
       invalidate,
       editedSegment: previousEditedSegment,
       allSegmentsChanged: previousAllSegmentsChanged,
-      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
     } = get()
 
     // since we are un frameloop="demand" mode, we need to manual invalidate the scene
@@ -426,7 +477,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         set({
           editedSegment: segment,
           atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
-          allSegmentsChanged: 1 + previousAllSegmentsChanged
+          allSegmentsChanged: 1 + previousAllSegmentsChanged,
         })
       }
     } else {
@@ -435,7 +486,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         set({
           editedSegment: undefined,
           atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
-          allSegmentsChanged: 1 + previousAllSegmentsChanged
+          allSegmentsChanged: 1 + previousAllSegmentsChanged,
         })
       } else {
         // nothing to do
@@ -450,14 +501,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     segment?: TimelineSegment
     isSelected?: boolean
     onlyOneSelectedAtOnce?: boolean
-  } = {
-  }) => {
+  } = {}) => {
     const {
       invalidate,
       segments,
       selectedSegments: previousSelectedSegments,
       atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
-      allSegmentsChanged: previousAllSegmentsChanged
+      allSegmentsChanged: previousAllSegmentsChanged,
     } = get()
 
     // since we are un frameloop="demand" mode, we need to manual invalidate the scene
@@ -471,19 +521,15 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     })
     */
 
-    let newValue = typeof isSelected !== "boolean"
-      ? (typeof segment?.isSelected === "boolean" ? (!segment.isSelected) : false)
-      : isSelected
+    let newValue = typeof isSelected !== 'boolean' ? (typeof segment?.isSelected === 'boolean' ? !segment.isSelected : false) : isSelected
 
     // console.log('`setSelectedSegment(): new value:', newValue)
 
     // note: we do all of this in order to avoid useless state updates
     if (segment) {
-
       if (segment.isSelected === newValue) {
-
         // console.log('`setSelectedSegment(): nothing to do')
-    
+
         // nothing to do
         return
       }
@@ -492,9 +538,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
       // if needed we clear any other selected item
       if (onlyOneSelectedAtOnce) {
-
         // console.log('`setSelectedSegment(): unselecting all previous segments')
-    
+
         segments.forEach(s => {
           s.isSelected = false
         })
@@ -502,7 +547,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       }
 
       // console.log('`setSelectedSegment(): assigning new value and propagating changes:', newValue)
-    
+
       segment.isSelected = newValue
 
       if (newValue) {
@@ -515,11 +560,9 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
         allSegmentsChanged: 1 + previousAllSegmentsChanged,
       })
-
     } else {
-
       // console.log('`setSelectedSegment(): mass change requested')
-    
+
       segments.forEach(s => {
         s.isSelected = newValue
       })
@@ -554,11 +597,24 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         }, null, 2))
       */
 
-      const { cellWidth, containerWidth, durationInMsPerStep, setSelectedSegment, setHoveredSegment, setEditedSegment } = get()
+      const {
+        cellWidth,
+        containerWidth,
+        durationInMsPerStep,
+        setSelectedSegment,
+        setHoveredSegment,
+        setEditedSegment,
+        tracks,
+        defaultCellHeight,
+        segments,
+        width,
+        height,
+        defaultSegmentDurationInSteps,
+        durationInMs: previousDurationInMs,
+        invalidate,
+      } = get()
 
-      const durationInSteps = (
-        (segment.endTimeInMs - segment.startTimeInMs) / durationInMsPerStep
-      )
+      const durationInSteps = (segment.endTimeInMs - segment.startTimeInMs) / durationInMsPerStep
 
       /*
       const startTimeInSteps = (
@@ -571,28 +627,96 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       const segmentWidth = widthInPx
 
       const isOutOfRange = offsetX < leftBarTrackScaleWidth || offsetY < topBarTimeScaleHeight
-    
-      const cursorX = pointX + (containerWidth / 2)
+
+      const cursorX = pointX + containerWidth / 2
       const cursorTimestampAtInMs = (cursorX / cellWidth) * useTimeline.getState().durationInMsPerStep
-      
+
+      const getTrackAtPointY = (pointY: number): number | undefined => {
+        const timelineY = -pointY
+        let trackTop = 0
+
+        for (let trackIndex = 0; trackIndex < tracks.length; trackIndex++) {
+          const trackHeight = tracks[trackIndex]?.height || defaultCellHeight
+          if (timelineY >= trackTop && timelineY < trackTop + trackHeight) {
+            return trackIndex
+          }
+          trackTop += trackHeight
+        }
+
+        return undefined
+      }
+
+      const moveDraggedSegment = () => {
+        if (!activeSegmentDrag || activeSegmentDrag.id !== segment.id) {
+          return
+        }
+
+        const targetTrack = getTrackAtPointY(event.point.y) ?? activeSegmentDrag.track
+        const targetTrackCategory = getCategoryFromTrackName(tracks[targetTrack]?.name)
+
+        if (targetTrackCategory && targetTrackCategory !== segment.category) {
+          return
+        }
+
+        const rawStartTimeInMs =
+          activeSegmentDrag.startSegmentTimeInMs + cursorTimestampAtInMs - activeSegmentDrag.startCursorTimestampInMs
+        const startTimeInMs = Math.max(0, Math.round(rawStartTimeInMs / durationInMsPerStep) * durationInMsPerStep)
+        const endTimeInMs = startTimeInMs + activeSegmentDrag.durationInMs
+        const collides = segments.some(s => (
+          s.id !== segment.id &&
+          s.track === targetTrack &&
+          !(s.endTimeInMs <= startTimeInMs || s.startTimeInMs >= endTimeInMs)
+        ))
+
+        if (collides) {
+          return
+        }
+
+        segment.startTimeInMs = startTimeInMs
+        segment.endTimeInMs = endTimeInMs
+        segment.track = targetTrack
+        segment.visibility = SegmentVisibility.VISIBLE
+
+        const durationInMs = Math.max(previousDurationInMs, endTimeInMs)
+
+        set({
+          segments: [...segments],
+          durationInMs,
+          atLeastOneSegmentChanged: 1 + get().atLeastOneSegmentChanged,
+          allSegmentsChanged: 1 + get().allSegmentsChanged,
+          ...computeContentSizeMetrics({
+            width,
+            height,
+            tracks,
+            cellWidth,
+            defaultSegmentDurationInSteps,
+            durationInMsPerStep,
+            durationInMs,
+          }),
+        })
+        invalidate()
+      }
+
       //console.log("cells.Cell:onClick() e:", e)
-    
+
       const wMin = cursorTimestampAtInMs - segment.startTimeInMs
       const wMax = segment.endTimeInMs - segment.startTimeInMs
       const cursorLeftPosInRatio = wMin / wMax
-    
+
       const cursorLeftPosInPx = cursorLeftPosInRatio * segmentWidth
-      const cursorRightPosInPx = segmentWidth - cursorLeftPosInPx 
-    
+      const cursorRightPosInPx = segmentWidth - cursorLeftPosInPx
+
       // note: this should be "responsive", with a max width
       const sideGrabHandleWidth = 9
       // let isInLeftArea = cursorLeftPosInRatio < 0.5
       // let isInRightArea = cursorLeftPosInRatio > 0.5
-    
+
       const area =
-        (cursorLeftPosInPx < sideGrabHandleWidth) ? SegmentArea.LEFT
-      : (cursorRightPosInPx < sideGrabHandleWidth) ? SegmentArea.RIGHT
-      : SegmentArea.MIDDLE
+        cursorLeftPosInPx < sideGrabHandleWidth
+          ? SegmentArea.LEFT
+          : cursorRightPosInPx < sideGrabHandleWidth
+            ? SegmentArea.RIGHT
+            : SegmentArea.MIDDLE
 
       if (isOutOfRange) {
         event.stopPropagation()
@@ -602,19 +726,19 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       if (eventType === SegmentPointerEvent.DOUBLE_CLICK) {
         setHoveredSegment({
           segment,
-          area
+          area,
         })
         setSelectedSegment({
           segment,
-    
+
           // we leave it unspecified to create an automated toggle
           // isSelected: true,
-    
+
           onlyOneSelectedAtOnce: true,
         })
         setEditedSegment({
           segment,
-          status: SegmentEditionStatus.EDITING
+          status: SegmentEditionStatus.EDITING,
         })
       } else if (
         eventType === SegmentPointerEvent.CLICK ||
@@ -623,28 +747,40 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       ) {
         setHoveredSegment({
           segment,
-          area
+          area,
         })
         if (area === SegmentArea.LEFT) {
           setEditedSegment({
             segment,
-            status: SegmentEditionStatus.RESIZE_START
+            status: SegmentEditionStatus.RESIZE_START,
           })
         } else if (area === SegmentArea.RIGHT) {
           setEditedSegment({
             segment,
-            status: SegmentEditionStatus.RESIZE_END
+            status: SegmentEditionStatus.RESIZE_END,
           })
         } else if (area === SegmentArea.MIDDLE) {
           setEditedSegment({
-          segment,
-            status: SegmentEditionStatus.DRAGGING
+            segment,
+            status: SegmentEditionStatus.DRAGGING,
           })
+          if (eventType === SegmentPointerEvent.DOWN) {
+            activeSegmentDrag = {
+              id: segment.id,
+              startCursorTimestampInMs: cursorTimestampAtInMs,
+              startSegmentTimeInMs: segment.startTimeInMs,
+              durationInMs: segment.endTimeInMs - segment.startTimeInMs,
+              track: segment.track,
+            }
+          } else if (eventType === SegmentPointerEvent.MOVE) {
+            moveDraggedSegment()
+          }
         }
       } else if (eventType === SegmentPointerEvent.UP) {
+        activeSegmentDrag = undefined
         setHoveredSegment({
           segment: undefined,
-          area
+          area,
         })
         setEditedSegment({
           segment: undefined,
@@ -660,14 +796,14 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     const { silentChangesInSegment, atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged } = get()
     set({
       silentChangesInSegment: Object.assign(silentChangesInSegment, {
-        [segmentId]: 1 + (silentChangesInSegment[segmentId] || 0)
+        [segmentId]: 1 + (silentChangesInSegment[segmentId] || 0),
       }),
       atLeastOneSegmentChanged: 1 + previousAtLeastOneSegmentChanged,
     })
   },
   trackSilentChangeInSegments: (segmentIds: string[]) => {
     const { silentChangesInSegment, atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged } = get()
-    
+
     for (const id of segmentIds) {
       silentChangesInSegment[id] = 1 + (silentChangesInSegment[id] || 0)
     }
@@ -695,7 +831,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   setScrollX: (scrollX: number) => {
     set({ scrollX })
   },
-  handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number, deltaY: number }) => {
+  handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number; deltaY: number }) => {
     const { scrollX, scrollY } = get()
     // TODO: compute the limits here, to avoid doing re-renderings for nothing
     set({
@@ -704,38 +840,133 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     })
   },
   toggleTrackVisibility: (trackId: number) => {
-    const {
-      width,
-      height,
-      tracks,
-      cellWidth,
-      defaultSegmentDurationInSteps,
-      durationInMsPerStep,
-      durationInMs,
-    } = get()
+    const { width, height, tracks, cellWidth, defaultSegmentDurationInSteps, durationInMsPerStep, durationInMs } = get()
 
     set({
       ...computeContentSizeMetrics({
         width,
         height,
-        tracks: tracks.map((t: any) => (
-          t.id === trackId
-          ? { ...t, visible: !t.visible }
-          : t
-        )),
+        tracks: tracks.map((t: any) => (t.id === trackId ? { ...t, visible: !t.visible } : t)),
         cellWidth,
         defaultSegmentDurationInSteps,
         durationInMsPerStep,
         durationInMs,
-      })
+      }),
     })
+  },
+  createTrack: ({ category = ClapSegmentCategory.GENERIC, name, height }: CreateTrackParams = {}): number => {
+    const {
+      width,
+      height: projectHeight,
+      tracks,
+      cellWidth,
+      defaultCellHeight,
+      defaultPreviewHeight,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged,
+      allSegmentsChanged: previousAllSegmentsChanged,
+    } = get()
+
+    const trackId = tracks.length
+    const isPreview = previewCategories.has(category)
+    const nextTracks = tracks.concat({
+      id: trackId,
+      name: name || category,
+      isPreview,
+      height: height || (isPreview ? defaultPreviewHeight : defaultCellHeight),
+      hue: 0,
+      occupied: false,
+      visible: true,
+    })
+
+    const metrics = computeContentSizeMetrics({
+      width,
+      height: projectHeight,
+      tracks: nextTracks,
+      cellWidth,
+      defaultSegmentDurationInSteps,
+      durationInMsPerStep,
+      durationInMs,
+    })
+
+    set({
+      allSegmentsChanged: previousAllSegmentsChanged + 1,
+      atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged + 1,
+      ...metrics,
+    })
+
+    return trackId
+  },
+  createClip: async ({ category, track, startTimeInMs, durationInMs, label, prompt }: CreateClipParams = {}): Promise<TimelineSegment> => {
+    const { tracks, cursorTimestampAtInMs, durationInMsPerStep, defaultSegmentDurationInSteps, createTrack, addSegment } = get()
+
+    const selectedTrack = isValidNumber(track) ? track! : createTrack({ category })
+    const trackCategory = getCategoryFromTrackName(tracks[selectedTrack]?.name)
+    const clipCategory = trackCategory || category || ClapSegmentCategory.GENERIC
+    const clipStartTimeInMs = isValidNumber(startTimeInMs) ? startTimeInMs! : cursorTimestampAtInMs
+    const clipDurationInMs = isValidNumber(durationInMs) ? durationInMs! : defaultSegmentDurationInSteps * durationInMsPerStep
+    const now = new Date().toISOString()
+
+    const segment: TimelineSegment = {
+      id: createSegmentId(),
+      parentId: '',
+      childrenIds: [],
+      track: selectedTrack,
+      startTimeInMs: clipStartTimeInMs,
+      endTimeInMs: clipStartTimeInMs + clipDurationInMs,
+      category: clipCategory,
+      entityId: '',
+      workflowId: '',
+      sceneId: '',
+      startTimeInLines: 0,
+      endTimeInLines: 0,
+      prompt: prompt || '',
+      label: label || `New ${clipCategory.toLowerCase()} clip`,
+      outputType: getSegmentOutputType(clipCategory),
+      renderId: '',
+      status: ClapSegmentStatus.TO_GENERATE,
+      assetUrl: prompt || '',
+      assetDurationInMs: clipDurationInMs,
+      assetSourceType: prompt ? ClapAssetSource.PROMPT : ClapAssetSource.EMPTY,
+      assetFileFormat: '',
+      createdAt: now,
+      createdBy: 'human',
+      revision: 0,
+      editedBy: 'human',
+      outputGain: 1,
+      seed: 0,
+      visibility: SegmentVisibility.VISIBLE,
+      textures: {},
+      colors: {} as TimelineSegment['colors'],
+      isSelected: false,
+      isHovered: false,
+      isHoveredOnBody: false,
+      isHoveredOnLeftHandle: false,
+      isHoveredOnRightHandle: false,
+      isGrabbedOnBody: false,
+      isGrabbedOnLeftHandle: false,
+      isGrabbedOnRightHandle: false,
+      isActive: false,
+      isPlaying: false,
+      editionStatus: SegmentEditionStatus.EDITABLE,
+    }
+
+    await addSegment({
+      segment,
+      startTimeInMs: clipStartTimeInMs,
+      track: selectedTrack,
+    })
+
+    return segment
   },
   setContainerSize: ({ width, height }: { width: number; height: number }) => {
     const { containerWidth: previousWidth, containerHeight: previousHeight } = get()
-    const changed = 
-      (Math.round(previousWidth) !== Math.round(height))
-      || (Math.round(previousHeight) !== Math.round(height))
-    if (!changed) { return }
+    const changed = Math.round(previousWidth) !== Math.round(height) || Math.round(previousHeight) !== Math.round(height)
+    if (!changed) {
+      return
+    }
 
     set({
       containerWidth: width,
@@ -786,7 +1017,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     showTargetDirPopup = false,
 
     // some extra text to append to the file name
-    extraLabel = ""
+    extraLabel = '',
   }: {
     // if embedded is true, the file will be larger, as all the content,
     // image, video, audio..
@@ -809,18 +1040,18 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     const blob = await serializeClap(clap)
 
     // Create an object URL for the compressed clap blob
-    const objectUrl = URL.createObjectURL(blob);
-  
+    const objectUrl = URL.createObjectURL(blob)
+
     // Create an anchor element and force browser download
-    const anchor = document.createElement("a");
-    anchor.href = objectUrl;
-    anchor.download = saveToFilePath || `${clap.meta.title}${extraLabel}.clap`;
-    document.body.appendChild(anchor); // Append to the body (could be removed once clicked)
-    anchor.click(); // Trigger the download
-  
+    const anchor = document.createElement('a')
+    anchor.href = objectUrl
+    anchor.download = saveToFilePath || `${clap.meta.title}${extraLabel}.clap`
+    document.body.appendChild(anchor) // Append to the body (could be removed once clicked)
+    anchor.click() // Trigger the download
+
     // Cleanup: revoke the object URL and remove the anchor element
-    URL.revokeObjectURL(objectUrl);
-    document.body.removeChild(anchor);
+    URL.revokeObjectURL(objectUrl)
+    document.body.removeChild(anchor)
 
     return objectUrl.length
   },
@@ -829,14 +1060,16 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   },
   resolveSegment: async (segment: TimelineSegment): Promise<TimelineSegment> => {
     const { segmentResolver, fitSegmentToAssetDuration } = get()
-    if (!segmentResolver) { return segment }
-    
+    if (!segmentResolver) {
+      return segment
+    }
+
     segment = await segmentResolver(segment)
 
     // after a segment has ben resolved, it is possible that the size
     // of its asset changed (eg. a dialogue line longer than the segment's length)
     //
-    // there are multiple ways to solve this, one approach could be to 
+    // there are multiple ways to solve this, one approach could be to
     // just add some more B-roll (more shots)
     //
     // or we can also extend it, which is the current simple solution
@@ -857,7 +1090,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   addSegments: async ({
     segments = [],
     startTimeInMs,
-    track
+    track,
   }: {
     segments?: TimelineSegment[]
     startTimeInMs?: number
@@ -869,7 +1102,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         await addSegment({
           segment,
           startTimeInMs,
-          track
+          track,
         })
       }
     }
@@ -898,24 +1131,19 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     } = get()
 
     segment.track = track
-   
+
     let nbTracks = tracks.length
 
     // add the track if it is missing
     if (!tracks[segment.track]) {
-      const isPreview =
-        segment.category === ClapSegmentCategory.IMAGE ||
-        segment.category === ClapSegmentCategory.VIDEO
-   
+      const isPreview = segment.category === ClapSegmentCategory.IMAGE || segment.category === ClapSegmentCategory.VIDEO
+
       tracks[segment.track] = {
         id: segment.track,
         // name: `Track ${s.track}`,
         name: `${segment.category}`,
         isPreview,
-        height:
-          isPreview
-          ? defaultPreviewHeight
-          : defaultCellHeight,
+        height: isPreview ? defaultPreviewHeight : defaultCellHeight,
         hue: 0,
         occupied: true,
         visible: true,
@@ -941,7 +1169,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   addSegment: async ({
     segment,
     startTimeInMs: requestedStartTimeInMs,
-    track: requestedTrack
+    track: requestedTrack,
   }: {
     segment: TimelineSegment
     startTimeInMs?: number
@@ -965,7 +1193,6 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       assignTrack,
     } = get()
 
-
     // note: the requestedTrack might not be empty
     const segmentDuration = segment.endTimeInMs - segment.startTimeInMs
 
@@ -974,10 +1201,12 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     const endTimeInMs = startTimeInMs + segmentDuration
 
     // for now let's do something simple: to always search for an available track
-    const availableTrack = isValidNumber(requestedTrack) ? requestedTrack! : findFreeTrack({
-      startTimeInMs,
-      endTimeInMs
-    })
+    const availableTrack = isValidNumber(requestedTrack)
+      ? requestedTrack!
+      : findFreeTrack({
+          startTimeInMs,
+          endTimeInMs,
+        })
 
     /*
     console.log("availableTrack:", {
@@ -996,7 +1225,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     // also, we assume that we are adding a segment in a place where it's visible
     // (if we are wrong don't worry, our visibility detector will fix it anyway)
     segment.visibility = SegmentVisibility.VISIBLE
-    
+
     assignTrack({
       segment,
       track: availableTrack,
@@ -1005,22 +1234,18 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       triggerChange: false,
     })
 
-
     // we assume that the provided segment is valid, with a unique UUID
-  
+
     // then we need to update everything
 
     // ok so, I'm not a big fan of doing this,
     // officially the order doesn't matter in the previousSegments array
-    // this means we don't have FOR LOOPs with a BREAK etc 
+    // this means we don't have FOR LOOPs with a BREAK etc
     // still, I think we can improve our performance one day by storing them
     // on a temporally sorted tree
     const segments = previousSegments.concat(segment)
 
-    const durationInMs =
-      segment.endTimeInMs > previousDurationInMs
-      ? segment.endTimeInMs
-      : previousDurationInMs
+    const durationInMs = segment.endTimeInMs > previousDurationInMs ? segment.endTimeInMs : previousDurationInMs
 
     set({
       segments,
@@ -1035,23 +1260,16 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         defaultSegmentDurationInSteps,
         durationInMsPerStep,
         durationInMs,
-      })
+      }),
     })
   },
-  findFreeTrack: ({
-    startTimeInMs,
-    endTimeInMs
-  }: {
-    startTimeInMs?: number
-    endTimeInMs?: number
-  }): number => {
+  findFreeTrack: ({ startTimeInMs, endTimeInMs }: { startTimeInMs?: number; endTimeInMs?: number }): number => {
     const { segments } = get()
     return findFreeTrack({ segments, startTimeInMs, endTimeInMs })
   },
 
   // resize and move the end of a segment, as well as the segment after it
   fitSegmentToAssetDuration: async (segment: TimelineSegment, requestedDurationInMs?: number): Promise<void> => {
-    
     const {
       width,
       height,
@@ -1064,22 +1282,17 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       allSegmentsChanged: previousAllSegmentsChanged,
       durationInMs: previousDurationInMs,
       findFreeTrack,
-      assignTrack
+      assignTrack,
     } = get()
 
     let requestedDuration: number =
-      typeof requestedDurationInMs === "number" && isFinite(requestedDurationInMs) && !isNaN(requestedDurationInMs)
-      ? requestedDurationInMs
-      : segment.assetDurationInMs
-
+      typeof requestedDurationInMs === 'number' && isFinite(requestedDurationInMs) && !isNaN(requestedDurationInMs)
+        ? requestedDurationInMs
+        : segment.assetDurationInMs
 
     // trivial case: nothing to do!
     const segmentDurationInMs = segment.endTimeInMs - segment.startTimeInMs
-    if (
-      requestedDuration === 0
-      ||
-      segmentDurationInMs === requestedDuration
-    ) {
+    if (requestedDuration === 0 || segmentDurationInMs === requestedDuration) {
       return
     }
 
@@ -1092,14 +1305,12 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     const timeDifferenceInMs = requestedDuration - segmentDurationInMs
 
     // setup some limits
-    const newSegmentDurationInMs = Math.max(
-      minimumLengthInMs,
-      segmentDurationInMs + timeDifferenceInMs
-    )
+    const newSegmentDurationInMs = Math.max(minimumLengthInMs, segmentDurationInMs + timeDifferenceInMs)
 
     // ok, well, there is nothing to change actually
-    if (segmentDurationInMs === newSegmentDurationInMs) { return }
-
+    if (segmentDurationInMs === newSegmentDurationInMs) {
+      return
+    }
 
     // positive if new duration is longer,
     // negative if shorter
@@ -1111,9 +1322,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     let durationInMs = previousDurationInMs
 
-    const referenceSegmentIsMusicOrSound =
-      segment.category === ClapSegmentCategory.MUSIC
-      || segment.category === ClapSegmentCategory.SOUND
+    const referenceSegmentIsMusicOrSound = segment.category === ClapSegmentCategory.MUSIC || segment.category === ClapSegmentCategory.SOUND
 
     let segmentsToDelete: string[] = []
 
@@ -1127,26 +1336,22 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       // 2. collision with an item on the same track (eg. of a different type)
       //    -> fix is annoying, for now the a quick solution is to put the segment
       //      onto its own free track
-      const currentSegmentIsMusicOrSound =
-        s.category === ClapSegmentCategory.MUSIC
-        || s.category === ClapSegmentCategory.SOUND
+      const currentSegmentIsMusicOrSound = s.category === ClapSegmentCategory.MUSIC || s.category === ClapSegmentCategory.SOUND
 
       const isSameCategoryAsReferenceSegment = s.category === segment.category
 
       const isSamePromptAsReferenceSegment = s.prompt === segment.prompt
 
-
       if (referenceSegmentIsMusicOrSound) {
-        
         if (isSameCategoryAsReferenceSegment && isSamePromptAsReferenceSegment) {
-          if (s.endTimeInMs <= endTimeInMs) { 
+          if (s.endTimeInMs <= endTimeInMs) {
             // we delete
-            console.log("TODO JULIAN: DELETE SEGMENT", s)
+            console.log('TODO JULIAN: DELETE SEGMENT', s)
             // segmentsToDelete.push(s.id)
-            // note: 
-          } else if (s.startTimeInMs < endTimeInMs) { 
+            // note:
+          } else if (s.startTimeInMs < endTimeInMs) {
             // we resize
-            console.log("TODO JULIAN: resize segment")
+            console.log('TODO JULIAN: resize segment')
             // s.startTimeInMs = endTimeInMs
           }
         }
@@ -1161,7 +1366,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           if (!(s.endTimeInMs <= startTimeInMs || s.startTimeInMs >= endTimeInMs)) {
             const newTrack = findFreeTrack({ startTimeInMs, endTimeInMs })
             //console.log(`ASSIGN NEW TRACK (${newTrack}) TO SEGMENT`, s)
-     
+
             assignTrack({
               segment,
               track: newTrack,
@@ -1169,9 +1374,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
               // we don't want to trigger a state change
               triggerChange: false,
             })
-            
           }
-      
         }
       } else {
         // this is a dialogue or a video, we can apply our regular strategy
@@ -1203,16 +1406,11 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         defaultSegmentDurationInSteps,
         durationInMsPerStep,
         durationInMs,
-      })
+      }),
     })
   },
   deleteSegments: (ids: string[]): void => {
-    const {
-      segments: previousSegments,
-      allSegmentsChanged,
-      atLeastOneSegmentChanged,
-      silentChangesInSegment,
-    } = get()
+    const { segments: previousSegments, allSegmentsChanged, atLeastOneSegmentChanged, silentChangesInSegment } = get()
 
     const deletables = new Set(ids)
 
@@ -1229,12 +1427,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     })
   },
   addEntities: async (newEntities: ClapEntity[]) => {
-    const {
-      entities: previousEntities,
-      entityIndex: previousentityIndex,
-      entitiesChanged: previousEntitiesChanged,
-    } = get()
-
+    const { entities: previousEntities, entityIndex: previousentityIndex, entitiesChanged: previousEntitiesChanged } = get()
 
     let somethingChanged = false
 
@@ -1257,11 +1450,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     }
   },
   updateEntities: async (newEntities: ClapEntity[]) => {
-    const {
-      entities: previousEntities,
-      entityIndex: previousentityIndex,
-      entitiesChanged: previousEntitiesChanged,
-    } = get()
+    const { entities: previousEntities, entityIndex: previousentityIndex, entitiesChanged: previousEntitiesChanged } = get()
 
     let somethingChanged = false
     for (const newEntity of newEntities) {
@@ -1284,17 +1473,13 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       })
     }
   },
-  deleteEntities: async (entitiesToDelete: (ClapEntity|string)[]) => {
-    const {
-      entities: previousEntities,
-      entityIndex: previousentityIndex,
-      entitiesChanged: previousEntitiesChanged,
-    } = get()
+  deleteEntities: async (entitiesToDelete: (ClapEntity | string)[]) => {
+    const { entities: previousEntities, entityIndex: previousentityIndex, entitiesChanged: previousEntitiesChanged } = get()
 
     let idsToDelete: string[] = []
-  
+
     for (const newEntityOrId of entitiesToDelete) {
-      const id = typeof newEntityOrId === "string" ? newEntityOrId : newEntityOrId.id
+      const id = typeof newEntityOrId === 'string' ? newEntityOrId : newEntityOrId.id
       delete previousentityIndex[id]
       idsToDelete.push(id)
     }
@@ -1310,10 +1495,9 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
   setInvalidate: (invalidate?: Invalidate) => {
     set({ invalidate: invalidate || (() => {}) })
-  }
-}
-))
+  },
+}))
 
 if (typeof window !== 'undefined') {
-  (window as any).useTimeline = useTimeline
+  ;(window as any).useTimeline = useTimeline
 }
