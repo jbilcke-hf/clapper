@@ -15,6 +15,7 @@
     "publish": "npm publish --access public",
     "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build",
     "dev": "vite",
+    "test": "bun test",
     "serve": "vite preview"
   },
   "devDependencies": {

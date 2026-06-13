@@ -49,6 +49,7 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
     // is both present inside each segment and also aliased here, for fast access
     hoveredSegment: undefined,
     editedSegment: undefined,
+    segmentDragOffsetInMs: 0,
     selectedSegments: [],
     
     allSegmentsChanged: 0,
