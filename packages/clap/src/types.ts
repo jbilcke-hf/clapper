@@ -959,6 +959,11 @@ export type ClapEntity = {
 export type ClapTrack = {
   id: number
   name: string
+  /**
+   * Optional track constraint used by timeline editors. Older .clap files do
+   * not contain this field, so it stays optional for backwards compatibility.
+   */
+  type?: ClapSegmentCategory
   isPreview: boolean
   height: number
   hue: number

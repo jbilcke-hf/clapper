@@ -5,7 +5,8 @@ import { Stats } from "@react-three/drei"
 import {
   TimelineControls,
   HorizontalScroller,
-  Timeline
+  Timeline,
+  TimelineToolbar
 } from "@/components"
 import { ClapProject, isValidNumber } from "@aitube/clap"
 import {
@@ -122,6 +123,7 @@ export function ClapTimeline({
       <div className="flex flex-grow flex-row w-full h-full">
         <div className="flex flex-grow flex-col w-full h-full">
           <HorizontalScroller />
+          <TimelineToolbar />
           <Canvas
             ref={(canvas) => {
               setCanvas(canvas || undefined)

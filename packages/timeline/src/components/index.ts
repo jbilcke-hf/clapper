@@ -10,3 +10,4 @@ export {
 export { TimelineControls } from "./controls"
 export { HorizontalScroller, VerticalScroller } from "./scroller"
 export { Timeline, TopBarTimeScale, Cells, Grid, type JumpAt } from "./timeline"
+export { TimelineToolbar } from "./timeline/TimelineToolbar"

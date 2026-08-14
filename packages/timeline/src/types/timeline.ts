@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapSegmentCategory, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -327,6 +327,20 @@ export type TimelineStoreModifiers = {
   setScrollX: (scrollX: number) => void
   handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number; deltaY: number }) => void
   toggleTrackVisibility: (trackId: number) => void
+  addTrack: (params?: { type?: ClapSegmentCategory; name?: string }) => number
+  setTrackType: (params: { trackId: number; type?: ClapSegmentCategory }) => void
+  createClip: (params: {
+    track: number
+    startTimeInMs?: number
+    durationInMs?: number
+    label?: string
+  }) => Promise<void>
+  moveSegment: (params: {
+    segmentId: string
+    startTimeInMs: number
+    track: number
+  }) => boolean
+  moveSegmentAtPoint: (params: { worldX: number; worldY: number }) => void
   setContainerSize: ({ width, height }: { width: number; height: number }) => void
   setTimelineCursor: (timelineCursor?: TimelineCursorImpl) => void
   setIsDraggingCursor: (isDraggingCursor: boolean) => void

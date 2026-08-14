@@ -3,6 +3,7 @@ export {
   HorizontalScroller,
   VerticalScroller,
   Timeline,
+  TimelineToolbar,
   TopBarTimeScale,
   Cells,
   Grid,
@@ -90,4 +91,3 @@ export type {
 } from "./types"
 
 export { ClapTimeline } from "./ClapTimeline"
-

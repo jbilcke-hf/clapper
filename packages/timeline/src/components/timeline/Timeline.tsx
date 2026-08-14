@@ -22,6 +22,8 @@ export function Timeline({ width, height }: { width: number; height: number }) {
 
   const contentHeight = useTimeline(s => s.contentHeight)
   const contentWidth = useTimeline(s => s.contentWidth)
+  const moveSegmentAtPoint = useTimeline(s => s.moveSegmentAtPoint)
+  const setEditedSegment = useTimeline(s => s.setEditedSegment)
 
   // console.log(`re-rendering <Timeline>`)
   return (
@@ -34,7 +36,16 @@ export function Timeline({ width, height }: { width: number; height: number }) {
           -(size.width / 2),
           0,
           -1
-        ]}>
+        ]}
+        onPointerMove={(event) => {
+          moveSegmentAtPoint({
+            worldX: event.point.x,
+            worldY: event.point.y,
+          })
+        }}
+        onPointerUp={() => {
+          setEditedSegment({ segment: undefined })
+        }}>
         <meshBasicMaterial
           attach="material"
           transparent
