@@ -3,6 +3,7 @@ export {
   HorizontalScroller,
   VerticalScroller,
   Timeline,
+  TimelineToolbar,
   TopBarTimeScale,
   Cells,
   Grid,

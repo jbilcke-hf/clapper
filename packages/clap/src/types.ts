@@ -959,6 +959,11 @@ export type ClapEntity = {
 export type ClapTrack = {
   id: number
   name: string
+  /**
+   * Optional media constraint for timeline editors. It remains optional so
+   * older .clap projects with untyped tracks continue to load unchanged.
+   */
+  type?: ClapSegmentCategory
   isPreview: boolean
   height: number
   hue: number

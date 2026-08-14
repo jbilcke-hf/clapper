@@ -22,11 +22,22 @@ export function Timeline({ width, height }: { width: number; height: number }) {
 
   const contentHeight = useTimeline(s => s.contentHeight)
   const contentWidth = useTimeline(s => s.contentWidth)
+  const moveSegmentAtPoint = useTimeline(s => s.moveSegmentAtPoint)
+  const setEditedSegment = useTimeline(s => s.setEditedSegment)
 
   // console.log(`re-rendering <Timeline>`)
   return (
     <mesh
       position={[0,0,0]}
+      onPointerMove={(event) => {
+        moveSegmentAtPoint({
+          worldX: event.point.x,
+          worldY: event.point.y,
+        })
+      }}
+      onPointerUp={() => {
+        setEditedSegment({ segment: undefined })
+      }}
     >
       <Plane
         args={[contentWidth, contentHeight]}
