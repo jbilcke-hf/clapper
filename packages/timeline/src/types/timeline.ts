@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks , ClapTrack } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -351,6 +351,8 @@ export type TimelineStoreModifiers = {
   }) => Promise<number>
   setSegmentResolver: (segmentResolver: SegmentResolver) => void
   resolveSegment: (segment: TimelineSegment) => Promise<TimelineSegment>
+  addTrack: (track?: Partial<ClapTrack>) => Promise<number>
+  createSegment: (params?: Partial<ClapSegment>) => Promise<TimelineSegment>
   addSegments: ({
     segments,
     startTimeInMs,
