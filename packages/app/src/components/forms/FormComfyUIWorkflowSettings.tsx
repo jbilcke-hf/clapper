@@ -55,21 +55,25 @@ export function FormComfyUIWorkflowSettings({
     }
   }
 
-  const handleOnChangeInputValue = (inputId, inputValue) => {
+  const handleOnChangeInputValue = (inputId: string, inputValue: any) => {
+    if (!clapWorkflow.data) return
+
     clapWorkflow.inputValues[inputId] = inputValue
-    const workflowGraph = ComfyUIWorkflowApiGraph.fromString(clapWorkflow.data)
-    // Apply same change to the graph
-    // TODO: add a setter to clapWorkflow to update its data when updating inputFields
-    workflowGraph.setInputValue(inputId, inputValue, { ignoreErrors: true })
-    // Update the generate 'data' based on new input values
-    clapWorkflow.data = workflowGraph.toString()
-    setClapWorkflowDataDraft(clapWorkflow.data || '')
-    if (ComfyUIWorkflowApiGraph.isValidWorkflow(clapWorkflow.data)) {
-      setErrors({ ...errors, workflow: null })
-      // If changes on JSON, convert it to ClapWorkflow
-      debouncedOnChangeClapWorkflow(structuredClone(clapWorkflow))
-    } else {
-      setErrors({ ...errors, workflow: 'Please, provide a valid workflow.' })
+
+    try {
+      const workflowGraph = ComfyUIWorkflowApiGraph.fromString(clapWorkflow.data)
+      workflowGraph.setInputValue(inputId, inputValue, { ignoreErrors: true })
+      clapWorkflow.data = workflowGraph.toString()
+      setClapWorkflowDataDraft(clapWorkflow.data || "")
+
+      if (ComfyUIWorkflowApiGraph.isValidWorkflow(clapWorkflow.data)) {
+        setErrors({ ...errors, workflow: null })
+        debouncedOnChangeClapWorkflow(structuredClone(clapWorkflow))
+      } else {
+        setErrors({ ...errors, workflow: "Please, provide a valid workflow." })
+      }
+    } catch (err) {
+      setErrors({ ...errors, workflow: "Error updating workflow graph input." })
     }
   }
 
