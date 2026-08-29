@@ -854,6 +854,39 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     return segment
   },
+  
+  addTrack: async (track?: Partial<ClapTrack>): Promise<number> => {
+    const { tracks, nbMaxTracks, defaultCellHeight } = get();
+    const newTrackId = tracks.length;
+    const newTrack: ClapTrack = {
+      id: newTrackId,
+      name: `Track ${newTrackId}`,
+      isPreview: false,
+      height: defaultCellHeight,
+      hue: 0,
+      occupied: false,
+      visible: true,
+      ...track,
+    };
+    const updatedTracks = [...tracks, newTrack];
+    set({
+      tracks: updatedTracks,
+      nbMaxTracks: Math.max(nbMaxTracks, updatedTracks.length),
+    });
+    return newTrackId;
+  },
+  createSegment: async (params?: Partial<ClapSegment>): Promise<TimelineSegment> => {
+    const { cursorTimestampAtInMs, defaultSegmentDurationInSteps, durationInMsPerStep, addSegment } = get();
+    const startTimeInMs = params?.startTimeInMs ?? cursorTimestampAtInMs;
+    const durationInMs = (params?.endTimeInMs ? params.endTimeInMs - (params.startTimeInMs || 0) : defaultSegmentDurationInSteps * durationInMsPerStep);
+    const segment = newSegment({
+      startTimeInMs,
+      endTimeInMs: startTimeInMs + durationInMs,
+      ...params,
+    }) as TimelineSegment;
+    await addSegment({ segment, startTimeInMs, track: params?.track });
+    return segment;
+  },
   addSegments: async ({
     segments = [],
     startTimeInMs,

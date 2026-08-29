@@ -18,9 +18,12 @@ import {
   useScriptEditor,
   useSegmentEditor,
   useUI,
-} from '@/services'
+} from '@/services';
+import { useTimeline } from '@aitube/timeline';
 
 export function TopMenuEdit() {
+  const addTrack = useTimeline((s) => s.addTrack);
+  const createSegment = useTimeline((s) => s.createSegment);
   const setShowSettings = useUI((s) => s.setShowSettings)
   const view = useEditors((s) => s.view)
 
@@ -67,6 +70,12 @@ export function TopMenuEdit() {
           }}
         >
           Show advanced settings
+        </MenubarItem>
+        <MenubarItem onClick={() => addTrack()}>
+          Add Track
+        </MenubarItem>
+        <MenubarItem onClick={() => createSegment()}>
+          Add Clip / Segment
         </MenubarItem>
         <MenubarSeparator />
         <MenubarItem onClick={undo}>
