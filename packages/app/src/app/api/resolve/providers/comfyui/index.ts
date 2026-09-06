@@ -62,7 +62,11 @@ export async function resolveSegment(
     clapWorkflow,
     ClapperComfyUiInputIds.OUTPUT
   )
-  const asset = extractComfyUiOutputAssets(result.history, outputNodeId).at(0)
+  const assets = extractComfyUiOutputAssets(result.history, outputNodeId)
+  const asset = selectComfyUiAssetForCategory(
+    assets,
+    request.segment.category
+  )
 
   if (!asset) {
     throw new Error(
@@ -95,13 +99,60 @@ function getComfyWorkflowForSegment(request: ResolveRequest): ClapWorkflow {
   }
 }
 
-function validateWorkflowBindings(clapWorkflow: ClapWorkflow) {
-  if (!clapWorkflow.inputValues?.[ClapperComfyUiInputIds.OUTPUT]) {
-    throw new Error(
-      `This workflow doesn't seem to have an output node required by Clapper. Please map @clapper/output to the ComfyUI save/output node.`
-    )
+function selectComfyUiAssetForCategory(
+  assets: ComfyUiOutputAsset[],
+  category: ClapSegmentCategory
+): ComfyUiOutputAsset | undefined {
+  const score = (asset: ComfyUiOutputAsset): number => {
+    const filename = asset.filename.toLowerCase()
+    const format = (asset.format || '').toLowerCase()
+    const type = (asset.type || '').toLowerCase()
+    const combined = `${filename} ${format} ${type}`
+
+    const isAudio = /\.(mp3|wav|ogg|flac|m4a|aac)$/i.test(filename) ||
+      /audio|sound/i.test(combined)
+    const isVideo = /\.(mp4|webm|mov|mkv|avi)$/i.test(filename) ||
+      /video|movie/i.test(combined)
+    const isImage = /\.(png|jpe?g|webp|gif)$/i.test(filename) ||
+      /image|photo|picture/i.test(combined)
+    const isGenericFile = /\.(json|txt|csv|zip|bin)$/i.test(filename) ||
+      /file|metadata/i.test(combined)
+
+    switch (category) {
+      case ClapSegmentCategory.VIDEO:
+        if (isVideo) return 100
+        if (isImage) return 40
+        if (isAudio) return 10
+        return isGenericFile ? 1 : 20
+
+      case ClapSegmentCategory.DIALOGUE:
+      case ClapSegmentCategory.SOUND:
+      case ClapSegmentCategory.MUSIC:
+        if (isAudio) return 100
+        if (isVideo) return 20
+        if (isImage) return 10
+        return isGenericFile ? 1 : 15
+
+      case ClapSegmentCategory.IMAGE:
+      default:
+        if (isImage) return 100
+        if (isVideo) return 40
+        if (isAudio) return 10
+        return isGenericFile ? 1 : 20
+    }
   }
 
+  return assets
+    .map((asset, index) => ({
+      asset,
+      index,
+      score: score(asset),
+    }))
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .at(0)?.asset
+}
+
+function validateWorkflowBindings(clapWorkflow: ClapWorkflow) {
   const needsPrompt = [
     ClapWorkflowCategory.IMAGE_GENERATION,
     ClapWorkflowCategory.VOICE_GENERATION,

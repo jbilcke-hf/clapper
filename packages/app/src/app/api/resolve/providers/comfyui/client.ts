@@ -198,21 +198,56 @@ export function extractComfyUiOutputAssets(
   return [...preferredOutput, ...fallbackOutputs].flatMap(extractOutputAssets)
 }
 
-function extractOutputAssets(output: any): ComfyUiOutputAsset[] {
-  return ['images', 'videos', 'gifs', 'audio', 'audios', 'files'].flatMap(
-    (key) => {
-      const items = output?.[key]
-      if (!Array.isArray(items)) return []
-      return items
-        .filter((item) => item?.filename)
-        .map((item) => ({
-          filename: item.filename,
-          subfolder: item.subfolder || '',
-          type: item.type || 'output',
-          format: item.format,
-        }))
+function extractOutputAssets(output: unknown): ComfyUiOutputAsset[] {
+  const assets: ComfyUiOutputAsset[] = []
+
+  const visit = (value: unknown) => {
+    if (!value) return
+
+    if (Array.isArray(value)) {
+      value.forEach(visit)
+      return
     }
-  )
+
+    if (typeof value !== 'object') return
+
+    const item = value as Record<string, unknown>
+
+    if (typeof item.filename === 'string' && item.filename.length > 0) {
+      assets.push({
+        filename: item.filename,
+        subfolder:
+          typeof item.subfolder === 'string' ? item.subfolder : '',
+        type: typeof item.type === 'string' ? item.type : 'output',
+        format:
+          typeof item.format === 'string' ? item.format : undefined,
+      })
+
+      // A filename-bearing object is already a concrete ComfyUI asset
+      // descriptor. Avoid recursively interpreting its metadata as assets.
+      return
+    }
+
+    Object.values(item).forEach(visit)
+  }
+
+  visit(output)
+
+  const seen = new Set<string>()
+
+  return assets.filter((asset) => {
+    const key = [
+      asset.filename,
+      asset.subfolder,
+      asset.type,
+      asset.format || '',
+    ].join('|')
+
+    if (seen.has(key)) return false
+
+    seen.add(key)
+    return true
+  })
 }
 
 function normalizeComfyUiUrl(apiUrl: string): string {
