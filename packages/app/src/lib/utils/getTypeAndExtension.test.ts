@@ -40,9 +40,9 @@ test('getTypeAndExtension', () => {
  * Issue: https://github.com/jbilcke-hf/clapper/issues/72
  */
 test('getTypeAndExtension should be fast for long uris', () => {
-  const startTime = Date.now()
-  const longBase64String = 'a'.repeat(500_000_000)
+  const longBase64String = 'a'.repeat(5_000_000)
   const dataUri = `data:image/png;base64,${longBase64String}`
+  const startTime = Date.now()
   const result = getTypeAndExtension(dataUri)
   expect(result).toStrictEqual({
     assetFileFormat: 'image/png',

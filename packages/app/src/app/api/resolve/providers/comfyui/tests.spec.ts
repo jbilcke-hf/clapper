@@ -599,3 +599,62 @@ test('should fail if workflow has cycles', () => {
     'The provided workflow has cycles, impossible to get the output node.'
   )
 })
+
+
+test('detects multiple terminal output nodes', () => {
+  const workflowWithMultipleOutputs = {
+    '1': {
+      inputs: {},
+      class_type: 'KSampler',
+      _meta: { title: 'Sampler' },
+    },
+    '2': {
+      inputs: {
+        samples: ['1', 0],
+      },
+      class_type: 'VAEDecode',
+      _meta: { title: 'Decode' },
+    },
+    '3': {
+      inputs: {
+        images: ['2', 0],
+      },
+      class_type: 'SaveImage',
+      _meta: { title: 'Save Image A' },
+    },
+    '4': {
+      inputs: {
+        images: ['2', 0],
+      },
+      class_type: 'SaveImage',
+      _meta: { title: 'Save Image B' },
+    },
+  }
+
+  const outputNodes = new ComfyUIWorkflowApiGraph(
+    workflowWithMultipleOutputs
+  ).getOutputNodes()
+
+  expect(outputNodes.map((node) => node.id)).toEqual(['3', '4'])
+})
+
+test('falls back to terminal nodes when output metadata is unavailable', () => {
+  const workflow = {
+    '1': {
+      inputs: {},
+      class_type: 'SomeGenerator',
+      _meta: { title: 'Generator' },
+    },
+    '2': {
+      inputs: {
+        value: ['1', 0],
+      },
+      class_type: 'CustomTerminalNode',
+      _meta: { title: 'Result' },
+    },
+  }
+
+  const outputNodes = new ComfyUIWorkflowApiGraph(workflow).getOutputNodes()
+
+  expect(outputNodes.map((node) => node.id)).toEqual(['2'])
+})

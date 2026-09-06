@@ -10,7 +10,7 @@ export function createPromptBuilder(
   workflowApiGraph: ComfyUIWorkflowApiGraph
 ): PromptBuilder<any, any, any> {
   const inputs = workflowApiGraph.getInputs()
-  const outputNode = workflowApiGraph.getOutputNode()
+  const outputNode = workflowApiGraph.getOutputNodes()[0] || null
 
   const inputKeys = Object.values(inputs)
     .map((input) => input.id)

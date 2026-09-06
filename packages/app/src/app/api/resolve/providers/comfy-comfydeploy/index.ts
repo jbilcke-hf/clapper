@@ -1,11 +1,19 @@
 import { ResolveRequest } from '@aitube/clapper-services'
-import {
-  ClapSegmentCategory,
-  ClapSegmentStatus,
-  getClapAssetSourceType,
-} from '@aitube/clap'
+import { ClapAssetSource } from '@aitube/clap'
 import { TimelineSegment } from '@aitube/timeline'
-import { getWorkflowInputValues } from '../getWorkflowInputValues'
+
+import {
+  extractCloudOutputUrl,
+  getCloudWorkflowInputs,
+  getGenerationWorkflowForSegment,
+  getRunId,
+  isTerminalFailureStatus,
+  isTerminalSuccessStatus,
+  readCloudAssetAsDataUri,
+  sleep,
+} from '../comfy-cloud'
+
+const COMFY_DEPLOY_API_URL = 'https://api.comfydeploy.com/api'
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -14,38 +22,117 @@ export async function resolveSegment(
     throw new Error(`Missing API key for "ComfyDeploy"`)
   }
 
-  if (request.segment.category === ClapSegmentCategory.IMAGE) {
-    const inputFields =
-      request.settings.imageGenerationWorkflow.inputFields || []
+  const segment: TimelineSegment = { ...request.segment }
+  const workflow = getGenerationWorkflowForSegment(request)
+  const deploymentId =
+    request.settings.comfyDeployDeploymentId ||
+    workflow.id.split('://').pop() ||
+    ''
 
-    // since this is a random "wild" workflow, it is possible
-    // that the field name is a bit different
-    // we try to look into the workflow input fields
-    // to find the best match
-    const promptFields = [
-      inputFields.find((f) => f.id === 'prompt'), // exactMatch,
-      inputFields.find((f) => f.id.includes('prompt')), // similarName,
-      inputFields.find((f) => f.type === 'string'), // similarType
-    ].filter((x) => typeof x !== 'undefined')
+  if (!deploymentId) {
+    throw new Error(
+      `Missing ComfyDeploy deployment id. Add one in provider settings or select a comfydeploy:// workflow.`
+    )
+  }
 
-    const promptField = promptFields[0]
-    if (!promptField) {
+  const queued = await queueComfyDeployRun({
+    apiKey: request.settings.comfyDeployApiKey,
+    deploymentId,
+    inputs: getCloudWorkflowInputs(request, workflow),
+  })
+  const runId = getRunId(queued)
+
+  if (!runId) {
+    throw new Error(
+      `ComfyDeploy did not return a run id: ${JSON.stringify(queued)}`
+    )
+  }
+
+  const result = await waitForComfyDeployRun({
+    apiKey: request.settings.comfyDeployApiKey,
+    runId,
+  })
+  const outputUrl = extractCloudOutputUrl(result)
+
+  if (!outputUrl) {
+    throw new Error(`ComfyDeploy run ${runId} finished without an output URL`)
+  }
+
+  segment.assetUrl = await readCloudAssetAsDataUri(outputUrl)
+  segment.assetSourceType = ClapAssetSource.DATA
+
+  return segment
+}
+
+async function queueComfyDeployRun({
+  apiKey,
+  deploymentId,
+  inputs,
+}: {
+  apiKey: string
+  deploymentId: string
+  inputs: Record<string, unknown>
+}): Promise<any> {
+  const response = await fetch(`${COMFY_DEPLOY_API_URL}/run/deployment/queue`, {
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      deployment_id: deploymentId,
+      inputs,
+    }),
+    method: 'POST',
+  })
+
+  if (!response.ok) {
+    throw new Error(
+      `ComfyDeploy queue failed (${response.status}): ${await response.text()}`
+    )
+  }
+
+  return response.json()
+}
+
+async function waitForComfyDeployRun({
+  apiKey,
+  runId,
+}: {
+  apiKey: string
+  runId: string
+}): Promise<any> {
+  const timeoutAt = Date.now() + 1000 * 60 * 60
+
+  while (Date.now() < timeoutAt) {
+    const response = await fetch(`${COMFY_DEPLOY_API_URL}/run/${runId}`, {
+      headers: {
+        accept: 'application/json',
+        authorization: `Bearer ${apiKey}`,
+      },
+    })
+
+    if (!response.ok) {
       throw new Error(
-        `this workflow doesn't seem to have a parameter called "prompt"`
+        `ComfyDeploy status failed (${response.status}): ${await response.text()}`
       )
     }
 
-    // TODO: modify the serialized workflow payload
-    // to inject our params:
-    // ...getWorkflowInputValues(request.settings.imageGenerationWorkflow),
-    // [promptField.id]: request.prompts.image.positive,
+    const result = await response.json()
+    const status = result.status || result.live_status || ''
+
+    if (isTerminalFailureStatus(status)) {
+      throw new Error(
+        `ComfyDeploy run ${runId} failed: ${JSON.stringify(result)}`
+      )
+    }
+
+    if (isTerminalSuccessStatus(status) || extractCloudOutputUrl(result)) {
+      return result
+    }
+
+    await sleep(2000)
   }
 
-  throw new Error(
-    `Clapper doesn't support ${request.segment.category} generation for provider "Comfy.icu". Please open a pull request with (working code) to solve this!`
-  )
-
-  const segment: TimelineSegment = { ...request.segment }
-
-  return segment
+  throw new Error(`Timed out waiting for ComfyDeploy run ${runId}`)
 }

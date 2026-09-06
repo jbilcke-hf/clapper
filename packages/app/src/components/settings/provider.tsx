@@ -46,6 +46,9 @@ export function SettingsSectionProvider() {
   const comfyUiClientId = useSettings((s) => s.comfyUiClientId)
   const setComfyUiClientId = useSettings((s) => s.setComfyUiClientId)
 
+  const comfyUiApiKey = useSettings((s) => s.comfyUiApiKey)
+  const setComfyUiApiKey = useSettings((s) => s.setComfyUiApiKey)
+
   const comfyUiHttpAuthLogin = useSettings((s) => s.comfyUiHttpAuthLogin)
   const setComfyUiHttpAuthLogin = useSettings((s) => s.setComfyUiHttpAuthLogin)
 
@@ -59,6 +62,14 @@ export function SettingsSectionProvider() {
 
   const comfyIcuAccelerator = useSettings((s) => s.comfyIcuAccelerator)
   const setComfyIcuAccelerator = useSettings((s) => s.setComfyIcuAccelerator)
+
+  const comfyDeployApiKey = useSettings((s) => s.comfyDeployApiKey)
+  const setComfyDeployApiKey = useSettings((s) => s.setComfyDeployApiKey)
+
+  const comfyDeployDeploymentId = useSettings((s) => s.comfyDeployDeploymentId)
+  const setComfyDeployDeploymentId = useSettings(
+    (s) => s.setComfyDeployDeploymentId
+  )
 
   const clapperApiKey = useSettings((s) => s.clapperApiKey)
   const setClapperApiKey = useSettings((s) => s.setClapperApiKey)
@@ -179,6 +190,14 @@ export function SettingsSectionProvider() {
             />
 
             <FormInput
+              label="ComfyUI bearer token (optional, for hosted endpoints)"
+              value={comfyUiApiKey}
+              defaultValue={defaultSettings.comfyUiApiKey}
+              onChange={setComfyUiApiKey}
+              type={apiKeyType}
+            />
+
+            <FormInput
               label="ComfyUI HTTP Auth login (optional)"
               value={comfyUiHttpAuthLogin}
               defaultValue={defaultSettings.comfyUiHttpAuthLogin}
@@ -218,6 +237,22 @@ export function SettingsSectionProvider() {
                 })
               )}
               onSelect={setComfyIcuAccelerator}
+            />
+
+            <FormInput
+              label="ComfyDeploy API key"
+              value={comfyDeployApiKey}
+              defaultValue={defaultSettings.comfyDeployApiKey}
+              onChange={setComfyDeployApiKey}
+              type={apiKeyType}
+            />
+
+            <FormInput
+              label="ComfyDeploy deployment ID"
+              value={comfyDeployDeploymentId}
+              defaultValue={defaultSettings.comfyDeployDeploymentId}
+              onChange={setComfyDeployDeploymentId}
+              type="text"
             />
 
             <FormInput

@@ -239,42 +239,46 @@ export class ComfyUIWorkflowApiGraph {
   }
 
   /**
-   * Topological sort of the graph (Kahn's Algorithm) to get the final output node.
-   * TODO: multiple outputs.
+   * Returns all terminal nodes that can produce workflow outputs.
+   *
+   * A workflow may legitimately have multiple independent output branches.
+   * Using the last node from a topological sort loses those branches and makes
+   * output selection dependent on object/insertion order.
+   */
+  getOutputNodes(): NodeData[] {
+    const terminalNodeIds = Object.keys(this.adjList).filter(
+      (nodeId) => this.adjList[nodeId].length === 0
+    )
+
+    const outputLikeNodeIds = terminalNodeIds.filter((nodeId) => {
+      const node = this.json[nodeId]
+      const descriptor = [
+        node.class_type,
+        node._meta?.title,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+
+      return /(save|preview|output|export|write|encode|mux|combine)/i.test(
+        descriptor
+      )
+    })
+
+    const candidateNodeIds =
+      outputLikeNodeIds.length > 0 ? outputLikeNodeIds : terminalNodeIds
+
+    return candidateNodeIds.map((nodeId) => ({
+      id: nodeId,
+      ...this.json[nodeId],
+    }))
+  }
+
+  /**
+   * Backward-compatible single-output helper.
    */
   getOutputNode(): NodeData | null {
-    const { adjList, inDegree } = this
-    const queue: string[] = []
-    const sortedOrder: string[] = []
-
-    for (const nodeId of Object.keys(inDegree)) {
-      if (inDegree[nodeId] === 0) {
-        queue.push(nodeId)
-      }
-    }
-
-    while (queue.length > 0) {
-      const currentNode = queue.shift()!
-      sortedOrder.push(currentNode)
-      for (const neighbor of adjList[currentNode]) {
-        inDegree[neighbor] -= 1
-        if (inDegree[neighbor] === 0) {
-          queue.push(neighbor)
-        }
-      }
-    }
-
-    // Last node in sortedOrder is the output node
-    // TODO: handle multiple outputs
-    if (sortedOrder.length === Object.keys(this.json).length) {
-      const outputNodeId = sortedOrder[sortedOrder.length - 1]
-      return { id: outputNodeId, ...this.json[outputNodeId] }
-    } else {
-      // If there are cycles, fail
-      throw new Error(
-        'The provided workflow has cycles, impossible to get the output node.'
-      )
-    }
+    return this.getOutputNodes()[0] || null
   }
 
   /**

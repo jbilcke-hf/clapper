@@ -7,12 +7,14 @@ import { defaultWorkflowForVideos } from './workflows/video'
 export function getDefaultSettingsState(): SettingsState {
   const state: SettingsState = {
     comfyUiClientId: 'clapper',
+    comfyUiApiKey: '',
     comfyUiHttpAuthLogin: '',
     comfyUiHttpAuthPassword: '',
     replicateApiKey: '',
     comfyIcuApiKey: '',
     comfyIcuAccelerator: ComfyIcuAccelerator.L4,
     comfyDeployApiKey: '',
+    comfyDeployDeploymentId: '',
     huggingFaceApiKey: '',
     modelsLabApiKey: '',
     falAiApiKey: '',

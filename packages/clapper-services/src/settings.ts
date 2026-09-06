@@ -5,12 +5,14 @@ import { ComfyIcuAccelerator } from "./base-types"
 
 export type BaseSettings = {
   comfyUiClientId: string
+  comfyUiApiKey: string
   comfyUiHttpAuthLogin: string
   comfyUiHttpAuthPassword: string
   replicateApiKey: string
   comfyIcuApiKey: string
   comfyIcuAccelerator: ComfyIcuAccelerator
   comfyDeployApiKey: string
+  comfyDeployDeploymentId: string
   clapperApiKey: string
   aiTubeApiKey: string
   falAiApiKey: string
@@ -135,12 +137,14 @@ export type RequestSettings = BaseSettings & {
 
 export type SettingsControls = {
   setComfyUiClientId: (comfyUiClientId?: string) => void
+  setComfyUiApiKey: (comfyUiApiKey?: string) => void
   setComfyUiHttpAuthLogin: (comfyUiHttpAuthLogin?: string) => void
   setComfyUiHttpAuthPassword: (comfyUiHttpAuthPassword?: string) => void
   setReplicateApiKey: (replicateApiKey?: string) => void
   setComfyIcuApiKey: (comfyIcuApiKey?: string) => void
   setComfyIcuAccelerator: (comfyIcuAccelerator?: ComfyIcuAccelerator) => void
   setComfyDeployApiKey: (comfyDeployApiKey?: string) => void
+  setComfyDeployDeploymentId: (comfyDeployDeploymentId?: string) => void
   setHuggingFaceApiKey: (huggingFaceApiKey?: string) => void
   setModelsLabApiKey: (modelsLabApiKey?: string) => void
   setAiTubeApiKey: (aiTubeApiKey?: string) => void

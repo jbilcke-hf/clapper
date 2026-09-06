@@ -44,7 +44,7 @@ export function getMainInputsFromComfyUiWorkflow(
   const heightNodeInputs = findHeightInputsFromWorkflow(workflowGraph)
   const seedNodeInputs = findSeedInputsFromWorkflow(workflowGraph)
   const imageNodeInputs = findImageInputsFromWorkflow(workflowGraph)
-  const outputNode = workflowGraph.getOutputNode()
+  const outputNode = workflowGraph.getOutputNodes()[0] || null
 
   const inputValues = {
     [ClapperComfyUiInputIds.PROMPT]: promptNodeInputs?.[0]

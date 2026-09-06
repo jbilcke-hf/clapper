@@ -8,6 +8,7 @@ import {
 import { genericImage, genericPrompt } from '../common/defaultValues'
 import { text_to_image_demo_workflow } from '../common/comfyui/text_to_image_demo_workflow'
 import { useSettings } from '@/services'
+import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/convertComfyUiWorkflowApiToClapWorkflow'
 
 // ------------------------------------------------------------------------------
 // if a user is already using one of those workflows and you change its settings,
@@ -88,61 +89,70 @@ export async function getDynamicComfyuiWorkflows(): Promise<ClapWorkflow[]> {
         [genericImage.id]: genericImage.defaultValue,
       },
     },
-    {
-      id: 'comfyui://settings.comfyWorkflowForVoice',
-      label: 'Custom Voice Workflow',
-      description: 'Custom ComfyUI workflow to generate voice',
-      tags: ['custom', 'voice generation'],
-      author: 'You',
-      thumbnailUrl: '',
-      nonCommercial: false,
-      engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
-      provider: ClapWorkflowProvider.COMFYUI,
-      category: ClapWorkflowCategory.VOICE_GENERATION,
-      data: settings.comfyWorkflowForVoice,
-      schema: '',
-      inputFields: [genericPrompt],
-      inputValues: {
-        [genericPrompt.id]: genericPrompt.defaultValue,
-      },
-    },
-    {
-      id: 'comfyui://settings.comfyWorkflowForMusic',
-      label: 'Custom Music Workflow',
-      description: 'Custom ComfyUI workflow to generate music',
-      tags: ['custom', 'music generation'],
-      author: 'You',
-      thumbnailUrl: '',
-      nonCommercial: false,
-      engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
-      provider: ClapWorkflowProvider.COMFYUI,
-      category: ClapWorkflowCategory.MUSIC_GENERATION,
-      data: settings.comfyWorkflowForMusic,
-      schema: '',
-      inputFields: [genericPrompt],
-      inputValues: {
-        [genericPrompt.id]: genericPrompt.defaultValue,
-      },
-    },
-    {
-      id: 'comfyui://settings.comfyWorkflowForSound',
-      label: 'Custom Sound Workflow',
-      description: 'Custom ComfyUI workflow to generate sound',
-      tags: ['custom', 'sound generation'],
-      author: 'You',
-      thumbnailUrl: '',
-      nonCommercial: false,
-      engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
-      provider: ClapWorkflowProvider.COMFYUI,
-      category: ClapWorkflowCategory.SOUND_GENERATION,
-      data: settings.comfyWorkflowForSound,
-      schema: '',
-      inputFields: [genericPrompt],
-      inputValues: {
-        [genericPrompt.id]: genericPrompt.defaultValue,
-      },
-    },
+    getCustomComfyWorkflow(
+      settings.comfyWorkflowForVoice,
+      ClapWorkflowCategory.VOICE_GENERATION
+    ),
+    getCustomComfyWorkflow(
+      settings.comfyWorkflowForMusic,
+      ClapWorkflowCategory.MUSIC_GENERATION
+    ),
+    getCustomComfyWorkflow(
+      settings.comfyWorkflowForSound,
+      ClapWorkflowCategory.SOUND_GENERATION
+    ),
   ]
 
   return workflows
+}
+
+function getCustomComfyWorkflow(
+  data: string,
+  category: ClapWorkflowCategory
+): ClapWorkflow {
+  try {
+    return convertComfyUiWorkflowApiToClapWorkflow(data, category)
+  } catch {
+    const fallback = {
+      [ClapWorkflowCategory.VOICE_GENERATION]: {
+        id: 'comfyui://settings.comfyWorkflowForVoice',
+        label: 'Custom Voice Workflow',
+        description: 'Custom ComfyUI workflow to generate voice',
+        tags: ['custom', 'voice generation'],
+      },
+      [ClapWorkflowCategory.MUSIC_GENERATION]: {
+        id: 'comfyui://settings.comfyWorkflowForMusic',
+        label: 'Custom Music Workflow',
+        description: 'Custom ComfyUI workflow to generate music',
+        tags: ['custom', 'music generation'],
+      },
+      [ClapWorkflowCategory.SOUND_GENERATION]: {
+        id: 'comfyui://settings.comfyWorkflowForSound',
+        label: 'Custom Sound Workflow',
+        description: 'Custom ComfyUI workflow to generate sound',
+        tags: ['custom', 'sound generation'],
+      },
+    }[category] || {
+      id: 'comfyui://settings.comfyWorkflowForImage',
+      label: 'Custom Image Workflow',
+      description: 'Custom ComfyUI workflow to generate images',
+      tags: ['custom', 'image generation'],
+    }
+
+    return {
+      ...fallback,
+      author: 'You',
+      thumbnailUrl: '',
+      nonCommercial: false,
+      engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
+      provider: ClapWorkflowProvider.COMFYUI,
+      category,
+      data,
+      schema: '',
+      inputFields: [genericPrompt],
+      inputValues: {
+        [genericPrompt.id]: genericPrompt.defaultValue,
+      },
+    }
+  }
 }
