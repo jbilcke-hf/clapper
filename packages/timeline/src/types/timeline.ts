@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapSegmentCategory, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -228,6 +228,19 @@ export type TimelineStoreProjectState = ClapMeta & {
 
   // position of the current timestamp
   cursorTimestampAtInMs: number
+
+  selectedTrackId?: number
+  selectedTrackCategory: ClapSegmentCategory
+  timelineDrag?: TimelineDragState
+}
+
+export type TimelineDragState = {
+  segmentId: string
+  pointX: number
+  pointY: number
+  startTimeInMs: number
+  endTimeInMs: number
+  track: number
 }
 
 export type TimelineStorePreferencesState = {
@@ -327,6 +340,32 @@ export type TimelineStoreModifiers = {
   setScrollX: (scrollX: number) => void
   handleMouseWheel: ({ deltaX, deltaY }: { deltaX: number; deltaY: number }) => void
   toggleTrackVisibility: (trackId: number) => void
+  setSelectedTrack: (trackId?: number) => void
+  setSelectedTrackCategory: (category: ClapSegmentCategory) => void
+  createTrack: (category?: ClapSegmentCategory) => number
+  setTrackCategory: (trackId: number, category: ClapSegmentCategory) => boolean
+  createClipOnTrack: (params?: {
+    trackId?: number
+    category?: ClapSegmentCategory
+    startTimeInMs?: number
+    durationInMs?: number
+  }) => Promise<TimelineSegment | undefined>
+  moveSegment: (params: {
+    segment: TimelineSegment
+    track?: number
+    startTimeInMs?: number
+  }) => boolean
+  startSegmentDrag: (params: {
+    segment: TimelineSegment
+    pointX: number
+    pointY: number
+  }) => void
+  updateSegmentDrag: (params: {
+    segment: TimelineSegment
+    pointX: number
+    pointY: number
+  }) => void
+  finishSegmentDrag: () => void
   setContainerSize: ({ width, height }: { width: number; height: number }) => void
   setTimelineCursor: (timelineCursor?: TimelineCursorImpl) => void
   setIsDraggingCursor: (isDraggingCursor: boolean) => void
