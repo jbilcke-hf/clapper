@@ -21,6 +21,7 @@ import { TimelineCamera } from "./components/camera"
 import { useTimeline } from "./hooks"
 import { topBarTimeScaleHeight } from "./constants/themes"
 import { TimelineStore } from "./types"
+import { TimelineAuthoringToolbar } from "./components/timeline/TimelineAuthoringToolbar"
 
 export function ClapTimeline({
   clap,
@@ -112,8 +113,10 @@ export function ClapTimeline({
     <div
       className={cn(`w-full h-full`, className)}
       style={{
+        position: "relative",
         backgroundColor: theme.grid.backgroundColor
       }}>
+      <TimelineAuthoringToolbar />
       <AutoSizer style={{
         height: "100%", // <-- mandatory otherwise the timeline won't show up
         width: "100%" // <-- mandatory otherwise the horizontal scroller won't show up

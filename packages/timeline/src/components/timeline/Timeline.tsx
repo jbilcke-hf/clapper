@@ -20,6 +20,25 @@ export function Timeline({ width, height }: { width: number; height: number }) {
     setContainerSize({ width, height })
   }, [width, height, setContainerSize])
 
+  useEffect(() => {
+    const handlePointerUp = () => {
+      const state = useTimeline.getState()
+      if (state.timelineDrag) {
+        state.finishSegmentDrag()
+      }
+    }
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("pointerup", handlePointerUp)
+    }
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("pointerup", handlePointerUp)
+      }
+    }
+  }, [])
+
   const contentHeight = useTimeline(s => s.contentHeight)
   const contentWidth = useTimeline(s => s.contentWidth)
 
