@@ -23,7 +23,7 @@ export type NodeData = NodeRawData & {
 
 export type ComfyUIWorkflowApiJson = Record<string, NodeRawData>
 
-export type INPUT_TYPES = 'string' | 'number'
+export type INPUT_TYPES = 'string' | 'number' | 'boolean'
 
 export type ComfyUiWorkflowApiNodeInput = {
   id: string

@@ -1,25 +1,51 @@
-import { FormArea, FormSection } from '@/components/forms'
-import { getDefaultSettingsState, useSettings } from '@/services/settings'
+import { useMemo } from 'react'
+import {
+  ClapWorkflowCategory,
+  ClapWorkflowEngine,
+  ClapWorkflowProvider,
+  ClapWorkflow,
+} from '@aitube/clap'
+import { FormSection } from '@/components/forms'
+import { FormComfyUIWorkflowSettings } from '@/components/forms/FormComfyUIWorkflowSettings'
+import { useSettings } from '@/services/settings'
+import { readConfiguredComfyWorkflow } from '@/app/api/resolve/providers/comfyui/convertComfyUiWorkflowApiToClapWorkflow'
 
 export function SettingsSectionMusic() {
-  const defaultSettings = getDefaultSettingsState()
-
-  const comfyWorkflowForMusic = useSettings((s) => s.comfyWorkflowForMusic)
-  const setComfyWorkflowForMusic = useSettings(
-    (s) => s.setComfyWorkflowForMusic
+  const value = useSettings((s) => s.comfyWorkflowForMusic)
+  const setValue = useSettings((s) => s.setComfyWorkflowForMusic)
+  const workflow = useMemo(
+    () =>
+      readConfiguredComfyWorkflow(
+        value,
+        ClapWorkflowCategory.MUSIC_GENERATION
+      ) ||
+      ({
+        id: 'comfyui://settings.comfyWorkflowForMusic',
+        label: 'Custom Music Workflow',
+        description: '',
+        tags: [],
+        author: 'You',
+        thumbnailUrl: '',
+        nonCommercial: false,
+        engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
+        provider: ClapWorkflowProvider.COMFYUI,
+        category: ClapWorkflowCategory.MUSIC_GENERATION,
+        data: '{}',
+        schema: '',
+        inputFields: [],
+        inputValues: {},
+      } satisfies ClapWorkflow),
+    [value]
   )
-
   return (
-    <div className="flex flex-col justify-between space-y-6">
-      <FormSection label="Music rendering">
-        <FormArea
-          label="Custom ComfyUI workflow for music"
-          value={comfyWorkflowForMusic}
-          defaultValue={defaultSettings.comfyWorkflowForMusic}
-          onChange={setComfyWorkflowForMusic}
-          rows={8}
-        />
-      </FormSection>
-    </div>
+    <FormSection label="Music rendering">
+      <FormComfyUIWorkflowSettings
+        label="Custom ComfyUI workflow for music"
+        clapWorkflow={workflow}
+        defaultClapWorkflow={workflow}
+        className="mt-4"
+        onChange={(updated) => setValue(JSON.stringify(updated))}
+      />
+    </FormSection>
   )
 }

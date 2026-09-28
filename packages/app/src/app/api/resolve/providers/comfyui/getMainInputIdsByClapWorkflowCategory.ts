@@ -8,6 +8,8 @@ export const getMainInputIdsByClapWorkflowCategory = (
   switch (category) {
     case ClapWorkflowCategory.VIDEO_GENERATION: {
       return [
+        ClapperComfyUiInputIds.PROMPT,
+        ClapperComfyUiInputIds.NEGATIVE_PROMPT,
         ClapperComfyUiInputIds.IMAGE,
         ClapperComfyUiInputIds.WIDTH,
         ClapperComfyUiInputIds.HEIGHT,

@@ -1,25 +1,51 @@
-import { FormArea, FormSection } from '@/components/forms'
-import { getDefaultSettingsState, useSettings } from '@/services/settings'
+import { useMemo } from 'react'
+import {
+  ClapWorkflowCategory,
+  ClapWorkflowEngine,
+  ClapWorkflowProvider,
+  ClapWorkflow,
+} from '@aitube/clap'
+import { FormSection } from '@/components/forms'
+import { FormComfyUIWorkflowSettings } from '@/components/forms/FormComfyUIWorkflowSettings'
+import { useSettings } from '@/services/settings'
+import { readConfiguredComfyWorkflow } from '@/app/api/resolve/providers/comfyui/convertComfyUiWorkflowApiToClapWorkflow'
 
 export function SettingsSectionVoice() {
-  const defaultSettings = getDefaultSettingsState()
-
-  const comfyWorkflowForVoice = useSettings((s) => s.comfyWorkflowForVoice)
-  const setComfyWorkflowForVoice = useSettings(
-    (s) => s.setComfyWorkflowForVoice
+  const value = useSettings((s) => s.comfyWorkflowForVoice)
+  const setValue = useSettings((s) => s.setComfyWorkflowForVoice)
+  const workflow = useMemo(
+    () =>
+      readConfiguredComfyWorkflow(
+        value,
+        ClapWorkflowCategory.VOICE_GENERATION
+      ) ||
+      ({
+        id: 'comfyui://settings.comfyWorkflowForVoice',
+        label: 'Custom Voice Workflow',
+        description: '',
+        tags: [],
+        author: 'You',
+        thumbnailUrl: '',
+        nonCommercial: false,
+        engine: ClapWorkflowEngine.COMFYUI_WORKFLOW,
+        provider: ClapWorkflowProvider.COMFYUI,
+        category: ClapWorkflowCategory.VOICE_GENERATION,
+        data: '{}',
+        schema: '',
+        inputFields: [],
+        inputValues: {},
+      } satisfies ClapWorkflow),
+    [value]
   )
-
   return (
-    <div className="flex flex-col justify-between space-y-6">
-      <FormSection label="Voice rendering">
-        <FormArea
-          label="Custom ComfyUI workflow for voice"
-          value={comfyWorkflowForVoice}
-          defaultValue={defaultSettings.comfyWorkflowForVoice}
-          onChange={setComfyWorkflowForVoice}
-          rows={8}
-        />
-      </FormSection>
-    </div>
+    <FormSection label="Voice rendering">
+      <FormComfyUIWorkflowSettings
+        label="Custom ComfyUI workflow for voice"
+        clapWorkflow={workflow}
+        defaultClapWorkflow={workflow}
+        className="mt-4"
+        onChange={(updated) => setValue(JSON.stringify(updated))}
+      />
+    </FormSection>
   )
 }

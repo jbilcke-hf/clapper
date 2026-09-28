@@ -24,6 +24,17 @@ export function findPromptInputsFromWorkflow(
     workflow.findInput({
       value: (value) => /.*\@clapper\/prompt.*/i.test(value),
     }),
+    workflow
+      .findInput({ type: 'string', name: /^(text|prompt)$/i })
+      .filter(
+        (input) =>
+          !/negative/i.test(input.node.name || '') &&
+          !workflow
+            .getNodesDict()
+            [
+              input.node.id
+            ].outboundEdges.some((edge) => /negative/i.test(edge.relationship))
+      ),
     'id'
   )
 }
@@ -105,6 +116,11 @@ export function findImageInputsFromWorkflow(
   workflow: ComfyUIWorkflowApiGraph
 ): ComfyUiWorkflowApiNodeInput[] {
   return unionBy(
+    workflow.findInput({
+      nodeType: 'LoadImage',
+      name: 'image',
+      type: 'string',
+    }),
     workflow.findInput({
       value: (value) => /.*\@clapper\/image.*/i.test(value),
     }),

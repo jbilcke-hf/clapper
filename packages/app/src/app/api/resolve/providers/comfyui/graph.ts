@@ -99,6 +99,61 @@ export class ComfyUIWorkflowApiGraph {
   private inDegree: Record<string, number> = {}
 
   constructor(workflow: ComfyUIWorkflowApiJson) {
+    if (
+      !workflow ||
+      typeof workflow !== 'object' ||
+      Array.isArray(workflow) ||
+      !Object.keys(workflow).length ||
+      Object.keys(workflow).length > 1000
+    ) {
+      throw new Error(
+        'Import a non-empty ComfyUI API-format workflow (at most 1000 nodes).'
+      )
+    }
+    for (const [id, node] of Object.entries(workflow)) {
+      if (
+        !node ||
+        typeof node !== 'object' ||
+        typeof node.class_type !== 'string' ||
+        !node.class_type ||
+        !node.inputs ||
+        typeof node.inputs !== 'object' ||
+        Array.isArray(node.inputs)
+      ) {
+        throw new Error(
+          `Node ${id} is invalid. Export the workflow using ComfyUI API format.`
+        )
+      }
+      if (
+        node._meta !== undefined &&
+        (!node._meta ||
+          typeof node._meta !== 'object' ||
+          Array.isArray(node._meta) ||
+          (node._meta.title !== undefined &&
+            typeof node._meta.title !== 'string'))
+      ) {
+        throw new Error(
+          `Node ${id} has invalid metadata; its title must be a string.`
+        )
+      }
+      if (['__proto__', 'prototype', 'constructor'].includes(id)) {
+        throw new Error(`Node ${id} uses a reserved identifier.`)
+      }
+      for (const value of Object.values(node.inputs)) {
+        if (
+          Array.isArray(value) &&
+          (value.length !== 2 ||
+            typeof value[0] !== 'string' ||
+            !Number.isInteger(value[1]) ||
+            value[1] < 0 ||
+            !Object.hasOwn(workflow, value[0]))
+        ) {
+          throw new Error(
+            `Node ${id} has an invalid or missing input connection.`
+          )
+        }
+      }
+    }
     this.json = structuredClone(workflow)
     const { adjList, dependencyList, dependantList, inDegree } =
       this.buildGraphData()
@@ -243,7 +298,8 @@ export class ComfyUIWorkflowApiGraph {
    * TODO: multiple outputs.
    */
   getOutputNode(): NodeData | null {
-    const { adjList, inDegree } = this
+    const { adjList } = this
+    const inDegree = { ...this.inDegree }
     const queue: string[] = []
     const sortedOrder: string[] = []
 
@@ -295,7 +351,11 @@ export class ComfyUIWorkflowApiGraph {
 
       // TODO: Handle more types
       let inputType: INPUT_TYPES =
-        typeof value === 'string' ? 'string' : 'number'
+        typeof value === 'boolean'
+          ? 'boolean'
+          : typeof value === 'string'
+            ? 'string'
+            : 'number'
 
       inputs.push({
         type: inputType,
@@ -350,16 +410,15 @@ export class ComfyUIWorkflowApiGraph {
 
     return Object.values(inputs).filter(
       (input) =>
-        (matches(input.type, query.type) &&
-          matches(input.name, query.name) &&
-          matches(input.node.name, query.nodeName) &&
-          matches(input.node.type, query.nodeType) &&
-          (!query.nodeOutputToNodeInput ||
-            this.nodes[input.node.id].outboundEdges.some((edge) =>
-              matches(edge.relationship, query.nodeOutputToNodeInput)
-            )) &&
-          !query.value) ||
-        query.value?.(input.value)
+        matches(input.type, query.type) &&
+        matches(input.name, query.name) &&
+        matches(input.node.name, query.nodeName) &&
+        matches(input.node.type, query.nodeType) &&
+        (!query.nodeOutputToNodeInput ||
+          this.nodes[input.node.id].outboundEdges.some((edge) =>
+            matches(edge.relationship, query.nodeOutputToNodeInput)
+          )) &&
+        (!query.value || query.value(input.value))
     )
   }
 

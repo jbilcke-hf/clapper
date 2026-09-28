@@ -139,7 +139,8 @@
     "web-audio-beat-detector": "8.2.12",
     "yaml": "2.6.1",
     "zustand": "4.5.2",
-    "zx": "8.1.4"
+    "zx": "8.1.4",
+    "lodash": "4.17.21"
   },
   "devDependencies": {
     "@electron-forge/cli": "7.4.0",

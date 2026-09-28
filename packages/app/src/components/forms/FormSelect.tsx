@@ -57,7 +57,7 @@ export function FormSelect<T>({
           )
           onSelect(selectedItem?.value)
         }}
-        defaultValue={selectedItemId}
+        value={selectedItemId || ''}
         style={{
           borderRadius: theme.formInputRadius || '8px',
         }}

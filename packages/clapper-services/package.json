@@ -14,8 +14,8 @@
     "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build"
   },
   "devDependencies": {
-    "@types/react": "*",
-    "@types/react-dom": "*",
+    "@types/react": "18",
+    "@types/react-dom": "18",
     "bun-types": "latest",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",

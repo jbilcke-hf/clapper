@@ -1,5 +1,11 @@
+import { ClapperComfyUiInputIds } from './types'
 import { expect, test } from 'vitest'
 import { createPromptBuilder } from './createPromptBuilder'
+import { ComfyUIWorkflowApiGraph } from './graph'
+import {
+  findPromptInputsFromWorkflow,
+  findNegativePromptInputsFromWorkflow,
+} from './utils'
 
 // Default workflow used by ComfyUI, downloaded for API
 const workflowRaw = {
@@ -575,11 +581,13 @@ test('should edit correctly an input of the workflow', () => {
 // TODO: More corrupted workflows
 const workflowRawWithCycles = {
   a: {
+    class_type: 'TestNode',
     inputs: {
       text: ['b', 0],
     },
   },
   b: {
+    class_type: 'TestNode',
     inputs: {
       text: ['a', 0],
     },

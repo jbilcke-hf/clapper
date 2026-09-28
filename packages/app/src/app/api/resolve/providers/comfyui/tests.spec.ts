@@ -581,11 +581,13 @@ test('should edit correctly an input of the workflow', () => {
 // TODO: More corrupted workflows
 const workflowRawWithCycles = {
   a: {
+    class_type: 'TestNode',
     inputs: {
       text: ['b', 0],
     },
   },
   b: {
+    class_type: 'TestNode',
     inputs: {
       text: ['a', 0],
     },

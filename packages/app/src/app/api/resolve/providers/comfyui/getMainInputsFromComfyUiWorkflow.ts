@@ -86,7 +86,7 @@ export function getMainInputsFromComfyUiWorkflow(
     [ClapperComfyUiInputIds.OUTPUT]: outputNode
       ? {
           id: outputNode?.id,
-          label: `${outputNode?._meta?.title} (id: ${outputNode?.id})`,
+          label: `${outputNode?._meta?.title || outputNode?.class_type} (id: ${outputNode?.id})`,
         }
       : undefined,
   }
@@ -215,10 +215,9 @@ export function getMainInputsFromComfyUiWorkflow(
             options: getOptionsItems(imageNodeInputs),
             tooltip: {
               message: `
-                Clapper doesn't support file/upload node inputs;
-                use a string input from where Clapper can load a base64
-                data URI string (e.g. the "Load Image From Base64" node's
-                "data" input in the default video workflow).
+                Choose a standard LoadImage image input to upload the source image,
+                or a custom base64 string input. Required custom nodes and models
+                must already be installed on your ComfyUI server.
               `,
               type: 'info',
             },
@@ -238,7 +237,7 @@ export function getMainInputsFromComfyUiWorkflow(
             options: nodes.map((p) => {
               const item = {
                 id: p.id,
-                label: `${p._meta?.title || 'Untitled node'} (id: ${p.id})`,
+                label: `${p._meta?.title || p.class_type || 'Untitled node'} (id: ${p.id})`,
               }
               return {
                 ...item,

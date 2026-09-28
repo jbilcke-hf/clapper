@@ -63,13 +63,13 @@ export function getInputsFromComfyUiWorkflow(
         .getNodesWithInputs()
         // Discard nodes with only inputs connections
         .filter(({ id }) => workflowGraph.getInputsByNodeId(id)?.length)
-        .map(({ id, _meta }) => {
+        .map(({ id, _meta, class_type }) => {
           return {
             id: '@clapper/node/' + id,
-            label: `${_meta?.title} (id: ${id})`,
+            label: `${_meta?.title || class_type || 'Node'} (id: ${id})`,
             type: 'group' as any,
             category: ClapInputCategory.UNKNOWN,
-            description: `Settings for ${_meta?.title}`,
+            description: `Settings for ${_meta?.title || class_type || 'Node'}`,
             defaultValue: '',
             inputFields: workflowGraph.getInputsByNodeId(id)?.map((input) => {
               const mainInputKey = Object.keys(inputValues).find(
