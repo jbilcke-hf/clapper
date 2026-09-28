@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapSegmentCategory, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -153,7 +153,24 @@ export type ContentSizeMetrics = {
   defaultPreviewHeight: number
 }
 
+export type SegmentDrag = {
+  segmentId: string
+  pointerId: number
+  clientX: number
+  clientY: number
+  startTimeInMs: number
+  endTimeInMs: number
+  durationInMs: number
+  track: number
+  trackCenter: number
+  msPerPixel: number
+  zoom: number
+  controlsEnabled: boolean
+}
+
 export type TimelineStoreProjectState = ClapMeta & {
+  segmentDrag?: SegmentDrag
+
   scenes: ClapScene[]
 
   segments: TimelineSegment[]
@@ -279,6 +296,14 @@ export type TimelineStoreState = TimelineStoreProjectState & TimelineStorePrefer
 
 
 export type TimelineStoreModifiers = {
+  createTrack: (category: ClapSegmentCategory) => number
+  setTrackCategory: (trackId: number, category: ClapSegmentCategory) => boolean
+  createClip: (trackId: number, startTimeInMs?: number) => Promise<TimelineSegment | undefined>
+  moveSegment: (segmentId: string, startTimeInMs: number, trackId: number) => boolean
+  beginSegmentDrag: (segmentId: string, pointerId: number, clientX: number, clientY: number) => void
+  updateSegmentDrag: (pointerId: number, clientX: number, clientY: number) => void
+  endSegmentDrag: (cancel?: boolean) => void
+
   setCanvas: (canvas?: HTMLCanvasElement) => void
   clear: () => void
   setClap: (clap?: ClapProject) => Promise<void>

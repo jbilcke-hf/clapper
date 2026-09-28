@@ -1,7 +1,9 @@
+import { sanitizeTracks } from "./sanitizeTracks"
 import { ClapMeta } from "@/types";
 import { getValidNumber, parseImageRatio, UUID } from "@/utils";
 
 export function sanitizeMeta({
+  timelineTracks,
   id,
   title,
   description,
@@ -32,6 +34,7 @@ export function sanitizeMeta({
   screenplay?: string
 } = {}): ClapMeta {
   return {
+    ...(Array.isArray(timelineTracks) ? { timelineTracks: sanitizeTracks(timelineTracks) } : {}),
     id: typeof id === "string" ? id : UUID(),
     title: typeof title === "string" ? title : "",
     description: typeof description === "string" ? description : "",

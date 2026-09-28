@@ -37,7 +37,7 @@ export async function clapSegmentToTimelineSegment(clapSegment: ClapSegment): Pr
   segment.colors = getSegmentColorScheme(segment)
 
   if (!segment.audioBuffer) {
-    if (segment.outputType === ClapOutputType.AUDIO) {
+    if (segment.outputType === ClapOutputType.AUDIO && segment.assetUrl) {
       try {
         segment.audioBuffer = await getAudioBuffer(segment.assetUrl)
       } catch (err) {

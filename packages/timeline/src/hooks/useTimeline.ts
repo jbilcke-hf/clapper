@@ -1,7 +1,8 @@
+import { outputTypeForCategory, trackAtPosition, trackCategory } from "../utils/trackEditing"
 import { create } from "zustand"
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
+import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta, newSegment } from "@aitube/clap"
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler, Invalidate } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
@@ -22,6 +23,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   },
 
   clear: () => {
+    get().endSegmentDrag(true)
     // this re-initialize everything that is related to the current .clap project
     set({
       ...getDefaultProjectState()
@@ -63,6 +65,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     let idCollisionDetector = new Set<string>()
 
     let tracks: ClapTracks = []
+    for (const track of meta.timelineTracks || []) tracks[track.id] = { ...track, occupied: false }
 
     let defaultSegmentDurationInSteps = get().defaultSegmentDurationInSteps
  
@@ -128,6 +131,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         tracks[segment.track] = {
           id: segment.track,
           // name: `Track ${s.track}`,
+          category: segment.category,
           name: `${segment.category}`,
           isPreview,
           height:
@@ -141,9 +145,12 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       } else {
         
         const track = tracks[segment.track]
+        track.occupied = true
+        track.category = segment.category
         const categories: string[] = track.name.split(",").map((x: string) => x.trim())
         if (!categories.includes(segment.category)) {
           tracks[segment.track].name = "(misc)"
+          tracks[segment.track].category = undefined
 
           /*
           if (categories.length < 2) {
@@ -160,7 +167,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     }
 
    // ---------- FILL-IN THE TRACKS ---------------
-    for (let id = 0; id < DEFAULT_NB_TRACKS; id++) {
+    for (let id = 0; id < Math.max(DEFAULT_NB_TRACKS, tracks.length); id++) {
       if (!tracks[id]) {
         tracks[id] = {
           id,
@@ -192,6 +199,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     set({
       ...meta,
+      timelineTracks: undefined,
       scenes: clap.scenes,
       segments,
       entities: clap.entities,
@@ -259,9 +267,11 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       storyPrompt,
       isLoop,
       isInteractive,
+      tracks,
     } = get()
 
     return {
+      timelineTracks: tracks.map(({ id, name, category, isPreview, height, hue, occupied, visible }) => ({ id, name, category, isPreview, height, hue, occupied, visible })),
       id,
       title,
       description,
@@ -530,131 +540,138 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
       })
     }
   },
-  handleSegmentEvent: ({
-    eventType,
-    segment,
-  }: {
-    eventType: SegmentPointerEvent
-    segment: TimelineSegment
-  }): SegmentEventCallbackHandler => {
-    function segmentEventCallbackHandler(event: ThreeEvent<PointerEvent> | ThreeEvent<MouseEvent>) {
-      const pointX = event.point.x
-      const offsetX = event.offsetX
-      const offsetY = event.offsetY
-
-      /*
-        console.log("segmentEventCallbackHandler:" + JSON.stringify({
-          pointX: Math.round(e.point.x),
-          offsetX: Math.round(e.offsetX),
-          offsetY: Math.round(e.offsetY),
-          isOutOfRange,
-          cursorLeftPosInPx: Math.round(cursorLeftPosInPx),
-          cursorRightPosInPx: Math.round(cursorRightPosInPx),
-          area
-        }, null, 2))
-      */
-
-      const { cellWidth, containerWidth, durationInMsPerStep, setSelectedSegment, setHoveredSegment, setEditedSegment } = get()
-
-      const durationInSteps = (
-        (segment.endTimeInMs - segment.startTimeInMs) / durationInMsPerStep
-      )
-
-      /*
-      const startTimeInSteps = (
-        segment.startTimeInMs / durationInMsPerStep
-      )
-      */
-
-      const widthInPx = durationInSteps * cellWidth
-
-      const segmentWidth = widthInPx
-
-      const isOutOfRange = offsetX < leftBarTrackScaleWidth || offsetY < topBarTimeScaleHeight
-    
-      const cursorX = pointX + (containerWidth / 2)
-      const cursorTimestampAtInMs = (cursorX / cellWidth) * useTimeline.getState().durationInMsPerStep
-      
-      //console.log("cells.Cell:onClick() e:", e)
-    
-      const wMin = cursorTimestampAtInMs - segment.startTimeInMs
-      const wMax = segment.endTimeInMs - segment.startTimeInMs
-      const cursorLeftPosInRatio = wMin / wMax
-    
-      const cursorLeftPosInPx = cursorLeftPosInRatio * segmentWidth
-      const cursorRightPosInPx = segmentWidth - cursorLeftPosInPx 
-    
-      // note: this should be "responsive", with a max width
-      const sideGrabHandleWidth = 9
-      // let isInLeftArea = cursorLeftPosInRatio < 0.5
-      // let isInRightArea = cursorLeftPosInRatio > 0.5
-    
-      const area =
-        (cursorLeftPosInPx < sideGrabHandleWidth) ? SegmentArea.LEFT
-      : (cursorRightPosInPx < sideGrabHandleWidth) ? SegmentArea.RIGHT
-      : SegmentArea.MIDDLE
-
-      if (isOutOfRange) {
-        event.stopPropagation()
-        return false
-      }
-
-      if (eventType === SegmentPointerEvent.DOUBLE_CLICK) {
-        setHoveredSegment({
-          segment,
-          area
-        })
-        setSelectedSegment({
-          segment,
-    
-          // we leave it unspecified to create an automated toggle
-          // isSelected: true,
-    
-          onlyOneSelectedAtOnce: true,
-        })
-        setEditedSegment({
-          segment,
-          status: SegmentEditionStatus.EDITING
-        })
-      } else if (
-        eventType === SegmentPointerEvent.CLICK ||
-        eventType === SegmentPointerEvent.DOWN ||
-        eventType === SegmentPointerEvent.MOVE
-      ) {
-        setHoveredSegment({
-          segment,
-          area
-        })
-        if (area === SegmentArea.LEFT) {
-          setEditedSegment({
-            segment,
-            status: SegmentEditionStatus.RESIZE_START
-          })
-        } else if (area === SegmentArea.RIGHT) {
-          setEditedSegment({
-            segment,
-            status: SegmentEditionStatus.RESIZE_END
-          })
-        } else if (area === SegmentArea.MIDDLE) {
-          setEditedSegment({
-          segment,
-            status: SegmentEditionStatus.DRAGGING
-          })
-        }
-      } else if (eventType === SegmentPointerEvent.UP) {
-        setHoveredSegment({
-          segment: undefined,
-          area
-        })
-        setEditedSegment({
-          segment: undefined,
-        })
-      }
-
+  handleSegmentEvent: ({ eventType, segment }) => (event) => {
+    const state = get()
+    const pointer = event.nativeEvent as PointerEvent
+    // A header can visually cover a clip without handling pointer-down itself.
+    // Ignore that clip hit, but still finish an owned drag released over a ruler.
+    if (eventType !== SegmentPointerEvent.UP &&
+      (event.offsetX < leftBarTrackScaleWidth || event.offsetY < topBarTimeScaleHeight)) {
       event.stopPropagation()
       return false
     }
-    return segmentEventCallbackHandler
+    if (eventType === SegmentPointerEvent.UP) {
+      if (state.segmentDrag?.pointerId === pointer.pointerId) state.endSegmentDrag()
+    } else if (eventType === SegmentPointerEvent.DOWN) {
+      if (state.segmentDrag) return false
+      if (event.button !== 0 || segment.editionStatus === SegmentEditionStatus.LOCKED) return false
+      event.nativeEvent.preventDefault()
+      state.setSelectedSegment({ segment, isSelected: true, onlyOneSelectedAtOnce: true })
+      state.beginSegmentDrag(segment.id, pointer.pointerId, pointer.clientX, pointer.clientY)
+    } else if (eventType === SegmentPointerEvent.DOUBLE_CLICK) {
+      state.setEditedSegment({ segment, status: SegmentEditionStatus.EDITING })
+    } else if (eventType === SegmentPointerEvent.MOVE && !state.segmentDrag) {
+      state.setHoveredSegment({ segment, area: SegmentArea.MIDDLE })
+    }
+    event.stopPropagation()
+    return false
+  },
+  createTrack: (category) => {
+    if (!Object.values(ClapSegmentCategory).includes(category)) return -1
+    const state = get()
+    const tracks = state.tracks.slice()
+    // The initial grid contains unused rows; give one a type before extending it.
+    let id = tracks.findIndex(t => !t.category && !state.segments.some(s => s.track === t.id))
+    if (id < 0) id = tracks.length
+    const isPreview = category === ClapSegmentCategory.IMAGE || category === ClapSegmentCategory.VIDEO
+    tracks[id] = { id, category, name: category, isPreview, height: isPreview ? state.defaultPreviewHeight : state.defaultCellHeight, hue: 0, occupied: false, visible: true }
+    set({ ...computeContentSizeMetrics({ ...state, tracks }), allSegmentsChanged: state.allSegmentsChanged + 1, atLeastOneSegmentChanged: state.atLeastOneSegmentChanged + 1 })
+    state.invalidate()
+    return id
+  },
+  setTrackCategory: (trackId, category) => {
+    const state = get()
+    if (!state.tracks[trackId] || !Object.values(ClapSegmentCategory).includes(category)) return false
+    if (state.segments.some(s => s.track === trackId && s.category !== category)) return false
+    const isPreview = category === ClapSegmentCategory.IMAGE || category === ClapSegmentCategory.VIDEO
+    const tracks = state.tracks.map(track => track.id === trackId
+      ? { ...track, category, name: category, isPreview, height: isPreview ? state.defaultPreviewHeight : state.defaultCellHeight } : track)
+    set({ ...computeContentSizeMetrics({ ...state, tracks }), allSegmentsChanged: state.allSegmentsChanged + 1, atLeastOneSegmentChanged: state.atLeastOneSegmentChanged + 1 })
+    state.invalidate()
+    return true
+  },
+  createClip: async (trackId, requestedStart) => {
+    let state = get()
+    const projectId = state.id
+    const category = trackCategory(state.tracks, state.segments, trackId)
+    if (!category || !state.tracks[trackId]) return undefined
+    const startTimeInMs = Math.max(0, requestedStart ?? state.cursorTimestampAtInMs)
+    if (!Number.isFinite(startTimeInMs)) return undefined
+    const segment = await clapSegmentToTimelineSegment(newSegment({
+      category, track: trackId, outputType: outputTypeForCategory(category),
+      startTimeInMs, endTimeInMs: startTimeInMs + state.defaultSegmentDurationInSteps * state.durationInMsPerStep,
+      label: `New ${category.toLowerCase()} clip`, createdBy: "user", editedBy: "user",
+    }))
+    state = get()
+    if (state.id !== projectId || trackCategory(state.tracks, state.segments, trackId) !== category) return undefined
+    segment.visibility = SegmentVisibility.VISIBLE
+    const tracks = state.tracks.map(t => t.id === trackId ? { ...t, occupied: true } : t)
+    const durationInMs = Math.max(state.durationInMs, segment.endTimeInMs)
+    set({ segments: [...state.segments, segment], durationInMs,
+      allSegmentsChanged: state.allSegmentsChanged + 1, atLeastOneSegmentChanged: state.atLeastOneSegmentChanged + 1,
+      ...computeContentSizeMetrics({ ...state, tracks, durationInMs }) })
+    get().setSelectedSegment({ segment, isSelected: true, onlyOneSelectedAtOnce: true })
+    state.invalidate()
+    return segment
+  },
+  moveSegment: (segmentId, requestedStart, trackId) => {
+    const state = get()
+    const segment = state.segments.find(s => s.id === segmentId)
+    if (!segment || !state.tracks[trackId] || !Number.isFinite(requestedStart) || segment.editionStatus === SegmentEditionStatus.LOCKED) return false
+    if (segment.track !== trackId && trackCategory(state.tracks, state.segments, trackId) !== segment.category) return false
+    const frame = 1000 / (state.frameRate > 0 && Number.isFinite(state.frameRate) ? state.frameRate : 24)
+    const startTimeInMs = Math.max(0, Math.round(requestedStart / frame) * frame)
+    const moved = { ...segment, track: trackId, startTimeInMs, endTimeInMs: startTimeInMs + segment.endTimeInMs - segment.startTimeInMs }
+    const segments = state.segments.map(s => s.id === segmentId ? moved : s)
+    const tracks = state.tracks.map(t => ({ ...t, occupied: segments.some(s => s.track === t.id) }))
+    const durationInMs = Math.max(state.durationInMs, moved.endTimeInMs)
+    set({ segments, durationInMs,
+      selectedSegments: state.selectedSegments.map(s => s.id === segmentId ? moved : s),
+      editedSegment: state.editedSegment?.id === segmentId ? moved : state.editedSegment,
+      allSegmentsChanged: state.allSegmentsChanged + 1, atLeastOneSegmentChanged: state.atLeastOneSegmentChanged + 1,
+      ...computeContentSizeMetrics({ ...state, tracks, durationInMs }) })
+    state.invalidate()
+    return true
+  },
+  beginSegmentDrag: (segmentId, pointerId, clientX, clientY) => {
+    const state = get()
+    const segment = state.segments.find(s => s.id === segmentId)
+    if (!segment || segment.editionStatus === SegmentEditionStatus.LOCKED) return
+    state.endSegmentDrag()
+    const zoom = state.timelineCamera?.zoom || 1
+    const controlsEnabled = state.timelineControls?.enabled ?? true
+    if (state.timelineControls) state.timelineControls.enabled = false
+    set({ segmentDrag: { segmentId, pointerId, clientX, clientY, startTimeInMs: segment.startTimeInMs, endTimeInMs: segment.endTimeInMs, durationInMs: state.durationInMs, track: segment.track,
+      trackCenter: state.getVerticalCellPosition(0, segment.track) + state.getCellHeight(segment.track) / 2,
+      msPerPixel: state.durationInMsPerStep / state.cellWidth / zoom, zoom, controlsEnabled } })
+  },
+  updateSegmentDrag: (pointerId, clientX, clientY) => {
+    const state = get()
+    const drag = state.segmentDrag
+    if (!drag || drag.pointerId !== pointerId) return
+    const trackId = trackAtPosition(state.tracks, drag.trackCenter + (clientY - drag.clientY) / drag.zoom)
+    if (trackId === undefined) return
+    state.moveSegment(drag.segmentId, drag.startTimeInMs + (clientX - drag.clientX) * drag.msPerPixel, trackId)
+  },
+  endSegmentDrag: (cancel = false) => {
+    const state = get()
+    const drag = state.segmentDrag
+    if (!drag) return
+    if (cancel) {
+      // Restore imported non-frame-aligned times exactly, without another snap.
+      const segments = state.segments.map(s => s.id === drag.segmentId
+        ? { ...s, track: drag.track, startTimeInMs: drag.startTimeInMs, endTimeInMs: drag.endTimeInMs } : s)
+      const tracks = state.tracks.map(t => ({ ...t, occupied: segments.some(s => s.track === t.id) }))
+      const restored = segments.find(s => s.id === drag.segmentId)
+      const durationInMs = segments.reduce((duration, s) => Math.max(duration, s.endTimeInMs), drag.durationInMs)
+      set({ segments, durationInMs, ...computeContentSizeMetrics({ ...state, tracks, durationInMs }),
+        selectedSegments: state.selectedSegments.flatMap(s => s.id === drag.segmentId ? restored ? [restored] : [] : [s]),
+        editedSegment: state.editedSegment?.id === drag.segmentId ? restored : state.editedSegment,
+        allSegmentsChanged: state.allSegmentsChanged + 1, atLeastOneSegmentChanged: state.atLeastOneSegmentChanged + 1 })
+    }
+    if (state.timelineControls) state.timelineControls.enabled = drag.controlsEnabled
+    set({ segmentDrag: undefined })
+    state.invalidate()
   },
   trackSilentChangeInSegment: (segmentId: string) => {
     const { silentChangesInSegment, atLeastOneSegmentChanged: previousAtLeastOneSegmentChanged } = get()
@@ -992,6 +1009,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     // we just make sure to sanitize it before adding it
     segment = await clapSegmentToTimelineSegment(segment)
+    segment.startTimeInMs = startTimeInMs
+    segment.endTimeInMs = endTimeInMs
 
     // also, we assume that we are adding a segment in a place where it's visible
     // (if we are wrong don't worry, our visibility detector will fix it anyway)

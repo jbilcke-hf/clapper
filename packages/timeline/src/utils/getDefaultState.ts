@@ -47,6 +47,7 @@ export function getDefaultProjectState(): TimelineStoreProjectState {
 
     // for developer convenience, the information about hovered, edited, selected..
     // is both present inside each segment and also aliased here, for fast access
+    segmentDrag: undefined,
     hoveredSegment: undefined,
     editedSegment: undefined,
     selectedSegments: [],

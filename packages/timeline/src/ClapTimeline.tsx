@@ -1,3 +1,5 @@
+import { useEffect } from "react"
+import { TrackEditor } from "./components/timeline/TrackEditor"
 import AutoSizer, { Size } from "react-virtualized-auto-sizer"
 import { Canvas } from "@react-three/fiber"
 import { Stats } from "@react-three/drei"
@@ -63,6 +65,31 @@ export function ClapTimeline({
   const setCanvas = useTimeline(s => s.setCanvas)
   const handleMouseWheel = useTimeline(s => s.handleMouseWheel)
 
+  useEffect(() => {
+    const move = (event: PointerEvent) => useTimeline.getState().updateSegmentDrag(event.pointerId, event.clientX, event.clientY)
+    const finish = (event: PointerEvent) => {
+      if (useTimeline.getState().segmentDrag?.pointerId === event.pointerId) useTimeline.getState().endSegmentDrag()
+    }
+    const cancel = () => useTimeline.getState().endSegmentDrag(true)
+    const cancelPointer = (event: PointerEvent) => {
+      if (useTimeline.getState().segmentDrag?.pointerId === event.pointerId) cancel()
+    }
+    const key = (event: KeyboardEvent) => { if (event.key === "Escape") cancel() }
+    window.addEventListener("pointermove", move)
+    window.addEventListener("pointerup", finish)
+    window.addEventListener("pointercancel", cancelPointer)
+    window.addEventListener("blur", cancel)
+    window.addEventListener("keydown", key)
+    return () => {
+      cancel()
+      window.removeEventListener("pointermove", move)
+      window.removeEventListener("pointerup", finish)
+      window.removeEventListener("pointercancel", cancelPointer)
+      window.removeEventListener("blur", cancel)
+      window.removeEventListener("keydown", key)
+    }
+  }, [])
+
   const handleIsCreated = () => {
     useTimeline.setState({ isReady: true })
   }
@@ -84,6 +111,7 @@ export function ClapTimeline({
   }
 
   const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    if (useTimeline.getState().segmentDrag) return
     const rect = canvas?.getBoundingClientRect()
     if (!rect) { return }
 
@@ -112,8 +140,12 @@ export function ClapTimeline({
     <div
       className={cn(`w-full h-full`, className)}
       style={{
-        backgroundColor: theme.grid.backgroundColor
+        backgroundColor: theme.grid.backgroundColor,
+        display: "flex",
+        flexDirection: "column"
       }}>
+      <TrackEditor />
+      <div style={{ flex: 1, minHeight: 0 }}>
       <AutoSizer style={{
         height: "100%", // <-- mandatory otherwise the timeline won't show up
         width: "100%" // <-- mandatory otherwise the horizontal scroller won't show up
@@ -146,6 +178,7 @@ export function ClapTimeline({
             
 
             style={{
+              touchAction: "none",
               width: isValidNumber(width) ? `${width}px` : "100%",
               height: isValidNumber(height) ? `${height}px` : "100%"
             }}
@@ -176,6 +209,7 @@ export function ClapTimeline({
         </div>
         )}
       </AutoSizer>
+      </div>
     </div>
   );
 };

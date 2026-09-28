@@ -36,6 +36,10 @@ export function TimelineControls({
     if (!timelineControls || !camera) return
 
     const handleTouchStart = (event: TouchEvent) => {
+      if (useTimeline.getState().segmentDrag) {
+        initialPinchDistanceRef.current = null
+        return
+      }
       if (event.touches.length === 2) {
         const touch1 = event.touches[0]
         const touch2 = event.touches[1]
@@ -47,6 +51,10 @@ export function TimelineControls({
     }
 
     const handleTouchMove = (event: TouchEvent) => {
+      if (useTimeline.getState().segmentDrag) {
+        initialPinchDistanceRef.current = null
+        return
+      }
       if (event.touches.length === 2 && initialPinchDistanceRef.current !== null) {
         const touch1 = event.touches[0]
         const touch2 = event.touches[1]

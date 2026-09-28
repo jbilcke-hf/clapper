@@ -6,6 +6,9 @@ import { TimelineSegment } from "@/types"
 function getKey(segment: TimelineSegment) {
   const keyItems = [
     segment.id,
+    segment.track,
+    segment.startTimeInMs,
+    segment.endTimeInMs,
 
     // properties of the timeline segment
     segment.startAtLine,
@@ -55,7 +58,8 @@ export function useSegmentChanges(segment: TimelineSegment): number {
     // so we need to recompute some kind of hash change
     const newHash = getKey(segment)
     if (hashRef.current === newHash) { return }
-    setChangeCounter(changesRef.current++)
+    hashRef.current = newHash
+    setChangeCounter(++changesRef.current)
   }, [atLeastOneSegmentChanged])
  
   return changeCounter

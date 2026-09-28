@@ -15,11 +15,12 @@
     "publish": "npm publish --access public",
     "update": "rm -Rf node_modules && rm bun.lockb && bun i && bun run build",
     "dev": "vite",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test": "bun test test"
   },
   "devDependencies": {
-    "@types/react": "*",
-    "@types/react-dom": "*",
+    "@types/react": "18",
+    "@types/react-dom": "18",
     "@typescript-eslint/eslint-plugin": "7.17.0",
     "@typescript-eslint/parser": "7.17.0",
     "@vitejs/plugin-react": "4.3.1",
@@ -32,7 +33,8 @@
     "prettier": "3.3.3",
     "rimraf": "6.0.1",
     "typescript": "5.5.2",
-    "vite": "5.3.4"
+    "vite": "5.3.4",
+    "@types/three": "0.164.1"
   },
   "dependencies": {
     "@aitube/clap": "workspace:*",
@@ -43,14 +45,15 @@
     "@react-three/fiber": "8.17.10",
     "clsx": "2.1.1",
     "date-fns": "3.6.0",
-    "react": "*",
-    "react-dom": "*",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-use-measure": "2.1.1",
     "react-virtualized-auto-sizer": "1.0.24",
     "tailwind-merge": "2.4.0",
     "tailwindcss": "3.4.10",
     "three": "0.164.1",
-    "zustand": "4.5.2"
+    "zustand": "4.5.2",
+    "three-stdlib": "2.36.1"
   },
   "repository": {
     "type": "git",

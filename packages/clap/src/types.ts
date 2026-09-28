@@ -267,6 +267,9 @@ export type ClapHeader = {
 }
 
 export type ClapMeta = {
+  /** Optional editor tracks, including empty typed tracks. */
+  timelineTracks?: ClapTracks
+
   id: string
   title: string
   description: string
@@ -957,6 +960,8 @@ export type ClapEntity = {
 }
 
 export type ClapTrack = {
+  category?: ClapSegmentCategory
+
   id: number
   name: string
   isPreview: boolean

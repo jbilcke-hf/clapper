@@ -25,7 +25,7 @@ export function computeContentSizeMetrics({
 
   // in the future those might be dynamic / coming from settings
   const nbMaxShots = NB_MAX_SHOTS
-  const nbMaxTracks = DEFAULT_NB_TRACKS
+  const nbMaxTracks = Math.max(DEFAULT_NB_TRACKS, tracks.length)
   const defaultCellHeight = PROMPT_STEP_HEIGHT_IN_PX
 
   const defaultSegmentLengthInPixels = cellWidth * defaultSegmentDurationInSteps
@@ -42,14 +42,16 @@ export function computeContentSizeMetrics({
   
   let contentHeight = 0
   const newTracks: ClapTracks = tracks.map((track: any) => {
-    contentHeight += computeCellHeight({
+    const trackHeight = computeCellHeight({
       trackNumber: track.id,
       tracks,
       defaultCellHeight,
       defaultPreviewHeight
     })
+    contentHeight += trackHeight
     return {
       ...track,
+      height: trackHeight,
       contentHeight,
     }
   })
