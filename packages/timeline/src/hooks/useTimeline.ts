@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapProject, ClapSegment, ClapSegmentCategory, isValidNumber, newClap, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
+import { ClapProject, ClapSegment, ClapSegmentCategory, ClapSegmentStatus, isValidNumber, newClap, newSegment, serializeClap, ClapTracks, ClapEntity, ClapMeta } from "@aitube/clap"
 
 import { TimelineSegment, SegmentEditionStatus, SegmentVisibility, TimelineStore, SegmentArea, SegmentPointerEvent, SegmentEventCallbackHandler, Invalidate } from "@/types/timeline"
 import { getDefaultProjectState, getDefaultState } from "@/utils/getDefaultState"
@@ -13,6 +13,9 @@ import { TimelineCameraImpl } from "@/components/camera/types"
 import { IsPlaying, JumpAt, TimelineCursorImpl, TogglePlayback } from "@/components/timeline/types"
 import { computeContentSizeMetrics } from "@/compute/computeContentSizeMetrics"
 import { topBarTimeScaleHeight } from "@/constants/themes"
+import { computeCellHeight } from "@/compute/computeCellHeight"
+import { canMoveToTrack, describeTracks, getClipOutputType, getTrackCategory, isTrackCategory } from "@/utils/trackAuthoring"
+import { timelinePointer } from "@/utils/timelinePointer"
 
 export const useTimeline = create<TimelineStore>((set, get) => ({
   ...getDefaultState(),
@@ -21,7 +24,165 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     set({ canvas })
   },
 
+  addTrack: (category) => {
+    const state = get()
+    if (!isTrackCategory(category) || state.isLoading || state.tracks.length >= 4096) return undefined
+    const id = state.tracks.length
+    const isPreview = category === ClapSegmentCategory.IMAGE || category === ClapSegmentCategory.VIDEO
+    const tracks = state.tracks.concat({
+      id, name: category, category, isPreview,
+      height: isPreview ? state.defaultPreviewHeight : state.defaultCellHeight,
+      hue: 0, occupied: false, visible: true,
+    })
+    set({ ...computeContentSizeMetrics({ ...state, tracks }), activeTrackId: id })
+    get().selectTrack(id)
+    return id
+  },
+
+  setTrackCategory: (trackId, category) => {
+    const state = get()
+    if (!isTrackCategory(category) || !state.tracks[trackId] || state.isLoading || state.segmentDrag ||
+      state.segments.some(segment => segment.track === trackId)) return false
+    const isPreview = category === ClapSegmentCategory.IMAGE || category === ClapSegmentCategory.VIDEO
+    const tracks = state.tracks.map(track => track.id === trackId ? {
+      ...track, category, name: category, mixed: false, isPreview,
+      height: isPreview ? state.defaultPreviewHeight : state.defaultCellHeight,
+    } : track)
+    set({ ...computeContentSizeMetrics({ ...state, tracks }) })
+    get().selectTrack(trackId)
+    return true
+  },
+
+  selectTrack: (trackId) => {
+    const state = get()
+    if (!state.tracks[trackId]) return
+    const center = state.getVerticalCellPosition(0, trackId) + state.getCellHeight(trackId) / 2
+    set({ activeTrackId: trackId, scrollY: state.contentHeight / 2 - center })
+    state.invalidate()
+  },
+
+  createClip: async (trackId, requestedStart) => {
+    const initial = get()
+    const category = getTrackCategory(initial.tracks[trackId], initial.segments)
+    const startTimeInMs = requestedStart ?? initial.cursorTimestampAtInMs
+    if (!category || initial.isLoading || !Number.isFinite(startTimeInMs) || startTimeInMs < 0) return undefined
+    const duration = initial.defaultSegmentDurationInSteps * initial.durationInMsPerStep
+    if (!Number.isFinite(duration) || duration <= 0 || !Number.isFinite(startTimeInMs + duration)) return undefined
+    const segment = await clapSegmentToTimelineSegment(newSegment({
+      track: trackId, category, outputType: getClipOutputType(category), status: ClapSegmentStatus.DRAFT,
+      startTimeInMs, endTimeInMs: startTimeInMs + duration, assetDurationInMs: duration,
+      assetUrl: "", prompt: "", label: `${category.toLowerCase()} clip`, createdBy: "human", editedBy: "human",
+    }))
+    // Re-read after conversion: rapid clicks must not overwrite each other's additions.
+    const state = get()
+    if (state.id !== initial.id || getTrackCategory(state.tracks[trackId], state.segments) !== category) return undefined
+    const tracks = state.tracks.map(track => track.id === trackId ? { ...track, occupied: true } : track)
+    const durationInMs = Math.max(state.durationInMs, segment.endTimeInMs)
+    set({
+      segments: state.segments.concat(segment),
+      allSegmentsChanged: state.allSegmentsChanged + 1,
+      atLeastOneSegmentChanged: state.atLeastOneSegmentChanged + 1,
+      durationInMs,
+      scrollX: startTimeInMs / state.durationInMsPerStep * state.cellWidth - leftBarTrackScaleWidth,
+      ...computeContentSizeMetrics({ ...state, tracks, durationInMs }),
+    })
+    get().selectTrack(trackId)
+    return segment
+  },
+
+  moveSegment: (segmentId, startTimeInMs, trackId) => {
+    const state = get()
+    const segment = state.segments.find(segment => segment.id === segmentId)
+    if (!segment || segment.editionStatus === SegmentEditionStatus.LOCKED || !Number.isFinite(startTimeInMs) ||
+      !canMoveToTrack({ ...segment, track: state.segmentDrag?.track ?? segment.track }, state.tracks[trackId], state.segments)) return false
+    const duration = segment.endTimeInMs - segment.startTimeInMs
+    const start = Math.max(0, startTimeInMs)
+    if (!Number.isFinite(duration) || duration <= 0 || !Number.isFinite(start + duration)) return false
+    const moved = { ...segment, track: trackId, startTimeInMs: start, endTimeInMs: start + duration }
+    const replace = (value: TimelineSegment) => value.id === segmentId ? moved : value
+    const segments = state.segments.map(replace)
+    const tracks = state.tracks.map(track => ({ ...track, occupied: segments.some(segment => segment.track === track.id) }))
+    const durationInMs = Math.max(state.durationInMs, moved.endTimeInMs)
+    set({
+      segments, loadedSegments: state.loadedSegments.map(replace), visibleSegments: state.visibleSegments.map(replace),
+      selectedSegments: state.selectedSegments.map(replace),
+      editedSegment: state.editedSegment?.id === segmentId ? moved : state.editedSegment,
+      hoveredSegment: state.hoveredSegment?.id === segmentId ? moved : state.hoveredSegment,
+      activeTrackId: trackId, durationInMs,
+      allSegmentsChanged: state.allSegmentsChanged + 1,
+      atLeastOneSegmentChanged: state.atLeastOneSegmentChanged + 1,
+      ...computeContentSizeMetrics({ ...state, tracks, durationInMs }),
+    })
+    state.invalidate()
+    return true
+  },
+
+  beginSegmentDrag: (segmentId, event) => {
+    const state = get()
+    const segment = state.segments.find(segment => segment.id === segmentId)
+    const pointer = timelinePointer(state, event.clientX, event.clientY)
+    if (event.button !== 0 || event.isPrimary === false || state.segmentDrag || state.isLoading || !segment ||
+      segment.editionStatus === SegmentEditionStatus.LOCKED || !pointer || pointer.trackId === undefined) return false
+    const controlsEnabled = state.timelineControls?.enabled ?? true
+    if (state.timelineControls) state.timelineControls.enabled = false
+    state.canvas?.setPointerCapture(event.pointerId)
+    state.setSelectedSegment({ segment, isSelected: true, onlyOneSelectedAtOnce: true })
+    segment.editionStatus = SegmentEditionStatus.DRAGGING
+    set({
+      editedSegment: segment,
+      segmentDrag: {
+        segmentId, pointerId: event.pointerId, anchorTimeInMs: pointer.timeInMs,
+        startTimeInMs: segment.startTimeInMs, endTimeInMs: segment.endTimeInMs, track: segment.track,
+        durationInMs: state.durationInMs, controlsEnabled, validDrop: true,
+      },
+    })
+    event.preventDefault()
+    return true
+  },
+
+  updateSegmentDrag: (event) => {
+    const state = get()
+    const drag = state.segmentDrag
+    if (!drag || event.pointerId !== drag.pointerId) return
+    const pointer = timelinePointer(state, event.clientX, event.clientY)
+    const segment = state.segments.find(segment => segment.id === drag.segmentId)
+    const target = pointer?.trackId === undefined ? undefined : state.tracks[pointer.trackId]
+    // Validate against the original source track, even after a valid preview move.
+    const validDrop = !!pointer && !!segment && canMoveToTrack({ ...segment, track: drag.track }, target, state.segments)
+    set({ segmentDrag: { ...drag, validDrop } })
+    if (validDrop && pointer && target) state.moveSegment(drag.segmentId,
+      Math.max(0, Math.round(drag.startTimeInMs + pointer.timeInMs - drag.anchorTimeInMs)), target.id)
+    event.preventDefault()
+  },
+
+  finishSegmentDrag: (cancel = false) => {
+    const state = get()
+    const drag = state.segmentDrag
+    if (!drag) return
+    const revert = cancel || !drag.validDrop
+    const replace = (segment: TimelineSegment): TimelineSegment => segment.id === drag.segmentId ? {
+      ...segment, editionStatus: SegmentEditionStatus.EDITABLE,
+      ...(revert ? { track: drag.track, startTimeInMs: drag.startTimeInMs, endTimeInMs: drag.endTimeInMs } : {}),
+    } : segment
+    const segments = state.segments.map(replace)
+    const tracks = state.tracks.map(track => ({ ...track, occupied: segments.some(segment => segment.track === track.id) }))
+    const durationInMs = revert ? drag.durationInMs : state.durationInMs
+    set({
+      segmentDrag: undefined, editedSegment: undefined, hoveredSegment: undefined,
+      segments, selectedSegments: state.selectedSegments.map(replace),
+      loadedSegments: state.loadedSegments.map(replace), visibleSegments: state.visibleSegments.map(replace),
+      activeTrackId: revert ? drag.track : state.activeTrackId, durationInMs,
+      allSegmentsChanged: state.allSegmentsChanged + 1,
+      atLeastOneSegmentChanged: state.atLeastOneSegmentChanged + 1,
+      ...computeContentSizeMetrics({ ...state, tracks, durationInMs }),
+    })
+    if (state.timelineControls) state.timelineControls.enabled = drag.controlsEnabled
+    if (state.canvas?.hasPointerCapture(drag.pointerId)) state.canvas.releasePointerCapture(drag.pointerId)
+    state.invalidate()
+  },
+
   clear: () => {
+    get().finishSegmentDrag(true)
     // this re-initialize everything that is related to the current .clap project
     set({
       ...getDefaultProjectState()
@@ -129,6 +290,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           id: segment.track,
           // name: `Track ${s.track}`,
           name: `${segment.category}`,
+          category: segment.category,
           isPreview,
           height:
             isPreview
@@ -144,6 +306,8 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
         const categories: string[] = track.name.split(",").map((x: string) => x.trim())
         if (!categories.includes(segment.category)) {
           tracks[segment.track].name = "(misc)"
+          tracks[segment.track].category = undefined
+          tracks[segment.track].mixed = true
 
           /*
           if (categories.length < 2) {
@@ -159,8 +323,21 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
 
     }
 
+    // Keep authored empty tracks, while legacy segment categories remain authoritative.
+    for (const descriptor of meta.timelineTracks || []) {
+      if (!Number.isSafeInteger(descriptor.id) || descriptor.id < 0 || descriptor.id > 4095 || !isTrackCategory(descriptor.category)) continue
+      const existing = tracks[descriptor.id]
+      if (existing?.mixed || (existing?.category && existing.category !== descriptor.category)) continue
+      const isPreview = descriptor.category === ClapSegmentCategory.IMAGE || descriptor.category === ClapSegmentCategory.VIDEO
+      tracks[descriptor.id] = {
+        id: descriptor.id, name: descriptor.name, category: descriptor.category,
+        isPreview, height: isPreview ? defaultPreviewHeight : defaultCellHeight,
+        hue: 0, occupied: !!existing?.occupied, visible: descriptor.visible,
+      }
+    }
+
    // ---------- FILL-IN THE TRACKS ---------------
-    for (let id = 0; id < DEFAULT_NB_TRACKS; id++) {
+    for (let id = 0; id < Math.max(DEFAULT_NB_TRACKS, tracks.length); id++) {
       if (!tracks[id]) {
         tracks[id] = {
           id,
@@ -262,6 +439,7 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
     } = get()
 
     return {
+      timelineTracks: describeTracks(get().tracks, get().segments),
       id,
       title,
       description,
@@ -324,17 +502,15 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
   setVisibleSegments: (visibleSegments: TimelineSegment[] = []) => { set({ visibleSegments }) },
 
   getCellHeight: (trackNumber?: number): number => {
-    const { defaultCellHeight, tracks } = get()
-    const track = tracks[trackNumber!]
-    return track?.height || defaultCellHeight
+    const state = get()
+    return computeCellHeight({ ...state, trackNumber: trackNumber ?? -1 })
   },
 
   getVerticalCellPosition: (start: number, end: number): number => {
-    const { defaultCellHeight, tracks } = get()
+    const { getCellHeight } = get()
     let height = 0
     for (let i = start; i < end; i++) {
-      const track = tracks[i!]
-      height += track?.height || defaultCellHeight
+      height += getCellHeight(i)
     }
     return height
   },
@@ -616,39 +792,15 @@ export const useTimeline = create<TimelineStore>((set, get) => ({
           segment,
           status: SegmentEditionStatus.EDITING
         })
-      } else if (
-        eventType === SegmentPointerEvent.CLICK ||
-        eventType === SegmentPointerEvent.DOWN ||
-        eventType === SegmentPointerEvent.MOVE
-      ) {
-        setHoveredSegment({
-          segment,
-          area
-        })
-        if (area === SegmentArea.LEFT) {
-          setEditedSegment({
-            segment,
-            status: SegmentEditionStatus.RESIZE_START
-          })
-        } else if (area === SegmentArea.RIGHT) {
-          setEditedSegment({
-            segment,
-            status: SegmentEditionStatus.RESIZE_END
-          })
-        } else if (area === SegmentArea.MIDDLE) {
-          setEditedSegment({
-          segment,
-            status: SegmentEditionStatus.DRAGGING
-          })
+      } else if (eventType === SegmentPointerEvent.DOWN) {
+        if (get().beginSegmentDrag(segment.id, event.nativeEvent as PointerEvent)) {
+          // Prevent the same press from beginning a MapControls pan.
+          event.nativeEvent.stopImmediatePropagation()
         }
-      } else if (eventType === SegmentPointerEvent.UP) {
-        setHoveredSegment({
-          segment: undefined,
-          area
-        })
-        setEditedSegment({
-          segment: undefined,
-        })
+      } else if (eventType === SegmentPointerEvent.MOVE && !get().segmentDrag) {
+        setHoveredSegment({ segment, area: SegmentArea.MIDDLE })
+      } else if (eventType === SegmentPointerEvent.CLICK && !get().segmentDrag) {
+        setSelectedSegment({ segment, isSelected: true, onlyOneSelectedAtOnce: true })
       }
 
       event.stopPropagation()
