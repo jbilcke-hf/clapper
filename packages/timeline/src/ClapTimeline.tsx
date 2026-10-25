@@ -21,6 +21,8 @@ import { TimelineCamera } from "./components/camera"
 import { useTimeline } from "./hooks"
 import { topBarTimeScaleHeight } from "./constants/themes"
 import { TimelineStore } from "./types"
+import { TimelineAuthoring } from "./components/TimelineAuthoring"
+import { useSegmentDrag } from "./hooks/useSegmentDrag"
 
 export function ClapTimeline({
   clap,
@@ -62,6 +64,7 @@ export function ClapTimeline({
   const canvas = useTimeline(s => s.canvas)
   const setCanvas = useTimeline(s => s.setCanvas)
   const handleMouseWheel = useTimeline(s => s.handleMouseWheel)
+  useSegmentDrag()
 
   const handleIsCreated = () => {
     useTimeline.setState({ isReady: true })
@@ -112,8 +115,14 @@ export function ClapTimeline({
     <div
       className={cn(`w-full h-full`, className)}
       style={{
-        backgroundColor: theme.grid.backgroundColor
+        backgroundColor: theme.grid.backgroundColor,
+        display: "flex",
+        flexDirection: "column",
+        minHeight: 0,
+        overflow: "hidden",
       }}>
+      <TimelineAuthoring />
+      <div style={{ flex: 1, minHeight: 0 }}>
       <AutoSizer style={{
         height: "100%", // <-- mandatory otherwise the timeline won't show up
         width: "100%" // <-- mandatory otherwise the horizontal scroller won't show up
@@ -176,6 +185,7 @@ export function ClapTimeline({
         </div>
         )}
       </AutoSizer>
+      </div>
     </div>
   );
 };

@@ -156,6 +156,8 @@ export enum ClapOutputType {
 }
 
 export enum ClapSegmentStatus {
+  // Authored placeholder: generation starts only after an explicit request.
+  DRAFT = "DRAFT",
   TO_GENERATE = "TO_GENERATE",
   IN_PROGRESS = "IN_PROGRESS",
   TO_INTERPOLATE = "TO_INTERPOLATE",
@@ -267,6 +269,8 @@ export type ClapHeader = {
 }
 
 export type ClapMeta = {
+  /** Optional authored tracks, including empty tracks. Older files omit this. */
+  timelineTracks?: ClapTrackDescriptor[]
   id: string
   title: string
   description: string
@@ -956,9 +960,19 @@ export type ClapEntity = {
   appearance: ClapEntityAppearance
 }
 
+export type ClapTrackDescriptor = {
+  id: number
+  name: string
+  category: ClapSegmentCategory
+  visible: boolean
+}
+
 export type ClapTrack = {
   id: number
   name: string
+  category?: ClapSegmentCategory
+  /** Legacy files may contain multiple categories on one track. */
+  mixed?: boolean
   isPreview: boolean
   height: number
   hue: number

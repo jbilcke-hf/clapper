@@ -1,5 +1,6 @@
 import { ClapMeta } from "@/types";
 import { getValidNumber, parseImageRatio, UUID } from "@/utils";
+import { sanitizeTimelineTracks } from "./sanitizeTimelineTracks";
 
 export function sanitizeMeta({
   id,
@@ -20,6 +21,7 @@ export function sanitizeMeta({
   isInteractive,
   bpm,
   frameRate,
+  timelineTracks,
 
    // old fields from an older version of the file format
   orientation,
@@ -32,6 +34,7 @@ export function sanitizeMeta({
   screenplay?: string
 } = {}): ClapMeta {
   return {
+    ...(Array.isArray(timelineTracks) ? { timelineTracks: sanitizeTimelineTracks(timelineTracks) } : {}),
     id: typeof id === "string" ? id : UUID(),
     title: typeof title === "string" ? title : "",
     description: typeof description === "string" ? description : "",

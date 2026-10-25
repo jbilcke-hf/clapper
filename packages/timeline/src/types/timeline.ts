@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import type { ThreeEvent } from "@react-three/fiber"
-import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapTracks } from "@aitube/clap"
+import { ClapEntity, ClapImageRatio, ClapMeta, ClapProject, ClapScene, ClapSegment, ClapSegmentCategory, ClapTracks } from "@aitube/clap"
 
 import { ClapSegmentColorScheme, ClapTimelineTheme } from "./theme"
 import { TimelineControlsImpl } from "@/components/controls/types"
@@ -154,6 +154,8 @@ export type ContentSizeMetrics = {
 }
 
 export type TimelineStoreProjectState = ClapMeta & {
+  activeTrackId: number
+  segmentDrag?: SegmentDrag
   scenes: ClapScene[]
 
   segments: TimelineSegment[]
@@ -279,6 +281,14 @@ export type TimelineStoreState = TimelineStoreProjectState & TimelineStorePrefer
 
 
 export type TimelineStoreModifiers = {
+  addTrack: (category: ClapSegmentCategory) => number | undefined
+  setTrackCategory: (trackId: number, category: ClapSegmentCategory) => boolean
+  selectTrack: (trackId: number) => void
+  createClip: (trackId: number, startTimeInMs?: number) => Promise<TimelineSegment | undefined>
+  moveSegment: (segmentId: string, startTimeInMs: number, trackId: number) => boolean
+  beginSegmentDrag: (segmentId: string, event: PointerEvent) => boolean
+  updateSegmentDrag: (event: PointerEvent) => void
+  finishSegmentDrag: (cancel?: boolean) => void
   setCanvas: (canvas?: HTMLCanvasElement) => void
   clear: () => void
   setClap: (clap?: ClapProject) => Promise<void>
@@ -402,6 +412,18 @@ export type TimelineStoreModifiers = {
   deleteEntities: (entities: (ClapEntity|string)[]) => Promise<void>
 
   setInvalidate: (invalidate?: Invalidate) => void
+}
+
+export type SegmentDrag = {
+  segmentId: string
+  pointerId: number
+  anchorTimeInMs: number
+  startTimeInMs: number
+  endTimeInMs: number
+  track: number
+  durationInMs: number
+  controlsEnabled: boolean
+  validDrop: boolean
 }
 
 export type TimelineStore = TimelineStoreState & TimelineStoreModifiers

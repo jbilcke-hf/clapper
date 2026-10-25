@@ -21,6 +21,7 @@ export {
   ClapSegmentFilteringMode,
   ClapSegmentStatus,
   ClapTrack,
+  ClapTrackDescriptor,
   ClapTracks,
   ClapVoice,
   ClapCompletionMode,

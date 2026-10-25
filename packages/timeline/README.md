@@ -48,6 +48,16 @@ You will also want to use a path like this to test the module directly dependenc
 ```
    
 
+## Authoring tracks and clips
+
+Use **New track**, select its **Track type**, then choose **New clip** to add a draft at the playhead. The track selector uses the same track numbers as the canvas. Empty tracks can change type; populated tracks keep the type of their clips. Mixed tracks from older projects remain readable, but cannot accept new clips until they have a single type.
+
+Drag a clip's body to change its start time or move it to another track of the same type. Its ID and duration stay unchanged. Dropping on an incompatible track or outside the canvas, pressing Escape, or losing window focus cancels the drag. Hovering alone does not edit a clip.
+
+Draft clips have an empty asset and do not request content generation. Existing explicit generation controls remain separate. Saving and opening a project preserves clip placement and typed empty tracks through optional `meta.timelineTracks` descriptors. Files without these descriptors still derive their track types from their clips. Authored/imported descriptors use track IDs 0–4095.
+
+The app's `src/lib/timeline-authoring.test.ts` exercises the compiled clap/timeline packages. Build those packages before running the app's Vitest tests.
+
 ## Future extensions
 
 This project is currently not designed to be used with other tools such as Svelte, Vue, or other state manager. In the future it may be split into sub-libraries to facilitate support for alternative frameworks.

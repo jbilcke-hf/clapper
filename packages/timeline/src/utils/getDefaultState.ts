@@ -8,6 +8,8 @@ import { DEFAULT_DURATION_IN_MS_PER_STEP, NB_MAX_SHOTS } from "@/constants/grid"
 export function getDefaultProjectState(): TimelineStoreProjectState {
   return {
     ...newClap().meta,
+    activeTrackId: 0,
+    segmentDrag: undefined,
     scenes: [],
     segments: [],
     loadedSegments: [],

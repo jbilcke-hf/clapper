@@ -211,7 +211,7 @@ export const useSegmentLoader = ({
     console.log("Re-rendering the timeline (this is an expensive operation, please optimize the code to make this rare!)")
     const fn = async () => { try { await sync(true) } catch (err) {} }
     fn()
-  }, [cellHeight, cellWidth, allSegmentsChanged])
+  }, [cellHeight, cellWidth, allSegmentsChanged, segments])
   
   return { visibleSegments, loadedSegments }
 }
