@@ -1,10 +1,5 @@
 import { ResolveRequest } from '@aitube/clapper-services'
-import {
-  ClapAssetSource,
-  ClapSegmentCategory,
-  ClapWorkflowCategory,
-  generateSeed,
-} from '@aitube/clap'
+import { ClapAssetSource, ClapWorkflowCategory } from '@aitube/clap'
 import { ClapInputValueObject } from '@aitube/clap/dist/types'
 
 import { TimelineSegment } from '@aitube/timeline'
@@ -12,15 +7,61 @@ import { TimelineSegment } from '@aitube/timeline'
 import { BasicCredentials, CallWrapper, ComfyApi } from '@saintno/comfyui-sdk'
 
 import { decodeOutput } from '@/lib/utils/decodeOutput'
+import { getSegmentWorkflowProviderAndEngine } from '@/services/editors/workflow-editor/getSegmentWorkflowProviderAndEngine'
 import { ClapperComfyUiInputIds } from './types'
 import { createPromptBuilder } from './createPromptBuilder'
 import { ComfyUIWorkflowApiGraph } from './graph'
+import { getClapperInputs, getMainInputs } from './getClapperInputs'
+import { getOutputFiles } from './getOutputFiles'
 
+/**
+ * Runs the ComfyUI workflow of the current segment category
+ * (image, video, voice, sound or music) on a local or remote ComfyUI server.
+ */
 export async function resolveSegment(
   request: ResolveRequest
 ): Promise<TimelineSegment> {
   if (!request.settings.comfyUiClientId) {
     throw new Error(`Missing client id for "ComfyUI"`)
+  }
+
+  const category = request.segment.category
+
+  const { generationWorkflow: clapWorkflow } =
+    getSegmentWorkflowProviderAndEngine(request)
+
+  if (!clapWorkflow) {
+    throw new Error(
+      `Clapper doesn't support ${category} generation for provider "ComfyUI". Please open a pull request with (working code) to solve this!`
+    )
+  }
+
+  if (
+    !ComfyUIWorkflowApiGraph.isValidWorkflow(clapWorkflow.data) ||
+    ComfyUIWorkflowApiGraph.fromString(clapWorkflow.data).getNodes().length ===
+      0
+  ) {
+    throw new Error(
+      `There is no valid ComfyUI workflow for ${category}. Please paste a workflow (in API format) in the settings.`
+    )
+  }
+
+  const mainInputs = getMainInputs(clapWorkflow)
+
+  if (!mainInputs[ClapperComfyUiInputIds.OUTPUT]) {
+    throw new Error(
+      `This workflow doesn't seem to have a node output required by Clapper (e.g. a 'Save Image' node)`
+    )
+  }
+
+  // video workflows only need an image to animate
+  if (
+    clapWorkflow.category !== ClapWorkflowCategory.VIDEO_GENERATION &&
+    !mainInputs[ClapperComfyUiInputIds.PROMPT]
+  ) {
+    throw new Error(
+      `This workflow doesn't seem to have an input required by Clapper (e.g. a node with an input called "prompt"). You can also set the value of a text input to "${ClapperComfyUiInputIds.PROMPT}" to tell Clapper where to put the prompt.`
+    )
   }
 
   const segment: TimelineSegment = { ...request.segment }
@@ -46,128 +87,50 @@ export async function resolveSegment(
       : undefined
   ).init()
 
-  if (
-    [ClapSegmentCategory.IMAGE, ClapSegmentCategory.VIDEO].includes(
-      request.segment.category
+  // Put the prompts, size, seed etc. of the segment in the workflow.
+  // Careful: a PromptBuilder is immutable, each call returns a new builder.
+  const comfyApiWorkflowPromptBuilder = getClapperInputs(request, mainInputs)
+    .reduce(
+      (builder, [inputId, value]) => builder.input(inputId, value),
+      createPromptBuilder(ComfyUIWorkflowApiGraph.fromString(clapWorkflow.data))
     )
-  ) {
-    const clapWorkflow = {
-      [ClapSegmentCategory.IMAGE]: request.settings.imageGenerationWorkflow,
-      [ClapSegmentCategory.VIDEO]: request.settings.videoGenerationWorkflow,
-    }[request.segment.category]
-
-    if (
-      clapWorkflow.category === ClapWorkflowCategory.IMAGE_GENERATION &&
-      !clapWorkflow.inputValues[ClapperComfyUiInputIds.PROMPT]
-    ) {
-      throw new Error(
-        `This workflow doesn't seem to have an input required by Clapper (e.g. a node with an input called "prompt")`
-      )
-    }
-
-    if (!clapWorkflow.inputValues[ClapperComfyUiInputIds.OUTPUT]) {
-      throw new Error(
-        `This workflow doesn't seem to have a node output required by Clapper (e.g. a 'Save Image' node)`
-      )
-    }
-
-    const comfyApiWorkflowPromptBuilder = createPromptBuilder(
-      ComfyUIWorkflowApiGraph.fromString(clapWorkflow.data)
-    )
-
-    const { inputFields, inputValues } = clapWorkflow
-
-    inputFields.forEach((inputField) => {
-      comfyApiWorkflowPromptBuilder.input(
-        inputField.id,
-        inputValues[inputField.id]
-      )
-    })
-
-    const mainInputs = [
-      [ClapperComfyUiInputIds.PROMPT, request.prompts.image.positive],
-      [ClapperComfyUiInputIds.NEGATIVE_PROMPT, request.prompts.image.negative],
-      [ClapperComfyUiInputIds.WIDTH, request.meta.width],
-      [ClapperComfyUiInputIds.HEIGHT, request.meta.height],
-      [ClapperComfyUiInputIds.SEED, generateSeed()],
-      [
-        ClapperComfyUiInputIds.IMAGE,
-        request.prompts.video.image.split(';base64,')?.[1],
-      ],
-    ]
-
-    mainInputs.forEach((mainInput) => {
-      if (
-        inputValues[mainInput[0]]?.id &&
-        inputValues[mainInput[0]]?.id != ClapperComfyUiInputIds.NULL
-      ) {
-        comfyApiWorkflowPromptBuilder.input(
-          inputValues[mainInput[0]]?.id,
-          mainInput[1]
-        )
-      }
-    })
-
-    // Set output
-    comfyApiWorkflowPromptBuilder.setOutputNode(
+    .setOutputNode(
       ClapperComfyUiInputIds.OUTPUT,
-      (inputValues[ClapperComfyUiInputIds.OUTPUT] as ClapInputValueObject)
+      (mainInputs[ClapperComfyUiInputIds.OUTPUT] as ClapInputValueObject)
         .id as string
     )
 
-    const pipeline = new CallWrapper(api, comfyApiWorkflowPromptBuilder)
-      .onPending(() => console.log('Task is pending'))
-      .onStart(() => console.log('Task is started'))
-      .onPreview((blob) => console.log(blob))
-      .onFinished((data) => {
-        console.log('Pipeline finished')
-      })
-      .onProgress((info) =>
-        console.log('Processing node', info.node, `${info.value}/${info.max}`)
-      )
-      .onFailed((err) => console.log('Task is failed', err))
-
-    const rawOutput = await pipeline.run()
-
-    if (!rawOutput) {
-      throw new Error(`failed to run the pipeline (no output)`)
-    }
-
-    const getAssetPaths = (rawOutput) => {
-      if (clapWorkflow.category == ClapWorkflowCategory.VIDEO_GENERATION) {
-        return (
-          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.videos ||
-          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.gifs ||
-          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images
-        ).map((asset: any) => api.getPathImage(asset))
-      } else {
-        return rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images.map(
-          (img: any) => api.getPathImage(img)
-        )
-      }
-    }
-    const assetPaths = getAssetPaths(rawOutput)
-
-    console.log(`assetPaths:`, assetPaths)
-
-    const assetPath = assetPaths.at(0)
-    if (!assetPath) {
-      throw new Error(`failed to run the pipeline (no image)`)
-    }
-
-    // TODO: check what the imagePath looks like exactly
-    const assetUrl = await decodeOutput(assetPath)
-
-    console.log(`assetUrl:`, assetPath)
-    segment.assetUrl = assetUrl
-    segment.assetSourceType = ClapAssetSource.DATA
-
-    // TODO:
-  } else {
-    throw new Error(
-      `Clapper doesn't support ${request.segment.category} generation for provider "ComfyUI". Please open a pull request with (working code) to solve this!`
+  const pipeline = new CallWrapper(api, comfyApiWorkflowPromptBuilder)
+    .onPending(() => console.log('Task is pending'))
+    .onStart(() => console.log('Task is started'))
+    .onPreview((blob) => console.log(blob))
+    .onFinished((data) => {
+      console.log('Pipeline finished')
+    })
+    .onProgress((info) =>
+      console.log('Processing node', info.node, `${info.value}/${info.max}`)
     )
+    .onFailed((err) => console.log('Task is failed', err))
+
+  const rawOutput = await pipeline.run()
+
+  if (!rawOutput) {
+    throw new Error(`failed to run the pipeline (no output)`)
   }
+
+  // an image, a video or an audio file, depending on the workflow
+  const assetPath = getOutputFiles(rawOutput[ClapperComfyUiInputIds.OUTPUT])
+    .map((file) => api.getPathImage(file))
+    .at(0)
+
+  if (!assetPath) {
+    throw new Error(`failed to run the pipeline (no ${category} file)`)
+  }
+
+  console.log(`assetPath:`, assetPath)
+
+  segment.assetUrl = await decodeOutput(assetPath)
+  segment.assetSourceType = ClapAssetSource.DATA
 
   return segment
 }
