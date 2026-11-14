@@ -1,15 +1,73 @@
 import { ResolveRequest } from '@aitube/clapper-services'
 import {
   ClapSegmentCategory,
+  ClapSegmentStatus,
   getClapAssetSourceType,
 } from '@aitube/clap'
 import { TimelineSegment } from '@aitube/timeline'
+import { getWorkflowInputValues } from '../getWorkflowInputValues'
 import { ComfyIcuApiRequestRunWorkflow } from './types'
 import {
   fetchComfyIcuRun,
   isComfyIcuRunComplete,
   pollComfyIcuRun,
 } from './runLifecycle'
+
+type ComfyWorkflowNode = {
+  inputs?: Record<string, unknown>
+  [key: string]: unknown
+}
+
+type ComfyWorkflowGraph = Record<string, ComfyWorkflowNode>
+
+/**
+ * Comfy.icu workflow field IDs are not always serialized in the same shape.
+ * Support explicit API paths (nodeId.inputs.field) and the simple input names
+ * exposed by Comfy.icu. Never silently submit a workflow if the selected
+ * Clapper value could not be injected.
+ */
+function setWorkflowInput(
+  graph: ComfyWorkflowGraph,
+  fieldId: string,
+  value: unknown
+): boolean {
+  const parts = fieldId.split('.')
+
+  if (parts.length >= 3 && parts[1] === 'inputs') {
+    const node = graph[parts[0]]
+    const inputName = parts.slice(2).join('.')
+    if (node?.inputs && inputName in node.inputs) {
+      node.inputs[inputName] = value
+      return true
+    }
+  }
+
+  if (parts.length >= 2 && graph[parts[0]]?.inputs) {
+    const inputName = parts.slice(1).join('.')
+    const node = graph[parts[0]]
+    if (node?.inputs && inputName in node.inputs) {
+      node.inputs[inputName] = value
+      return true
+    }
+  }
+
+  for (const node of Object.values(graph)) {
+    if (node.inputs && Object.prototype.hasOwnProperty.call(node.inputs, fieldId)) {
+      node.inputs[fieldId] = value
+      return true
+    }
+  }
+
+  return false
+}
+
+function getPromptField(inputFields: Array<{ id: string; type?: string }>) {
+  return (
+    inputFields.find((field) => field.id.toLowerCase() === 'prompt') ||
+    inputFields.find((field) => field.id.toLowerCase().includes('prompt')) ||
+    inputFields.find((field) => field.type === 'string')
+  )
+}
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -32,45 +90,43 @@ export async function resolveSegment(
   }
 
   const inputFields = workflow.inputFields || []
-  const promptField =
-    inputFields.find((field) => field.id === 'prompt') ||
-    inputFields.find((field) => field.id.toLowerCase().includes('prompt')) ||
-    inputFields.find((field) => field.type === 'string')
+  const promptField = getPromptField(inputFields)
 
   if (!promptField) {
-    throw new Error(
-      'This Comfy.icu workflow does not expose a prompt input field'
-    )
+    throw new Error('This Comfy.icu workflow does not expose a prompt input field')
   }
 
-  let prompt: unknown
+  let graph: ComfyWorkflowGraph
   try {
-    prompt = JSON.parse(workflow.data)
+    graph = JSON.parse(workflow.data) as ComfyWorkflowGraph
   } catch {
     throw new Error('The configured Comfy.icu workflow is not valid JSON')
   }
 
-  const promptPath = promptField.id.split('.')
-  const promptNodeId = promptPath.shift() || ''
-  if (promptPath[0] === 'inputs') promptPath.shift()
-  const promptInputName = promptPath.join('.')
-  const promptGraph = prompt as Record<
-    string,
-    { inputs?: Record<string, unknown> }
-  >
-  const promptNode = promptGraph[promptNodeId]
+  if (!graph || typeof graph !== 'object' || Array.isArray(graph)) {
+    throw new Error('The configured Comfy.icu workflow is not a valid node graph')
+  }
 
-  if (!promptNode?.inputs || !promptInputName) {
+  // Apply saved workflow values and defaults before overriding the prompt.
+  const { workflowDefaultValues, workflowValues } =
+    getWorkflowInputValues(workflow)
+
+  for (const [fieldId, value] of Object.entries({
+    ...workflowDefaultValues,
+    ...workflowValues,
+  })) {
+    if (value !== undefined) setWorkflowInput(graph, fieldId, value)
+  }
+
+  if (!setWorkflowInput(graph, promptField.id, request.prompts.image.positive)) {
     throw new Error(
-      `The configured prompt field "${promptField.id}" does not match a ComfyUI API node input`
+      `Could not map Comfy.icu prompt field "${promptField.id}" to a workflow node input`
     )
   }
 
-  promptNode.inputs[promptInputName] = request.prompts.image.positive
-
   const payload: ComfyIcuApiRequestRunWorkflow = {
     workflow_id: workflowId,
-    prompt: JSON.stringify(promptGraph),
+    prompt: JSON.stringify(graph),
     files: {},
   }
 
@@ -112,6 +168,7 @@ export async function resolveSegment(
   const segment: TimelineSegment = { ...request.segment }
   segment.assetUrl = assetUrl
   segment.assetSourceType = getClapAssetSourceType(assetUrl)
+  segment.status = ClapSegmentStatus.COMPLETED
 
   return segment
 }
