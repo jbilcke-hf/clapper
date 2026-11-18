@@ -1,4 +1,5 @@
 import { expect, test } from 'vitest'
+import { ClapWorkflowCategory } from '@aitube/clap'
 import {
   findNegativePromptInputsFromWorkflow,
   findPromptInputsFromWorkflow,
@@ -6,6 +7,7 @@ import {
 import { ComfyUIWorkflowApiGraph } from './graph'
 import { createPromptBuilder } from './createPromptBuilder'
 import { ClapperComfyUiInputIds } from './types'
+import { getMainInputsFromComfyUiWorkflow } from './getMainInputsFromComfyUiWorkflow'
 
 // Default workflow used by ComfyUI, downloaded for API
 const workflowRaw = {
@@ -598,4 +600,24 @@ test('should fail if workflow has cycles', () => {
   }).toThrow(
     'The provided workflow has cycles, impossible to get the output node.'
   )
+})
+
+test('should return null as the output node for an empty workflow', () => {
+  const workflow = new ComfyUIWorkflowApiGraph({})
+
+  // Regression: this used to return a phantom `{ id: undefined }` node,
+  // because `sortedOrder[sortedOrder.length - 1]` is `undefined`
+  // when the graph has no nodes at all.
+  expect(workflow.getOutputNode()).toBeNull()
+  // repeated reads must stay null
+  expect(workflow.getOutputNode()).toBeNull()
+})
+
+test('should not produce a phantom output input for an empty workflow', () => {
+  const { inputValues } = getMainInputsFromComfyUiWorkflow(
+    '{}',
+    ClapWorkflowCategory.IMAGE_GENERATION
+  )
+
+  expect(inputValues[ClapperComfyUiInputIds.OUTPUT]).toBeUndefined()
 })
