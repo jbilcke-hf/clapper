@@ -12,7 +12,13 @@ export function getValidComfyWorkflowTemplate(
   const strValue = `${something || defaultComfyWorkflowTemplate}`
   try {
     const workflow = JSON.parse(strValue)
-    if (typeof workflow === 'object') {
+    // NB: `typeof null === 'object'` and arrays are objects too,
+    // so both need to be rejected explicitly here.
+    if (
+      workflow &&
+      typeof workflow === 'object' &&
+      !Array.isArray(workflow)
+    ) {
       return strValue
     } else {
       throw new Error(
@@ -20,6 +26,8 @@ export function getValidComfyWorkflowTemplate(
       )
     }
   } catch (err) {
-    return '{}'
+    // Fall back to the default template provided by the caller,
+    // instead of an empty workflow (which has no output node).
+    return defaultComfyWorkflowTemplate
   }
 }

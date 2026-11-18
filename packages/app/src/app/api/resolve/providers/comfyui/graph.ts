@@ -266,6 +266,12 @@ export class ComfyUIWorkflowApiGraph {
 
     // Last node in sortedOrder is the output node
     // TODO: handle multiple outputs
+    // An empty workflow has no output node: without this guard,
+    // `sortedOrder[sortedOrder.length - 1]` is `undefined` and the
+    // caller gets a phantom `{ id: undefined }` node instead of `null`.
+    if (sortedOrder.length === 0) {
+      return null
+    }
     if (sortedOrder.length === Object.keys(this.json).length) {
       const outputNodeId = sortedOrder[sortedOrder.length - 1]
       return { id: outputNodeId, ...this.json[outputNodeId] }

@@ -63,3 +63,20 @@ test('getValidComfyWorkflowTemplate', () => {
   expect(getValidComfyWorkflowTemplate(null, defaultStr)).toBe(defaultStr)
   expect(getValidComfyWorkflowTemplate(mockStr, defaultStr)).toBe(mockStr)
 })
+
+test('getValidComfyWorkflowTemplate falls back to the default template for invalid input', () => {
+  // Regression: invalid input used to return '{}' (an empty workflow),
+  // ignoring the default template passed by the caller.
+  // An empty workflow has no output node, so the caller would end up
+  // with a broken workflow instead of the known-good default.
+  expect(getValidComfyWorkflowTemplate('{invalid json', mockStr)).toBe(mockStr)
+  expect(getValidComfyWorkflowTemplate('', mockStr)).toBe(mockStr)
+  // JSON values that parse fine but are not workflow objects
+  // (note: `typeof null === 'object'`, so `null` used to slip through)
+  expect(getValidComfyWorkflowTemplate('null', mockStr)).toBe(mockStr)
+  expect(getValidComfyWorkflowTemplate('[]', mockStr)).toBe(mockStr)
+  expect(getValidComfyWorkflowTemplate('"just a string"', mockStr)).toBe(
+    mockStr
+  )
+  expect(getValidComfyWorkflowTemplate('42', mockStr)).toBe(mockStr)
+})
