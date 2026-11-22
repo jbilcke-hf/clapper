@@ -1,3 +1,5 @@
+import { ClapWorkflowCategory } from '@aitube/clap'
+
 export enum ClapperComfyUiInputIds {
   PROMPT = '@clapper/prompt',
   NEGATIVE_PROMPT = '@clapper/negative/prompt',
@@ -23,7 +25,7 @@ export type NodeData = NodeRawData & {
 
 export type ComfyUIWorkflowApiJson = Record<string, NodeRawData>
 
-export type INPUT_TYPES = 'string' | 'number'
+export type INPUT_TYPES = 'string' | 'number' | 'boolean'
 
 export type ComfyUiWorkflowApiNodeInput = {
   id: string
@@ -36,4 +38,20 @@ export type ComfyUiWorkflowApiNodeInput = {
     name?: string
     type?: string
   }
+}
+
+export type ComfyUiOutputAsset = {
+  filename: string
+  subfolder?: string
+  type?: string
+}
+
+export type ComfyUiWorkflowPreset = {
+  id: string
+  label: string
+  description: string
+  category: ClapWorkflowCategory
+  author: string
+  tags: string[]
+  data: string
 }

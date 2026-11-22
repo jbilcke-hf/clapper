@@ -60,6 +60,9 @@ export function SettingsSectionProvider() {
   const comfyIcuAccelerator = useSettings((s) => s.comfyIcuAccelerator)
   const setComfyIcuAccelerator = useSettings((s) => s.setComfyIcuAccelerator)
 
+  const comfyDeployApiKey = useSettings((s) => s.comfyDeployApiKey)
+  const setComfyDeployApiKey = useSettings((s) => s.setComfyDeployApiKey)
+
   const clapperApiKey = useSettings((s) => s.clapperApiKey)
   const setClapperApiKey = useSettings((s) => s.setClapperApiKey)
 
@@ -218,6 +221,14 @@ export function SettingsSectionProvider() {
                 })
               )}
               onSelect={setComfyIcuAccelerator}
+            />
+
+            <FormInput
+              label="ComfyDeploy API key"
+              value={comfyDeployApiKey}
+              defaultValue={defaultSettings.comfyDeployApiKey}
+              onChange={setComfyDeployApiKey}
+              type={apiKeyType}
             />
 
             <FormInput

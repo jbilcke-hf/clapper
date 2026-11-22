@@ -21,6 +21,7 @@ import { HARD_LIMIT_NB_MAX_ASSETS_TO_GENERATE_IN_PARALLEL } from '@/lib/core/con
 import { getDefaultSettingsState } from './getDefaultSettingsState'
 import { getValidComfyWorkflowTemplate } from '@/lib/utils/getValidComfyWorkflowTemplate'
 import { parseComfyIcuAccelerator } from '@/lib/utils/parseComfyIcuAccelerator'
+import { convertComfyUiWorkflowApiToClapWorkflow } from '@/app/api/resolve/providers/comfyui/convertComfyUiWorkflowApiToClapWorkflow'
 
 import { parseWorkflow } from './workflows/parseWorkflow'
 
@@ -712,27 +713,81 @@ export const useSettings = create<SettingsStore>()(
         }
       },
       setComfyWorkflowForVoice: (comfyWorkflowForVoice?: string) => {
+        const validTemplate = getValidComfyWorkflowTemplate(
+          comfyWorkflowForVoice,
+          getDefaultSettingsState().comfyWorkflowForVoice
+        )
+        const currentWorkflowString = get().voiceGenerationWorkflow
+        const currentWorkflow = parseWorkflow(
+          currentWorkflowString,
+          ClapWorkflowCategory.VOICE_GENERATION
+        )
+        let updatedVoiceWorkflowString = currentWorkflowString
+        if (currentWorkflow.engine === ClapWorkflowEngine.COMFYUI_WORKFLOW) {
+          try {
+            updatedVoiceWorkflowString = JSON.stringify(
+              convertComfyUiWorkflowApiToClapWorkflow(
+                validTemplate,
+                ClapWorkflowCategory.VOICE_GENERATION
+              )
+            )
+          } catch {}
+        }
         set({
-          comfyWorkflowForVoice: getValidComfyWorkflowTemplate(
-            comfyWorkflowForVoice,
-            getDefaultSettingsState().comfyWorkflowForVoice
-          ),
+          comfyWorkflowForVoice: validTemplate,
+          voiceGenerationWorkflow: updatedVoiceWorkflowString,
         })
       },
       setComfyWorkflowForSound: (comfyWorkflowForSound?: string) => {
+        const validTemplate = getValidComfyWorkflowTemplate(
+          comfyWorkflowForSound,
+          getDefaultSettingsState().comfyWorkflowForSound
+        )
+        const currentWorkflowString = get().soundGenerationWorkflow
+        const currentWorkflow = parseWorkflow(
+          currentWorkflowString,
+          ClapWorkflowCategory.SOUND_GENERATION
+        )
+        let updatedSoundWorkflowString = currentWorkflowString
+        if (currentWorkflow.engine === ClapWorkflowEngine.COMFYUI_WORKFLOW) {
+          try {
+            updatedSoundWorkflowString = JSON.stringify(
+              convertComfyUiWorkflowApiToClapWorkflow(
+                validTemplate,
+                ClapWorkflowCategory.SOUND_GENERATION
+              )
+            )
+          } catch {}
+        }
         set({
-          comfyWorkflowForSound: getValidComfyWorkflowTemplate(
-            comfyWorkflowForSound,
-            getDefaultSettingsState().comfyWorkflowForSound
-          ),
+          comfyWorkflowForSound: validTemplate,
+          soundGenerationWorkflow: updatedSoundWorkflowString,
         })
       },
       setComfyWorkflowForMusic: (comfyWorkflowForMusic?: string) => {
+        const validTemplate = getValidComfyWorkflowTemplate(
+          comfyWorkflowForMusic,
+          getDefaultSettingsState().comfyWorkflowForMusic
+        )
+        const currentWorkflowString = get().musicGenerationWorkflow
+        const currentWorkflow = parseWorkflow(
+          currentWorkflowString,
+          ClapWorkflowCategory.MUSIC_GENERATION
+        )
+        let updatedMusicWorkflowString = currentWorkflowString
+        if (currentWorkflow.engine === ClapWorkflowEngine.COMFYUI_WORKFLOW) {
+          try {
+            updatedMusicWorkflowString = JSON.stringify(
+              convertComfyUiWorkflowApiToClapWorkflow(
+                validTemplate,
+                ClapWorkflowCategory.MUSIC_GENERATION
+              )
+            )
+          } catch {}
+        }
         set({
-          comfyWorkflowForMusic: getValidComfyWorkflowTemplate(
-            comfyWorkflowForMusic,
-            getDefaultSettingsState().comfyWorkflowForMusic
-          ),
+          comfyWorkflowForMusic: validTemplate,
+          musicGenerationWorkflow: updatedMusicWorkflowString,
         })
       },
       setComfyUiApiUrl: (comfyUiApiUrl?: string) => {

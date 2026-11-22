@@ -1,5 +1,11 @@
 import { expect, test } from 'vitest'
+import {
+  findNegativePromptInputsFromWorkflow,
+  findPromptInputsFromWorkflow,
+} from './utils'
+import { ComfyUIWorkflowApiGraph } from './graph'
 import { createPromptBuilder } from './createPromptBuilder'
+import { ClapperComfyUiInputIds } from './types'
 
 // Default workflow used by ComfyUI, downloaded for API
 const workflowRaw = {
@@ -559,13 +565,14 @@ test('should convert correctly the workflow to string', () => {
 })
 
 test('should edit correctly an input of the workflow', () => {
+  const expectedRaw = structuredClone(workflowRaw)
   const workflow = new ComfyUIWorkflowApiGraph(workflowRaw)
   workflow.setInputValue('3.inputs.seed', 1121)
-  workflowRaw['3'].inputs.seed = 1111
-  expect(workflow.toJson()).not.toEqual(workflowRaw)
+  expectedRaw['3'].inputs.seed = 1111
+  expect(workflow.toJson()).not.toEqual(expectedRaw)
   workflow.setInputValue('3.inputs.seed', 3333)
-  workflowRaw['3'].inputs.seed = 3333
-  expect(workflow.toJson()).toEqual(workflowRaw)
+  expectedRaw['3'].inputs.seed = 3333
+  expect(workflow.toJson()).toEqual(expectedRaw)
 })
 
 /**
