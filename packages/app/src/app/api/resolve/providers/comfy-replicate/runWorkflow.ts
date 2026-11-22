@@ -25,7 +25,9 @@ export async function runWorkflow({
     },
   })
 
-  console.log(`response from Replicate:`, output)
+  if (Array.isArray(output)) {
+    return String(output[0] || '')
+  }
 
-  return output as any
+  return String(output || '')
 }

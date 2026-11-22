@@ -3,6 +3,9 @@ import { ComfyIcuAccelerator, SettingsState } from '@aitube/clapper-services'
 
 import { defaultWorkflowForImages } from './workflows/image'
 import { defaultWorkflowForVideos } from './workflows/video'
+import { defaultComfyWorkflowForVoiceJson } from './workflows/voice'
+import { defaultComfyWorkflowForSoundJson } from './workflows/sound'
+import { defaultComfyWorkflowForMusicJson } from './workflows/music'
 
 export function getDefaultSettingsState(): SettingsState {
   const state: SettingsState = {
@@ -85,9 +88,9 @@ export function getDefaultSettingsState(): SettingsState {
 
     comfyClapWorkflowForImage: defaultWorkflowForImages,
     comfyClapWorkflowForVideo: defaultWorkflowForVideos,
-    comfyWorkflowForVoice: '{}',
-    comfyWorkflowForSound: '{}',
-    comfyWorkflowForMusic: '{}',
+    comfyWorkflowForVoice: defaultComfyWorkflowForVoiceJson,
+    comfyWorkflowForSound: defaultComfyWorkflowForSoundJson,
+    comfyWorkflowForMusic: defaultComfyWorkflowForMusicJson,
 
     comfyUiApiUrl: 'http://localhost:8188',
 

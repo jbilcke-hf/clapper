@@ -19,6 +19,7 @@ import { useWorkflowEditor } from '@/services/editors'
 
 import { glifs } from './samples/glif'
 import { glifToReactWorkflow } from './formats/glif/glifToReactWorkflow'
+import { clapWorkflowToReactWorkflow } from './clapWorkflowToReactWorkflow'
 import { useTheme } from '@/services'
 
 const nodeTypes = {
@@ -32,10 +33,14 @@ export function ReactFlowCanvas() {
   const [edges, setEdges, onEdgesChange] = useEdgesState<ReactWorkflowEdge>([])
 
   useEffect(() => {
-    const { nodes, edges } = glifToReactWorkflow(glifs[0])
+    const converted = current ? clapWorkflowToReactWorkflow(current) : null
+    const { nodes, edges } =
+      converted && converted.nodes.length > 0
+        ? converted
+        : glifToReactWorkflow(glifs[0])
     setNodes(nodes)
     setEdges(edges)
-  }, [setEdges, setNodes])
+  }, [current, setEdges, setNodes])
 
   const onConnect: OnConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),

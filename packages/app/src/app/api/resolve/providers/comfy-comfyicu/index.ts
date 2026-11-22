@@ -1,12 +1,72 @@
 import { ResolveRequest } from '@aitube/clapper-services'
-import {
-  ClapSegmentCategory,
-  ClapSegmentStatus,
-  getClapAssetSourceType,
-} from '@aitube/clap'
+import { ClapSegmentStatus, getClapAssetSourceType } from '@aitube/clap'
 import { TimelineSegment } from '@aitube/timeline'
-import { getWorkflowInputValues } from '../getWorkflowInputValues'
-import { ComfyIcuApiRequestRunWorkflow } from './types'
+
+import { buildPopulatedComfyUiWorkflow } from '../comfyui/createPromptBuilder'
+import { resolveClapWorkflowForSegment } from '../comfyui'
+import {
+  ComfyIcuApiRequestRunWorkflow,
+  ComfyIcuApiResponseWorkflowStatus,
+} from './types'
+
+export async function pollComfyIcuRun({
+  workflowId,
+  runId,
+  apiKey,
+  pollIntervalMs = 1000,
+  maxPollAttempts = 120,
+}: {
+  workflowId: string
+  runId: string
+  apiKey: string
+  pollIntervalMs?: number
+  maxPollAttempts?: number
+}): Promise<ComfyIcuApiResponseWorkflowStatus> {
+  for (let attempt = 0; attempt < maxPollAttempts; attempt++) {
+    const statusResponse = await fetch(
+      `https://comfy.icu/api/v1/workflows/${encodeURIComponent(workflowId)}/runs/${encodeURIComponent(runId)}`,
+      {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          authorization: `Bearer ${apiKey}`,
+        },
+      }
+    )
+
+    if (!statusResponse.ok) {
+      throw new Error(
+        `Comfy.icu status poll failed with status ${statusResponse.status}`
+      )
+    }
+
+    const statusData =
+      (await statusResponse.json()) as ComfyIcuApiResponseWorkflowStatus
+    const normalizedStatus = (statusData.status || '').toUpperCase()
+
+    if (normalizedStatus === 'COMPLETED' || normalizedStatus === 'SUCCESS') {
+      return statusData
+    }
+
+    if (
+      normalizedStatus === 'ERROR' ||
+      normalizedStatus === 'FAILED' ||
+      normalizedStatus === 'CANCELLED'
+    ) {
+      throw new Error(
+        statusData.message ||
+          statusData.error ||
+          `Comfy.icu workflow run ${runId} failed with status ${statusData.status}`
+      )
+    }
+
+    if (attempt < maxPollAttempts - 1) {
+      await new Promise((resolve) => setTimeout(resolve, pollIntervalMs))
+    }
+  }
+
+  throw new Error(`Timed out waiting for Comfy.icu run ${runId}`)
+}
 
 export async function resolveSegment(
   request: ResolveRequest
@@ -15,75 +75,78 @@ export async function resolveSegment(
     throw new Error(`Missing API key for "Comfy.icu"`)
   }
 
-  if (request.segment.category === ClapSegmentCategory.IMAGE) {
-    const workflowId =
-      request.settings.imageGenerationWorkflow.id.split('://').pop() || ''
+  const clapWorkflow = resolveClapWorkflowForSegment(request)
+  const workflowId = clapWorkflow.id.split('://').pop() || ''
 
-    if (!workflowId) {
-      throw new Error(`The ComfyICU workflow ID is missing`)
+  if (!workflowId) {
+    throw new Error(`The ComfyICU workflow ID is missing`)
+  }
+
+  const { workflowJson } = buildPopulatedComfyUiWorkflow(clapWorkflow, request)
+
+  const payload: ComfyIcuApiRequestRunWorkflow = {
+    workflow_id: workflowId,
+    prompt: workflowJson,
+    files: {},
+    ...(request.settings.comfyIcuAccelerator
+      ? { accelerator: request.settings.comfyIcuAccelerator }
+      : {}),
+  }
+
+  const rawResponse = await fetch(
+    `https://comfy.icu/api/v1/workflows/${encodeURIComponent(workflowId)}/runs`,
+    {
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        authorization: `Bearer ${request.settings.comfyIcuApiKey}`,
+      },
+      body: JSON.stringify(payload),
+      method: 'POST',
     }
+  )
 
-    const inputFields =
-      request.settings.imageGenerationWorkflow.inputFields || []
-
-    // since this is a random "wild" workflow, it is possible
-    // that the field name is a bit different
-    // we try to look into the workflow input fields
-    // to find the best match
-    const promptFields = [
-      inputFields.find((f) => f.id === 'prompt'), // exactMatch,
-      inputFields.find((f) => f.id.includes('prompt')), // similarName,
-      inputFields.find((f) => f.type === 'string'), // similarType
-    ].filter((x) => typeof x !== 'undefined')
-
-    const promptField = promptFields[0]
-    if (!promptField) {
-      throw new Error(
-        `this workflow doesn't seem to have a parameter called "prompt"`
-      )
-    }
-
-    // TODO: modify the serialized workflow payload
-    // to inject our params:
-    // ...getWorkflowInputValues(request.settings.imageGenerationWorkflow),
-    // [promptField.id]: request.prompts.image.positive,
-
-    const payload: ComfyIcuApiRequestRunWorkflow = {
-      workflow_id: workflowId,
-      prompt: request.settings.imageGenerationWorkflow.data,
-      files: {},
-    }
-
-    const rawResponse = await fetch(
-      `https://comfy.icu/api/v1/workflows/${workflowId}/runs`,
-      {
-        headers: {
-          accept: 'application/json',
-          'content-type': 'application/json',
-          authorization: `Bearer ${request.settings.comfyIcuApiKey}`,
-        },
-        body: JSON.stringify(payload),
-        method: 'POST',
-      }
-    )
-
-    const response = await rawResponse.json()
-
-    if (response.status === 'error') {
-      throw new Error(response.message)
-    }
-
-    console.log('response:', response)
-
-    // TODO use the RUN ID to regularly check for status
-    // see https://comfy.icu/docs/api
-
+  if (!rawResponse.ok) {
     throw new Error(
-      `Clapper doesn't support ${request.segment.category} generation for provider "Comfy.icu". Please open a pull request with (working code) to solve this!`
+      `Comfy.icu run submission failed with HTTP ${rawResponse.status}`
     )
   }
 
-  const segment: TimelineSegment = { ...request.segment }
+  const response =
+    (await rawResponse.json()) as ComfyIcuApiResponseWorkflowStatus
+
+  const initialStatus = (response.status || '').toUpperCase()
+  if (initialStatus === 'ERROR' || initialStatus === 'FAILED') {
+    throw new Error(
+      response.message || response.error || 'Comfy.icu workflow execution error'
+    )
+  }
+
+  let completedRun = response
+  if (initialStatus !== 'COMPLETED' && initialStatus !== 'SUCCESS') {
+    if (!response.id) {
+      throw new Error('Comfy.icu response did not include a run ID')
+    }
+    completedRun = await pollComfyIcuRun({
+      workflowId,
+      runId: response.id,
+      apiKey: request.settings.comfyIcuApiKey,
+    })
+  }
+
+  const outputs = completedRun.output || completedRun.outputs || []
+  const outputUrl = outputs[0]?.url
+
+  if (!outputUrl) {
+    throw new Error('Comfy.icu workflow completed without an output asset URL')
+  }
+
+  const segment: TimelineSegment = {
+    ...request.segment,
+    assetUrl: outputUrl,
+    assetSourceType: getClapAssetSourceType(outputUrl),
+    status: ClapSegmentStatus.COMPLETED,
+  }
 
   return segment
 }

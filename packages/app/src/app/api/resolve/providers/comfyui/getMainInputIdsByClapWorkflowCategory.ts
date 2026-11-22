@@ -8,6 +8,8 @@ export const getMainInputIdsByClapWorkflowCategory = (
   switch (category) {
     case ClapWorkflowCategory.VIDEO_GENERATION: {
       return [
+        ClapperComfyUiInputIds.PROMPT,
+        ClapperComfyUiInputIds.NEGATIVE_PROMPT,
         ClapperComfyUiInputIds.IMAGE,
         ClapperComfyUiInputIds.WIDTH,
         ClapperComfyUiInputIds.HEIGHT,
@@ -15,6 +17,16 @@ export const getMainInputIdsByClapWorkflowCategory = (
         ClapperComfyUiInputIds.OUTPUT,
       ]
     }
+    case ClapWorkflowCategory.VOICE_GENERATION:
+    case ClapWorkflowCategory.SOUND_GENERATION:
+    case ClapWorkflowCategory.MUSIC_GENERATION: {
+      return [
+        ClapperComfyUiInputIds.PROMPT,
+        ClapperComfyUiInputIds.SEED,
+        ClapperComfyUiInputIds.OUTPUT,
+      ]
+    }
+    case ClapWorkflowCategory.IMAGE_GENERATION:
     default: {
       return [
         ClapperComfyUiInputIds.PROMPT,

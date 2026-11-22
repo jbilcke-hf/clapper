@@ -3,7 +3,180 @@ import {
   ComfyUiWorkflowApiNodeInput,
   INPUT_TYPES,
   NodeData,
+  NodeRawData,
 } from './types'
+
+const MAX_WORKFLOW_JSON_BYTES = 5 * 1024 * 1024
+const MAX_SANITIZE_DEPTH = 64
+const DANGEROUS_KEYS = new Set(['__proto__', 'constructor', 'prototype'])
+
+const OUTPUT_NODE_CLASS_PATTERNS = [
+  /^(SaveImage|PreviewImage|SaveAnimatedWEBP|SaveAnimatedPNG)$/i,
+  /^(VHS_VideoCombine|SaveVideo|SaveWEBM)$/i,
+  /^(SaveAudio|PreviewAudio|VHS_Audio|SaveAudioMP3|SaveAudioWAV)$/i,
+  /(Save|Preview|Output|Combine)/i,
+]
+
+const GUI_NODE_WIDGET_MAPPINGS: Record<string, string[]> = {
+  KSampler: [
+    'seed',
+    'control_after_generate',
+    'steps',
+    'cfg',
+    'sampler_name',
+    'scheduler',
+    'denoise',
+  ],
+  KSamplerAdvanced: [
+    'add_noise',
+    'noise_seed',
+    'control_after_generate',
+    'steps',
+    'cfg',
+    'sampler_name',
+    'scheduler',
+    'start_at_step',
+    'end_at_step',
+    'return_with_leftover_noise',
+  ],
+  RandomNoise: ['noise_seed', 'control_after_generate'],
+  CLIPTextEncode: ['text'],
+  T5TextEncode: ['text'],
+  EmptyLatentImage: ['width', 'height', 'batch_size'],
+  EmptySD3LatentImage: ['width', 'height', 'batch_size'],
+  CheckpointLoaderSimple: ['ckpt_name'],
+  ImageOnlyCheckpointLoader: ['ckpt_name'],
+  UNETLoader: ['unet_name', 'weight_dtype'],
+  VAELoader: ['vae_name'],
+  DualCLIPLoader: ['clip_name1', 'clip_name2', 'type'],
+  CLIPLoader: ['clip_name', 'type'],
+  LoraLoader: ['lora_name', 'strength_model', 'strength_clip'],
+  SaveImage: ['filename_prefix'],
+  SaveAudio: ['filename_prefix'],
+  LoadImage: ['image', 'upload'],
+  LoadImageFromBase64: ['data'],
+  SVD_img2vid_Conditioning: [
+    'width',
+    'height',
+    'video_frames',
+    'motion_bucket_id',
+    'fps',
+    'augmentation_level',
+  ],
+}
+
+export function sanitizeJsonObject(value: unknown, depth = 0): any {
+  if (depth > MAX_SANITIZE_DEPTH) {
+    throw new Error('Workflow JSON exceeds maximum nesting depth.')
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeJsonObject(item, depth + 1))
+  }
+  if (value !== null && typeof value === 'object') {
+    const clean: Record<string, any> = {}
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      if (DANGEROUS_KEYS.has(k)) continue
+      clean[k] = sanitizeJsonObject(v, depth + 1)
+    }
+    return clean
+  }
+  return value
+}
+
+export function isComfyUiGuiWorkflow(raw: unknown): boolean {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+    return false
+  }
+  const obj = raw as Record<string, unknown>
+  return Array.isArray(obj.nodes) && Array.isArray(obj.links)
+}
+
+export function convertComfyUiGuiToApiFormat(
+  guiWorkflow: Record<string, any>
+): ComfyUIWorkflowApiJson {
+  const nodes = Array.isArray(guiWorkflow.nodes) ? guiWorkflow.nodes : []
+  const links = Array.isArray(guiWorkflow.links) ? guiWorkflow.links : []
+
+  // Map link_id -> [origin_node_id, origin_slot]
+  const linkMap: Record<number, [string, number]> = {}
+  for (const link of links) {
+    if (Array.isArray(link) && link.length >= 5) {
+      const [linkId, originNodeId, originSlot] = link
+      linkMap[Number(linkId)] = [String(originNodeId), Number(originSlot)]
+    }
+  }
+
+  const apiWorkflow: ComfyUIWorkflowApiJson = {}
+
+  for (const node of nodes) {
+    if (!node || typeof node !== 'object' || node.id === undefined) continue
+    const nodeType = String(node.type || '')
+    // Skip pure UI virtual routing nodes
+    if (nodeType === 'Reroute') continue
+
+    const nodeId = String(node.id)
+    const inputs: Record<string, unknown> = {}
+    const linkedInputNames = new Set<string>()
+    let widgetIdx = 0
+    const widgetsValues = Array.isArray(node.widgets_values)
+      ? node.widgets_values
+      : []
+
+    if (Array.isArray(node.inputs)) {
+      for (const input of node.inputs) {
+        if (!input || typeof input.name !== 'string') continue
+        if (input.link != null && linkMap[Number(input.link)]) {
+          inputs[input.name] = linkMap[Number(input.link)]
+          linkedInputNames.add(input.name)
+          if (input.widget) {
+            widgetIdx += 1
+          }
+        } else if (input.widget && widgetIdx < widgetsValues.length) {
+          inputs[input.name] = widgetsValues[widgetIdx]
+          widgetIdx += 1
+        }
+      }
+    }
+
+    const knownWidgetNames = GUI_NODE_WIDGET_MAPPINGS[nodeType]
+    if (knownWidgetNames && widgetsValues.length > 0) {
+      for (
+        let i = 0;
+        i < knownWidgetNames.length && i < widgetsValues.length;
+        i++
+      ) {
+        const wName = knownWidgetNames[i]
+        if (wName === 'control_after_generate') continue
+        if (!linkedInputNames.has(wName) && inputs[wName] === undefined) {
+          inputs[wName] = widgetsValues[i]
+        }
+      }
+    } else if (widgetIdx < widgetsValues.length) {
+      for (let i = widgetIdx; i < widgetsValues.length; i++) {
+        const val = widgetsValues[i]
+        if (
+          typeof val === 'string' &&
+          inputs.text === undefined &&
+          /TextEncode|Prompt/i.test(nodeType)
+        ) {
+          inputs.text = val
+        } else {
+          inputs[`widget_${i}`] = val
+        }
+      }
+    }
+
+    apiWorkflow[nodeId] = {
+      inputs,
+      class_type: nodeType,
+      _meta: {
+        title: String(node.title || nodeType || `Node ${nodeId}`),
+      },
+    }
+  }
+
+  return apiWorkflow
+}
 
 export class ComfyUIWorkflowApiGraphEdge {
   source: ComfyUIWorkflowApiGraphNode
@@ -99,7 +272,32 @@ export class ComfyUIWorkflowApiGraph {
   private inDegree: Record<string, number> = {}
 
   constructor(workflow: ComfyUIWorkflowApiJson) {
-    this.json = structuredClone(workflow)
+    if (!workflow || typeof workflow !== 'object' || Array.isArray(workflow)) {
+      throw new Error('Invalid workflow.')
+    }
+    const sanitized = sanitizeJsonObject(workflow)
+    const normalized: ComfyUIWorkflowApiJson = isComfyUiGuiWorkflow(sanitized)
+      ? convertComfyUiGuiToApiFormat(sanitized)
+      : sanitized
+
+    const nodeIds = Object.keys(normalized)
+    if (nodeIds.length === 0) {
+      throw new Error('Invalid workflow: workflow contains no nodes.')
+    }
+
+    for (const nodeId of nodeIds) {
+      const nodeVal = normalized[nodeId] as NodeRawData
+      if (
+        !nodeVal ||
+        typeof nodeVal !== 'object' ||
+        Array.isArray(nodeVal) ||
+        (nodeVal.inputs === undefined && nodeVal.class_type === undefined)
+      ) {
+        throw new Error('Invalid workflow: malformed node data.')
+      }
+    }
+
+    this.json = structuredClone(normalized)
     const { adjList, dependencyList, dependantList, inDegree } =
       this.buildGraphData()
     this.adjList = adjList
@@ -147,8 +345,11 @@ export class ComfyUIWorkflowApiGraph {
     for (const node of Object.values(this.nodes)) {
       if (node.inputs) {
         for (const [inputName, value] of Object.entries(node.inputs)) {
-          if (Array.isArray(value)) {
-            const dependencyNodeId = value[0] as string
+          if (Array.isArray(value) && value.length >= 1) {
+            const dependencyNodeId = String(value[0])
+            if (!this.nodes[dependencyNodeId]) {
+              continue
+            }
             adjList[dependencyNodeId].push(node.id)
             dependencyList[node.id].push({ from: dependencyNodeId, inputName })
             node.addInboundEdge(this.nodes[dependencyNodeId], inputName)
@@ -240,15 +441,17 @@ export class ComfyUIWorkflowApiGraph {
 
   /**
    * Topological sort of the graph (Kahn's Algorithm) to get the final output node.
-   * TODO: multiple outputs.
+   * Prioritizes terminal output node classes (SaveImage, VHS_VideoCombine, SaveAudio, etc.)
+   * and clones inDegree so repeated calls are idempotent.
    */
   getOutputNode(): NodeData | null {
-    const { adjList, inDegree } = this
+    const { adjList } = this
+    const inDegreeCopy = { ...this.inDegree }
     const queue: string[] = []
     const sortedOrder: string[] = []
 
-    for (const nodeId of Object.keys(inDegree)) {
-      if (inDegree[nodeId] === 0) {
+    for (const nodeId of Object.keys(inDegreeCopy)) {
+      if (inDegreeCopy[nodeId] === 0) {
         queue.push(nodeId)
       }
     }
@@ -257,24 +460,46 @@ export class ComfyUIWorkflowApiGraph {
       const currentNode = queue.shift()!
       sortedOrder.push(currentNode)
       for (const neighbor of adjList[currentNode]) {
-        inDegree[neighbor] -= 1
-        if (inDegree[neighbor] === 0) {
+        inDegreeCopy[neighbor] -= 1
+        if (inDegreeCopy[neighbor] === 0) {
           queue.push(neighbor)
         }
       }
     }
 
-    // Last node in sortedOrder is the output node
-    // TODO: handle multiple outputs
-    if (sortedOrder.length === Object.keys(this.json).length) {
-      const outputNodeId = sortedOrder[sortedOrder.length - 1]
-      return { id: outputNodeId, ...this.json[outputNodeId] }
-    } else {
-      // If there are cycles, fail
+    if (sortedOrder.length !== Object.keys(this.json).length) {
       throw new Error(
         'The provided workflow has cycles, impossible to get the output node.'
       )
     }
+
+    if (sortedOrder.length === 0) {
+      return null
+    }
+
+    // Prefer sink nodes (no outbound edges) matching known output classes
+    const sinkNodeIds = sortedOrder.filter(
+      (nodeId) => (adjList[nodeId]?.length || 0) === 0
+    )
+    const candidatePools = [
+      [...sinkNodeIds].reverse(),
+      [...sortedOrder].reverse(),
+    ]
+
+    for (const pool of candidatePools) {
+      for (const pattern of OUTPUT_NODE_CLASS_PATTERNS) {
+        const matchedId = pool.find((nodeId) =>
+          pattern.test(this.json[nodeId]?.class_type || '')
+        )
+        if (matchedId) {
+          return { id: matchedId, ...this.json[matchedId] }
+        }
+      }
+    }
+
+    const fallbackId =
+      sinkNodeIds[sinkNodeIds.length - 1] || sortedOrder[sortedOrder.length - 1]
+    return { id: fallbackId, ...this.json[fallbackId] }
   }
 
   /**
@@ -291,11 +516,23 @@ export class ComfyUIWorkflowApiGraph {
     const inputs: ComfyUiWorkflowApiNodeInput[] = []
 
     for (const [name, value] of Object.entries(nodeData.inputs)) {
-      if (Array.isArray(value)) continue
+      if (Array.isArray(value) || value === null || value === undefined) {
+        continue
+      }
+      if (
+        typeof value !== 'string' &&
+        typeof value !== 'number' &&
+        typeof value !== 'boolean'
+      ) {
+        continue
+      }
 
-      // TODO: Handle more types
-      let inputType: INPUT_TYPES =
-        typeof value === 'string' ? 'string' : 'number'
+      const inputType: INPUT_TYPES =
+        typeof value === 'string'
+          ? 'string'
+          : typeof value === 'boolean'
+            ? 'boolean'
+            : 'number'
 
       inputs.push({
         type: inputType,
@@ -396,8 +633,13 @@ export class ComfyUIWorkflowApiGraph {
   static fromString(
     workflowString: string | undefined
   ): ComfyUIWorkflowApiGraph {
-    if (!workflowString) throw new Error('Invalid workflow.')
-    const workflowRaw = JSON.parse(workflowString)
+    if (!workflowString || typeof workflowString !== 'string') {
+      throw new Error('Invalid workflow.')
+    }
+    if (workflowString.length > MAX_WORKFLOW_JSON_BYTES) {
+      throw new Error('Workflow JSON exceeds maximum allowed size (5 MB).')
+    }
+    const workflowRaw = sanitizeJsonObject(JSON.parse(workflowString))
     return new ComfyUIWorkflowApiGraph(workflowRaw)
   }
 
