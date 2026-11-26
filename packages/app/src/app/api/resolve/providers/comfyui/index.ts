@@ -47,13 +47,22 @@ export async function resolveSegment(
   ).init()
 
   if (
-    [ClapSegmentCategory.IMAGE, ClapSegmentCategory.VIDEO].includes(
-      request.segment.category
-    )
+    [
+      ClapSegmentCategory.IMAGE,
+      ClapSegmentCategory.VIDEO,
+      ClapSegmentCategory.SOUND,
+      ClapSegmentCategory.VOICE,
+      ClapSegmentCategory.MUSIC,
+      ClapSegmentCategory.DIALOGUE,
+    ].includes(request.segment.category)
   ) {
     const clapWorkflow = {
       [ClapSegmentCategory.IMAGE]: request.settings.imageGenerationWorkflow,
       [ClapSegmentCategory.VIDEO]: request.settings.videoGenerationWorkflow,
+      [ClapSegmentCategory.SOUND]: request.settings.soundGenerationWorkflow,
+      [ClapSegmentCategory.VOICE]: request.settings.voiceGenerationWorkflow,
+      [ClapSegmentCategory.MUSIC]: request.settings.musicGenerationWorkflow,
+      [ClapSegmentCategory.DIALOGUE]: request.settings.voiceGenerationWorkflow,
     }[request.segment.category]
 
     if (
@@ -84,9 +93,28 @@ export async function resolveSegment(
       )
     })
 
+    const isAudioCategory = [
+      ClapSegmentCategory.SOUND,
+      ClapSegmentCategory.VOICE,
+      ClapSegmentCategory.MUSIC,
+      ClapSegmentCategory.DIALOGUE,
+    ].includes(request.segment.category)
+
+    const positivePrompt = isAudioCategory
+      ? request.prompts.voice?.positive ||
+        request.prompts.storyboard?.positive ||
+        request.segment.prompt ||
+        request.prompts.image?.positive ||
+        ''
+      : request.prompts.image.positive
+
+    const negativePrompt = isAudioCategory
+      ? request.prompts.voice?.negative || ''
+      : request.prompts.image.negative
+
     const mainInputs = [
-      [ClapperComfyUiInputIds.PROMPT, request.prompts.image.positive],
-      [ClapperComfyUiInputIds.NEGATIVE_PROMPT, request.prompts.image.negative],
+      [ClapperComfyUiInputIds.PROMPT, positivePrompt],
+      [ClapperComfyUiInputIds.NEGATIVE_PROMPT, negativePrompt],
       [ClapperComfyUiInputIds.WIDTH, request.meta.width],
       [ClapperComfyUiInputIds.HEIGHT, request.meta.height],
       [ClapperComfyUiInputIds.SEED, generateSeed()],
@@ -138,10 +166,23 @@ export async function resolveSegment(
         return (
           rawOutput[ClapperComfyUiInputIds.OUTPUT]?.videos ||
           rawOutput[ClapperComfyUiInputIds.OUTPUT]?.gifs ||
-          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images
+          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images ||
+          []
+        ).map((asset: any) => api.getPathImage(asset))
+      } else if (
+        clapWorkflow.category == ClapWorkflowCategory.SOUND_GENERATION ||
+        clapWorkflow.category == ClapWorkflowCategory.VOICE_GENERATION ||
+        clapWorkflow.category == ClapWorkflowCategory.MUSIC_GENERATION
+      ) {
+        return (
+          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.audio ||
+          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.audios ||
+          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.files ||
+          rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images ||
+          []
         ).map((asset: any) => api.getPathImage(asset))
       } else {
-        return rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images.map(
+        return (rawOutput[ClapperComfyUiInputIds.OUTPUT]?.images || []).map(
           (img: any) => api.getPathImage(img)
         )
       }
